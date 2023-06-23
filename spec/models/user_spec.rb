@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe User, type: :model do
-  it { should have_many(:topic_users) }
-  it { should have_many(:topics).through(:topic_users) }
+RSpec.describe User do
+  it { is_expected.to have_many(:topic_users) }
+  it { is_expected.to have_many(:topics).through(:topic_users) }
 end
 
 # == Schema Information

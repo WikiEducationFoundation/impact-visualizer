@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe ArticleBagArticle, type: :model do
-  it { should belong_to(:article_bag) }
-  it { should belong_to(:article) }
+RSpec.describe ArticleBagArticle do
+  it { is_expected.to belong_to(:article_bag) }
+  it { is_expected.to belong_to(:article) }
 end
 
 # == Schema Information

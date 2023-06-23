@@ -1,10 +1,10 @@
-class ArticleBag < ApplicationRecord
+# frozen_string_literal: true
 
+class ArticleBag < ApplicationRecord
   # Associations
   belongs_to :topic
   has_many :article_bag_articles
   has_many :articles, through: :article_bag_articles
-
 end
 
 # == Schema Information

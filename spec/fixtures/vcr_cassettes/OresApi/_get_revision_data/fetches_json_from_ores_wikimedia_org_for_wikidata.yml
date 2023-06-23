@@ -1,0 +1,210 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://ores.wikimedia.org/v3/scores/wikidatawiki/?features&models=itemquality&revids=641962088%7C12345
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Cache-Control:
+      - no-store, no-cache, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Server:
+      - ores2001.codfw.wmnet
+      Access-Control-Allow-Headers:
+      - X-Wikimedia-Debug
+      Date:
+      - Thu, 22 Jun 2023 23:32:19 GMT
+      Vary:
+      - Accept-Encoding
+      Age:
+      - '1'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "wikidatawiki": {
+            "models": {
+              "itemquality": {
+                "version": "0.5.0"
+              }
+            },
+            "scores": {
+              "12345": {
+                "itemquality": {
+                  "features": {
+                    "feature.item_in_set('ar', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('ar', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('ar', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('de', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('de', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('de', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('en', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('en', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('en', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('es', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('es', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('es', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('fr', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('fr', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('fr', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('pt', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('pt', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('pt', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('ru', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('ru', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('ru', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('zh', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('zh', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('zh', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.len(<datasource.wikibase.revision.aliases>)": 1.0,
+                    "feature.len(<datasource.wikibase.revision.badges>)": 0.0,
+                    "feature.len(<datasource.wikibase.revision.claim>)": 0.0,
+                    "feature.len(<datasource.wikibase.revision.descriptions>)": 1.0,
+                    "feature.len(<datasource.wikibase.revision.labels>)": 1.0,
+                    "feature.len(<datasource.wikibase.revision.properties>)": 0.0,
+                    "feature.len(<datasource.wikibase.revision.qualifiers>)": 0.0,
+                    "feature.len(<datasource.wikibase.revision.sources>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.complete_translations>)": 1.0,
+                    "feature.len(<datasource.wikidatawiki.revision.external_identifiers>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.important_complete_translations>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.important_description_translations>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.important_label_translations>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.non_external_id_statements>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.references>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.unique_references>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.wikimedia_references>)": 0.0,
+                    "feature.wikidatawiki.revision.dead": false,
+                    "feature.wikidatawiki.revision.has_birthday": false,
+                    "feature.wikidatawiki.revision.has_commons_media": false,
+                    "feature.wikidatawiki.revision.has_image": false,
+                    "feature.wikidatawiki.revision.is_human": false,
+                    "feature.wikidatawiki.revision.is_scholarlyarticle": false,
+                    "feature.wikidatawiki.revision.page.externally_referenced_claims_ratio": 0.0,
+                    "feature.wikidatawiki.revision.page.is_astronomical_object": false,
+                    "feature.wikidatawiki.revision.page.referenced_claims_ratio": 0.0,
+                    "feature.wikidatawiki.revision.page.wikimedia_referenced_ratio": 0.0
+                  },
+                  "score": {
+                    "prediction": "E",
+                    "probability": {
+                      "A": 0.0007619706459774424,
+                      "B": 0.0010723569759644143,
+                      "C": 0.0034023775960190968,
+                      "D": 0.015236655952853628,
+                      "E": 0.9795266388291856
+                    }
+                  }
+                }
+              },
+              "641962088": {
+                "itemquality": {
+                  "features": {
+                    "feature.item_in_set('ar', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('ar', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('ar', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('de', <datasource.wikidatawiki.revision.important_complete_translations>)": true,
+                    "feature.item_in_set('de', <datasource.wikidatawiki.revision.important_description_translations>)": true,
+                    "feature.item_in_set('de', <datasource.wikidatawiki.revision.important_label_translations>)": true,
+                    "feature.item_in_set('en', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('en', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('en', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('es', <datasource.wikidatawiki.revision.important_complete_translations>)": true,
+                    "feature.item_in_set('es', <datasource.wikidatawiki.revision.important_description_translations>)": true,
+                    "feature.item_in_set('es', <datasource.wikidatawiki.revision.important_label_translations>)": true,
+                    "feature.item_in_set('fr', <datasource.wikidatawiki.revision.important_complete_translations>)": true,
+                    "feature.item_in_set('fr', <datasource.wikidatawiki.revision.important_description_translations>)": true,
+                    "feature.item_in_set('fr', <datasource.wikidatawiki.revision.important_label_translations>)": true,
+                    "feature.item_in_set('pt', <datasource.wikidatawiki.revision.important_complete_translations>)": true,
+                    "feature.item_in_set('pt', <datasource.wikidatawiki.revision.important_description_translations>)": true,
+                    "feature.item_in_set('pt', <datasource.wikidatawiki.revision.important_label_translations>)": true,
+                    "feature.item_in_set('ru', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('ru', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('ru', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.item_in_set('zh', <datasource.wikidatawiki.revision.important_complete_translations>)": false,
+                    "feature.item_in_set('zh', <datasource.wikidatawiki.revision.important_description_translations>)": false,
+                    "feature.item_in_set('zh', <datasource.wikidatawiki.revision.important_label_translations>)": false,
+                    "feature.len(<datasource.wikibase.revision.aliases>)": 0.0,
+                    "feature.len(<datasource.wikibase.revision.badges>)": 0.0,
+                    "feature.len(<datasource.wikibase.revision.claim>)": 3.0,
+                    "feature.len(<datasource.wikibase.revision.descriptions>)": 17.0,
+                    "feature.len(<datasource.wikibase.revision.labels>)": 6.0,
+                    "feature.len(<datasource.wikibase.revision.properties>)": 3.0,
+                    "feature.len(<datasource.wikibase.revision.qualifiers>)": 0.0,
+                    "feature.len(<datasource.wikibase.revision.sources>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.complete_translations>)": 5.0,
+                    "feature.len(<datasource.wikidatawiki.revision.external_identifiers>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.important_complete_translations>)": 4.0,
+                    "feature.len(<datasource.wikidatawiki.revision.important_description_translations>)": 4.0,
+                    "feature.len(<datasource.wikidatawiki.revision.important_label_translations>)": 4.0,
+                    "feature.len(<datasource.wikidatawiki.revision.non_external_id_statements>)": 3.0,
+                    "feature.len(<datasource.wikidatawiki.revision.references>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.unique_references>)": 0.0,
+                    "feature.len(<datasource.wikidatawiki.revision.wikimedia_references>)": 0.0,
+                    "feature.wikidatawiki.revision.dead": false,
+                    "feature.wikidatawiki.revision.has_birthday": false,
+                    "feature.wikidatawiki.revision.has_commons_media": false,
+                    "feature.wikidatawiki.revision.has_image": false,
+                    "feature.wikidatawiki.revision.is_human": false,
+                    "feature.wikidatawiki.revision.is_scholarlyarticle": false,
+                    "feature.wikidatawiki.revision.page.externally_referenced_claims_ratio": 0.0,
+                    "feature.wikidatawiki.revision.page.is_astronomical_object": false,
+                    "feature.wikidatawiki.revision.page.referenced_claims_ratio": 0.0,
+                    "feature.wikidatawiki.revision.page.wikimedia_referenced_ratio": 0.0
+                  },
+                  "score": {
+                    "prediction": "D",
+                    "probability": {
+                      "A": 0.002866885296096887,
+                      "B": 0.005822416435812799,
+                      "C": 0.08426574819712691,
+                      "D": 0.894309818649275,
+                      "E": 0.012735131421688252
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+  recorded_at: Thu, 22 Jun 2023 23:32:19 GMT
+recorded_with: VCR 6.1.0

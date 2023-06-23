@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe TopicUser, type: :model do
-  it { should belong_to(:user) }
-  it { should belong_to(:topic) }
+RSpec.describe TopicUser do
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:topic) }
 end
 
 # == Schema Information

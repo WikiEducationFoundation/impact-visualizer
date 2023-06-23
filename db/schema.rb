@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_16_195410) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_21_231018) do
   create_table "article_bag_articles", force: :cascade do |t|
     t.integer "article_bag_id", null: false
     t.integer "article_id", null: false
@@ -34,6 +34,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_195410) do
     t.integer "article_length"
     t.integer "links_count"
     t.integer "revisions_count"
+    t.date "timestamp"
     t.integer "article_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -78,6 +79,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_195410) do
     t.integer "attributed_links_count_delta"
     t.integer "attributed_revisions_count_delta"
     t.integer "attributed_articles_created_delta"
+    t.date "timestamp"
     t.integer "topic_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -97,8 +99,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_195410) do
     t.string "name"
     t.string "description"
     t.string "slug"
+    t.integer "timepoint_day_interval", default: 7
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "wiki_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -106,6 +110,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_16_195410) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "wikis", force: :cascade do |t|
+    t.string "language", limit: 16
+    t.string "project", limit: 16
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["language", "project"], name: "index_wikis_on_language_and_project", unique: true
   end
 
   add_foreign_key "article_bag_articles", "article_bags"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TopicUser < ApplicationRecord
   belongs_to :topic
   belongs_to :user

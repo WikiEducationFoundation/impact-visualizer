@@ -10,6 +10,8 @@ gem 'jbuilder'
 gem 'tzinfo-data', platforms: %i[ mingw mswin x64_mingw jruby ]
 gem 'bootsnap', require: false
 gem 'awesome_print'
+gem 'mediawiki_api'
+gem 'oj'
 
 group :development do
   gem 'spring'
@@ -22,9 +24,14 @@ group :development, :test do
   gem 'factory_bot_rails'
   gem 'spring-commands-rspec'
   gem 'faker'
+  gem 'rubocop',  require: false
+  gem 'rubocop-rails', require: false
+  gem 'rubocop-rspec', require: false
+  gem 'rubocop-performance', require: false
 end
 
 group :test do
   gem 'shoulda-matchers', '~> 5.0'
   gem 'vcr'
+  gem 'webmock'
 end

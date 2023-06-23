@@ -1,0 +1,2156 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://ores.wikimedia.org/v3/scores/enwiki/?features&models=articlequality&revids=641962088%7C641962089%7C641962090%7C641962091%7C641962092%7C641962093%7C641962094%7C641962095%7C641962096%7C641962097%7C641962098%7C641962099%7C641962100%7C641962101%7C641962102%7C641962103%7C641962104%7C641962105%7C641962106%7C641962107%7C641962108%7C641962109%7C641962110%7C641962111%7C641962112%7C641962113%7C641962114%7C641962115%7C641962116%7C641962117%7C641962118%7C641962119%7C641962120%7C641962121%7C641962122%7C641962123%7C641962124%7C641962125%7C641962126%7C641962127%7C641962128%7C641962129%7C641962130%7C641962131%7C641962132%7C641962133%7C641962134%7C641962135%7C641962136%7C641962137
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Cache-Control:
+      - no-store, no-cache, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Server:
+      - ores2005.codfw.wmnet
+      Access-Control-Allow-Headers:
+      - X-Wikimedia-Debug
+      Date:
+      - Thu, 22 Jun 2023 23:32:22 GMT
+      Vary:
+      - Accept-Encoding
+      Age:
+      - '3'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "enwiki": {
+            "models": {
+              "articlequality": {
+                "version": "0.9.2"
+              }
+            },
+            "scores": {
+              "641962088": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 93,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 581.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 1.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 21.0,
+                    "feature.wikitext.revision.chars": 589.0,
+                    "feature.wikitext.revision.content_chars": 589.0,
+                    "feature.wikitext.revision.external_links": 4.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 0.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 0.0,
+                    "feature.wikitext.revision.wikilinks": 0.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.05346747947031159,
+                      "C": 0.03566589837597718,
+                      "FA": 0.0029837211689327093,
+                      "GA": 0.005891859964515511,
+                      "Start": 0.2826812730433699,
+                      "Stub": 0.6193097679768931
+                    }
+                  }
+                }
+              },
+              "641962089": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 15110,
+                    "feature.enwiki.infobox_images": 3,
+                    "feature.enwiki.main_article_templates": 3.0,
+                    "feature.enwiki.revision.category_links": 2.0,
+                    "feature.enwiki.revision.cite_templates": 46.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 3.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 8576.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 33.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 3171.0,
+                    "feature.wikitext.revision.chars": 29673.0,
+                    "feature.wikitext.revision.content_chars": 12762.0,
+                    "feature.wikitext.revision.external_links": 51.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 8.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 5.0,
+                    "feature.wikitext.revision.list_items": 21.0,
+                    "feature.wikitext.revision.ref_tags": 64.0,
+                    "feature.wikitext.revision.templates": 67.0,
+                    "feature.wikitext.revision.wikilinks": 127.0
+                  },
+                  "score": {
+                    "prediction": "GA",
+                    "probability": {
+                      "B": 0.09551067562718596,
+                      "C": 0.07301669419987983,
+                      "FA": 0.23632498654818535,
+                      "GA": 0.5815337413902218,
+                      "Start": 0.009782024111350885,
+                      "Stub": 0.0038318781231760613
+                    }
+                  }
+                }
+              },
+              "641962090": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 6037,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 8.0,
+                    "feature.enwiki.revision.cite_templates": 1.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 3.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 6152.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 4.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 5.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 1348.0,
+                    "feature.wikitext.revision.chars": 9880.0,
+                    "feature.wikitext.revision.content_chars": 6758.0,
+                    "feature.wikitext.revision.external_links": 2.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 5.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 6.0,
+                    "feature.wikitext.revision.ref_tags": 5.0,
+                    "feature.wikitext.revision.templates": 8.0,
+                    "feature.wikitext.revision.wikilinks": 164.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.17428013021978206,
+                      "C": 0.511107674027411,
+                      "FA": 0.006444505735557627,
+                      "GA": 0.011400279059684026,
+                      "Start": 0.28856806072821295,
+                      "Stub": 0.008199350229352325
+                    }
+                  }
+                }
+              },
+              "641962091": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 48834,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 1.0,
+                    "feature.enwiki.revision.category_links": 3.0,
+                    "feature.enwiki.revision.cite_templates": 193.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 8535.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 6.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 60.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 10949.0,
+                    "feature.wikitext.revision.chars": 98326.0,
+                    "feature.wikitext.revision.content_chars": 37863.0,
+                    "feature.wikitext.revision.external_links": 202.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 11.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 5.0,
+                    "feature.wikitext.revision.list_items": 3.0,
+                    "feature.wikitext.revision.ref_tags": 234.0,
+                    "feature.wikitext.revision.templates": 217.0,
+                    "feature.wikitext.revision.wikilinks": 89.0
+                  },
+                  "score": {
+                    "prediction": "B",
+                    "probability": {
+                      "B": 0.4435211945076466,
+                      "C": 0.14769912816789457,
+                      "FA": 0.15539055100238353,
+                      "GA": 0.22930980495062853,
+                      "Start": 0.017915644441858607,
+                      "Stub": 0.0061636769295881425
+                    }
+                  }
+                }
+              },
+              "641962092": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 13387,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 1.0,
+                    "feature.enwiki.revision.cite_templates": 2.0,
+                    "feature.enwiki.revision.cn_templates": 1.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 14634.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 3.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 66.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 3304.0,
+                    "feature.wikitext.revision.chars": 21318.0,
+                    "feature.wikitext.revision.content_chars": 18276.0,
+                    "feature.wikitext.revision.external_links": 4.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 6.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 6.0,
+                    "feature.wikitext.revision.list_items": 82.0,
+                    "feature.wikitext.revision.ref_tags": 6.0,
+                    "feature.wikitext.revision.templates": 12.0,
+                    "feature.wikitext.revision.wikilinks": 103.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.3777767972675873,
+                      "C": 0.5039845763052709,
+                      "FA": 0.012812668805175209,
+                      "GA": 0.00903182610924815,
+                      "Start": 0.08948912441080277,
+                      "Stub": 0.006905007101915497
+                    }
+                  }
+                }
+              },
+              "641962093": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 11591,
+                    "feature.enwiki.infobox_images": 2,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 21.0,
+                    "feature.enwiki.revision.cite_templates": 10.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 17197.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 2.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 20.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 2543.0,
+                    "feature.wikitext.revision.chars": 19229.0,
+                    "feature.wikitext.revision.content_chars": 13638.0,
+                    "feature.wikitext.revision.external_links": 12.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 5.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 5.0,
+                    "feature.wikitext.revision.list_items": 33.0,
+                    "feature.wikitext.revision.ref_tags": 11.0,
+                    "feature.wikitext.revision.templates": 29.0,
+                    "feature.wikitext.revision.wikilinks": 159.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.22137519407655618,
+                      "C": 0.6866747930697769,
+                      "FA": 0.023283103156755205,
+                      "GA": 0.030362474882359138,
+                      "Start": 0.03435720700254793,
+                      "Stub": 0.003947227812004548
+                    }
+                  }
+                }
+              },
+              "641962094": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 1324,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 1.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 1953.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 231.0,
+                    "feature.wikitext.revision.chars": 1968.0,
+                    "feature.wikitext.revision.content_chars": 922.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 1.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 3.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 8.0,
+                    "feature.wikitext.revision.wikilinks": 19.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.014357909713377697,
+                      "C": 0.014350726420660747,
+                      "FA": 0.002114412138630317,
+                      "GA": 0.0035853421022527593,
+                      "Start": 0.15079331379324618,
+                      "Stub": 0.8147982958318323
+                    }
+                  }
+                }
+              },
+              "641962095": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 1126,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 2.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 1947.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 2.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 264.0,
+                    "feature.wikitext.revision.chars": 1951.0,
+                    "feature.wikitext.revision.content_chars": 1113.0,
+                    "feature.wikitext.revision.external_links": 1.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 1.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 3.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 2.0,
+                    "feature.wikitext.revision.wikilinks": 21.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.022264306710373768,
+                      "C": 0.0220391800969777,
+                      "FA": 0.003930333715195502,
+                      "GA": 0.0055330077024280154,
+                      "Start": 0.49832076647248974,
+                      "Stub": 0.4479124053025352
+                    }
+                  }
+                }
+              },
+              "641962096": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 993,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 3.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 5.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 764.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 2.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 203.0,
+                    "feature.wikitext.revision.chars": 1630.0,
+                    "feature.wikitext.revision.content_chars": 1080.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 3.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 8.0,
+                    "feature.wikitext.revision.ref_tags": 1.0,
+                    "feature.wikitext.revision.templates": 3.0,
+                    "feature.wikitext.revision.wikilinks": 28.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.020573417039323253,
+                      "C": 0.03177143462821729,
+                      "FA": 0.0039059475899053454,
+                      "GA": 0.005324984436021247,
+                      "Start": 0.3175989453674336,
+                      "Stub": 0.6208252709390992
+                    }
+                  }
+                }
+              },
+              "641962097": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 59072,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 8.0,
+                    "feature.enwiki.revision.category_links": 3.0,
+                    "feature.enwiki.revision.cite_templates": 95.0,
+                    "feature.enwiki.revision.cn_templates": 9.0,
+                    "feature.enwiki.revision.image_links": 9.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 11862.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 5.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 109.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 12801.0,
+                    "feature.wikitext.revision.chars": 101929.0,
+                    "feature.wikitext.revision.content_chars": 69384.0,
+                    "feature.wikitext.revision.external_links": 139.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 20.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 28.0,
+                    "feature.wikitext.revision.list_items": 51.0,
+                    "feature.wikitext.revision.ref_tags": 173.0,
+                    "feature.wikitext.revision.templates": 156.0,
+                    "feature.wikitext.revision.wikilinks": 284.0
+                  },
+                  "score": {
+                    "prediction": "B",
+                    "probability": {
+                      "B": 0.7760209573739081,
+                      "C": 0.11430687051768106,
+                      "FA": 0.034085327438693636,
+                      "GA": 0.06429234751920819,
+                      "Start": 0.00835680647750473,
+                      "Stub": 0.0029376906730044046
+                    }
+                  }
+                }
+              },
+              "641962098": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 36,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 2.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 51.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 6.0,
+                    "feature.wikitext.revision.chars": 51.0,
+                    "feature.wikitext.revision.content_chars": 43.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 0.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 0.0,
+                    "feature.wikitext.revision.wikilinks": 2.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.012122953764011764,
+                      "C": 0.009089593343167772,
+                      "FA": 0.003037245774701089,
+                      "GA": 0.0032495761768966402,
+                      "Start": 0.055550910805597986,
+                      "Stub": 0.9169497201356248
+                    }
+                  }
+                }
+              },
+              "641962099": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 10843,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 16.0,
+                    "feature.enwiki.revision.cite_templates": 14.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 4504.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 12.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 2174.0,
+                    "feature.wikitext.revision.chars": 22102.0,
+                    "feature.wikitext.revision.content_chars": 10757.0,
+                    "feature.wikitext.revision.external_links": 46.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 7.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 7.0,
+                    "feature.wikitext.revision.list_items": 20.0,
+                    "feature.wikitext.revision.ref_tags": 59.0,
+                    "feature.wikitext.revision.templates": 31.0,
+                    "feature.wikitext.revision.wikilinks": 161.0
+                  },
+                  "score": {
+                    "prediction": "GA",
+                    "probability": {
+                      "B": 0.25529225040695397,
+                      "C": 0.20836003280966067,
+                      "FA": 0.02369666946764173,
+                      "GA": 0.4888104325576987,
+                      "Start": 0.01933637408532724,
+                      "Stub": 0.004504240672717771
+                    }
+                  }
+                }
+              },
+              "641962100": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 2271,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 5.0,
+                    "feature.enwiki.revision.cite_templates": 5.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 1577.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 498.0,
+                    "feature.wikitext.revision.chars": 4393.0,
+                    "feature.wikitext.revision.content_chars": 1323.0,
+                    "feature.wikitext.revision.external_links": 5.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 4.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 3.0,
+                    "feature.wikitext.revision.list_items": 17.0,
+                    "feature.wikitext.revision.ref_tags": 6.0,
+                    "feature.wikitext.revision.templates": 21.0,
+                    "feature.wikitext.revision.wikilinks": 19.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.04688947316164992,
+                      "C": 0.1392744395761037,
+                      "FA": 0.005001942055704167,
+                      "GA": 0.01284257791983522,
+                      "Start": 0.6689079975331504,
+                      "Stub": 0.12708356975355664
+                    }
+                  }
+                }
+              },
+              "641962101": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 27376,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 2.0,
+                    "feature.enwiki.revision.cite_templates": 54.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 39627.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 9.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 6345.0,
+                    "feature.wikitext.revision.chars": 51362.0,
+                    "feature.wikitext.revision.content_chars": 21890.0,
+                    "feature.wikitext.revision.external_links": 46.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 33.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 147.0,
+                    "feature.wikitext.revision.ref_tags": 175.0,
+                    "feature.wikitext.revision.templates": 609.0,
+                    "feature.wikitext.revision.wikilinks": 352.0
+                  },
+                  "score": {
+                    "prediction": "B",
+                    "probability": {
+                      "B": 0.3971954710418637,
+                      "C": 0.21145355269081953,
+                      "FA": 0.062464181088920295,
+                      "GA": 0.3069463118851726,
+                      "Start": 0.01873098348265055,
+                      "Stub": 0.0032094998105733313
+                    }
+                  }
+                }
+              },
+              "641962102": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 49900,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 77431.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 18.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 200.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 11924.0,
+                    "feature.wikitext.revision.chars": 77601.0,
+                    "feature.wikitext.revision.content_chars": 63068.0,
+                    "feature.wikitext.revision.external_links": 11.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 41.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 37.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 56.0,
+                    "feature.wikitext.revision.wikilinks": 464.0
+                  },
+                  "score": {
+                    "prediction": "B",
+                    "probability": {
+                      "B": 0.5243992212700591,
+                      "C": 0.17802050719348878,
+                      "FA": 0.19596612123855167,
+                      "GA": 0.015426434017739696,
+                      "Start": 0.07815829582849226,
+                      "Stub": 0.008029420451668547
+                    }
+                  }
+                }
+              },
+              "641962103": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 5328,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 21.0,
+                    "feature.enwiki.revision.cite_templates": 8.0,
+                    "feature.enwiki.revision.cn_templates": 2.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 4728.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 11.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 1157.0,
+                    "feature.wikitext.revision.chars": 10374.0,
+                    "feature.wikitext.revision.content_chars": 5217.0,
+                    "feature.wikitext.revision.external_links": 11.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 7.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 2.0,
+                    "feature.wikitext.revision.list_items": 39.0,
+                    "feature.wikitext.revision.ref_tags": 8.0,
+                    "feature.wikitext.revision.templates": 22.0,
+                    "feature.wikitext.revision.wikilinks": 104.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.049893682149418625,
+                      "C": 0.49733017501476856,
+                      "FA": 0.0030397173066579785,
+                      "GA": 0.008665706987345994,
+                      "Start": 0.4374796701142628,
+                      "Stub": 0.003591048427545898
+                    }
+                  }
+                }
+              },
+              "641962104": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 1074,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 1686.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 3.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 8.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 242.0,
+                    "feature.wikitext.revision.chars": 1693.0,
+                    "feature.wikitext.revision.content_chars": 23.0,
+                    "feature.wikitext.revision.external_links": 1.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 2.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 0.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 5.0,
+                    "feature.wikitext.revision.wikilinks": 6.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.026485480658826083,
+                      "C": 0.01793171164849259,
+                      "FA": 0.004225130485463713,
+                      "GA": 0.0038254950976716016,
+                      "Start": 0.21656387940180014,
+                      "Stub": 0.7309683027077459
+                    }
+                  }
+                }
+              },
+              "641962105": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 28427,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 4.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 42865.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 14.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 5550.0,
+                    "feature.wikitext.revision.chars": 45013.0,
+                    "feature.wikitext.revision.content_chars": 32524.0,
+                    "feature.wikitext.revision.external_links": 1.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 3.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 38.0,
+                    "feature.wikitext.revision.list_items": 323.0,
+                    "feature.wikitext.revision.ref_tags": 1.0,
+                    "feature.wikitext.revision.templates": 5.0,
+                    "feature.wikitext.revision.wikilinks": 826.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.3386774752994416,
+                      "C": 0.2501289643014577,
+                      "FA": 0.011181801428461462,
+                      "GA": 0.01007749051434829,
+                      "Start": 0.356336347008672,
+                      "Stub": 0.03359792144761891
+                    }
+                  }
+                }
+              },
+              "641962106": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 914,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 4.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 1467.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 199.0,
+                    "feature.wikitext.revision.chars": 1469.0,
+                    "feature.wikitext.revision.content_chars": 427.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 10.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 9.0,
+                    "feature.wikitext.revision.wikilinks": 21.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.009199065560370565,
+                      "C": 0.010434235642134722,
+                      "FA": 0.0019660313630462133,
+                      "GA": 0.002951222806149679,
+                      "Start": 0.04346155316519886,
+                      "Stub": 0.9319878914631
+                    }
+                  }
+                }
+              },
+              "641962107": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 3351,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 5654.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 17.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 752.0,
+                    "feature.wikitext.revision.chars": 5671.0,
+                    "feature.wikitext.revision.content_chars": 3960.0,
+                    "feature.wikitext.revision.external_links": 1.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 1.0,
+                    "feature.wikitext.revision.list_items": 4.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 5.0,
+                    "feature.wikitext.revision.wikilinks": 45.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.15176536490555512,
+                      "C": 0.09015625653314727,
+                      "FA": 0.006462241658796536,
+                      "GA": 0.008093096686594392,
+                      "Start": 0.561155226879248,
+                      "Stub": 0.18236781333665872
+                    }
+                  }
+                }
+              },
+              "641962108": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 18267,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 5.0,
+                    "feature.enwiki.revision.category_links": 3.0,
+                    "feature.enwiki.revision.cite_templates": 9.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 28250.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 2.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 3691.0,
+                    "feature.wikitext.revision.chars": 40223.0,
+                    "feature.wikitext.revision.content_chars": 2915.0,
+                    "feature.wikitext.revision.external_links": 70.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 7.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 13.0,
+                    "feature.wikitext.revision.list_items": 4.0,
+                    "feature.wikitext.revision.ref_tags": 13.0,
+                    "feature.wikitext.revision.templates": 211.0,
+                    "feature.wikitext.revision.wikilinks": 323.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.06716804740884533,
+                      "C": 0.18166477173979556,
+                      "FA": 0.0060994449052660235,
+                      "GA": 0.016917020935460596,
+                      "Start": 0.7100042479475096,
+                      "Stub": 0.01814646706312289
+                    }
+                  }
+                }
+              },
+              "641962109": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 7921,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 2.0,
+                    "feature.enwiki.revision.cite_templates": 6.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 4.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 2474.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 6.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 1650.0,
+                    "feature.wikitext.revision.chars": 14108.0,
+                    "feature.wikitext.revision.content_chars": 3947.0,
+                    "feature.wikitext.revision.external_links": 6.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 5.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 8.0,
+                    "feature.wikitext.revision.list_items": 0.0,
+                    "feature.wikitext.revision.ref_tags": 9.0,
+                    "feature.wikitext.revision.templates": 151.0,
+                    "feature.wikitext.revision.wikilinks": 88.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.1929141891590273,
+                      "C": 0.43781471645544834,
+                      "FA": 0.008235658136998907,
+                      "GA": 0.07906112827992187,
+                      "Start": 0.27210331791148556,
+                      "Stub": 0.009870990057118072
+                    }
+                  }
+                }
+              },
+              "641962110": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 9594,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 2.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 14500.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 26.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 2158.0,
+                    "feature.wikitext.revision.chars": 14528.0,
+                    "feature.wikitext.revision.content_chars": 12415.0,
+                    "feature.wikitext.revision.external_links": 2.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 8.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 4.0,
+                    "feature.wikitext.revision.list_items": 19.0,
+                    "feature.wikitext.revision.ref_tags": 4.0,
+                    "feature.wikitext.revision.templates": 9.0,
+                    "feature.wikitext.revision.wikilinks": 53.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.253124108754146,
+                      "C": 0.5869548920995061,
+                      "FA": 0.010412689579405393,
+                      "GA": 0.00967666571321798,
+                      "Start": 0.13156493335165367,
+                      "Stub": 0.008266710502070994
+                    }
+                  }
+                }
+              },
+              "641962111": {
+                "articlequality": {
+                  "error": {
+                    "message": "RevisionNotFound: Could not find revision ({revision}:641962111)",
+                    "type": "RevisionNotFound"
+                  }
+                }
+              },
+              "641962112": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 2626,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 1.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 5041.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 10.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 578.0,
+                    "feature.wikitext.revision.chars": 5055.0,
+                    "feature.wikitext.revision.content_chars": 1671.0,
+                    "feature.wikitext.revision.external_links": 3.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 1.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 9.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 8.0,
+                    "feature.wikitext.revision.wikilinks": 36.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.06767309081267893,
+                      "C": 0.062436160362151265,
+                      "FA": 0.005299782382965537,
+                      "GA": 0.00789325526070811,
+                      "Start": 0.775673443742816,
+                      "Stub": 0.08102426743868013
+                    }
+                  }
+                }
+              },
+              "641962113": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 3118,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 4743.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 2.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 1.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 577.0,
+                    "feature.wikitext.revision.chars": 4771.0,
+                    "feature.wikitext.revision.content_chars": 3864.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 8.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 6.0,
+                    "feature.wikitext.revision.list_items": 67.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 4.0,
+                    "feature.wikitext.revision.wikilinks": 62.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.057382410478583834,
+                      "C": 0.11548936772667763,
+                      "FA": 0.003389938870920938,
+                      "GA": 0.005463826343048,
+                      "Start": 0.5877883745879507,
+                      "Stub": 0.23048608199281864
+                    }
+                  }
+                }
+              },
+              "641962114": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 2613,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 4.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 3078.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 495.0,
+                    "feature.wikitext.revision.chars": 4491.0,
+                    "feature.wikitext.revision.content_chars": 1953.0,
+                    "feature.wikitext.revision.external_links": 5.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 2.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 2.0,
+                    "feature.wikitext.revision.ref_tags": 1.0,
+                    "feature.wikitext.revision.templates": 8.0,
+                    "feature.wikitext.revision.wikilinks": 56.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.034648234614053114,
+                      "C": 0.050345455825127255,
+                      "FA": 0.003948212083491503,
+                      "GA": 0.007250365203612456,
+                      "Start": 0.683433394708175,
+                      "Stub": 0.22037433756554062
+                    }
+                  }
+                }
+              },
+              "641962115": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 2538,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 8.0,
+                    "feature.enwiki.revision.cite_templates": 1.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 3238.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 479.0,
+                    "feature.wikitext.revision.chars": 4443.0,
+                    "feature.wikitext.revision.content_chars": 2340.0,
+                    "feature.wikitext.revision.external_links": 5.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 4.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 3.0,
+                    "feature.wikitext.revision.list_items": 32.0,
+                    "feature.wikitext.revision.ref_tags": 2.0,
+                    "feature.wikitext.revision.templates": 6.0,
+                    "feature.wikitext.revision.wikilinks": 58.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.026606193488250118,
+                      "C": 0.09572934097333441,
+                      "FA": 0.0036281374803204666,
+                      "GA": 0.005840280403288861,
+                      "Start": 0.7964046537228399,
+                      "Stub": 0.07179139393196621
+                    }
+                  }
+                }
+              },
+              "641962116": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 9241,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 16.0,
+                    "feature.enwiki.revision.cite_templates": 7.0,
+                    "feature.enwiki.revision.cn_templates": 1.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 12946.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 16.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 1996.0,
+                    "feature.wikitext.revision.chars": 14435.0,
+                    "feature.wikitext.revision.content_chars": 8698.0,
+                    "feature.wikitext.revision.external_links": 7.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 11.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 22.0,
+                    "feature.wikitext.revision.ref_tags": 6.0,
+                    "feature.wikitext.revision.templates": 17.0,
+                    "feature.wikitext.revision.wikilinks": 58.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.1947130747126316,
+                      "C": 0.7043206921057587,
+                      "FA": 0.007241437177115298,
+                      "GA": 0.010559679330317961,
+                      "Start": 0.07946246790841398,
+                      "Stub": 0.003702648765762319
+                    }
+                  }
+                }
+              },
+              "641962117": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 22008,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 7.0,
+                    "feature.enwiki.revision.cite_templates": 12.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 6.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 32038.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 77.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 5.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 25.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 4992.0,
+                    "feature.wikitext.revision.chars": 33670.0,
+                    "feature.wikitext.revision.content_chars": 25718.0,
+                    "feature.wikitext.revision.external_links": 7.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 5.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 4.0,
+                    "feature.wikitext.revision.list_items": 9.0,
+                    "feature.wikitext.revision.ref_tags": 4.0,
+                    "feature.wikitext.revision.templates": 105.0,
+                    "feature.wikitext.revision.wikilinks": 92.0
+                  },
+                  "score": {
+                    "prediction": "FA",
+                    "probability": {
+                      "B": 0.03627354065408168,
+                      "C": 0.020135118060501053,
+                      "FA": 0.7838395839335128,
+                      "GA": 0.1505557865444995,
+                      "Start": 0.006979338690147942,
+                      "Stub": 0.0022166321172570236
+                    }
+                  }
+                }
+              },
+              "641962118": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 44,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 63.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 8.0,
+                    "feature.wikitext.revision.chars": 63.0,
+                    "feature.wikitext.revision.content_chars": 42.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 1.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 1.0,
+                    "feature.wikitext.revision.wikilinks": 1.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.006397536453166179,
+                      "C": 0.005293660970916063,
+                      "FA": 0.0014709962689662486,
+                      "GA": 0.0018558369732084336,
+                      "Start": 0.029411021334407053,
+                      "Stub": 0.9555709479993361
+                    }
+                  }
+                }
+              },
+              "641962119": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 40,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 58.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 7.0,
+                    "feature.wikitext.revision.chars": 58.0,
+                    "feature.wikitext.revision.content_chars": 37.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 1.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 1.0,
+                    "feature.wikitext.revision.wikilinks": 1.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.006256743226038692,
+                      "C": 0.005154906881141124,
+                      "FA": 0.0014378444963662044,
+                      "GA": 0.0018301476555113104,
+                      "Start": 0.02753424515761263,
+                      "Stub": 0.95778611258333
+                    }
+                  }
+                }
+              },
+              "641962120": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 2173,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 10.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 3422.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 1.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 427.0,
+                    "feature.wikitext.revision.chars": 3443.0,
+                    "feature.wikitext.revision.content_chars": 1854.0,
+                    "feature.wikitext.revision.external_links": 1.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 3.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 3.0,
+                    "feature.wikitext.revision.list_items": 4.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 11.0,
+                    "feature.wikitext.revision.wikilinks": 34.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.02683508189467509,
+                      "C": 0.06183980442030555,
+                      "FA": 0.004429035659179555,
+                      "GA": 0.006756971538554538,
+                      "Start": 0.7146715883636434,
+                      "Stub": 0.18546751812364182
+                    }
+                  }
+                }
+              },
+              "641962121": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 3229,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 1.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 815.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 3.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 756.0,
+                    "feature.wikitext.revision.chars": 8151.0,
+                    "feature.wikitext.revision.content_chars": 6797.0,
+                    "feature.wikitext.revision.external_links": 35.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 4.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 3.0,
+                    "feature.wikitext.revision.list_items": 4.0,
+                    "feature.wikitext.revision.ref_tags": 31.0,
+                    "feature.wikitext.revision.templates": 3.0,
+                    "feature.wikitext.revision.wikilinks": 26.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.21015207753816015,
+                      "C": 0.5853659485311774,
+                      "FA": 0.007683475891680307,
+                      "GA": 0.031479667514769195,
+                      "Start": 0.151338415202769,
+                      "Stub": 0.01398041532144381
+                    }
+                  }
+                }
+              },
+              "641962122": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 14306,
+                    "feature.enwiki.infobox_images": 2,
+                    "feature.enwiki.main_article_templates": 3.0,
+                    "feature.enwiki.revision.category_links": 17.0,
+                    "feature.enwiki.revision.cite_templates": 3.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 7.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 16459.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 28.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 2979.0,
+                    "feature.wikitext.revision.chars": 22719.0,
+                    "feature.wikitext.revision.content_chars": 15859.0,
+                    "feature.wikitext.revision.external_links": 7.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 8.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 9.0,
+                    "feature.wikitext.revision.list_items": 34.0,
+                    "feature.wikitext.revision.ref_tags": 34.0,
+                    "feature.wikitext.revision.templates": 28.0,
+                    "feature.wikitext.revision.wikilinks": 219.0
+                  },
+                  "score": {
+                    "prediction": "B",
+                    "probability": {
+                      "B": 0.4170698562281833,
+                      "C": 0.3594140302602554,
+                      "FA": 0.029328970672178607,
+                      "GA": 0.17609618427839183,
+                      "Start": 0.014103306468999714,
+                      "Stub": 0.003987652091991244
+                    }
+                  }
+                }
+              },
+              "641962123": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 8849,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 28.0,
+                    "feature.enwiki.revision.cite_templates": 6.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 1.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 6116.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 17.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 1800.0,
+                    "feature.wikitext.revision.chars": 15194.0,
+                    "feature.wikitext.revision.content_chars": 9647.0,
+                    "feature.wikitext.revision.external_links": 15.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 8.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 1.0,
+                    "feature.wikitext.revision.list_items": 5.0,
+                    "feature.wikitext.revision.ref_tags": 33.0,
+                    "feature.wikitext.revision.templates": 21.0,
+                    "feature.wikitext.revision.wikilinks": 87.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.2249165566816051,
+                      "C": 0.4106229572617191,
+                      "FA": 0.04501993145456849,
+                      "GA": 0.2829010842023925,
+                      "Start": 0.030009107831616602,
+                      "Stub": 0.00653036256809805
+                    }
+                  }
+                }
+              },
+              "641962124": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 8907,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 9.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 1.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 6258.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 19.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 1864.0,
+                    "feature.wikitext.revision.chars": 14708.0,
+                    "feature.wikitext.revision.content_chars": 10217.0,
+                    "feature.wikitext.revision.external_links": 3.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 5.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 6.0,
+                    "feature.wikitext.revision.list_items": 11.0,
+                    "feature.wikitext.revision.ref_tags": 50.0,
+                    "feature.wikitext.revision.templates": 20.0,
+                    "feature.wikitext.revision.wikilinks": 114.0
+                  },
+                  "score": {
+                    "prediction": "B",
+                    "probability": {
+                      "B": 0.47948898427584297,
+                      "C": 0.3627316967182174,
+                      "FA": 0.03790247501005022,
+                      "GA": 0.0999753764503175,
+                      "Start": 0.015510977755700187,
+                      "Stub": 0.004390489789871634
+                    }
+                  }
+                }
+              },
+              "641962125": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 7705,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 2.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 6029.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 12.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 1680.0,
+                    "feature.wikitext.revision.chars": 13175.0,
+                    "feature.wikitext.revision.content_chars": 6799.0,
+                    "feature.wikitext.revision.external_links": 4.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 9.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 4.0,
+                    "feature.wikitext.revision.ref_tags": 19.0,
+                    "feature.wikitext.revision.templates": 22.0,
+                    "feature.wikitext.revision.wikilinks": 109.0
+                  },
+                  "score": {
+                    "prediction": "B",
+                    "probability": {
+                      "B": 0.39305751310413706,
+                      "C": 0.3781416776907113,
+                      "FA": 0.013578640223153464,
+                      "GA": 0.1353714721833995,
+                      "Start": 0.07152308970845157,
+                      "Stub": 0.008327607090147232
+                    }
+                  }
+                }
+              },
+              "641962126": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 2613,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 8.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 3344.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 1.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 5.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 521.0,
+                    "feature.wikitext.revision.chars": 4947.0,
+                    "feature.wikitext.revision.content_chars": 2766.0,
+                    "feature.wikitext.revision.external_links": 7.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 6.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 18.0,
+                    "feature.wikitext.revision.ref_tags": 9.0,
+                    "feature.wikitext.revision.templates": 8.0,
+                    "feature.wikitext.revision.wikilinks": 27.0
+                  },
+                  "score": {
+                    "prediction": "Start",
+                    "probability": {
+                      "B": 0.06441938713663918,
+                      "C": 0.15470676790887988,
+                      "FA": 0.003048202242788109,
+                      "GA": 0.007248674768066407,
+                      "Start": 0.7542524746728678,
+                      "Stub": 0.016324493270758595
+                    }
+                  }
+                }
+              },
+              "641962127": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 845,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 1372.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 199.0,
+                    "feature.wikitext.revision.chars": 1380.0,
+                    "feature.wikitext.revision.content_chars": 1042.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 2.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 16.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 2.0,
+                    "feature.wikitext.revision.wikilinks": 15.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.011004324246926737,
+                      "C": 0.01003646487346905,
+                      "FA": 0.001663820192325648,
+                      "GA": 0.002753482303539911,
+                      "Start": 0.10300113256763696,
+                      "Stub": 0.8715407758161016
+                    }
+                  }
+                }
+              },
+              "641962128": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 444,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 779.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 1.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 96.0,
+                    "feature.wikitext.revision.chars": 780.0,
+                    "feature.wikitext.revision.content_chars": 659.0,
+                    "feature.wikitext.revision.external_links": 1.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 1.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 0.0,
+                    "feature.wikitext.revision.ref_tags": 1.0,
+                    "feature.wikitext.revision.templates": 0.0,
+                    "feature.wikitext.revision.wikilinks": 6.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.022242704816132806,
+                      "C": 0.014656722227151808,
+                      "FA": 0.002093065003947168,
+                      "GA": 0.0041009353865000655,
+                      "Start": 0.06327285211802475,
+                      "Stub": 0.8936337204482435
+                    }
+                  }
+                }
+              },
+              "641962129": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 13303,
+                    "feature.enwiki.infobox_images": 2,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 8.0,
+                    "feature.enwiki.revision.cite_templates": 14.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 2.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 16081.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 7.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 26.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 2908.0,
+                    "feature.wikitext.revision.chars": 24641.0,
+                    "feature.wikitext.revision.content_chars": 14008.0,
+                    "feature.wikitext.revision.external_links": 27.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 10.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 5.0,
+                    "feature.wikitext.revision.list_items": 13.0,
+                    "feature.wikitext.revision.ref_tags": 51.0,
+                    "feature.wikitext.revision.templates": 30.0,
+                    "feature.wikitext.revision.wikilinks": 122.0
+                  },
+                  "score": {
+                    "prediction": "GA",
+                    "probability": {
+                      "B": 0.12179603936100329,
+                      "C": 0.05992342337710463,
+                      "FA": 0.18366126195405016,
+                      "GA": 0.6212074033228178,
+                      "Start": 0.009706369727329956,
+                      "Stub": 0.00370550225769415
+                    }
+                  }
+                }
+              },
+              "641962130": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 126256,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 7.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 4.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 206294.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 58.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 610.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 30236.0,
+                    "feature.wikitext.revision.chars": 211995.0,
+                    "feature.wikitext.revision.content_chars": 165544.0,
+                    "feature.wikitext.revision.external_links": 208.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 20.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 10.0,
+                    "feature.wikitext.revision.list_items": 306.0,
+                    "feature.wikitext.revision.ref_tags": 7.0,
+                    "feature.wikitext.revision.templates": 65.0,
+                    "feature.wikitext.revision.wikilinks": 741.0
+                  },
+                  "score": {
+                    "prediction": "B",
+                    "probability": {
+                      "B": 0.6344671104960137,
+                      "C": 0.15149588130448904,
+                      "FA": 0.11773017389412639,
+                      "GA": 0.0396959809016352,
+                      "Start": 0.05342086745630044,
+                      "Stub": 0.003189985947435167
+                    }
+                  }
+                }
+              },
+              "641962131": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 6634,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 7.0,
+                    "feature.enwiki.revision.cite_templates": 13.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 4776.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 14.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 1385.0,
+                    "feature.wikitext.revision.chars": 11305.0,
+                    "feature.wikitext.revision.content_chars": 6385.0,
+                    "feature.wikitext.revision.external_links": 10.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 5.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 2.0,
+                    "feature.wikitext.revision.ref_tags": 29.0,
+                    "feature.wikitext.revision.templates": 19.0,
+                    "feature.wikitext.revision.wikilinks": 57.0
+                  },
+                  "score": {
+                    "prediction": "GA",
+                    "probability": {
+                      "B": 0.11890154739265227,
+                      "C": 0.12140122359911046,
+                      "FA": 0.01200277681599688,
+                      "GA": 0.7247384891621377,
+                      "Start": 0.019652025317622307,
+                      "Stub": 0.0033039377124804217
+                    }
+                  }
+                }
+              },
+              "641962132": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 12640,
+                    "feature.enwiki.infobox_images": 2,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 4.0,
+                    "feature.enwiki.revision.cite_templates": 15.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 9.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 15583.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 19.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 2689.0,
+                    "feature.wikitext.revision.chars": 21176.0,
+                    "feature.wikitext.revision.content_chars": 11147.0,
+                    "feature.wikitext.revision.external_links": 17.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 9.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 9.0,
+                    "feature.wikitext.revision.list_items": 59.0,
+                    "feature.wikitext.revision.ref_tags": 16.0,
+                    "feature.wikitext.revision.templates": 43.0,
+                    "feature.wikitext.revision.wikilinks": 191.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.30250513963109293,
+                      "C": 0.6008377563745819,
+                      "FA": 0.020842851165876492,
+                      "GA": 0.04278683038487476,
+                      "Start": 0.028796253703687737,
+                      "Stub": 0.004231168739886
+                    }
+                  }
+                }
+              },
+              "641962133": {
+                "articlequality": {
+                  "error": {
+                    "message": "RevisionNotFound: Could not find revision ({revision}:641962133)",
+                    "type": "RevisionNotFound"
+                  }
+                }
+              },
+              "641962134": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 34,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 2.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 50.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 0.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 6.0,
+                    "feature.wikitext.revision.chars": 50.0,
+                    "feature.wikitext.revision.content_chars": 42.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 0.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 0.0,
+                    "feature.wikitext.revision.wikilinks": 2.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.012437196574693315,
+                      "C": 0.00896254197827348,
+                      "FA": 0.0030016560398739445,
+                      "GA": 0.0032115395581661854,
+                      "Start": 0.05511018059965949,
+                      "Stub": 0.9172768852493336
+                    }
+                  }
+                }
+              },
+              "641962135": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 49131,
+                    "feature.enwiki.infobox_images": 1,
+                    "feature.enwiki.main_article_templates": 5.0,
+                    "feature.enwiki.revision.category_links": 1.0,
+                    "feature.enwiki.revision.cite_templates": 101.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 8.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 75663.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 3.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 80.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 11042.0,
+                    "feature.wikitext.revision.chars": 85754.0,
+                    "feature.wikitext.revision.content_chars": 45264.0,
+                    "feature.wikitext.revision.external_links": 58.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 9.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 13.0,
+                    "feature.wikitext.revision.list_items": 20.0,
+                    "feature.wikitext.revision.ref_tags": 168.0,
+                    "feature.wikitext.revision.templates": 192.0,
+                    "feature.wikitext.revision.wikilinks": 266.0
+                  },
+                  "score": {
+                    "prediction": "FA",
+                    "probability": {
+                      "B": 0.03936909538944599,
+                      "C": 0.01612209284804924,
+                      "FA": 0.7199034335535937,
+                      "GA": 0.21566676047068836,
+                      "Start": 0.006356131890602074,
+                      "Stub": 0.002582485847620704
+                    }
+                  }
+                }
+              },
+              "641962136": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 5361,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 6.0,
+                    "feature.enwiki.revision.cite_templates": 7.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 6246.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 16.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 1119.0,
+                    "feature.wikitext.revision.chars": 9585.0,
+                    "feature.wikitext.revision.content_chars": 6553.0,
+                    "feature.wikitext.revision.external_links": 19.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 12.0,
+                    "feature.wikitext.revision.ref_tags": 8.0,
+                    "feature.wikitext.revision.templates": 15.0,
+                    "feature.wikitext.revision.wikilinks": 35.0
+                  },
+                  "score": {
+                    "prediction": "C",
+                    "probability": {
+                      "B": 0.1544996682617085,
+                      "C": 0.4184669385542813,
+                      "FA": 0.0065772878552089855,
+                      "GA": 0.016083396308003997,
+                      "Start": 0.37601130281871237,
+                      "Stub": 0.02836140620208499
+                    }
+                  }
+                }
+              },
+              "641962137": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 23872,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 1.0,
+                    "feature.enwiki.revision.category_links": 8.0,
+                    "feature.enwiki.revision.cite_templates": 43.0,
+                    "feature.enwiki.revision.cn_templates": 1.0,
+                    "feature.enwiki.revision.image_links": 2.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 1.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 39021.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 1.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 53.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 5043.0,
+                    "feature.wikitext.revision.chars": 41911.0,
+                    "feature.wikitext.revision.content_chars": 25955.0,
+                    "feature.wikitext.revision.external_links": 55.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 11.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 21.0,
+                    "feature.wikitext.revision.list_items": 48.0,
+                    "feature.wikitext.revision.ref_tags": 79.0,
+                    "feature.wikitext.revision.templates": 59.0,
+                    "feature.wikitext.revision.wikilinks": 169.0
+                  },
+                  "score": {
+                    "prediction": "B",
+                    "probability": {
+                      "B": 0.6261014134297059,
+                      "C": 0.25429314398118724,
+                      "FA": 0.0350605939537662,
+                      "GA": 0.07276647429128372,
+                      "Start": 0.008754667286232731,
+                      "Stub": 0.0030237070578239766
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+  recorded_at: Thu, 22 Jun 2023 23:32:22 GMT
+recorded_with: VCR 6.1.0

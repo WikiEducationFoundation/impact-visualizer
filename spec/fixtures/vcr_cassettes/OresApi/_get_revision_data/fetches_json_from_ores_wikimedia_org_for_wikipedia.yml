@@ -1,0 +1,162 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://ores.wikimedia.org/v3/scores/enwiki/?features&models=articlequality&revids=641962088%7C12345
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+      Cache-Control:
+      - no-store, no-cache, max-age=0
+      Pragma:
+      - no-cache
+      Expires:
+      - Thu, 01 Jan 1970 00:00:00 GMT
+      Access-Control-Allow-Origin:
+      - "*"
+      Server:
+      - ores2007.codfw.wmnet
+      Access-Control-Allow-Headers:
+      - X-Wikimedia-Debug
+      Date:
+      - Thu, 22 Jun 2023 23:32:18 GMT
+      Vary:
+      - Accept-Encoding
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: |-
+        {
+          "enwiki": {
+            "models": {
+              "articlequality": {
+                "version": "0.9.2"
+              }
+            },
+            "scores": {
+              "12345": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 458,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 928.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 4.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 111.0,
+                    "feature.wikitext.revision.chars": 949.0,
+                    "feature.wikitext.revision.content_chars": 843.0,
+                    "feature.wikitext.revision.external_links": 0.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 0.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 0.0,
+                    "feature.wikitext.revision.wikilinks": 8.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.04109666150848109,
+                      "C": 0.020607381770090968,
+                      "FA": 0.0029400688910391592,
+                      "GA": 0.004970401857774162,
+                      "Start": 0.1736249330632796,
+                      "Stub": 0.7567605529093351
+                    }
+                  }
+                }
+              },
+              "641962088": {
+                "articlequality": {
+                  "features": {
+                    "feature.english.stemmed.revision.stems_length": 93,
+                    "feature.enwiki.infobox_images": 0,
+                    "feature.enwiki.main_article_templates": 0.0,
+                    "feature.enwiki.revision.category_links": 0.0,
+                    "feature.enwiki.revision.cite_templates": 0.0,
+                    "feature.enwiki.revision.cn_templates": 0.0,
+                    "feature.enwiki.revision.image_links": 0.0,
+                    "feature.enwiki.revision.image_template": 0.0,
+                    "feature.enwiki.revision.images_in_tags": 0,
+                    "feature.enwiki.revision.images_in_templates": 0,
+                    "feature.enwiki.revision.infobox_templates": 0.0,
+                    "feature.enwiki.revision.paragraphs_without_refs_total_length": 581.0,
+                    "feature.enwiki.revision.shortened_footnote_templates": 0.0,
+                    "feature.enwiki.revision.who_templates": 0.0,
+                    "feature.len(<datasource.english.idioms.revision.matches>)": 0.0,
+                    "feature.len(<datasource.english.words_to_watch.revision.matches>)": 1.0,
+                    "feature.len(<datasource.wikitext.revision.words>)": 21.0,
+                    "feature.wikitext.revision.chars": 589.0,
+                    "feature.wikitext.revision.content_chars": 589.0,
+                    "feature.wikitext.revision.external_links": 4.0,
+                    "feature.wikitext.revision.headings_by_level(2)": 0.0,
+                    "feature.wikitext.revision.headings_by_level(3)": 0.0,
+                    "feature.wikitext.revision.list_items": 0.0,
+                    "feature.wikitext.revision.ref_tags": 0.0,
+                    "feature.wikitext.revision.templates": 0.0,
+                    "feature.wikitext.revision.wikilinks": 0.0
+                  },
+                  "score": {
+                    "prediction": "Stub",
+                    "probability": {
+                      "B": 0.05346747947031159,
+                      "C": 0.03566589837597718,
+                      "FA": 0.0029837211689327093,
+                      "GA": 0.005891859964515511,
+                      "Start": 0.2826812730433699,
+                      "Stub": 0.6193097679768931
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+  recorded_at: Thu, 22 Jun 2023 23:32:18 GMT
+recorded_with: VCR 6.1.0

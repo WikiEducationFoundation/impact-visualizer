@@ -13,6 +13,7 @@ class CreateTopicTimepoints < ActiveRecord::Migration[7.0]
       t.integer :attributed_links_count_delta
       t.integer :attributed_revisions_count_delta
       t.integer :attributed_articles_created_delta
+      t.date :timestamp
       t.references :topic, null: false, foreign_key: true
 
       t.timestamps

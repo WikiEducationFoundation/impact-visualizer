@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe TopicTimepoint, type: :model do
-  it { should belong_to(:topic) }
-  it { should have_many(:topic_article_timepoints) }
+RSpec.describe TopicTimepoint do
+  it { is_expected.to belong_to(:topic) }
+  it { is_expected.to have_many(:topic_article_timepoints) }
 end
 
 # == Schema Information
@@ -22,6 +24,7 @@ end
 #  links_count_delta                 :integer
 #  revisions_count                   :integer
 #  revisions_count_delta             :integer
+#  timestamp                         :date
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
 #  topic_id                          :integer          not null

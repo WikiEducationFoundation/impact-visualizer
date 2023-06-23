@@ -20,6 +20,7 @@ end
 #  article_length       :integer
 #  links_count          :integer
 #  revisions_count      :integer
+#  timestamp            :date
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  article_id           :integer          not null

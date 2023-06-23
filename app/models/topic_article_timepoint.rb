@@ -1,10 +1,10 @@
-class TopicArticleTimepoint < ApplicationRecord
+# frozen_string_literal: true
 
-  # Associations 
+class TopicArticleTimepoint < ApplicationRecord
+  # Associations
   belongs_to :topic_timepoint
   belongs_to :article_bag_article
-  belongs_to :attributed_creator, class_name: "User"
-
+  belongs_to :attributed_creator, class_name: 'User'
 end
 
 # == Schema Information

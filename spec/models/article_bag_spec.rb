@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe ArticleBag, type: :model do
-  it { should belong_to(:topic) }
-  it { should have_many(:article_bag_articles) }
-  it { should have_many(:articles).through(:article_bag_articles) }
+RSpec.describe ArticleBag do
+  it { is_expected.to belong_to(:topic) }
+  it { is_expected.to have_many(:article_bag_articles) }
+  it { is_expected.to have_many(:articles).through(:article_bag_articles) }
 end
 
 # == Schema Information

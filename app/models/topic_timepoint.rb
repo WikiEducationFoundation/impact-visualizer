@@ -1,13 +1,12 @@
-class TopicTimepoint < ApplicationRecord
+# frozen_string_literal: true
 
+class TopicTimepoint < ApplicationRecord
   # TODO
   # - Add wp10_prediction
-  # - Add some kind of timestamp (other than created_at)?
 
   # Associations
   belongs_to :topic
   has_many :topic_article_timepoints
-
 end
 
 # == Schema Information
@@ -27,6 +26,7 @@ end
 #  links_count_delta                 :integer
 #  revisions_count                   :integer
 #  revisions_count_delta             :integer
+#  timestamp                         :date
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
 #  topic_id                          :integer          not null

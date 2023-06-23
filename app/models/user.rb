@@ -1,9 +1,9 @@
-class User < ApplicationRecord
+# frozen_string_literal: true
 
+class User < ApplicationRecord
   # Associations
   has_many :topic_users
   has_many :topics, through: :topic_users
-
 end
 
 # == Schema Information

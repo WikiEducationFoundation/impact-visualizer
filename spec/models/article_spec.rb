@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe Article, type: :model do
-  it { should have_many(:article_bag_articles) }
-  it { should have_many(:article_bags).through(:article_bag_articles) }
-  it { should have_many(:article_timepoints) }
+RSpec.describe Article do
+  it { is_expected.to have_many(:article_bag_articles) }
+  it { is_expected.to have_many(:article_bags).through(:article_bag_articles) }
+  it { is_expected.to have_many(:article_timepoints) }
 end
 
 # == Schema Information

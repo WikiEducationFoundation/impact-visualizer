@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
-RSpec.describe ArticleTimepoint, type: :model do
-  it { should belong_to(:article) }
+RSpec.describe ArticleTimepoint do
+  it { is_expected.to belong_to(:article) }
 end
 
 # == Schema Information
@@ -12,6 +14,7 @@ end
 #  article_length       :integer
 #  links_count          :integer
 #  revisions_count      :integer
+#  timestamp            :date
 #  created_at           :datetime         not null
 #  updated_at           :datetime         not null
 #  article_id           :integer          not null
