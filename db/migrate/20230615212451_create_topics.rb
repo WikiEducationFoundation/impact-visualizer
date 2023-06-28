@@ -5,7 +5,8 @@ class CreateTopics < ActiveRecord::Migration[7.0]
       t.string :description
       t.string :slug
       t.integer :timepoint_day_interval, default: 7
-
+      t.datetime :start_date
+      t.datetime :end_date
       t.timestamps
     end
   end

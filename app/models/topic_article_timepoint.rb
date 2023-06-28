@@ -4,7 +4,7 @@ class TopicArticleTimepoint < ApplicationRecord
   # Associations
   belongs_to :topic_timepoint
   belongs_to :article_bag_article
-  belongs_to :attributed_creator, class_name: 'User'
+  belongs_to :attributed_creator, class_name: 'User', optional: true
 end
 
 # == Schema Information

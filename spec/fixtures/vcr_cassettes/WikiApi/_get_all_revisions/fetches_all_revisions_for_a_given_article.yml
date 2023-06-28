@@ -2,73 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://www.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=58170849&prop=revisions&redirects=true&rvlimit=500&rvprop=size%7Cuser%7Cuserid%7Ctimestamp
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.17.6
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Date:
-      - Wed, 21 Jun 2023 20:40:38 GMT
-      Server:
-      - mw2396.codfw.wmnet
-      Location:
-      - https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=58170849&prop=revisions&redirects=true&rvlimit=500&rvprop=size%7Cuser%7Cuserid%7Ctimestamp
-      Content-Length:
-      - '410'
-      Content-Type:
-      - text/html; charset=iso-8859-1
-      Vary:
-      - X-Forwarded-Proto
-      Age:
-      - '3978'
-      X-Cache:
-      - cp4041 miss, cp4041 hit/1
-      X-Cache-Status:
-      - hit-front
-      Server-Timing:
-      - cache;desc="hit-front", host;desc="cp4041"
-      Strict-Transport-Security:
-      - max-age=106384710; includeSubDomains; preload
-      Report-To:
-      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
-        }] }'
-      Nel:
-      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
-        0.0}'
-      Set-Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
-      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=21-Jun-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
-        23 Jul 2023 12:00:00 GMT
-      - WMF-Last-Access=21-Jun-2023;Path=/;HttpOnly;secure;Expires=Sun, 23 Jul 2023
-        12:00:00 GMT
-      X-Client-Ip:
-      - 67.170.51.150
-    body:
-      encoding: UTF-8
-      string: |
-        <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-        <html><head>
-        <title>301 Moved Permanently</title>
-        </head><body>
-        <h1>Moved Permanently</h1>
-        <p>The document has moved <a href="https://en.wikipedia.org/w/api.php?action=query&amp;format=json&amp;formatversion=2&amp;pageids=58170849&amp;prop=revisions&amp;redirects=true&amp;rvlimit=500&amp;rvprop=size%7Cuser%7Cuserid%7Ctimestamp">here</a>.</p>
-        </body></html>
-  recorded_at: Wed, 21 Jun 2023 21:46:57 GMT
-- request:
-    method: get
-    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=58170849&prop=revisions&redirects=true&rvlimit=500&rvprop=size%7Cuser%7Cuserid%7Ctimestamp
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=58170849&prop=revisions&redirects=true&rvlimit=500&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids
     body:
       encoding: US-ASCII
       string: ''
@@ -85,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 21 Jun 2023 21:46:57 GMT
+      - Tue, 27 Jun 2023 20:22:54 GMT
       Server:
-      - mw2295.codfw.wmnet
+      - mw2356.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -101,7 +35,7 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Age:
-      - '0'
+      - '2'
       X-Cache:
       - cp4041 miss, cp4041 pass
       X-Cache-Status:
@@ -119,19 +53,19 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
       - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=21-Jun-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
-        23 Jul 2023 12:00:00 GMT
-      - WMF-Last-Access=21-Jun-2023;Path=/;HttpOnly;secure;Expires=Sun, 23 Jul 2023
+      - WMF-Last-Access-Global=27-Jun-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sat,
+        29 Jul 2023 12:00:00 GMT
+      - WMF-Last-Access=27-Jun-2023;Path=/;HttpOnly;secure;Expires=Sat, 29 Jul 2023
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
       Accept-Ranges:
       - bytes
-      Content-Length:
-      - '1977'
+      Transfer-Encoding:
+      - chunked
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJiYXRjaGNvbXBsZXRlIjp0cnVlLCJxdWVyeSI6eyJwYWdlcyI6W3sicGFnZWlkIjo1ODE3MDg0OSwibnMiOjAsInRpdGxlIjoiQmF0dGxlIG9mIEJvdXJndGjDqXJvdWxkZSIsInJldmlzaW9ucyI6W3sidXNlciI6IlRoZSBNaWdodHkgRm9yZXN0IiwidXNlcmlkIjo0MjQyODMxMSwidGltZXN0YW1wIjoiMjAyMi0wNC0yNVQxMDoyMTo0NloiLCJzaXplIjo4NTUyfSx7InVzZXIiOiJEbDIwMDAiLCJ1c2VyaWQiOjkxNzIyMywidGltZXN0YW1wIjoiMjAyMS0wNi0wNVQxODoyNDoxOFoiLCJzaXplIjo4NzA1fSx7InVzZXIiOiJMZW5uYXJ0OTciLCJ1c2VyaWQiOjE0NDIzMDI4LCJ0aW1lc3RhbXAiOiIyMDIwLTExLTI3VDE5OjQyOjIwWiIsInNpemUiOjg2NzV9LHsidXNlciI6IlNhbU1jRGVybW90dCIsInVzZXJpZCI6Mzg0Mzk2ODAsInRpbWVzdGFtcCI6IjIwMjAtMTAtMDFUMTg6MzY6NTlaIiwic2l6ZSI6ODYzMn0seyJ1c2VyIjoiU2FtTWNEZXJtb3R0IiwidXNlcmlkIjozODQzOTY4MCwidGltZXN0YW1wIjoiMjAyMC0xMC0wMVQxODozNTozOFoiLCJzaXplIjo4NjMwfSx7InVzZXIiOiJTYW1NY0Rlcm1vdHQiLCJ1c2VyaWQiOjM4NDM5NjgwLCJ0aW1lc3RhbXAiOiIyMDIwLTEwLTAxVDE4OjM0OjE1WiIsInNpemUiOjg1OTh9LHsidXNlciI6IkdNYW41NTIiLCJ1c2VyaWQiOjQwMzI4MywidGltZXN0YW1wIjoiMjAyMC0wNy0yMlQyMTo1MDowM1oiLCJzaXplIjo3NTUyfSx7InVzZXIiOiJSaWNoIEZhcm1icm91Z2giLCJ1c2VyaWQiOjgyODM1LCJ0aW1lc3RhbXAiOiIyMDE5LTEwLTE3VDE4OjE4OjM2WiIsInNpemUiOjc4NTN9LHsidXNlciI6IlRpbHR1TSIsInVzZXJpZCI6MjU4NDgzOTAsInRpbWVzdGFtcCI6IjIwMTktMDUtMDhUMTU6MzM6NDNaIiwic2l6ZSI6Nzg3MX0seyJ1c2VyIjoiQ2x1ZUJvdCBORyIsInVzZXJpZCI6MTMyODYwNzIsInRpbWVzdGFtcCI6IjIwMTktMDEtMTVUMTk6MTM6MDRaIiwic2l6ZSI6Nzg2OX0seyJ1c2VyIjoiMTczLjE2Ni4yMjMuMjA5IiwiYW5vbiI6dHJ1ZSwidXNlcmlkIjowLCJ0aW1lc3RhbXAiOiIyMDE5LTAxLTE1VDE5OjEzOjAyWiIsInNpemUiOjc4Nzh9LHsidXNlciI6IkVkZGllODkxIiwidXNlcmlkIjoyOTgyNjk3NSwidGltZXN0YW1wIjoiMjAxOC0wOS0yMVQyMjowNzo0NFoiLCJzaXplIjo3ODY5fSx7InVzZXIiOiJOYXJreSBCbGVydCIsInVzZXJpZCI6MjIwNDE2NDYsInRpbWVzdGFtcCI6IjIwMTgtMDktMTlUMTY6NDI6MThaIiwic2l6ZSI6NzkwOH0seyJ1c2VyIjoiUm9zZ3VpbGwiLCJ1c2VyaWQiOjMyNzYzMDI2LCJ0aW1lc3RhbXAiOiIyMDE4LTA5LTE1VDIzOjAxOjIxWiIsInNpemUiOjc4Njl9LHsidXNlciI6IlRoZUxvbmdUb25lIiwidXNlcmlkIjoxMDYxNDc5NCwidGltZXN0YW1wIjoiMjAxOC0wOS0xNVQxNTowMzo0MVoiLCJzaXplIjo3ODMwfSx7InVzZXIiOiJUaGVMb25nVG9uZSIsInVzZXJpZCI6MTA2MTQ3OTQsInRpbWVzdGFtcCI6IjIwMTgtMDktMTVUMTQ6NTk6MjhaIiwic2l6ZSI6Nzg1MX0seyJ1c2VyIjoiQW5nZXZpbktuaWdodDExNTQiLCJ1c2VyaWQiOjMyMTc2MDE4LCJ0aW1lc3RhbXAiOiIyMDE4LTA4LTE3VDE1OjQyOjM4WiIsInNpemUiOjc4MzN9LHsidXNlciI6IlBsdWNhczU4IiwidXNlcmlkIjo5NzY2NjQwLCJ0aW1lc3RhbXAiOiIyMDE4LTA4LTE3VDA5OjA3OjA5WiIsInNpemUiOjc4Mjl9LHsidXNlciI6Ik1hZ2ljIGxpbmtzIGJvdCIsInVzZXJpZCI6MzA3MDczNjksInRpbWVzdGFtcCI6IjIwMTgtMDgtMTdUMDQ6MDc6MTVaIiwic2l6ZSI6Nzc5N30seyJ1c2VyIjoiQW5nZXZpbktuaWdodDExNTQiLCJ1c2VyaWQiOjMyMTc2MDE4LCJ0aW1lc3RhbXAiOiIyMDE4LTA4LTE3VDAwOjQ1OjA5WiIsInNpemUiOjc3OTN9LHsidXNlciI6IkFuZ2V2aW5LbmlnaHQxMTU0IiwidXNlcmlkIjozMjE3NjAxOCwidGltZXN0YW1wIjoiMjAxOC0wOC0xN1QwMDoyMToyMVoiLCJzaXplIjo3ODI0fV19XX19
-  recorded_at: Wed, 21 Jun 2023 21:46:57 GMT
+        eyJiYXRjaGNvbXBsZXRlIjp0cnVlLCJxdWVyeSI6eyJwYWdlcyI6W3sicGFnZWlkIjo1ODE3MDg0OSwibnMiOjAsInRpdGxlIjoiQmF0dGxlIG9mIEJvdXJndGjDqXJvdWxkZSIsInJldmlzaW9ucyI6W3sicmV2aWQiOjEwODQ1ODE1MTIsInBhcmVudGlkIjoxMDI3MDM1Mzk0LCJ1c2VyIjoiVGhlIE1pZ2h0eSBGb3Jlc3QiLCJ1c2VyaWQiOjQyNDI4MzExLCJ0aW1lc3RhbXAiOiIyMDIyLTA0LTI1VDEwOjIxOjQ2WiIsInNpemUiOjg1NTJ9LHsicmV2aWQiOjEwMjcwMzUzOTQsInBhcmVudGlkIjo5OTEwMDczNzQsInVzZXIiOiJEbDIwMDAiLCJ1c2VyaWQiOjkxNzIyMywidGltZXN0YW1wIjoiMjAyMS0wNi0wNVQxODoyNDoxOFoiLCJzaXplIjo4NzA1fSx7InJldmlkIjo5OTEwMDczNzQsInBhcmVudGlkIjo5ODEzMzk1MzcsInVzZXIiOiJMZW5uYXJ0OTciLCJ1c2VyaWQiOjE0NDIzMDI4LCJ0aW1lc3RhbXAiOiIyMDIwLTExLTI3VDE5OjQyOjIwWiIsInNpemUiOjg2NzV9LHsicmV2aWQiOjk4MTMzOTUzNywicGFyZW50aWQiOjk4MTMzOTM5MSwidXNlciI6IlNhbU1jRGVybW90dCIsInVzZXJpZCI6Mzg0Mzk2ODAsInRpbWVzdGFtcCI6IjIwMjAtMTAtMDFUMTg6MzY6NTlaIiwic2l6ZSI6ODYzMn0seyJyZXZpZCI6OTgxMzM5MzkxLCJwYXJlbnRpZCI6OTgxMzM5MjE4LCJ1c2VyIjoiU2FtTWNEZXJtb3R0IiwidXNlcmlkIjozODQzOTY4MCwidGltZXN0YW1wIjoiMjAyMC0xMC0wMVQxODozNTozOFoiLCJzaXplIjo4NjMwfSx7InJldmlkIjo5ODEzMzkyMTgsInBhcmVudGlkIjo5NjkwMTUwMDcsInVzZXIiOiJTYW1NY0Rlcm1vdHQiLCJ1c2VyaWQiOjM4NDM5NjgwLCJ0aW1lc3RhbXAiOiIyMDIwLTEwLTAxVDE4OjM0OjE1WiIsInNpemUiOjg1OTh9LHsicmV2aWQiOjk2OTAxNTAwNywicGFyZW50aWQiOjkyMTc1NzYyMCwidXNlciI6IkdNYW41NTIiLCJ1c2VyaWQiOjQwMzI4MywidGltZXN0YW1wIjoiMjAyMC0wNy0yMlQyMTo1MDowM1oiLCJzaXplIjo3NTUyfSx7InJldmlkIjo5MjE3NTc2MjAsInBhcmVudGlkIjo4OTYxNDQzODIsInVzZXIiOiJSaWNoIEZhcm1icm91Z2giLCJ1c2VyaWQiOjgyODM1LCJ0aW1lc3RhbXAiOiIyMDE5LTEwLTE3VDE4OjE4OjM2WiIsInNpemUiOjc4NTN9LHsicmV2aWQiOjg5NjE0NDM4MiwicGFyZW50aWQiOjg3ODU5MTgxMSwidXNlciI6IlRpbHR1TSIsInVzZXJpZCI6MjU4NDgzOTAsInRpbWVzdGFtcCI6IjIwMTktMDUtMDhUMTU6MzM6NDNaIiwic2l6ZSI6Nzg3MX0seyJyZXZpZCI6ODc4NTkxODExLCJwYXJlbnRpZCI6ODc4NTkxODA0LCJ1c2VyIjoiQ2x1ZUJvdCBORyIsInVzZXJpZCI6MTMyODYwNzIsInRpbWVzdGFtcCI6IjIwMTktMDEtMTVUMTk6MTM6MDRaIiwic2l6ZSI6Nzg2OX0seyJyZXZpZCI6ODc4NTkxODA0LCJwYXJlbnRpZCI6ODYwNjE1NjI5LCJ1c2VyIjoiMTczLjE2Ni4yMjMuMjA5IiwiYW5vbiI6dHJ1ZSwidXNlcmlkIjowLCJ0aW1lc3RhbXAiOiIyMDE5LTAxLTE1VDE5OjEzOjAyWiIsInNpemUiOjc4Nzh9LHsicmV2aWQiOjg2MDYxNTYyOSwicGFyZW50aWQiOjg2MDI4NjgwMSwidXNlciI6IkVkZGllODkxIiwidXNlcmlkIjoyOTgyNjk3NSwidGltZXN0YW1wIjoiMjAxOC0wOS0yMVQyMjowNzo0NFoiLCJzaXplIjo3ODY5fSx7InJldmlkIjo4NjAyODY4MDEsInBhcmVudGlkIjo4NTk3Mjk0MzAsInVzZXIiOiJOYXJreSBCbGVydCIsInVzZXJpZCI6MjIwNDE2NDYsInRpbWVzdGFtcCI6IjIwMTgtMDktMTlUMTY6NDI6MThaIiwic2l6ZSI6NzkwOH0seyJyZXZpZCI6ODU5NzI5NDMwLCJwYXJlbnRpZCI6ODU5NjcyOTE5LCJ1c2VyIjoiUm9zZ3VpbGwiLCJ1c2VyaWQiOjMyNzYzMDI2LCJ0aW1lc3RhbXAiOiIyMDE4LTA5LTE1VDIzOjAxOjIxWiIsInNpemUiOjc4Njl9LHsicmV2aWQiOjg1OTY3MjkxOSwicGFyZW50aWQiOjg1OTY3MjM5NiwidXNlciI6IlRoZUxvbmdUb25lIiwidXNlcmlkIjoxMDYxNDc5NCwidGltZXN0YW1wIjoiMjAxOC0wOS0xNVQxNTowMzo0MVoiLCJzaXplIjo3ODMwfSx7InJldmlkIjo4NTk2NzIzOTYsInBhcmVudGlkIjo4NTUzMzg4NTksInVzZXIiOiJUaGVMb25nVG9uZSIsInVzZXJpZCI6MTA2MTQ3OTQsInRpbWVzdGFtcCI6IjIwMTgtMDktMTVUMTQ6NTk6MjhaIiwic2l6ZSI6Nzg1MX0seyJyZXZpZCI6ODU1MzM4ODU5LCJwYXJlbnRpZCI6ODU1MzAwMTY1LCJ1c2VyIjoiQW5nZXZpbktuaWdodDExNTQiLCJ1c2VyaWQiOjMyMTc2MDE4LCJ0aW1lc3RhbXAiOiIyMDE4LTA4LTE3VDE1OjQyOjM4WiIsInNpemUiOjc4MzN9LHsicmV2aWQiOjg1NTMwMDE2NSwicGFyZW50aWQiOjg1NTI3NDk2OSwidXNlciI6IlBsdWNhczU4IiwidXNlcmlkIjo5NzY2NjQwLCJ0aW1lc3RhbXAiOiIyMDE4LTA4LTE3VDA5OjA3OjA5WiIsInNpemUiOjc4Mjl9LHsicmV2aWQiOjg1NTI3NDk2OSwicGFyZW50aWQiOjg1NTI1NjQ2OCwidXNlciI6Ik1hZ2ljIGxpbmtzIGJvdCIsInVzZXJpZCI6MzA3MDczNjksInRpbWVzdGFtcCI6IjIwMTgtMDgtMTdUMDQ6MDc6MTVaIiwic2l6ZSI6Nzc5N30seyJyZXZpZCI6ODU1MjU2NDY4LCJwYXJlbnRpZCI6ODU1MjU0Mzg0LCJ1c2VyIjoiQW5nZXZpbktuaWdodDExNTQiLCJ1c2VyaWQiOjMyMTc2MDE4LCJ0aW1lc3RhbXAiOiIyMDE4LTA4LTE3VDAwOjQ1OjA5WiIsInNpemUiOjc3OTN9LHsicmV2aWQiOjg1NTI1NDM4NCwicGFyZW50aWQiOjAsInVzZXIiOiJBbmdldmluS25pZ2h0MTE1NCIsInVzZXJpZCI6MzIxNzYwMTgsInRpbWVzdGFtcCI6IjIwMTgtMDgtMTdUMDA6MjE6MjFaIiwic2l6ZSI6NzgyNH1dfV19fQ==
+  recorded_at: Tue, 27 Jun 2023 20:22:55 GMT
 recorded_with: VCR 6.1.0

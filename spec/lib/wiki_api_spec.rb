@@ -7,6 +7,7 @@ describe WikiApi do
     let(:subject) { described_class.new.get_page_info(pageid: 58170849) }
 
     it 'handles mediawiki 503 errors gracefully' do
+      allow(Rails.env).to receive(:production?).and_return(true)
       stub_wikipedia_503_error
       expect(subject).to eq(nil)
     end
@@ -92,6 +93,17 @@ describe WikiApi do
       continue = wiki_api.fetch_all query_parameters: continue_query
 
       expect(complete).to eq(continue)
+    end
+  end
+
+  describe '#get_revision_at_timestamp' do
+    it 'returns the most recent revision at the given timestamp', vcr: true do
+      wiki_api = described_class.new
+      timestamp = Date.new(2023, 1, 1)
+      revision = wiki_api.get_revision_at_timestamp(pageid: 58170849, timestamp:)
+      expect(revision['user']).to eq('The Mighty Forest')
+      expect(revision['revid']).to eq(1084581512)
+      expect(revision['size']).to eq(8552)
     end
   end
 

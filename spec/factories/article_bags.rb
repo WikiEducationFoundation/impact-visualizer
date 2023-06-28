@@ -1,7 +1,18 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :article_bag do
-    name { "MyString" }
-    topic { nil }
+    name { 'Name of Article Bag' }
+
+    factory :small_article_bag do
+      after(:create) do |article_bag|
+        require "#{Rails.root}/spec/fixtures/test_articles"
+        TestArticles::ARTICLE_IDS.each do |article_name|
+          article = create(:article, title: article_name)
+          create(:article_bag_article, article:, article_bag:)
+        end
+      end
+    end
   end
 end
 

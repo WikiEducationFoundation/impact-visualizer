@@ -224,3 +224,5 @@ Rails/CompactBlank:
   Enabled: false
 Layout/FirstHashElementIndentation:
   Enabled: false
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent

@@ -243,6 +243,7 @@ GEM
       spring (>= 0.9.1)
     sqlite3 (1.6.3-arm64-darwin)
     thor (1.2.2)
+    timecop (0.9.6)
     timeout (0.3.2)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
@@ -284,6 +285,7 @@ DEPENDENCIES
   spring
   spring-commands-rspec
   sqlite3 (~> 1.4)
+  timecop (~> 0.9.6)
   tzinfo-data
   vcr
   webmock

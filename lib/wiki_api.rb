@@ -60,7 +60,7 @@ class WikiApi
     query_parameters = {
       pageids: [pageid],
       prop: 'revisions',
-      rvprop: %w[size user userid timestamp],
+      rvprop: %w[size user userid timestamp ids],
       rvlimit: 500,
       redirects: true,
       formatversion: '2'
@@ -71,6 +71,26 @@ class WikiApi
 
     # Return just the revisions
     data.dig('pages', 0, 'revisions')
+  end
+
+  def get_revision_at_timestamp(pageid:, timestamp:)
+    # Setup basic query parameters
+    query_parameters = {
+      pageids: [pageid],
+      prop: 'revisions',
+      rvprop: %w[size user userid timestamp ids],
+      rvlimit: 1,
+      rvstart: timestamp&.beginning_of_day&.iso8601,
+      rvdir: 'older',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    # Fetch revision
+    response = query(query_parameters:)
+
+    # Return just the revisions
+    response.data.dig('pages', 0, 'revisions', 0) if response&.status == 200
   end
 
   private

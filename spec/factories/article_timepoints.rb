@@ -1,14 +1,7 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :article_timepoint do
-    article_length { 1 }
-    revision_id { 1 }
-    previous_revision_id { "MyString" }
-    integer { "MyString" }
-    links_count { "MyString" }
-    integer { "MyString" }
-    revisions_count { "MyString" }
-    integer { "MyString" }
-    article { nil }
   end
 end
 

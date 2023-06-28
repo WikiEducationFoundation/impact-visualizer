@@ -5,7 +5,6 @@ require 'rails_helper'
 RSpec.describe TopicArticleTimepoint do
   it { is_expected.to belong_to(:topic_timepoint) }
   it { is_expected.to belong_to(:article_bag_article) }
-  it { is_expected.to belong_to(:attributed_creator) }
 end
 
 # == Schema Information

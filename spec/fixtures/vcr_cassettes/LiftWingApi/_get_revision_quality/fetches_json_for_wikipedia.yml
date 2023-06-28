@@ -1,0 +1,61 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.wikimedia.org/service/lw/inference/v1/models/enwiki-articlequality:predict
+    body:
+      encoding: UTF-8
+      string: '{"rev_id":641962088}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '303'
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 28 Jun 2023 19:47:36 GMT
+      Server:
+      - envoy
+      X-Ratelimit-Limit:
+      - 10000, 10000;w=3600
+      X-Ratelimit-Remaining:
+      - '9987'
+      X-Ratelimit-Reset:
+      - '744'
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"enwiki":{"models":{"articlequality":{"version":"0.8.2"}},"scores":{"641962088":{"articlequality":{"score":{"prediction":"Stub","probability":{"B":0.10079731357067488,"C":0.06586256200112978,"FA":0.004111470759849595,"GA":0.008487597970812858,"Start":0.2943603130674627,"Stub":0.5263807426300702}}}}}}}'
+  recorded_at: Wed, 28 Jun 2023 19:47:36 GMT
+recorded_with: VCR 6.1.0

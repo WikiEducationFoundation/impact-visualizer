@@ -1,7 +1,5 @@
 FactoryBot.define do
   factory :article do
-    title { "MyString" }
-    page_id { 1 }
   end
 end
 
@@ -10,8 +8,8 @@ end
 # Table name: articles
 #
 #  id         :integer          not null, primary key
+#  pageid     :integer
 #  title      :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  page_id    :integer
 #

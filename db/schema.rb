@@ -43,7 +43,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_231018) do
 
   create_table "articles", force: :cascade do |t|
     t.string "title"
-    t.integer "page_id"
+    t.integer "pageid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -100,6 +100,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_231018) do
     t.string "description"
     t.string "slug"
     t.integer "timepoint_day_interval", default: 7
+    t.datetime "start_date"
+    t.datetime "end_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "wiki_id"

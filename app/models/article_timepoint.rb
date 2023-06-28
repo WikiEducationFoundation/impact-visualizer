@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class ArticleTimepoint < ApplicationRecord
-  # TODO
+  ## TODO
   # - Add wp10_prediction
 
-  # Associations
+  ## Associations
   belongs_to :article
 end
 
