@@ -57,11 +57,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_231018) do
     t.integer "attributed_revisions_count_delta"
     t.datetime "attributed_creation_at"
     t.integer "topic_timepoint_id", null: false
-    t.integer "article_bag_article_id", null: false
+    t.integer "article_timepoint_id", null: false
     t.integer "attributed_creator_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["article_bag_article_id"], name: "index_topic_article_timepoints_on_article_bag_article_id"
+    t.index ["article_timepoint_id"], name: "index_topic_article_timepoints_on_article_timepoint_id"
     t.index ["attributed_creator_id"], name: "index_topic_article_timepoints_on_attributed_creator_id"
     t.index ["topic_timepoint_id"], name: "index_topic_article_timepoints_on_topic_timepoint_id"
   end
@@ -126,7 +126,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_231018) do
   add_foreign_key "article_bag_articles", "articles"
   add_foreign_key "article_bags", "topics"
   add_foreign_key "article_timepoints", "articles"
-  add_foreign_key "topic_article_timepoints", "article_bag_articles"
+  add_foreign_key "topic_article_timepoints", "article_timepoints"
   add_foreign_key "topic_article_timepoints", "topic_timepoints"
   add_foreign_key "topic_article_timepoints", "users", column: "attributed_creator_id"
   add_foreign_key "topic_timepoints", "topics"

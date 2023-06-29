@@ -6,6 +6,7 @@ class TimepointService
   def initialize(topic:)
     @topic = topic
     @article_stats_service = ArticleStatsService.new
+    @topic_timepoint_stats_service = TopicTimepointStatsService.new
   end
 
   def build_timepoints
@@ -29,15 +30,15 @@ class TimepointService
 
         # Find or create TopicArticleTimepoint for each Article
         topic_article_timepoint = TopicArticleTimepoint.find_or_create_by!(
-          article_bag_article:, topic_timepoint:
+          article_timepoint:, topic_timepoint:
         )
 
         # Update topic_article_timepoint with stats
-        # @article_stats_service.update_stats_for_topic_article_timepoint(topic_article_timepoint:)
+        @article_stats_service.update_stats_for_topic_article_timepoint(topic_article_timepoint:)
       end
 
       # Update TopicTimepoint with summarized stats
-      # topic_timepoint.update ???
+      @topic_timepoint_stats_service.update_stats_for_topic_timepoint(topic_timepoint:)
     end
   end
 end

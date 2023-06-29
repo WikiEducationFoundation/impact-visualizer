@@ -1,18 +1,5 @@
 FactoryBot.define do
   factory :topic_timepoint do
-    length { 1 }
-    length_delta { 1 }
-    links_count { 1 }
-    links_count_delta { 1 }
-    articles_count { 1 }
-    articles_count_delta { 1 }
-    revisions_count { 1 }
-    revisions_count_delta { 1 }
-    attributed_length_delta { 1 }
-    attributed_links_count_delta { 1 }
-    attributed_revisions_count_delta { 1 }
-    attributed_articles_created { 1 }
-    topic { nil }
   end
 end
 

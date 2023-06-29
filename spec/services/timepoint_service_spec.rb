@@ -20,6 +20,12 @@ describe TimepointService do
       allow_any_instance_of(ArticleStatsService).to(
         receive(:update_stats_for_article_timepoint)
       )
+      allow_any_instance_of(ArticleStatsService).to(
+        receive(:update_stats_for_topic_article_timepoint)
+      )
+      allow_any_instance_of(TopicTimepointStatsService).to(
+        receive(:update_stats_for_topic_timepoint)
+      )
     end
 
     it 'builds all timepoints for Topic' do
@@ -73,7 +79,7 @@ describe TimepointService do
       expect(ArticleTimepoint.count).to eq(article_timepoint_count + article_count)
     end
 
-    it 'updates stats for ArticleTimepoints' do
+    it 'updates stats for ArticleTimepoints and TopicArticleTimepoints' do
       article_bag = create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
 
@@ -86,6 +92,22 @@ describe TimepointService do
           .exactly(article_timepoint_count).times
           .with(
             article_timepoint: kind_of(ArticleTimepoint)
+          )
+      )
+
+      expect_any_instance_of(ArticleStatsService).to(
+        receive(:update_stats_for_topic_article_timepoint)
+          .exactly(article_timepoint_count).times
+          .with(
+            topic_article_timepoint: kind_of(TopicArticleTimepoint)
+          )
+      )
+
+      expect_any_instance_of(TopicTimepointStatsService).to(
+        receive(:update_stats_for_topic_timepoint)
+          .exactly(topic_timepoints_count).times
+          .with(
+            topic_timepoint: kind_of(TopicTimepoint)
           )
       )
 

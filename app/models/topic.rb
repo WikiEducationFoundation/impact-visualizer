@@ -20,11 +20,11 @@ class Topic < ApplicationRecord
     # If end_date is not set, fallback to "now"
     now_or_end_date = end_date || Time.zone.now
 
-    # Get total number of days within range... converted from seconds to days
-    total_days = (now_or_end_date - start_date) / 1.day.to_i
+    # Get total number of days within range... converted from seconds to days, with a 1 day buffer
+    total_days = ((now_or_end_date - start_date) / 1.day.to_i) + 1
 
     # Calculate how many timestamps fit within range
-    total_timepoints = (total_days / timepoint_day_interval).round
+    total_timepoints = (total_days / timepoint_day_interval).ceil
 
     # Initialize variables for loop
     output = []
@@ -38,6 +38,20 @@ class Topic < ApplicationRecord
 
     # Return final array of dates
     output
+  end
+
+  def timestamp_previous_to(timestamp)
+    timestamp_index = timestamps.index(timestamp)
+    raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.nil?
+    return nil unless timestamp_index.positive?
+    timestamps[timestamp_index - 1]
+  end
+
+  def timestamp_next_to(timestamp)
+    timestamp_index = timestamps.index(timestamp)
+    raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.nil?
+    return nil unless timestamp_index.positive?
+    timestamps[timestamp_index + 1]
   end
 
   # TODO

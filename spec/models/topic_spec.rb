@@ -11,16 +11,16 @@ RSpec.describe Topic do
   it { is_expected.to belong_to(:wiki) }
 
   describe '#timestamps' do
-    let(:topic) { create(:topic) }
+    let(:topic) { create(:topic, timepoint_day_interval: 7) }
 
     it 'returns the correct dates within timeframe, with default interval' do
       start_date = Date.new(2023, 1, 1)
       end_date = start_date + 30.days
       topic.update(start_date:, end_date:)
       schedule = topic.timestamps
-      expect(schedule.count).to eq(4)
+      expect(schedule.count).to eq(5)
       expect(schedule.first).to eq(Date.new(2023, 1, 1))
-      expect(schedule.last).to eq(Date.new(2023, 1, 22))
+      expect(schedule.last).to eq(Date.new(2023, 1, 29))
     end
 
     it 'returns the correct dates within timeframe, with custom interval' do
@@ -28,9 +28,9 @@ RSpec.describe Topic do
       end_date = start_date + 30.days
       topic.update(start_date:, end_date:, timepoint_day_interval: 1)
       schedule = topic.timestamps
-      expect(schedule.count).to eq(30)
+      expect(schedule.count).to eq(31)
       expect(schedule.first).to eq(Date.new(2023, 1, 1))
-      expect(schedule.last).to eq(Date.new(2023, 1, 30))
+      expect(schedule.last).to eq(Date.new(2023, 1, 31))
     end
 
     it 'returns the correct dates within timeframe, with no end_date, and uses NOW' do
@@ -38,9 +38,9 @@ RSpec.describe Topic do
         start_date = Date.new(2023, 1, 1)
         topic.update(start_date:, end_date: nil)
         schedule = topic.timestamps
-        expect(schedule.count).to eq(4)
+        expect(schedule.count).to eq(5)
         expect(schedule.first).to eq(Date.new(2023, 1, 1))
-        expect(schedule.last).to eq(Date.new(2023, 1, 22))
+        expect(schedule.last).to eq(Date.new(2023, 1, 29))
       end
     end
 
@@ -48,6 +48,46 @@ RSpec.describe Topic do
       topic.update(start_date: nil, end_date: nil)
       expect { topic.timestamps }
         .to raise_error(ImpactVisualizerErrors::TopicMissingStartDate)
+    end
+  end
+
+  describe '#timestamp_previous_to' do
+    let(:start_date) { Date.new(2023, 1, 1) }
+    let(:end_date) { start_date + 30.days }
+    let(:topic) { create(:topic, start_date:, end_date:) }
+
+    it 'returns the timestamp previous to the provided timestamp' do
+      expect(topic.timestamp_previous_to(Date.new(2023, 1, 8))).to eq(Date.new(2023, 1, 1))
+    end
+
+    it 'returns nil if the provided timestamp is the first' do
+      expect(topic.timestamp_previous_to(Date.new(2023, 1, 1))).to eq(nil)
+    end
+
+    it 'raises if provided timestamp is not valid' do
+      expect do
+        topic.timestamp_previous_to(Date.new(2023, 1, 2))
+      end.to raise_error(ImpactVisualizerErrors::InvalidTimestampForTopic)
+    end
+  end
+
+  describe '#timestamp_next_to' do
+    let(:start_date) { Date.new(2023, 1, 1) }
+    let(:end_date) { start_date + 30.days }
+    let(:topic) { create(:topic, start_date:, end_date:) }
+
+    it 'returns the next timestamp following the provided timestamp' do
+      expect(topic.timestamp_next_to(Date.new(2023, 1, 8))).to eq(Date.new(2023, 1, 15))
+    end
+
+    it 'returns nil if the provided timestamp is the last' do
+      expect(topic.timestamp_next_to(Date.new(2023, 1, 29))).to eq(nil)
+    end
+
+    it 'raises if provided timestamp is not valid' do
+      expect do
+        topic.timestamp_next_to(Date.new(2023, 1, 2))
+      end.to raise_error(ImpactVisualizerErrors::InvalidTimestampForTopic)
     end
   end
 end

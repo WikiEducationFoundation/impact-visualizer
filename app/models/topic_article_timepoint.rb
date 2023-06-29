@@ -3,8 +3,13 @@
 class TopicArticleTimepoint < ApplicationRecord
   # Associations
   belongs_to :topic_timepoint
-  belongs_to :article_bag_article
+  belongs_to :article_timepoint
   belongs_to :attributed_creator, class_name: 'User', optional: true
+
+  # Delegates
+  delegate :timestamp, to: :topic_timepoint
+  delegate :topic, to: :topic_timepoint
+  delegate :article, to: :article_timepoint
 end
 
 # == Schema Information
@@ -21,19 +26,19 @@ end
 #  revisions_count_delta            :integer
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
-#  article_bag_article_id           :integer          not null
+#  article_timepoint_id             :integer          not null
 #  attributed_creator_id            :integer
 #  topic_timepoint_id               :integer          not null
 #
 # Indexes
 #
-#  index_topic_article_timepoints_on_article_bag_article_id  (article_bag_article_id)
-#  index_topic_article_timepoints_on_attributed_creator_id   (attributed_creator_id)
-#  index_topic_article_timepoints_on_topic_timepoint_id      (topic_timepoint_id)
+#  index_topic_article_timepoints_on_article_timepoint_id   (article_timepoint_id)
+#  index_topic_article_timepoints_on_attributed_creator_id  (attributed_creator_id)
+#  index_topic_article_timepoints_on_topic_timepoint_id     (topic_timepoint_id)
 #
 # Foreign Keys
 #
-#  article_bag_article_id  (article_bag_article_id => article_bag_articles.id)
-#  attributed_creator_id   (attributed_creator_id => users.id)
-#  topic_timepoint_id      (topic_timepoint_id => topic_timepoints.id)
+#  article_timepoint_id   (article_timepoint_id => article_timepoints.id)
+#  attributed_creator_id  (attributed_creator_id => users.id)
+#  topic_timepoint_id     (topic_timepoint_id => topic_timepoints.id)
 #
