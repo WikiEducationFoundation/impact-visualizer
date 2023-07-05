@@ -1,0 +1,667 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&palimit=50&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:02 GMT
+      Server:
+      - mw2300.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=05-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
+        06 Aug 2023 12:00:00 GMT
+      - WMF-Last-Access=05-Jul-2023;Path=/;HttpOnly;secure;Expires=Sun, 06 Aug 2023
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: '{"batchcomplete":"","query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple","pageassessments":{"Plants":{"class":"GA","importance":"High"},"Wikipedia
+        1.0":{"class":"GA","importance":"Mid"},"Food and drink":{"class":"GA","importance":"Top"}}},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem","pageassessments":{"Wikipedia
+        1.0":{"class":"B","importance":"Unknown"},"South Africa":{"class":"B","importance":"Low"},"Systems":{"class":"B","importance":"Top"},"Environment":{"class":"B","importance":"Top"},"Ecology":{"class":"B","importance":"Top"},"Ecoregions":{"class":"B","importance":"High"},"Sanitation":{"class":"B","importance":"Low"},"Limnology
+        and Oceanography":{"class":"B","importance":"High"}}},"10843":{"pageid":10843,"ns":0,"title":"Fruit","pageassessments":{"Plants":{"class":"C","importance":"Top"},"Wikipedia
+        1.0":{"class":"C","importance":"Low"},"Food and drink":{"class":"C","importance":"Top"},"Veganism
+        and Vegetarianism":{"class":"C","importance":"High"}}},"24278":{"pageid":24278,"ns":0,"title":"Pear","pageassessments":{"Plants":{"class":"C","importance":"High"},"Food
+        and drink":{"class":"C","importance":"High"},"Agriculture":{"class":"C","importance":"Mid"}}}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:02 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&palimit=2&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=05-Jul-2023;
+        WMF-Last-Access-Global=05-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:02 GMT
+      Server:
+      - mw2442.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '394'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"pacontinue":"9632|189","continue":"||"},"query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple"},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem","pageassessments":{"Wikipedia
+        1.0":{"class":"B","importance":"Unknown"},"South Africa":{"class":"B","importance":"Low"}}},"10843":{"pageid":10843,"ns":0,"title":"Fruit"},"24278":{"pageid":24278,"ns":0,"title":"Pear"}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:02 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&continue=%7C%7C&format=json&pacontinue=9632%7C189&palimit=2&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=05-Jul-2023;
+        WMF-Last-Access-Global=05-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:03 GMT
+      Server:
+      - mw2319.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '383'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"pacontinue":"9632|627","continue":"||"},"query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple"},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem","pageassessments":{"Systems":{"class":"B","importance":"Top"},"Environment":{"class":"B","importance":"Top"}}},"10843":{"pageid":10843,"ns":0,"title":"Fruit"},"24278":{"pageid":24278,"ns":0,"title":"Pear"}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:03 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&continue=%7C%7C&format=json&pacontinue=9632%7C627&palimit=2&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=05-Jul-2023;
+        WMF-Last-Access-Global=05-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:03 GMT
+      Server:
+      - mw2376.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '383'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"pacontinue":"9632|930","continue":"||"},"query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple"},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem","pageassessments":{"Ecology":{"class":"B","importance":"Top"},"Ecoregions":{"class":"B","importance":"High"}}},"10843":{"pageid":10843,"ns":0,"title":"Fruit"},"24278":{"pageid":24278,"ns":0,"title":"Pear"}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:03 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&continue=%7C%7C&format=json&pacontinue=9632%7C930&palimit=2&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=05-Jul-2023;
+        WMF-Last-Access-Global=05-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:03 GMT
+      Server:
+      - mw2401.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '402'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"pacontinue":"10843|27","continue":"||"},"query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple"},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem","pageassessments":{"Sanitation":{"class":"B","importance":"Low"},"Limnology
+        and Oceanography":{"class":"B","importance":"High"}}},"10843":{"pageid":10843,"ns":0,"title":"Fruit"},"24278":{"pageid":24278,"ns":0,"title":"Pear"}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:03 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&continue=%7C%7C&format=json&pacontinue=10843%7C27&palimit=2&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=05-Jul-2023;
+        WMF-Last-Access-Global=05-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:03 GMT
+      Server:
+      - mw2300.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '385'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"pacontinue":"10843|140","continue":"||"},"query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple"},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem"},"10843":{"pageid":10843,"ns":0,"title":"Fruit","pageassessments":{"Plants":{"class":"C","importance":"Top"},"Wikipedia
+        1.0":{"class":"C","importance":"Low"}}},"24278":{"pageid":24278,"ns":0,"title":"Pear"}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:03 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&continue=%7C%7C&format=json&pacontinue=10843%7C140&palimit=2&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=05-Jul-2023;
+        WMF-Last-Access-Global=05-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:03 GMT
+      Server:
+      - mw2423.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '406'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"pacontinue":"24278|27","continue":"||"},"query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple"},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem"},"10843":{"pageid":10843,"ns":0,"title":"Fruit","pageassessments":{"Food
+        and drink":{"class":"C","importance":"Top"},"Veganism and Vegetarianism":{"class":"C","importance":"High"}}},"24278":{"pageid":24278,"ns":0,"title":"Pear"}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:03 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&continue=%7C%7C&format=json&pacontinue=24278%7C27&palimit=2&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=05-Jul-2023;
+        WMF-Last-Access-Global=05-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:04 GMT
+      Server:
+      - mw2423.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '388'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"pacontinue":"24278|403","continue":"||"},"query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple"},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem"},"10843":{"pageid":10843,"ns":0,"title":"Fruit"},"24278":{"pageid":24278,"ns":0,"title":"Pear","pageassessments":{"Plants":{"class":"C","importance":"High"},"Food
+        and drink":{"class":"C","importance":"High"}}}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:04 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&continue=%7C%7C&format=json&pacontinue=24278%7C403&palimit=2&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=05-Jul-2023;
+        WMF-Last-Access-Global=05-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:04 GMT
+      Server:
+      - mw2299.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '407'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"pacontinue":"18978754|40","continue":"||"},"query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple","pageassessments":{"Plants":{"class":"GA","importance":"High"}}},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem"},"10843":{"pageid":10843,"ns":0,"title":"Fruit"},"24278":{"pageid":24278,"ns":0,"title":"Pear","pageassessments":{"Agriculture":{"class":"C","importance":"Mid"}}}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:04 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&continue=%7C%7C&format=json&pacontinue=18978754%7C40&palimit=2&prop=pageassessments&redirects=true&titles=Apple%7CFruit%7CEcosystem%7CPear
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=05-Jul-2023;
+        WMF-Last-Access-Global=05-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:04 GMT
+      Server:
+      - mw2366.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '360'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"batchcomplete":"","query":{"pages":{"18978754":{"pageid":18978754,"ns":0,"title":"Apple","pageassessments":{"Wikipedia
+        1.0":{"class":"GA","importance":"Mid"},"Food and drink":{"class":"GA","importance":"Top"}}},"9632":{"pageid":9632,"ns":0,"title":"Ecosystem"},"10843":{"pageid":10843,"ns":0,"title":"Fruit"},"24278":{"pageid":24278,"ns":0,"title":"Pear"}}}}'
+  recorded_at: Wed, 05 Jul 2023 19:50:04 GMT
+recorded_with: VCR 6.1.0

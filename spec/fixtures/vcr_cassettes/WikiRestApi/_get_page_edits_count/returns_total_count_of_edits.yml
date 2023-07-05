@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/rest.php/v1/page/Jazz/history/counts/edits
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 21:00:26 GMT
+      Server:
+      - mw2317.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - no-cache
+      Access-Control-Allow-Origin:
+      - "*"
+      Vary:
+      - Accept-Encoding
+      Last-Modified:
+      - Sun, 25 Jun 2023 20:18:53 GMT
+      Content-Length:
+      - '29'
+      Content-Type:
+      - application/json
+      Age:
+      - '2'
+      X-Cache:
+      - cp4041 hit, cp4041 miss
+      X-Cache-Status:
+      - hit-local
+      Server-Timing:
+      - cache;desc="hit-local", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=05-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
+        06 Aug 2023 12:00:00 GMT
+      - WMF-Last-Access=05-Jul-2023;Path=/;HttpOnly;secure;Expires=Sun, 06 Aug 2023
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"count":11671,"limit":false}'
+  recorded_at: Wed, 05 Jul 2023 21:00:26 GMT
+recorded_with: VCR 6.1.0

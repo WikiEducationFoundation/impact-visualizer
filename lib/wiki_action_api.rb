@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-class WikiApi
+class WikiActionApi
   include ApiErrorHandling
 
   attr_accessor :client
 
   def initialize(wiki = nil)
     wiki ||= Wiki.default_wiki
-    @api_url = wiki.api_url
+    @api_url = wiki.action_api_url
     @client = api_client
   end
 
@@ -82,6 +82,25 @@ class WikiApi
       rvlimit: 1,
       rvstart: timestamp&.beginning_of_day&.iso8601,
       rvdir: 'older',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    # Fetch revision
+    response = query(query_parameters:)
+
+    # Return just the revisions
+    response.data.dig('pages', 0, 'revisions', 0) if response&.status == 200
+  end
+
+  def get_first_revision(pageid:)
+    # Setup basic query parameters
+    query_parameters = {
+      pageids: [pageid],
+      prop: 'revisions',
+      rvprop: %w[size user userid timestamp ids],
+      rvlimit: 1,
+      rvdir: 'newer',
       redirects: true,
       formatversion: '2'
     }

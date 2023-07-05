@@ -58,10 +58,17 @@ RSpec.describe Wiki do
     end
   end
 
-  describe '#api_url' do
+  describe '#action_api_url' do
     it 'returns the correct url for standard projects' do
       wiki = described_class.find_or_create_by(language: 'en', project: 'wikipedia')
-      expect(wiki.api_url).to eq('https://en.wikipedia.org/w/api.php')
+      expect(wiki.action_api_url).to eq('https://en.wikipedia.org/w/api.php')
+    end
+  end
+
+  describe '#rest_api_url' do
+    it 'returns the correct url for standard projects' do
+      wiki = described_class.find_or_create_by(language: 'en', project: 'wikipedia')
+      expect(wiki.rest_api_url).to eq('https://en.wikipedia.org/w/rest.php/v1/')
     end
   end
 end

@@ -45,7 +45,7 @@ describe ArticleStatsService do
         topic_article_timepoint: start_topic_article_timepoint_1
       )
       start_topic_article_timepoint_1.reload
-      expect(start_topic_article_timepoint_1.length_delta).to eq(100)
+      expect(start_topic_article_timepoint_1.length_delta).to eq(0)
     end
 
     it 'updates links_count_delta'

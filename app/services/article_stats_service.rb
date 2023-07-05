@@ -2,7 +2,7 @@
 
 class ArticleStatsService
   def initialize
-    @wiki_api = WikiApi.new
+    @wiki_api = WikiActionApi.new
   end
 
   def update_stats_for_article_timepoint(article_timepoint:)
@@ -42,7 +42,7 @@ class ArticleStatsService
       length_delta = article_timepoint.article_length - previous_article_timepoint.article_length
     else
       # If no previous, this must be the first
-      length_delta = article_timepoint.article_length
+      length_delta = 0
     end
 
     # Update accordingly

@@ -1,0 +1,71 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=58170849&prop=revisions&redirects=true&rvlimit=500&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Wed, 05 Jul 2023 19:50:04 GMT
+      Server:
+      - mw2299.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '2'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=05-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
+        06 Aug 2023 12:00:00 GMT
+      - WMF-Last-Access=05-Jul-2023;Path=/;HttpOnly;secure;Expires=Sun, 06 Aug 2023
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJiYXRjaGNvbXBsZXRlIjp0cnVlLCJxdWVyeSI6eyJwYWdlcyI6W3sicGFnZWlkIjo1ODE3MDg0OSwibnMiOjAsInRpdGxlIjoiQmF0dGxlIG9mIEJvdXJndGjDqXJvdWxkZSIsInJldmlzaW9ucyI6W3sicmV2aWQiOjEwODQ1ODE1MTIsInBhcmVudGlkIjoxMDI3MDM1Mzk0LCJ1c2VyIjoiVGhlIE1pZ2h0eSBGb3Jlc3QiLCJ1c2VyaWQiOjQyNDI4MzExLCJ0aW1lc3RhbXAiOiIyMDIyLTA0LTI1VDEwOjIxOjQ2WiIsInNpemUiOjg1NTJ9LHsicmV2aWQiOjEwMjcwMzUzOTQsInBhcmVudGlkIjo5OTEwMDczNzQsInVzZXIiOiJEbDIwMDAiLCJ1c2VyaWQiOjkxNzIyMywidGltZXN0YW1wIjoiMjAyMS0wNi0wNVQxODoyNDoxOFoiLCJzaXplIjo4NzA1fSx7InJldmlkIjo5OTEwMDczNzQsInBhcmVudGlkIjo5ODEzMzk1MzcsInVzZXIiOiJMZW5uYXJ0OTciLCJ1c2VyaWQiOjE0NDIzMDI4LCJ0aW1lc3RhbXAiOiIyMDIwLTExLTI3VDE5OjQyOjIwWiIsInNpemUiOjg2NzV9LHsicmV2aWQiOjk4MTMzOTUzNywicGFyZW50aWQiOjk4MTMzOTM5MSwidXNlciI6IlNhbU1jRGVybW90dCIsInVzZXJpZCI6Mzg0Mzk2ODAsInRpbWVzdGFtcCI6IjIwMjAtMTAtMDFUMTg6MzY6NTlaIiwic2l6ZSI6ODYzMn0seyJyZXZpZCI6OTgxMzM5MzkxLCJwYXJlbnRpZCI6OTgxMzM5MjE4LCJ1c2VyIjoiU2FtTWNEZXJtb3R0IiwidXNlcmlkIjozODQzOTY4MCwidGltZXN0YW1wIjoiMjAyMC0xMC0wMVQxODozNTozOFoiLCJzaXplIjo4NjMwfSx7InJldmlkIjo5ODEzMzkyMTgsInBhcmVudGlkIjo5NjkwMTUwMDcsInVzZXIiOiJTYW1NY0Rlcm1vdHQiLCJ1c2VyaWQiOjM4NDM5NjgwLCJ0aW1lc3RhbXAiOiIyMDIwLTEwLTAxVDE4OjM0OjE1WiIsInNpemUiOjg1OTh9LHsicmV2aWQiOjk2OTAxNTAwNywicGFyZW50aWQiOjkyMTc1NzYyMCwidXNlciI6IkdNYW41NTIiLCJ1c2VyaWQiOjQwMzI4MywidGltZXN0YW1wIjoiMjAyMC0wNy0yMlQyMTo1MDowM1oiLCJzaXplIjo3NTUyfSx7InJldmlkIjo5MjE3NTc2MjAsInBhcmVudGlkIjo4OTYxNDQzODIsInVzZXIiOiJSaWNoIEZhcm1icm91Z2giLCJ1c2VyaWQiOjgyODM1LCJ0aW1lc3RhbXAiOiIyMDE5LTEwLTE3VDE4OjE4OjM2WiIsInNpemUiOjc4NTN9LHsicmV2aWQiOjg5NjE0NDM4MiwicGFyZW50aWQiOjg3ODU5MTgxMSwidXNlciI6IlRpbHR1TSIsInVzZXJpZCI6MjU4NDgzOTAsInRpbWVzdGFtcCI6IjIwMTktMDUtMDhUMTU6MzM6NDNaIiwic2l6ZSI6Nzg3MX0seyJyZXZpZCI6ODc4NTkxODExLCJwYXJlbnRpZCI6ODc4NTkxODA0LCJ1c2VyIjoiQ2x1ZUJvdCBORyIsInVzZXJpZCI6MTMyODYwNzIsInRpbWVzdGFtcCI6IjIwMTktMDEtMTVUMTk6MTM6MDRaIiwic2l6ZSI6Nzg2OX0seyJyZXZpZCI6ODc4NTkxODA0LCJwYXJlbnRpZCI6ODYwNjE1NjI5LCJ1c2VyIjoiMTczLjE2Ni4yMjMuMjA5IiwiYW5vbiI6dHJ1ZSwidXNlcmlkIjowLCJ0aW1lc3RhbXAiOiIyMDE5LTAxLTE1VDE5OjEzOjAyWiIsInNpemUiOjc4Nzh9LHsicmV2aWQiOjg2MDYxNTYyOSwicGFyZW50aWQiOjg2MDI4NjgwMSwidXNlciI6IkVkZGllODkxIiwidXNlcmlkIjoyOTgyNjk3NSwidGltZXN0YW1wIjoiMjAxOC0wOS0yMVQyMjowNzo0NFoiLCJzaXplIjo3ODY5fSx7InJldmlkIjo4NjAyODY4MDEsInBhcmVudGlkIjo4NTk3Mjk0MzAsInVzZXIiOiJOYXJreSBCbGVydCIsInVzZXJpZCI6MjIwNDE2NDYsInRpbWVzdGFtcCI6IjIwMTgtMDktMTlUMTY6NDI6MThaIiwic2l6ZSI6NzkwOH0seyJyZXZpZCI6ODU5NzI5NDMwLCJwYXJlbnRpZCI6ODU5NjcyOTE5LCJ1c2VyIjoiUm9zZ3VpbGwiLCJ1c2VyaWQiOjMyNzYzMDI2LCJ0aW1lc3RhbXAiOiIyMDE4LTA5LTE1VDIzOjAxOjIxWiIsInNpemUiOjc4Njl9LHsicmV2aWQiOjg1OTY3MjkxOSwicGFyZW50aWQiOjg1OTY3MjM5NiwidXNlciI6IlRoZUxvbmdUb25lIiwidXNlcmlkIjoxMDYxNDc5NCwidGltZXN0YW1wIjoiMjAxOC0wOS0xNVQxNTowMzo0MVoiLCJzaXplIjo3ODMwfSx7InJldmlkIjo4NTk2NzIzOTYsInBhcmVudGlkIjo4NTUzMzg4NTksInVzZXIiOiJUaGVMb25nVG9uZSIsInVzZXJpZCI6MTA2MTQ3OTQsInRpbWVzdGFtcCI6IjIwMTgtMDktMTVUMTQ6NTk6MjhaIiwic2l6ZSI6Nzg1MX0seyJyZXZpZCI6ODU1MzM4ODU5LCJwYXJlbnRpZCI6ODU1MzAwMTY1LCJ1c2VyIjoiQW5nZXZpbktuaWdodDExNTQiLCJ1c2VyaWQiOjMyMTc2MDE4LCJ0aW1lc3RhbXAiOiIyMDE4LTA4LTE3VDE1OjQyOjM4WiIsInNpemUiOjc4MzN9LHsicmV2aWQiOjg1NTMwMDE2NSwicGFyZW50aWQiOjg1NTI3NDk2OSwidXNlciI6IlBsdWNhczU4IiwidXNlcmlkIjo5NzY2NjQwLCJ0aW1lc3RhbXAiOiIyMDE4LTA4LTE3VDA5OjA3OjA5WiIsInNpemUiOjc4Mjl9LHsicmV2aWQiOjg1NTI3NDk2OSwicGFyZW50aWQiOjg1NTI1NjQ2OCwidXNlciI6Ik1hZ2ljIGxpbmtzIGJvdCIsInVzZXJpZCI6MzA3MDczNjksInRpbWVzdGFtcCI6IjIwMTgtMDgtMTdUMDQ6MDc6MTVaIiwic2l6ZSI6Nzc5N30seyJyZXZpZCI6ODU1MjU2NDY4LCJwYXJlbnRpZCI6ODU1MjU0Mzg0LCJ1c2VyIjoiQW5nZXZpbktuaWdodDExNTQiLCJ1c2VyaWQiOjMyMTc2MDE4LCJ0aW1lc3RhbXAiOiIyMDE4LTA4LTE3VDAwOjQ1OjA5WiIsInNpemUiOjc3OTN9LHsicmV2aWQiOjg1NTI1NDM4NCwicGFyZW50aWQiOjAsInVzZXIiOiJBbmdldmluS25pZ2h0MTE1NCIsInVzZXJpZCI6MzIxNzYwMTgsInRpbWVzdGFtcCI6IjIwMTgtMDgtMTdUMDA6MjE6MjFaIiwic2l6ZSI6NzgyNH1dfV19fQ==
+  recorded_at: Wed, 05 Jul 2023 19:50:05 GMT
+recorded_with: VCR 6.1.0

@@ -56,8 +56,12 @@ class Wiki < ApplicationRecord
     'https://' + domain
   end
 
-  def api_url
+  def action_api_url
     "#{base_url}/w/api.php"
+  end
+
+  def rest_api_url
+    "#{base_url}/w/rest.php/v1/"
   end
 end
 

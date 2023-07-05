@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe WikiApi do
+describe WikiActionApi do
   describe 'error handling and calls ApiErrorHandling method' do
     let(:subject) { described_class.new.get_page_info(pageid: 58170849) }
 
@@ -93,6 +93,16 @@ describe WikiApi do
       continue = wiki_api.fetch_all query_parameters: continue_query
 
       expect(complete).to eq(continue)
+    end
+  end
+
+  describe '#get_first_revision' do
+    it 'gets the first revision', :vcr do
+      wiki_api = described_class.new
+      revision = wiki_api.get_first_revision(pageid: 58170849)
+      expect(revision['user']).to eq('AngevinKnight1154')
+      expect(revision['revid']).to eq(855254384)
+      expect(revision['size']).to eq(7824)
     end
   end
 
