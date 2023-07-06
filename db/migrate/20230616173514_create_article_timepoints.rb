@@ -4,7 +4,6 @@ class CreateArticleTimepoints < ActiveRecord::Migration[7.0]
       t.integer :revision_id
       t.integer :previous_revision_id
       t.integer :article_length
-      t.integer :links_count
       t.integer :revisions_count
       t.date :timestamp
       t.references :article, null: false, foreign_key: true

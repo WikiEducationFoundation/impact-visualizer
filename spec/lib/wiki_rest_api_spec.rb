@@ -29,6 +29,14 @@ describe WikiRestApi do
       expect(data['limit']).to be_in([true, false])
     end
 
+    it 'returns total count of edits, with a title with spaces', :vcr do
+      wiki_api = described_class.new
+      data = wiki_api.get_page_edits_count(page_title: '& Juliet')
+      expect(data).to be_a(Hash)
+      expect(data['count']).to be_a(Integer)
+      expect(data['limit']).to be_in([true, false])
+    end
+
     it 'returns total count of edits between revision IDs', :vcr do
       wiki_api = described_class.new
       data = wiki_api.get_page_edits_count(

@@ -1,0 +1,137 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=2364730&prop=info&redirects=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 06 Jul 2023 18:00:58 GMT
+      Server:
+      - mw2308.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '268'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '2'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=06-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
+        07 Aug 2023 12:00:00 GMT
+      - WMF-Last-Access=06-Jul-2023;Path=/;HttpOnly;secure;Expires=Mon, 07 Aug 2023
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
+        Game Reserve","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2023-07-05T19:13:45Z","lastrevid":1153643668,"length":13456}]}}'
+  recorded_at: Thu, 06 Jul 2023 18:00:59 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=2364730&prop=revisions&redirects=true&rvdir=newer&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=06-Jul-2023;
+        WMF-Last-Access-Global=06-Jul-2023
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 06 Jul 2023 18:00:59 GMT
+      Server:
+      - mw2397.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '273'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"rvcontinue":"20050915122639|23281131","continue":"||"},"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
+        Game Reserve","revisions":[{"revid":20142847,"parentid":0,"user":"Jamie7687","userid":311307,"timestamp":"2005-08-02T21:43:23Z","size":371}]}]}}'
+  recorded_at: Thu, 06 Jul 2023 18:00:59 GMT
+recorded_with: VCR 6.1.0

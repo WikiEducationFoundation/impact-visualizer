@@ -10,10 +10,8 @@ end
 #  id                               :integer          not null, primary key
 #  attributed_creation_at           :datetime
 #  attributed_length_delta          :integer
-#  attributed_links_count_delta     :integer
 #  attributed_revisions_count_delta :integer
 #  length_delta                     :integer
-#  links_count_delta                :integer
 #  revisions_count_delta            :integer
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null

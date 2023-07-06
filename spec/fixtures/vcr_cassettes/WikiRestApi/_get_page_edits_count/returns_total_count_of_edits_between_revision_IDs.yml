@@ -21,13 +21,13 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 05 Jul 2023 20:59:49 GMT
+      - Thu, 06 Jul 2023 19:19:42 GMT
       Server:
-      - mw2290.codfw.wmnet
+      - mw2308.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
       Cache-Control:
-      - max-age=60
+      - no-cache
       Access-Control-Allow-Origin:
       - "*"
       Vary:
@@ -39,13 +39,13 @@ http_interactions:
       Content-Type:
       - application/json
       Age:
-      - '24'
+      - '0'
       X-Cache:
-      - cp4041 miss, cp4041 hit/1
+      - cp4041 hit, cp4041 miss
       X-Cache-Status:
-      - hit-front
+      - hit-local
       Server-Timing:
-      - cache;desc="hit-front", host;desc="cp4041"
+      - cache;desc="hit-local", host;desc="cp4041"
       Strict-Transport-Security:
       - max-age=106384710; includeSubDomains; preload
       Report-To:
@@ -57,9 +57,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
       - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=05-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
-        06 Aug 2023 12:00:00 GMT
-      - WMF-Last-Access=05-Jul-2023;Path=/;HttpOnly;secure;Expires=Sun, 06 Aug 2023
+      - WMF-Last-Access-Global=06-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
+        07 Aug 2023 12:00:00 GMT
+      - WMF-Last-Access=06-Jul-2023;Path=/;HttpOnly;secure;Expires=Mon, 07 Aug 2023
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -68,5 +68,5 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"count":2,"limit":false}'
-  recorded_at: Wed, 05 Jul 2023 21:00:14 GMT
+  recorded_at: Thu, 06 Jul 2023 19:19:42 GMT
 recorded_with: VCR 6.1.0

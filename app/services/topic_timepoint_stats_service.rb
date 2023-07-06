@@ -8,6 +8,8 @@ class TopicTimepointStatsService
     # Setup counter variables
     length = 0
     length_delta = 0
+    revisions_count = 0
+    revisions_count_delta = 0
     articles_count = 0
 
     # Iterate and sum up stats
@@ -15,10 +17,13 @@ class TopicTimepointStatsService
       article_timepoint = topic_article_timepoint.article_timepoint
       length += article_timepoint.article_length
       length_delta += topic_article_timepoint.length_delta
+      revisions_count += article_timepoint.revisions_count
+      revisions_count_delta += topic_article_timepoint.revisions_count_delta
       articles_count += 1
     end
 
     # Capture stats
-    topic_timepoint.update(length:, length_delta:, articles_count:)
+    topic_timepoint.update(length:, length_delta:, articles_count:,
+                           revisions_count:, revisions_count_delta:)
   end
 end

@@ -20,6 +20,9 @@ class TimepointService
       @topic.active_article_bag.article_bag_articles.each do |article_bag_article|
         article = article_bag_article.article
 
+        # Update basic details of Article
+        @article_stats_service.update_details_for_article(article:)
+
         # Find or create ArticleTimepoint for each Article
         article_timepoint = ArticleTimepoint.find_or_create_by!(
           timestamp:, article:

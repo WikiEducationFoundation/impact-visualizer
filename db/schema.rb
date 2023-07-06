@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_21_231018) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_06_172908) do
   create_table "article_bag_articles", force: :cascade do |t|
     t.integer "article_bag_id", null: false
     t.integer "article_id", null: false
@@ -32,7 +32,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_231018) do
     t.integer "revision_id"
     t.integer "previous_revision_id"
     t.integer "article_length"
-    t.integer "links_count"
     t.integer "revisions_count"
     t.date "timestamp"
     t.integer "article_id", null: false
@@ -46,14 +45,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_231018) do
     t.integer "pageid"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "first_revision_id"
+    t.string "first_revision_by_name"
+    t.integer "first_revision_by_id"
+    t.datetime "first_revision_at"
   end
 
   create_table "topic_article_timepoints", force: :cascade do |t|
     t.integer "length_delta"
-    t.integer "links_count_delta"
     t.integer "revisions_count_delta"
     t.integer "attributed_length_delta"
-    t.integer "attributed_links_count_delta"
     t.integer "attributed_revisions_count_delta"
     t.datetime "attributed_creation_at"
     t.integer "topic_timepoint_id", null: false
@@ -69,14 +70,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_21_231018) do
   create_table "topic_timepoints", force: :cascade do |t|
     t.integer "length"
     t.integer "length_delta"
-    t.integer "links_count"
-    t.integer "links_count_delta"
     t.integer "articles_count"
     t.integer "articles_count_delta"
     t.integer "revisions_count"
     t.integer "revisions_count_delta"
     t.integer "attributed_length_delta"
-    t.integer "attributed_links_count_delta"
     t.integer "attributed_revisions_count_delta"
     t.integer "attributed_articles_created_delta"
     t.date "timestamp"

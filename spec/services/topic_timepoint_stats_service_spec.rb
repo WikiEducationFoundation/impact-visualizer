@@ -15,7 +15,9 @@ describe TopicTimepointStatsService do
       start_topic_timepoint.update(
         articles_count: nil,
         length_delta: nil,
-        length: nil
+        length: nil,
+        revisions_count: nil,
+        revisions_count_delta: nil
       )
 
       # Update stats based on pre-existing
@@ -26,8 +28,10 @@ describe TopicTimepointStatsService do
       start_topic_timepoint.reload
       expect(start_topic_timepoint).to have_attributes(
         articles_count: 2,
-        length_delta: 200,
-        length: 200
+        length_delta: 0,
+        length: 200,
+        revisions_count: 3,
+        revisions_count_delta: 0
       )
     end
 
@@ -36,7 +40,9 @@ describe TopicTimepointStatsService do
       end_topic_timepoint.update(
         articles_count: nil,
         length_delta: nil,
-        length: nil
+        length: nil,
+        revisions_count: nil,
+        revisions_count_delta: nil
       )
 
       # Update stats based on pre-existing
@@ -48,7 +54,9 @@ describe TopicTimepointStatsService do
       expect(end_topic_timepoint).to have_attributes(
         articles_count: 2,
         length_delta: 200,
-        length: 400
+        length: 400,
+        revisions_count: 7,
+        revisions_count_delta: 4
       )
     end
   end

@@ -24,7 +24,8 @@ class WikiRestApi
         to: to_rev_id
       }
     end
-    response = wiki_rest_server.get("page/#{page_title}/history/counts/edits", params)
+    title = page_title.tr(' ', '_')
+    response = wiki_rest_server.get("page/#{title}/history/counts/edits", params)
     Oj.load(response.body)
   rescue StandardError => e
     log_error(e)

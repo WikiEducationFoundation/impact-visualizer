@@ -39,14 +39,16 @@ class WikiActionApi
     data
   end
 
-  def get_page_info(pageid:)
+  def get_page_info(pageid: nil, title: nil)
     # Setup basic query parameters
     query_parameters = {
-      pageids: [pageid],
       prop: 'info',
       redirects: true,
       formatversion: '2'
     }
+
+    query_parameters['pageids'] = [pageid] if pageid
+    query_parameters['titles'] = [title] if title
 
     # Fetch it
     response = query(query_parameters:)

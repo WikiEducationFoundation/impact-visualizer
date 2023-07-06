@@ -2,11 +2,13 @@
 http_interactions:
 - request:
     method: get
-    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=2364730&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids&rvstart=2023-01-01T00:00:00Z
+    uri: https://en.wikipedia.org/w/rest.php/v1/page/&_Juliet/history/counts/edits
     body:
       encoding: US-ASCII
       string: ''
     headers:
+      Content-Type:
+      - application/json
       User-Agent:
       - Faraday v0.17.6
       Accept-Encoding:
@@ -19,31 +21,31 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 28 Jun 2023 21:58:48 GMT
+      - Thu, 06 Jul 2023 19:18:20 GMT
       Server:
-      - mw2450.codfw.wmnet
+      - mw2374.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
-      X-Frame-Options:
-      - SAMEORIGIN
-      Content-Disposition:
-      - inline; filename=api-result.json
-      Vary:
-      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
       Cache-Control:
-      - private, must-revalidate, max-age=0
+      - max-age=60
+      Access-Control-Allow-Origin:
+      - "*"
+      Vary:
+      - Accept-Encoding
+      Last-Modified:
+      - Thu, 06 Jul 2023 08:35:21 GMT
       Content-Length:
-      - '294'
+      - '27'
       Content-Type:
-      - application/json; charset=utf-8
+      - application/json
       Age:
-      - '0'
+      - '80'
       X-Cache:
-      - cp4041 miss, cp4041 pass
+      - cp4041 miss, cp4041 hit/1
       X-Cache-Status:
-      - pass
+      - hit-front
       Server-Timing:
-      - cache;desc="pass", host;desc="cp4041"
+      - cache;desc="hit-front", host;desc="cp4041"
       Strict-Transport-Security:
       - max-age=106384710; includeSubDomains; preload
       Report-To:
@@ -55,9 +57,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
       - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=28-Jun-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
-        30 Jul 2023 12:00:00 GMT
-      - WMF-Last-Access=28-Jun-2023;Path=/;HttpOnly;secure;Expires=Sun, 30 Jul 2023
+      - WMF-Last-Access-Global=06-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
+        07 Aug 2023 12:00:00 GMT
+      - WMF-Last-Access=06-Jul-2023;Path=/;HttpOnly;secure;Expires=Mon, 07 Aug 2023
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -65,8 +67,6 @@ http_interactions:
       - bytes
     body:
       encoding: UTF-8
-      string: '{"continue":{"rvcontinue":"20220519171123|1088700858","continue":"||"},"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
-        Game Reserve","revisions":[{"revid":1100917005,"parentid":1088700858,"user":"Uncle
-        Bash007","userid":37714525,"timestamp":"2022-07-28T09:46:48Z","size":13079}]}]}}'
-  recorded_at: Wed, 28 Jun 2023 21:58:48 GMT
+      string: '{"count":337,"limit":false}'
+  recorded_at: Thu, 06 Jul 2023 19:19:39 GMT
 recorded_with: VCR 6.1.0

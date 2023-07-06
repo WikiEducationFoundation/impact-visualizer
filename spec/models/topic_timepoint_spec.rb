@@ -16,12 +16,9 @@ end
 #  articles_count_delta              :integer
 #  attributed_articles_created_delta :integer
 #  attributed_length_delta           :integer
-#  attributed_links_count_delta      :integer
 #  attributed_revisions_count_delta  :integer
 #  length                            :integer
 #  length_delta                      :integer
-#  links_count                       :integer
-#  links_count_delta                 :integer
 #  revisions_count                   :integer
 #  revisions_count_delta             :integer
 #  timestamp                         :date

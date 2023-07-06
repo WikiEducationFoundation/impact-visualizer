@@ -3,5 +3,7 @@
 class ImpactVisualizerErrors
   class TopicMissingStartDate < StandardError; end
   class ArticleMissingPageid < StandardError; end
+  class ArticleMissingPageTitle < StandardError; end
   class InvalidTimestampForTopic < StandardError; end
+  class ArticleMissingFirstRevisionInfo < StandardError; end
 end
