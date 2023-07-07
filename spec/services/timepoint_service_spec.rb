@@ -82,6 +82,29 @@ describe TimepointService do
       expect(ArticleTimepoint.count).to eq(article_timepoint_count + article_count)
     end
 
+    it 'skips articles that were created after timepoint' do
+      article_bag = create(:small_article_bag, topic:)
+
+      # Make one Article newer than the others
+      # If first_revision_at is after end_date, it should not be included
+      first_article = article_bag.articles.first
+      first_article.update first_revision_at: end_date + 1.week
+
+      timepoint_service = described_class.new(topic:)
+      timepoint_service.build_timepoints
+
+      topic_timepoints_count = topic.timestamps.count
+
+      # Subtract the newer Article from count
+      article_count = article_bag.articles.count - 1
+      article_timepoint_count = topic_timepoints_count * article_count
+      topic_article_timepoint_count = topic_timepoints_count * article_count
+
+      expect(TopicTimepoint.count).to eq(topic_timepoints_count)
+      expect(ArticleTimepoint.count).to eq(article_timepoint_count)
+      expect(TopicArticleTimepoint.count).to eq(topic_article_timepoint_count)
+    end
+
     it 'updates details for Article' do
       article_bag = create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)

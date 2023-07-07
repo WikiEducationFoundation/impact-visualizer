@@ -6,6 +6,21 @@ class ArticleTimepoint < ApplicationRecord
 
   ## Associations
   belongs_to :article
+
+  ## Class Methods
+  def self.find_or_create_for_timestamp(article:, timestamp:)
+    unless article.first_revision_info?
+      raise ImpactVisualizerErrors::ArticleMissingFirstRevisionInfo
+    end
+
+    unless article.exists_at_timestamp?(timestamp)
+      raise ImpactVisualizerErrors::ArticleCreatedAfterTimestamp
+    end
+
+    ArticleTimepoint.find_or_create_by!(
+      timestamp:, article:
+    )
+  end
 end
 
 # == Schema Information

@@ -23,8 +23,11 @@ class TimepointService
         # Update basic details of Article
         @article_stats_service.update_details_for_article(article:)
 
+        # If article was created after timestamp, skip it
+        next unless article.exists_at_timestamp?(timestamp)
+
         # Find or create ArticleTimepoint for each Article
-        article_timepoint = ArticleTimepoint.find_or_create_by!(
+        article_timepoint = ArticleTimepoint.find_or_create_for_timestamp(
           timestamp:, article:
         )
 

@@ -5,28 +5,45 @@ require './spec/support/shared_contexts'
 
 describe ArticleStatsService do
   describe '#update_stats_for_article_timepoint' do
-    let!(:article_stats_service) { described_class.new }
-    let!(:article) { create(:article, pageid: 2364730, title: 'Yankari Game Reserve') }
-    let!(:article_timepoint) do
-      create(:article_timepoint, article:, timestamp: Date.new(2023, 1, 1))
+    context 'when the article exists at timestamp' do
+      let!(:article_stats_service) { described_class.new }
+      let!(:article) { create(:article, pageid: 2364730, title: 'Yankari Game Reserve') }
+      let!(:article_timepoint) do
+        create(:article_timepoint, article:, timestamp: Date.new(2023, 1, 1))
+      end
+
+      before do
+        article_stats_service.update_first_revision_info(article:)
+        article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
+        article_timepoint.reload
+      end
+
+      it 'captures revision_id', :vcr do
+        expect(article_timepoint.revision_id).to eq(1100917005)
+      end
+
+      it 'captures article_length', :vcr do
+        expect(article_timepoint.article_length).to eq(13079)
+      end
+
+      it 'updates revisions_count', :vcr do
+        expect(article_timepoint.revisions_count).to eq(261)
+      end
     end
 
-    before do
-      article_stats_service.update_first_revision_info(article:)
-      article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
-      article_timepoint.reload
-    end
+    context 'when the article does not exist at timestamp' do
+      let!(:article_stats_service) { described_class.new }
+      let!(:article) { create(:article, pageid: 2364730, title: 'Yankari Game Reserve') }
+      let!(:article_timepoint) do
+        create(:article_timepoint, article:, timestamp: Date.new(2001, 1, 1))
+      end
 
-    it 'captures revision_id', :vcr do
-      expect(article_timepoint.revision_id).to eq(1100917005)
-    end
-
-    it 'captures article_length', :vcr do
-      expect(article_timepoint.article_length).to eq(13079)
-    end
-
-    it 'updates revisions_count', :vcr do
-      expect(article_timepoint.revisions_count).to eq(261)
+      it 'captures revision_id', vcr: false do
+        article_stats_service.update_first_revision_info(article:)
+        expect do
+          article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
+        end.to raise_error(ImpactVisualizerErrors::ArticleCreatedAfterTimestamp)
+      end
     end
   end
 

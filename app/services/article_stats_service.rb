@@ -48,6 +48,9 @@ class ArticleStatsService
     unless article.first_revision_info?
       raise ImpactVisualizerErrors::ArticleMissingFirstRevisionInfo
     end
+    unless article.exists_at_timestamp?(timestamp)
+      raise ImpactVisualizerErrors::ArticleCreatedAfterTimestamp
+    end
 
     # Get the Revision at timestamp
     revision = @wiki_action_api.get_revision_at_timestamp(pageid:, timestamp:)
