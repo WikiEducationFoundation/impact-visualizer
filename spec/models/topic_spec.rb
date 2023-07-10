@@ -90,6 +90,22 @@ RSpec.describe Topic do
       end.to raise_error(ImpactVisualizerErrors::InvalidTimestampForTopic)
     end
   end
+
+  describe '#user_with_wiki_id' do
+    let!(:topic) { create(:topic) }
+    let!(:user) { create(:user, wiki_user_id: 123) }
+    let!(:topic_user) { create(:topic_user, topic:, user:) }
+
+    it 'returns an associated User with the given wiki userid' do
+      found_user = topic.user_with_wiki_id(123)
+      expect(found_user).to eq(user)
+    end
+
+    it 'returns nil if no associated User with the given wiki userid' do
+      found_user = topic.user_with_wiki_id(234)
+      expect(found_user).to eq(nil)
+    end
+  end
 end
 
 # == Schema Information

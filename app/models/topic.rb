@@ -54,6 +54,10 @@ class Topic < ApplicationRecord
     timestamps[timestamp_index + 1]
   end
 
+  def user_with_wiki_id(wiki_user_id)
+    users.find_by(wiki_user_id:)
+  end
+
   # TODO
   # Add a field to capture active article bag, but fall back to most recent
   def active_article_bag

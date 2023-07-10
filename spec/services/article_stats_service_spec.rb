@@ -88,9 +88,70 @@ describe ArticleStatsService do
       expect(end_topic_article_timepoint_1.revisions_count_delta).to eq(2)
     end
 
-    it 'updates attributed_creation_at and attributed_creator'
-    it 'updates attributed_length_delta'
-    it 'updates attributed_revisions_count_delta'
+    it 'updates attributed_creation_at and attributed_creator' do
+      user = create(:user, wiki_user_id: 123)
+      create(:topic_user, user:, topic:)
+
+      first_revision_at = Time.zone.now
+      article_1.update(first_revision_by_id: 123, first_revision_at:)
+
+      article_stats_service = described_class.new
+      article_stats_service.update_stats_for_topic_article_timepoint(
+        topic_article_timepoint: start_topic_article_timepoint_1
+      )
+      start_topic_article_timepoint_1.reload
+
+      expect(start_topic_article_timepoint_1.attributed_creator).to eq(user)
+      expect(start_topic_article_timepoint_1.attributed_creation_at).to eq(first_revision_at)
+    end
+
+    it 'updates attributed_length_delta and attributed_revisions_count_delta' do
+      user1 = create(:user, wiki_user_id: revisions_response[0][:userid])
+      user2 = create(:user, wiki_user_id: revisions_response[1][:userid])
+
+      create(:topic_user, user: user1, topic:)
+      create(:topic_user, user: user2, topic:)
+
+      expect_any_instance_of(WikiActionApi).to(
+        receive(:get_all_revisions_in_range)
+          .once
+          .with(pageid: 2364730, start_timestamp: start_date, end_timestamp: end_date)
+          .and_return(revisions_response)
+      )
+
+      article_stats_service = described_class.new
+      article_stats_service.update_stats_for_topic_article_timepoint(
+        topic_article_timepoint: end_topic_article_timepoint_1
+      )
+
+      end_topic_article_timepoint_1.reload
+      expect(end_topic_article_timepoint_1.attributed_length_delta).to eq(8605)
+      expect(end_topic_article_timepoint_1.attributed_revisions_count_delta).to eq(2)
+    end
+
+    it 'does not update attributed values if revision is negative' do
+      user1 = create(:user, wiki_user_id: revisions_response[0][:userid])
+      user2 = create(:user, wiki_user_id: revisions_response[2][:userid])
+
+      create(:topic_user, user: user1, topic:)
+      create(:topic_user, user: user2, topic:)
+
+      expect_any_instance_of(WikiActionApi).to(
+        receive(:get_all_revisions_in_range)
+          .once
+          .with(pageid: 2364730, start_timestamp: start_date, end_timestamp: end_date)
+          .and_return(revisions_response)
+      )
+
+      article_stats_service = described_class.new
+      article_stats_service.update_stats_for_topic_article_timepoint(
+        topic_article_timepoint: end_topic_article_timepoint_1
+      )
+
+      end_topic_article_timepoint_1.reload
+      expect(end_topic_article_timepoint_1.attributed_length_delta).to eq(8575)
+      expect(end_topic_article_timepoint_1.attributed_revisions_count_delta).to eq(1)
+    end
   end
 
   describe '#update_article_details' do

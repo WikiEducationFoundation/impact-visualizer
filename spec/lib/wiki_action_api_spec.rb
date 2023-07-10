@@ -138,4 +138,22 @@ describe WikiActionApi do
       expect(revisions[0]['size']).to be_a(Integer)
     end
   end
+
+  describe '#get_all_revisions_in_range' do
+    it 'fetches all revisions in range for a given article', vcr: true do
+      start_timestamp = Date.new(2020, 1, 1)
+      end_timestamp = Date.new(2023, 1, 1)
+      wiki_api = described_class.new
+      revisions = wiki_api.get_all_revisions_in_range(
+        pageid: 58170849,
+        start_timestamp:,
+        end_timestamp:
+      )
+      expect(revisions.count).to be > 0
+      expect(revisions[0]['user']).to be_a(String)
+      expect(revisions[0]['userid']).to be_a(Integer)
+      expect(revisions[0]['timestamp']).to be_a(String)
+      expect(revisions[0]['size']).to be_a(Integer)
+    end
+  end
 end

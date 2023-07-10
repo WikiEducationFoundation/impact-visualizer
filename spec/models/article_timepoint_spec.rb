@@ -71,15 +71,14 @@ end
 #
 # Table name: article_timepoints
 #
-#  id                   :integer          not null, primary key
-#  article_length       :integer
-#  revisions_count      :integer
-#  timestamp            :date
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  article_id           :integer          not null
-#  previous_revision_id :integer
-#  revision_id          :integer
+#  id              :integer          not null, primary key
+#  article_length  :integer
+#  revisions_count :integer
+#  timestamp       :date
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  article_id      :integer          not null
+#  revision_id     :integer
 #
 # Indexes
 #

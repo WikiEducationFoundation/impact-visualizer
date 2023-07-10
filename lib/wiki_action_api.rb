@@ -75,6 +75,27 @@ class WikiActionApi
     data.dig('pages', 0, 'revisions')
   end
 
+  def get_all_revisions_in_range(pageid:, start_timestamp:, end_timestamp:)
+    # Setup basic query parameters
+    query_parameters = {
+      pageids: [pageid],
+      prop: 'revisions',
+      rvprop: %w[size user userid timestamp ids],
+      rvlimit: 500,
+      redirects: true,
+      rvstart: start_timestamp&.beginning_of_day&.iso8601,
+      rvend: end_timestamp&.end_of_day&.iso8601,
+      rvdir: 'newer',
+      formatversion: '2'
+    }
+
+    # Fetch all revisions
+    data = fetch_all(query_parameters:)
+
+    # Return just the revisions
+    data.dig('pages', 0, 'revisions')
+  end
+
   def get_revision_at_timestamp(pageid:, timestamp:)
     # Setup basic query parameters
     query_parameters = {
