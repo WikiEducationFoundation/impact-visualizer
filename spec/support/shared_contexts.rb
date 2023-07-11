@@ -6,6 +6,8 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:start_date) { Date.new(2023, 1, 1) }
   let!(:end_date) { start_date + timepoint_day_interval.days }
   let!(:topic) { create(:topic, start_date:, end_date:, timepoint_day_interval:) }
+  let!(:user) { create(:user) }
+  let!(:topic_user) { create(:topic_user, user:, topic:) }
   let!(:article_1) { create(:article, pageid: 2364730) }
   let!(:article_2) { create(:article, pageid: 2364730) }
   let!(:article_bag) { create(:article_bag, topic:) }
@@ -22,7 +24,9 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:start_topic_article_timepoint_1) do
     create(:topic_article_timepoint, topic_timepoint: start_topic_timepoint,
            article_timepoint: start_article_timepoint_1, length_delta: 0,
-           revisions_count_delta: 0)
+           revisions_count_delta: 0, attributed_length_delta: 0,
+           attributed_revisions_count_delta: 0,
+           attributed_creator: user, attributed_creation_at: start_date)
   end
   let!(:start_article_timepoint_2) do
     create(:article_timepoint, article: article_2, timestamp: start_date,
@@ -31,7 +35,8 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:start_topic_article_timepoint_2) do
     create(:topic_article_timepoint, topic_timepoint: start_topic_timepoint,
            article_timepoint: start_article_timepoint_2, length_delta: 0,
-           revisions_count_delta: 0)
+           revisions_count_delta: 0, attributed_length_delta: 0,
+           attributed_revisions_count_delta: 0)
   end
 
   # End timepoints
@@ -44,7 +49,8 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:end_topic_article_timepoint_1) do
     create(:topic_article_timepoint, topic_timepoint: end_topic_timepoint,
            article_timepoint: end_article_timepoint_1, length_delta: 100,
-           revisions_count_delta: 2)
+           revisions_count_delta: 2, attributed_length_delta: 50,
+           attributed_revisions_count_delta: 1)
   end
   let!(:end_article_timepoint_2) do
     create(:article_timepoint, article: article_2, timestamp: end_date,
@@ -53,7 +59,8 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:end_topic_article_timepoint_2) do
     create(:topic_article_timepoint, topic_timepoint: end_topic_timepoint,
            article_timepoint: end_article_timepoint_2, length_delta: 100,
-           revisions_count_delta: 2)
+           revisions_count_delta: 2, attributed_length_delta: 50,
+           attributed_revisions_count_delta: 1)
   end
 
   let!(:revisions_response) do

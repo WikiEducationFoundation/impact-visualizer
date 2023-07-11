@@ -51,6 +51,16 @@ describe ArticleStatsService do
     # This shared context sets up 1 Topic with 2 Articles and 2 Timepoints
     include_context 'topic with two timepoints'
 
+    before do
+      params = {
+        attributed_length_delta: nil, attributed_revisions_count_delta: nil
+      }
+      start_topic_article_timepoint_1.update params
+      start_topic_article_timepoint_2.update params
+      end_topic_article_timepoint_1.update params
+      end_topic_article_timepoint_2.update params
+    end
+
     it 'updates length_delta based on previous article_timpoint' do
       # Reset length_delta so we can test it being updated
       end_topic_article_timepoint_1.update length_delta: nil

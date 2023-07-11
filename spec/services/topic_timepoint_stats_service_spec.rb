@@ -17,7 +17,8 @@ describe TopicTimepointStatsService do
         length_delta: nil,
         length: nil,
         revisions_count: nil,
-        revisions_count_delta: nil
+        revisions_count_delta: nil,
+        attributed_articles_created_delta: nil
       )
 
       # Update stats based on pre-existing
@@ -31,7 +32,8 @@ describe TopicTimepointStatsService do
         length_delta: 0,
         length: 200,
         revisions_count: 3,
-        revisions_count_delta: 0
+        revisions_count_delta: 0,
+        attributed_articles_created_delta: 1
       )
     end
 
@@ -42,7 +44,9 @@ describe TopicTimepointStatsService do
         length_delta: nil,
         length: nil,
         revisions_count: nil,
-        revisions_count_delta: nil
+        revisions_count_delta: nil,
+        attributed_revisions_count_delta: nil,
+        attributed_length_delta: nil
       )
 
       # Update stats based on pre-existing
@@ -56,7 +60,9 @@ describe TopicTimepointStatsService do
         length_delta: 200,
         length: 400,
         revisions_count: 7,
-        revisions_count_delta: 4
+        revisions_count_delta: 4,
+        attributed_revisions_count_delta: 2,
+        attributed_length_delta: 100
       )
     end
   end
