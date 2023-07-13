@@ -21,10 +21,10 @@ describe TimepointService do
         receive(:update_stats_for_article_timepoint)
       )
       allow_any_instance_of(ArticleStatsService).to(
-        receive(:update_stats_for_topic_article_timepoint)
-      )
-      allow_any_instance_of(ArticleStatsService).to(
         receive(:update_details_for_article)
+      )
+      allow_any_instance_of(TopicArticleTimepointStatsService).to(
+        receive(:update_stats_for_topic_article_timepoint)
       )
       allow_any_instance_of(TopicTimepointStatsService).to(
         receive(:update_stats_for_topic_timepoint)
@@ -140,12 +140,9 @@ describe TimepointService do
           )
       )
 
-      expect_any_instance_of(ArticleStatsService).to(
-        receive(:update_stats_for_topic_article_timepoint)
-          .exactly(article_timepoint_count).times
-          .with(
-            topic_article_timepoint: kind_of(TopicArticleTimepoint)
-          )
+      call_count = 0
+      allow_any_instance_of(TopicArticleTimepointStatsService).to(
+        receive(:update_stats_for_topic_article_timepoint) { call_count += 1 }
       )
 
       expect_any_instance_of(TopicTimepointStatsService).to(
@@ -157,6 +154,8 @@ describe TimepointService do
       )
 
       timepoint_service.build_timepoints
+
+      expect(call_count).to eq(article_timepoint_count)
     end
   end
 end

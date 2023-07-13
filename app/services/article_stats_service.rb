@@ -38,9 +38,9 @@ class ArticleStatsService
   def update_stats_for_article_timepoint(article_timepoint:)
     # Setup some variables
     article = article_timepoint.article
+    timestamp = article_timepoint.timestamp
     pageid = article.pageid
     title = article.title
-    timestamp = article_timepoint.timestamp
 
     # Raise if the article doesn't have a "pageid" or "title"
     raise ImpactVisualizerErrors::ArticleMissingPageid unless pageid
@@ -67,87 +67,6 @@ class ArticleStatsService
       article_length: revision['size'],
       revision_id: revision['revid'],
       revisions_count: revisions_count['count']
-    )
-  end
-
-  def update_stats_for_topic_article_timepoint(topic_article_timepoint:)
-    # Setup some variables
-    timestamp = topic_article_timepoint.timestamp
-    topic = topic_article_timepoint.topic
-    article = topic_article_timepoint.article
-    article_timepoint = topic_article_timepoint.article_timepoint
-
-    length_delta = 0
-    revisions_count_delta = 0
-    attributed_creator = nil
-    attributed_creation_at = nil
-    attributed_length_delta = 0
-    attributed_revisions_count_delta = 0
-
-    # Get previous timestamp
-    previous_timestamp = topic.timestamp_previous_to(timestamp)
-
-    # Get article_timepoint associated with previous timestamp
-    previous_article_timepoint = ArticleTimepoint.find_by(article:, timestamp: previous_timestamp)
-
-    if previous_timestamp && previous_article_timepoint
-      # Calculate diffs based on previous article_timepoint and current article_timepoint
-      length_delta =
-        article_timepoint.article_length - previous_article_timepoint.article_length
-      revisions_count_delta =
-        article_timepoint.revisions_count - previous_article_timepoint.revisions_count
-
-      # Get all revisions since previous timestamp
-      revisions = @wiki_action_api.get_all_revisions_in_range(
-        pageid: article.pageid,
-        start_timestamp: previous_timestamp,
-        end_timestamp: timestamp
-      )
-
-      revisions&.each_with_index do |revision, index|
-        # For each revision, check to see if revision created by topic_user
-        user = topic.user_with_wiki_id(revision[:userid])
-
-        # Skip if user not found
-        next unless user
-
-        # Find the size of previous revision, so we can diff
-        if index.zero?
-          # If first revision in set, get size of previous revision from previous_article_timepoint
-          previous_size = previous_article_timepoint.article_length
-        else
-          # Otherwise, grab from previous array element
-          previous_size = revisions[index - 1][:size]
-        end
-
-        # Calculate the diff
-        size_diff = revision[:size] - previous_size
-
-        # Skip if revision has negative size
-        next unless size_diff.positive?
-
-        # Update counts if revision created by topic_user
-        attributed_length_delta += size_diff
-
-        # Update count of attributed revisions
-        attributed_revisions_count_delta += 1
-      end
-
-    else
-      # If no previous, this must be the first
-      # Check to see if created by a topic_user
-      attributed_creator = topic.users.find_by wiki_user_id: article.first_revision_by_id
-      attributed_creation_at = article.first_revision_at if attributed_creator
-    end
-
-    # Update accordingly
-    topic_article_timepoint.update(
-      length_delta:,
-      revisions_count_delta:,
-      attributed_creator:,
-      attributed_creation_at:,
-      attributed_length_delta:,
-      attributed_revisions_count_delta:
     )
   end
 end
