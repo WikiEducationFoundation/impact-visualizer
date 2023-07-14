@@ -1,0 +1,64 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.wikimedia.org/service/lw/inference/v1/models/ruwiki-articlequality:predict
+    body:
+      encoding: UTF-8
+      string: '{"rev_id":1}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '322'
+      Content-Type:
+      - application/json
+      Date:
+      - Fri, 14 Jul 2023 22:21:52 GMT
+      Server:
+      - envoy
+      Cache-Control:
+      - no-cache
+      X-Ratelimit-Limit:
+      - 50000, 50000;w=3600
+      X-Ratelimit-Remaining:
+      - '49991'
+      X-Ratelimit-Reset:
+      - '2284'
+      Age:
+      - '4'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJydXdpa2kiOnsibW9kZWxzIjp7ImFydGljbGVxdWFsaXR5Ijp7InZlcnNpb24iOiIwLjguMCJ9fSwic2NvcmVzIjp7IjEiOnsiYXJ0aWNsZXF1YWxpdHkiOnsic2NvcmUiOnsicHJlZGljdGlvbiI6IklWIiwicHJvYmFiaWxpdHkiOnsiSSI6MC4xMzU2NDA0Mzk2NzE4OTMzNSwiSUkiOjAuMDY1MzYyMDAwNzAzMDYwOTcsIklJSSI6MC4yMTIwODg4OTIzOTU5MTkwOCwiSVYiOjAuNTMzMjg5Njg5MzI2OTA0NSwi0JTQoSI6MC4wMTExNDY0MzQ3MjE4NDQ4MTUsItCY0KEiOjAuMDI1NDgxMTAzODc4MTA2ODEsItCl0KEiOjAuMDE2OTkxNDM5MzAyMjcwNDI4fX19fX19fQ==
+  recorded_at: Fri, 14 Jul 2023 22:21:56 GMT
+recorded_with: VCR 6.1.0

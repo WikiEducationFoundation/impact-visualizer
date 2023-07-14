@@ -16,12 +16,20 @@ describe LiftWingApi do
 
   describe '#get_revision_quality' do
     let(:wikipedia) { create(:wiki, project: 'wikipedia', language: 'en') }
+    let(:ru_wikipedia) { create(:wiki, project: 'wikipedia', language: 'ru') }
     let(:wikidata) { create(:wiki, project: 'wikidata', language: 'en') }
 
     it 'fetches json for wikipedia', vcr: true do
       response = described_class.new(wikipedia).get_revision_quality(641962088)
       expect(response).to be_a(Hash)
       expect(response.dig('enwiki', 'scores', '641962088', 'articlequality', 'score'))
+        .to be_a(Hash)
+    end
+
+    it 'fetches json for ru wikipedia', vcr: true do
+      response = described_class.new(ru_wikipedia).get_revision_quality(1)
+      expect(response).to be_a(Hash)
+      expect(response.dig('ruwiki', 'scores', '1', 'articlequality', 'score'))
         .to be_a(Hash)
     end
 
