@@ -33,7 +33,8 @@ describe TopicTimepointStatsService do
         length: 200,
         revisions_count: 3,
         revisions_count_delta: 0,
-        attributed_articles_created_delta: 1
+        attributed_articles_created_delta: 1,
+        average_wp10_prediction: 50.0
       )
     end
 
@@ -62,7 +63,8 @@ describe TopicTimepointStatsService do
         revisions_count: 7,
         revisions_count_delta: 4,
         attributed_revisions_count_delta: 2,
-        attributed_length_delta: 100
+        attributed_length_delta: 100,
+        average_wp10_prediction: 55.0
       )
     end
   end

@@ -14,6 +14,7 @@ class TopicTimepointStatsService
     attributed_revisions_count_delta = 0
     attributed_length_delta = 0
     attributed_articles_created_delta = 0
+    wp10_predictions = []
 
     # Iterate and sum up stats
     topic_article_timepoints.each do |topic_article_timepoint|
@@ -25,13 +26,23 @@ class TopicTimepointStatsService
       attributed_revisions_count_delta += topic_article_timepoint.attributed_revisions_count_delta
       attributed_length_delta += topic_article_timepoint.attributed_length_delta
       attributed_articles_created_delta += 1 if topic_article_timepoint.attributed_creator
+      wp10_predictions << article_timepoint.wp10_prediction if article_timepoint.wp10_prediction
       articles_count += 1
     end
+
+    # Find average of wp10_predictions
+    average_wp10_prediction = calulate_average_wp10_prediction(wp10_predictions)
 
     # Capture stats
     topic_timepoint.update(length:, length_delta:, articles_count:,
                            revisions_count:, revisions_count_delta:,
                            attributed_revisions_count_delta:,
-                           attributed_length_delta:, attributed_articles_created_delta:)
+                           attributed_length_delta:, attributed_articles_created_delta:,
+                           average_wp10_prediction:)
+  end
+
+  def calulate_average_wp10_prediction(wp10_predictions)
+    sum = wp10_predictions.sum
+    sum.to_f / wp10_predictions.size
   end
 end

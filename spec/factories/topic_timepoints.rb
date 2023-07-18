@@ -13,11 +13,13 @@ end
 #  attributed_articles_created_delta :integer
 #  attributed_length_delta           :integer
 #  attributed_revisions_count_delta  :integer
+#  average_wp10_prediction           :float
 #  length                            :integer
 #  length_delta                      :integer
 #  revisions_count                   :integer
 #  revisions_count_delta             :integer
 #  timestamp                         :date
+#  wp10_prediction                   :float
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
 #  topic_id                          :integer          not null
