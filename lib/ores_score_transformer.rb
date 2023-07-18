@@ -3,12 +3,12 @@
 class OresScoreTransformer
   # ORES articlequality ratings are often derived from the en.wiki system,
   # so this is the fallback scheme.
-  ENWIKI_WEIGHTING = { 'FA'    => 100,
-                       'GA'    => 80,
-                       'B'     => 60,
-                       'C'     => 40,
+  ENWIKI_WEIGHTING = { 'FA' => 100,
+                       'GA' => 80,
+                       'B' => 60,
+                       'C' => 40,
                        'Start' => 20,
-                       'Stub'  => 0 }.freeze
+                       'Stub' => 0 }.freeze
   FRWIKI_WEIGHTING = { 'adq' => 100,
                        'ba' => 80,
                        'a' => 60,
