@@ -16,7 +16,8 @@ class LiftWingApi
     wiki.project == 'wikipedia' && AVAILABLE_WIKIPEDIAS.include?(wiki.language)
   end
 
-  def initialize(wiki)
+  def initialize(wiki = nil)
+    wiki ||= Wiki.default_wiki
     raise InvalidProjectError unless LiftWingApi.valid_wiki?(wiki)
     @project_code = wiki.project == 'wikidata' ? 'wikidata' + 'wiki' : wiki.language + 'wiki'
     @project_quality_model = wiki.project == 'wikidata' ? 'itemquality' : 'articlequality'
@@ -25,7 +26,9 @@ class LiftWingApi
   def get_revision_quality(rev_id)
     body = { rev_id: }.to_json
     response = lift_wing_server.post(quality_query_url, body)
-    Oj.load(response.body)
+    parsed_response = Oj.load(response.body)
+    parsed_response.dig(@project_code, 'scores', rev_id.to_s,
+                        @project_quality_model, 'score', 'probability')
   rescue StandardError => e
     log_error(e)
     return {}

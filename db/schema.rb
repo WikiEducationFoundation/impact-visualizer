@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_06_172908) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_18_174702) do
   create_table "article_bag_articles", force: :cascade do |t|
     t.integer "article_bag_id", null: false
     t.integer "article_id", null: false
@@ -36,6 +36,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_06_172908) do
     t.integer "article_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.float "wp10_prediction"
     t.index ["article_id"], name: "index_article_timepoints_on_article_id"
   end
 

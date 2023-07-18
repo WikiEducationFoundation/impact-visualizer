@@ -19,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 07 Jul 2023 17:57:27 GMT
+      - Tue, 18 Jul 2023 18:22:07 GMT
       Server:
-      - mw2368.codfw.wmnet
+      - mw2290.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -37,7 +37,7 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Age:
-      - '0'
+      - '2'
       X-Cache:
       - cp4041 miss, cp4041 pass
       X-Cache-Status:
@@ -55,9 +55,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
       - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=07-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Tue,
-        08 Aug 2023 12:00:00 GMT
-      - WMF-Last-Access=07-Jul-2023;Path=/;HttpOnly;secure;Expires=Tue, 08 Aug 2023
+      - WMF-Last-Access-Global=18-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sat,
+        19 Aug 2023 12:00:00 GMT
+      - WMF-Last-Access=18-Jul-2023;Path=/;HttpOnly;secure;Expires=Sat, 19 Aug 2023
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -67,7 +67,7 @@ http_interactions:
       encoding: UTF-8
       string: '{"continue":{"rvcontinue":"20050915122639|23281131","continue":"||"},"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
         Game Reserve","revisions":[{"revid":20142847,"parentid":0,"user":"Jamie7687","userid":311307,"timestamp":"2005-08-02T21:43:23Z","size":371}]}]}}'
-  recorded_at: Fri, 07 Jul 2023 17:57:27 GMT
+  recorded_at: Tue, 18 Jul 2023 18:22:08 GMT
 - request:
     method: get
     uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=2364730&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids&rvstart=2023-01-01T00:00:00Z
@@ -78,8 +78,8 @@ http_interactions:
       User-Agent:
       - Faraday v0.17.6
       Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=07-Jul-2023;
-        WMF-Last-Access-Global=07-Jul-2023
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=18-Jul-2023;
+        WMF-Last-Access-Global=18-Jul-2023
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -90,9 +90,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 07 Jul 2023 17:57:27 GMT
+      - Tue, 18 Jul 2023 18:22:08 GMT
       Server:
-      - mw2300.codfw.wmnet
+      - mw2368.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -134,7 +134,7 @@ http_interactions:
       string: '{"continue":{"rvcontinue":"20220519171123|1088700858","continue":"||"},"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
         Game Reserve","revisions":[{"revid":1100917005,"parentid":1088700858,"user":"Uncle
         Bash007","userid":37714525,"timestamp":"2022-07-28T09:46:48Z","size":13079}]}]}}'
-  recorded_at: Fri, 07 Jul 2023 17:57:27 GMT
+  recorded_at: Tue, 18 Jul 2023 18:22:08 GMT
 - request:
     method: get
     uri: https://en.wikipedia.org/w/rest.php/v1/page/Yankari_Game_Reserve/history/counts/edits?from=20142847&to=1100917005
@@ -156,9 +156,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Fri, 07 Jul 2023 17:57:28 GMT
+      - Tue, 18 Jul 2023 18:22:08 GMT
       Server:
-      - mw2293.codfw.wmnet
+      - mw2323.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
       Cache-Control:
@@ -168,7 +168,7 @@ http_interactions:
       Vary:
       - Accept-Encoding
       Last-Modified:
-      - Sun, 07 May 2023 13:35:58 GMT
+      - Sat, 15 Jul 2023 17:08:07 GMT
       Content-Length:
       - '27'
       Content-Type:
@@ -192,9 +192,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
       - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=07-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Tue,
-        08 Aug 2023 12:00:00 GMT
-      - WMF-Last-Access=07-Jul-2023;Path=/;HttpOnly;secure;Expires=Tue, 08 Aug 2023
+      - WMF-Last-Access-Global=18-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sat,
+        19 Aug 2023 12:00:00 GMT
+      - WMF-Last-Access=18-Jul-2023;Path=/;HttpOnly;secure;Expires=Sat, 19 Aug 2023
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -203,5 +203,65 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"count":261,"limit":false}'
-  recorded_at: Fri, 07 Jul 2023 17:57:28 GMT
+  recorded_at: Tue, 18 Jul 2023 18:22:08 GMT
+- request:
+    method: post
+    uri: https://api.wikimedia.org/service/lw/inference/v1/models/enwiki-articlequality:predict
+    body:
+      encoding: UTF-8
+      string: '{"rev_id":1100917005}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '301'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 18 Jul 2023 18:22:06 GMT
+      Server:
+      - envoy
+      Cache-Control:
+      - no-cache
+      X-Ratelimit-Limit:
+      - 50000, 50000;w=3600
+      X-Ratelimit-Remaining:
+      - '49985'
+      X-Ratelimit-Reset:
+      - '2272'
+      Age:
+      - '2'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"enwiki":{"models":{"articlequality":{"version":"0.8.2"}},"scores":{"1100917005":{"articlequality":{"score":{"prediction":"C","probability":{"B":0.24610542305519229,"C":0.403842982844304,"FA":0.013572942908747289,"GA":0.30218674600346773,"Start":0.029190869786169683,"Stub":0.00510103540211908}}}}}}}'
+  recorded_at: Tue, 18 Jul 2023 18:22:08 GMT
 recorded_with: VCR 6.1.0

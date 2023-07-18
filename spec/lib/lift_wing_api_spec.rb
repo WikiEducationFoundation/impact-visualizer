@@ -22,22 +22,24 @@ describe LiftWingApi do
     it 'fetches json for wikipedia', vcr: true do
       response = described_class.new(wikipedia).get_revision_quality(641962088)
       expect(response).to be_a(Hash)
-      expect(response.dig('enwiki', 'scores', '641962088', 'articlequality', 'score'))
-        .to be_a(Hash)
+      expect(response['B']).to be_a(Numeric)
+      expect(response['C']).to be_a(Numeric)
+      expect(response['FA']).to be_a(Numeric)
+      expect(response['GA']).to be_a(Numeric)
+      expect(response['Start']).to be_a(Numeric)
+      expect(response['Stub']).to be_a(Numeric)
     end
 
     it 'fetches json for ru wikipedia', vcr: true do
       response = described_class.new(ru_wikipedia).get_revision_quality(1)
       expect(response).to be_a(Hash)
-      expect(response.dig('ruwiki', 'scores', '1', 'articlequality', 'score'))
-        .to be_a(Hash)
+      expect(response['I']).to be_a(Numeric)
     end
 
     it 'fetches json for wikidata', vcr: true do
       response = described_class.new(wikidata).get_revision_quality(641962088)
       expect(response).to be_a(Hash)
-      expect(response.dig('wikidatawiki', 'scores', '641962088', 'itemquality', 'score'))
-        .to be_a(Hash)
+      expect(response['A']).to be_a(Numeric)
     end
   end
 

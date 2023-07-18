@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 class ArticleStatsService
-  def initialize
-    @wiki_action_api = WikiActionApi.new
-    @wiki_rest_api = WikiRestApi.new
+  def initialize(wiki = nil)
+    wiki ||= Wiki.default_wiki
+    @wiki = wiki
+    @wiki_action_api = WikiActionApi.new(wiki)
+    @wiki_rest_api = WikiRestApi.new(wiki)
+    @lift_wing_api = LiftWingApi.new(wiki)
   end
 
   def update_details_for_article(article:)
@@ -62,11 +65,22 @@ class ArticleStatsService
       to_rev_id: revision['revid']
     )
 
+    # Get the wp10 quality prediction
+    quality = weighted_revision_quality(revision_id: revision['revid'])
+
     # Update the ArticleTimepoint
     article_timepoint.update(
       article_length: revision['size'],
       revision_id: revision['revid'],
-      revisions_count: revisions_count['count']
+      revisions_count: revisions_count['count'],
+      wp10_prediction: quality
     )
+  end
+
+  def weighted_revision_quality(revision_id:)
+    probabilities = @lift_wing_api.get_revision_quality(revision_id)
+    return nil unless probabilities
+    language = @wiki.language
+    OresScoreTransformer.weighted_mean_score_from_probabilities(probabilities:, language:)
   end
 end

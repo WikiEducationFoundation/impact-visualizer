@@ -75,6 +75,7 @@ end
 #  article_length  :integer
 #  revisions_count :integer
 #  timestamp       :date
+#  wp10_prediction :float
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  article_id      :integer          not null

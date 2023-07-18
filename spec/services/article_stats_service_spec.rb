@@ -29,6 +29,10 @@ describe ArticleStatsService do
       it 'updates revisions_count', :vcr do
         expect(article_timepoint.revisions_count).to eq(261)
       end
+
+      it 'updates wp10_prediction', vcr: true do
+        expect(article_timepoint.wp10_prediction).to eq(57.03609606395922836)
+      end
     end
 
     context 'when the article does not exist at timestamp' do
@@ -44,6 +48,15 @@ describe ArticleStatsService do
           article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
         end.to raise_error(ImpactVisualizerErrors::ArticleCreatedAfterTimestamp)
       end
+    end
+  end
+
+  describe '#weighted_revision_quality' do
+    let!(:article_stats_service) { described_class.new }
+
+    it 'returns the weighted quality of revision', vcr: false do
+      quality = article_stats_service.weighted_revision_quality(revision_id: 1100917005)
+      expect(quality).to be_a(Numeric)
     end
   end
 
