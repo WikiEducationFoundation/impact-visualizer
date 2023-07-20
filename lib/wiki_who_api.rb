@@ -14,12 +14,12 @@ class WikiWhoApi
     AVAILABLE_WIKIPEDIAS.include?(wiki.language)
   end
 
-  def initialize(wiki)
+  def initialize(wiki:)
     raise InvalidLanguageError unless WikiWhoApi.valid_wiki_language?(wiki)
     @wiki = wiki
   end
 
-  def get_attributed_revision_tokens(revision_id)
+  def get_revision_tokens(revision_id)
     url_query = query_url(revision_id)
     response = wiki_who_server.get(url_query)
     response_body = response.body

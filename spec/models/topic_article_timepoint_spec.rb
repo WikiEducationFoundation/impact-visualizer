@@ -1,10 +1,34 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require './spec/support/shared_contexts'
 
 RSpec.describe TopicArticleTimepoint do
   it { is_expected.to belong_to(:topic_timepoint) }
   it { is_expected.to belong_to(:article_timepoint) }
+
+  describe '#find_by_topic_article_and_timestamp' do
+    # This shared context sets up 1 Topic with 2 Articles and 2 Timepoints
+    include_context 'topic with two timepoints'
+
+    it 'returns the expected timepoint' do
+      topic_article_timepoint = described_class.find_by_topic_article_and_timestamp(
+        topic:,
+        article: article_1,
+        timestamp: start_date
+      )
+      expect(topic_article_timepoint).to eq(start_topic_article_timepoint_1)
+    end
+
+    it 'returns nil if none found' do
+      topic_article_timepoint = described_class.find_by_topic_article_and_timestamp(
+        topic:,
+        article: article_1,
+        timestamp: Date.new(2023, 1, 2)
+      )
+      expect(topic_article_timepoint).to be_nil
+    end
+  end
 end
 
 # == Schema Information
@@ -15,8 +39,12 @@ end
 #  attributed_creation_at           :datetime
 #  attributed_length_delta          :integer
 #  attributed_revisions_count_delta :integer
+#  attributed_token_count           :integer
+#  attributed_token_count_delta     :integer
+#  initial_attributed_token_count   :integer
 #  length_delta                     :integer
 #  revisions_count_delta            :integer
+#  token_count_delta                :integer
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
 #  article_timepoint_id             :integer          not null

@@ -91,6 +91,16 @@ RSpec.describe Topic do
     end
   end
 
+  describe '#first_timestamp' do
+    let(:start_date) { Date.new(2023, 1, 1) }
+    let(:end_date) { start_date + 30.days }
+    let(:topic) { create(:topic, start_date:, end_date:) }
+
+    it 'returns the next timestamp following the provided timestamp' do
+      expect(topic.first_timestamp).to eq(Date.new(2023, 1, 1))
+    end
+  end
+
   describe '#user_with_wiki_id' do
     let!(:topic) { create(:topic) }
     let!(:user) { create(:user, wiki_user_id: 123) }

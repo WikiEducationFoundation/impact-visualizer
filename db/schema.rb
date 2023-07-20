@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_18_185452) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_20_234017) do
   create_table "article_bag_articles", force: :cascade do |t|
     t.integer "article_bag_id", null: false
     t.integer "article_id", null: false
@@ -37,6 +37,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_18_185452) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "wp10_prediction"
+    t.integer "token_count"
     t.index ["article_id"], name: "index_article_timepoints_on_article_id"
   end
 
@@ -62,6 +63,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_18_185452) do
     t.integer "attributed_creator_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "token_count_delta"
+    t.integer "initial_attributed_token_count"
+    t.integer "attributed_token_count"
+    t.integer "attributed_token_count_delta"
     t.index ["article_timepoint_id"], name: "index_topic_article_timepoints_on_article_timepoint_id"
     t.index ["attributed_creator_id"], name: "index_topic_article_timepoints_on_attributed_creator_id"
     t.index ["topic_timepoint_id"], name: "index_topic_article_timepoints_on_topic_timepoint_id"
@@ -83,6 +88,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_18_185452) do
     t.datetime "updated_at", null: false
     t.float "wp10_prediction"
     t.float "average_wp10_prediction"
+    t.integer "token_count"
+    t.integer "token_count_delta"
+    t.integer "attributed_token_count"
+    t.integer "attributed_token_count_delta"
     t.index ["topic_id"], name: "index_topic_timepoints_on_topic_id"
   end
 

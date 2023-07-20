@@ -11,8 +11,12 @@ end
 #  attributed_creation_at           :datetime
 #  attributed_length_delta          :integer
 #  attributed_revisions_count_delta :integer
+#  attributed_token_count           :integer
+#  attributed_token_count_delta     :integer
+#  initial_attributed_token_count   :integer
 #  length_delta                     :integer
 #  revisions_count_delta            :integer
+#  token_count_delta                :integer
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
 #  article_timepoint_id             :integer          not null

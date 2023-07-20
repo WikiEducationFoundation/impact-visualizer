@@ -18,7 +18,11 @@ describe TopicTimepointStatsService do
         length: nil,
         revisions_count: nil,
         revisions_count_delta: nil,
-        attributed_articles_created_delta: nil
+        attributed_articles_created_delta: nil,
+        token_count: nil,
+        token_count_delta: nil,
+        attributed_token_count: nil,
+        attributed_token_count_delta: nil
       )
 
       # Update stats based on pre-existing
@@ -34,7 +38,11 @@ describe TopicTimepointStatsService do
         revisions_count: 3,
         revisions_count_delta: 0,
         attributed_articles_created_delta: 1,
-        average_wp10_prediction: 50.0
+        average_wp10_prediction: 50.0,
+        token_count: 30,
+        token_count_delta: 0,
+        attributed_token_count: 0,
+        attributed_token_count_delta: 0
       )
     end
 
@@ -47,7 +55,11 @@ describe TopicTimepointStatsService do
         revisions_count: nil,
         revisions_count_delta: nil,
         attributed_revisions_count_delta: nil,
-        attributed_length_delta: nil
+        attributed_length_delta: nil,
+        token_count: nil,
+        token_count_delta: nil,
+        attributed_token_count: nil,
+        attributed_token_count_delta: nil
       )
 
       # Update stats based on pre-existing
@@ -64,7 +76,11 @@ describe TopicTimepointStatsService do
         revisions_count_delta: 4,
         attributed_revisions_count_delta: 2,
         attributed_length_delta: 100,
-        average_wp10_prediction: 55.0
+        average_wp10_prediction: 55.0,
+        token_count: 70,
+        token_count_delta: 60,
+        attributed_token_count: 40,
+        attributed_token_count_delta: 20
       )
     end
   end

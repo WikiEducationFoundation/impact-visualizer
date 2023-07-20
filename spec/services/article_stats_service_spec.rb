@@ -4,6 +4,35 @@ require 'rails_helper'
 require './spec/support/shared_contexts'
 
 describe ArticleStatsService do
+  describe '#update_article_details' do
+    it 'captures pageid given title', :vcr do
+      article = create(:article, pageid: nil, title: 'Yankari Game Reserve')
+      article_stats_service = described_class.new
+      article_stats_service.update_details_for_article(article:)
+      article.reload
+      expect(article.pageid).to eq(2364730)
+    end
+
+    it 'captures title given pageid', :vcr do
+      article = create(:article, pageid: 2364730, title: nil)
+      article_stats_service = described_class.new
+      article_stats_service.update_details_for_article(article:)
+      article.reload
+      expect(article.title).to eq('Yankari Game Reserve')
+    end
+
+    it 'captures first revision details', :vcr do
+      article = create(:article, pageid: 2364730, first_revision_id: nil)
+      article_stats_service = described_class.new
+      article_stats_service.update_details_for_article(article:)
+      article.reload
+      expect(article.first_revision_id).to eq(20142847)
+      expect(article.first_revision_at).to eq('2005-08-02 21:43:23')
+      expect(article.first_revision_by_name).to eq('Jamie7687')
+      expect(article.first_revision_by_id).to eq(311307)
+    end
+  end
+
   describe '#update_stats_for_article_timepoint' do
     context 'when the article exists at timestamp' do
       let!(:article_stats_service) { described_class.new }
@@ -24,6 +53,10 @@ describe ArticleStatsService do
 
       it 'captures article_length', :vcr do
         expect(article_timepoint.article_length).to eq(13079)
+      end
+
+      it 'captures token_count', vcr: true do
+        expect(article_timepoint.token_count).to eq(2984)
       end
 
       it 'updates revisions_count', :vcr do
@@ -57,35 +90,6 @@ describe ArticleStatsService do
     it 'returns the weighted quality of revision', vcr: false do
       quality = article_stats_service.weighted_revision_quality(revision_id: 1100917005)
       expect(quality).to be_a(Numeric)
-    end
-  end
-
-  describe '#update_article_details' do
-    it 'captures pageid given title', :vcr do
-      article = create(:article, pageid: nil, title: 'Yankari Game Reserve')
-      article_stats_service = described_class.new
-      article_stats_service.update_details_for_article(article:)
-      article.reload
-      expect(article.pageid).to eq(2364730)
-    end
-
-    it 'captures title given pageid', :vcr do
-      article = create(:article, pageid: 2364730, title: nil)
-      article_stats_service = described_class.new
-      article_stats_service.update_details_for_article(article:)
-      article.reload
-      expect(article.title).to eq('Yankari Game Reserve')
-    end
-
-    it 'captures first revision details', :vcr do
-      article = create(:article, pageid: 2364730, first_revision_id: nil)
-      article_stats_service = described_class.new
-      article_stats_service.update_details_for_article(article:)
-      article.reload
-      expect(article.first_revision_id).to eq(20142847)
-      expect(article.first_revision_at).to eq('2005-08-02 21:43:23')
-      expect(article.first_revision_by_name).to eq('Jamie7687')
-      expect(article.first_revision_by_id).to eq(311307)
     end
   end
 end

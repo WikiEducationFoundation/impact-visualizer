@@ -10,6 +10,20 @@ class TopicArticleTimepoint < ApplicationRecord
   delegate :timestamp, to: :topic_timepoint
   delegate :topic, to: :topic_timepoint
   delegate :article, to: :article_timepoint
+
+  ## Class Methods
+
+  def self.find_by_topic_article_and_timestamp(topic:, article:, timestamp:)
+    return nil unless topic && article && timestamp
+    joins(topic_timepoint: [:topic], article_timepoint: [:article])
+      .where('topics.id = ? AND
+              articles.id = ? AND
+              topic_timepoints.timestamp = ?',
+             topic.id,
+             article.id,
+             timestamp.to_date)
+      .first
+  end
 end
 
 # == Schema Information
@@ -20,8 +34,12 @@ end
 #  attributed_creation_at           :datetime
 #  attributed_length_delta          :integer
 #  attributed_revisions_count_delta :integer
+#  attributed_token_count           :integer
+#  attributed_token_count_delta     :integer
+#  initial_attributed_token_count   :integer
 #  length_delta                     :integer
 #  revisions_count_delta            :integer
+#  token_count_delta                :integer
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
 #  article_timepoint_id             :integer          not null
