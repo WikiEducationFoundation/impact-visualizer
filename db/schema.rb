@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_20_234017) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_28_204352) do
   create_table "article_bag_articles", force: :cascade do |t|
     t.integer "article_bag_id", null: false
     t.integer "article_id", null: false
@@ -70,6 +70,28 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_20_234017) do
     t.index ["article_timepoint_id"], name: "index_topic_article_timepoints_on_article_timepoint_id"
     t.index ["attributed_creator_id"], name: "index_topic_article_timepoints_on_attributed_creator_id"
     t.index ["topic_timepoint_id"], name: "index_topic_article_timepoints_on_topic_timepoint_id"
+  end
+
+  create_table "topic_summaries", force: :cascade do |t|
+    t.integer "articles_count"
+    t.integer "articles_count_delta"
+    t.integer "attributed_articles_created_delta"
+    t.integer "attributed_length_delta"
+    t.integer "attributed_revisions_count_delta"
+    t.integer "attributed_token_count"
+    t.integer "attributed_token_count_delta"
+    t.integer "length"
+    t.integer "length_delta"
+    t.integer "revisions_count"
+    t.integer "revisions_count_delta"
+    t.integer "token_count"
+    t.integer "token_count_delta"
+    t.integer "timepoint_count"
+    t.float "average_wp10_prediction"
+    t.integer "topic_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["topic_id"], name: "index_topic_summaries_on_topic_id"
   end
 
   create_table "topic_timepoints", force: :cascade do |t|
@@ -138,6 +160,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_20_234017) do
   add_foreign_key "topic_article_timepoints", "article_timepoints"
   add_foreign_key "topic_article_timepoints", "topic_timepoints"
   add_foreign_key "topic_article_timepoints", "users", column: "attributed_creator_id"
+  add_foreign_key "topic_summaries", "topics"
   add_foreign_key "topic_timepoints", "topics"
   add_foreign_key "topic_users", "topics"
   add_foreign_key "topic_users", "users"

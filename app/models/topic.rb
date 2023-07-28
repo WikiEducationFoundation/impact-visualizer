@@ -12,6 +12,7 @@ class Topic < ApplicationRecord
   has_many :topic_users
   has_many :users, through: :topic_users
   has_many :topic_timepoints
+  has_many :topic_summaries
 
   ## Instance methods
   def timestamps
@@ -66,6 +67,14 @@ class Topic < ApplicationRecord
   # Add a field to capture active article bag, but fall back to most recent
   def active_article_bag
     article_bags.first
+  end
+
+  def articles_count
+    active_article_bag&.articles&.count
+  end
+
+  def most_recent_summary
+    topic_summaries.last
   end
 end
 

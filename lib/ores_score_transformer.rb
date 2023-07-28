@@ -51,4 +51,9 @@ class OresScoreTransformer
   def self.weighting(language:)
     WEIGHTING_BY_LANGUAGE[language]
   end
+
+  def self.calulate_average_wp10_prediction(wp10_predictions)
+    sum = wp10_predictions.sum
+    sum.to_f / wp10_predictions.size
+  end
 end

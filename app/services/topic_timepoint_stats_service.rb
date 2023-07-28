@@ -39,7 +39,9 @@ class TopicTimepointStatsService
     end
 
     # Find average of wp10_predictions
-    average_wp10_prediction = calulate_average_wp10_prediction(wp10_predictions)
+    average_wp10_prediction = OresScoreTransformer.calulate_average_wp10_prediction(
+      wp10_predictions
+    )
 
     # Capture stats
     topic_timepoint.update(length:, length_delta:, articles_count:,
@@ -48,10 +50,5 @@ class TopicTimepointStatsService
                            attributed_length_delta:, attributed_articles_created_delta:,
                            average_wp10_prediction:, token_count:, token_count_delta:,
                            attributed_token_count:, attributed_token_count_delta:)
-  end
-
-  def calulate_average_wp10_prediction(wp10_predictions)
-    sum = wp10_predictions.sum
-    sum.to_f / wp10_predictions.size
   end
 end

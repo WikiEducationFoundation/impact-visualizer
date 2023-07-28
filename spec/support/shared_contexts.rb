@@ -104,3 +104,69 @@ RSpec.shared_context 'topic with two timepoints' do
     ]
   end
 end
+
+RSpec.shared_context 'three topic_timepoints' do
+  let!(:start_date) { Date.new(2023, 1, 1) }
+  let!(:end_date) { Date.new(2023, 1, 30) }
+  let!(:topic) { create(:topic, start_date:, end_date:, timepoint_day_interval: 7) }
+  let!(:topic_timepoint_1) do
+    create(
+      :topic_timepoint,
+      topic:,
+      articles_count: 10,
+      articles_count_delta: 0,
+      attributed_articles_created_delta: 0,
+      attributed_length_delta: 0,
+      attributed_revisions_count_delta: 0,
+      attributed_token_count: 0,
+      attributed_token_count_delta: 0,
+      average_wp10_prediction: 10,
+      length: 300,
+      length_delta: 0,
+      revisions_count: 200,
+      revisions_count_delta: 0,
+      token_count: 100,
+      token_count_delta: 0
+    )
+  end
+  let!(:topic_timepoint_2) do
+    create(
+      :topic_timepoint,
+      topic:,
+      articles_count: 20,
+      articles_count_delta: 10,
+      attributed_articles_created_delta: 5,
+      attributed_length_delta: 100,
+      attributed_revisions_count_delta: 5,
+      attributed_token_count: 4,
+      attributed_token_count_delta: 4,
+      average_wp10_prediction: 20,
+      length: 600,
+      length_delta: 300,
+      revisions_count: 210,
+      revisions_count_delta: 10,
+      token_count: 200,
+      token_count_delta: 100
+    )
+  end
+  let!(:topic_timepoint_3) do
+    create(
+      :topic_timepoint,
+      topic:,
+      articles_count: 30,
+      articles_count_delta: 10,
+      attributed_articles_created_delta: 5,
+      attributed_length_delta: 100,
+      attributed_revisions_count_delta: 5,
+      attributed_token_count: 6,
+      attributed_token_count_delta: 2,
+      average_wp10_prediction: 30,
+      length: 900,
+      length_delta: 300,
+      revisions_count: 220,
+      revisions_count_delta: 10,
+      token_count: 300,
+      token_count_delta: 100
+    )
+  end
+end

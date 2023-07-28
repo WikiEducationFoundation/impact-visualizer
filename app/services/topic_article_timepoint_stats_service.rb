@@ -84,7 +84,7 @@ class TopicArticleTimepointStatsService
       return
     end
 
-    # If we made it here, it's not the firtst timepoint, so...
+    # If we made it here, it's not the first timepoint, so...
     # Subtract the initial_attributed_token_count starting point
     # Because... we only care about activity within Topic's timeframe
     attributed_token_count -= @first_topic_article_timepoint.initial_attributed_token_count
