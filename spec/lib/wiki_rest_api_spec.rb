@@ -9,14 +9,19 @@ describe WikiRestApi do
     it 'handles mediawiki 503 errors gracefully' do
       allow(Rails.env).to receive(:production?).and_return(true)
       stub_wikipedia_503_error
-      expect(subject).to eq({})
+      expect { subject }.to raise_error(Faraday::ClientError)
+    end
+
+    it 'handles mediawiki 429 errors gracefully' do
+      allow(Rails.env).to receive(:production?).and_return(true)
+      stub_wikipedia_429_error
+      expect { subject }.to raise_error(Faraday::ClientError)
     end
 
     it 'handles timeout errors gracefully' do
       allow_any_instance_of(Faraday::Connection).to receive(:get)
         .and_raise(Faraday::TimeoutError)
-      expect_any_instance_of(described_class).to receive(:log_error).once
-      expect(subject).to eq({})
+      expect { subject }.to raise_error(Faraday::ClientError)
     end
   end
 

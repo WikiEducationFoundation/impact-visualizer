@@ -9,7 +9,7 @@ end
 #
 # Table name: article_timepoints
 #
-#  id              :integer          not null, primary key
+#  id              :bigint           not null, primary key
 #  article_length  :integer
 #  revisions_count :integer
 #  timestamp       :date
@@ -17,7 +17,7 @@ end
 #  wp10_prediction :float
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
-#  article_id      :integer          not null
+#  article_id      :bigint           not null
 #  revision_id     :integer
 #
 # Indexes
@@ -26,5 +26,5 @@ end
 #
 # Foreign Keys
 #
-#  article_id  (article_id => articles.id)
+#  fk_rails_...  (article_id => articles.id)
 #

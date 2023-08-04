@@ -7,7 +7,7 @@ class Topic < ApplicationRecord
 
   ## Associations
   belongs_to :wiki
-  has_many :article_bags
+  has_many :article_bags, -> { order(created_at: :desc) }
   has_many :articles, through: :article_bags
   has_many :topic_users
   has_many :users, through: :topic_users
@@ -66,7 +66,7 @@ class Topic < ApplicationRecord
   # TODO
   # Add a field to capture active article bag, but fall back to most recent
   def active_article_bag
-    article_bags.first
+    article_bags.last
   end
 
   def articles_count
@@ -82,7 +82,7 @@ end
 #
 # Table name: topics
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint           not null, primary key
 #  description            :string
 #  end_date               :datetime
 #  name                   :string

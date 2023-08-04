@@ -77,7 +77,7 @@ end
 #
 # Table name: wikis
 #
-#  id         :integer          not null, primary key
+#  id         :bigint           not null, primary key
 #  language   :string(16)
 #  project    :string(16)
 #  created_at :datetime         not null

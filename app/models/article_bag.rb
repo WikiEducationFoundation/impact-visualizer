@@ -5,17 +5,19 @@ class ArticleBag < ApplicationRecord
   belongs_to :topic
   has_many :article_bag_articles
   has_many :articles, through: :article_bag_articles
+
+  default_scope { order(created_at: :asc) }
 end
 
 # == Schema Information
 #
 # Table name: article_bags
 #
-#  id         :integer          not null, primary key
+#  id         :bigint           not null, primary key
 #  name       :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  topic_id   :integer          not null
+#  topic_id   :bigint           not null
 #
 # Indexes
 #
@@ -23,5 +25,5 @@ end
 #
 # Foreign Keys
 #
-#  topic_id  (topic_id => topics.id)
+#  fk_rails_...  (topic_id => topics.id)
 #

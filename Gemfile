@@ -3,15 +3,18 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.2.2'
 
+gem 'benchmark', '~> 0.2.1'
 gem 'rails', '~> 7.0.5'
 gem 'sqlite3', '~> 1.4'
 gem 'puma', '~> 5.0'
+gem 'pg'
 gem 'jbuilder'
 gem 'tzinfo-data', platforms: %i[ mingw mswin x64_mingw jruby ]
 gem 'bootsnap', require: false
 gem 'awesome_print'
 gem 'mediawiki_api'
 gem 'oj'
+gem "parallel", "~> 1.23"
 
 group :development do
   gem 'spring'
@@ -36,3 +39,5 @@ group :test do
   gem 'vcr'
   gem 'webmock'
 end
+
+

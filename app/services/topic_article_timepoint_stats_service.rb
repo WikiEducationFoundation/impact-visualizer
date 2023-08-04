@@ -4,7 +4,6 @@ class TopicArticleTimepointStatsService
   def initialize(topic_article_timepoint:)
     @topic_article_timepoint = topic_article_timepoint
     @wiki_action_api = WikiActionApi.new
-    @wiki_rest_api = WikiRestApi.new
     setup_context
   end
 
@@ -27,7 +26,7 @@ class TopicArticleTimepointStatsService
     @first_topic_article_timepoint = TopicArticleTimepoint.find_by_topic_article_and_timestamp(
       topic: @topic,
       article: @article,
-      timestamp: @previous_timestamp
+      timestamp: @first_timestamp
     )
   end
 
@@ -118,6 +117,9 @@ class TopicArticleTimepointStatsService
         # Otherwise, grab from previous array element
         previous_size = revisions[index - 1][:size]
       end
+
+      size = revision[:size]
+      next unless size && previous_size
 
       # Calculate the diff
       size_diff = revision[:size] - previous_size

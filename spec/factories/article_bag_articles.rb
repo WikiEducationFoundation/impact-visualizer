@@ -9,11 +9,11 @@ end
 #
 # Table name: article_bag_articles
 #
-#  id             :integer          not null, primary key
+#  id             :bigint           not null, primary key
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
-#  article_bag_id :integer          not null
-#  article_id     :integer          not null
+#  article_bag_id :bigint           not null
+#  article_id     :bigint           not null
 #
 # Indexes
 #
@@ -22,6 +22,6 @@ end
 #
 # Foreign Keys
 #
-#  article_bag_id  (article_bag_id => article_bags.id)
-#  article_id      (article_id => articles.id)
+#  fk_rails_...  (article_bag_id => article_bags.id)
+#  fk_rails_...  (article_id => articles.id)
 #

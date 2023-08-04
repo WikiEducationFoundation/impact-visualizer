@@ -11,7 +11,7 @@ end
 #
 # Table name: topics
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint           not null, primary key
 #  description            :string
 #  end_date               :datetime
 #  name                   :string

@@ -35,7 +35,7 @@ end
 #
 # Table name: topic_article_timepoints
 #
-#  id                               :integer          not null, primary key
+#  id                               :bigint           not null, primary key
 #  attributed_creation_at           :datetime
 #  attributed_length_delta          :integer
 #  attributed_revisions_count_delta :integer
@@ -47,9 +47,9 @@ end
 #  token_count_delta                :integer
 #  created_at                       :datetime         not null
 #  updated_at                       :datetime         not null
-#  article_timepoint_id             :integer          not null
-#  attributed_creator_id            :integer
-#  topic_timepoint_id               :integer          not null
+#  article_timepoint_id             :bigint           not null
+#  attributed_creator_id            :bigint
+#  topic_timepoint_id               :bigint           not null
 #
 # Indexes
 #
@@ -59,7 +59,7 @@ end
 #
 # Foreign Keys
 #
-#  article_timepoint_id   (article_timepoint_id => article_timepoints.id)
-#  attributed_creator_id  (attributed_creator_id => users.id)
-#  topic_timepoint_id     (topic_timepoint_id => topic_timepoints.id)
+#  fk_rails_...  (article_timepoint_id => article_timepoints.id)
+#  fk_rails_...  (attributed_creator_id => users.id)
+#  fk_rails_...  (topic_timepoint_id => topic_timepoints.id)
 #

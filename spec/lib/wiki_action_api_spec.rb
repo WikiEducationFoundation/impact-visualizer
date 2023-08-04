@@ -12,6 +12,12 @@ describe WikiActionApi do
       expect(subject).to eq(nil)
     end
 
+    it 'handles mediawiki 429 errors gracefully' do
+      allow(Rails.env).to receive(:production?).and_return(true)
+      stub_wikipedia_429_error
+      expect(subject).to eq(nil)
+    end
+
     it 'handles timeout errors gracefully' do
       allow_any_instance_of(MediawikiApi::Client).to receive(:send)
         .and_raise(Faraday::TimeoutError)
@@ -83,6 +89,24 @@ describe WikiActionApi do
       expect(data['title']).to eq('Battle of Bourgthéroulde')
       expect(data['lastrevid']).to be_a(Integer)
       expect(data['length']).to be_a(Integer)
+    end
+  end
+
+  describe '#get_user_info' do
+    it 'returns user info given userid', :vcr do
+      wiki_api = described_class.new
+      data = wiki_api.get_user_info(userid: 25848390)
+      expect(data).to be_a(Hash)
+      expect(data['userid']).to eq(25848390)
+      expect(data['name']).to eq('TiltuM')
+    end
+
+    it 'returns user info given name', :vcr do
+      wiki_api = described_class.new
+      data = wiki_api.get_user_info(name: 'TiltuM')
+      expect(data).to be_a(Hash)
+      expect(data['userid']).to eq(25848390)
+      expect(data['name']).to eq('TiltuM')
     end
   end
 

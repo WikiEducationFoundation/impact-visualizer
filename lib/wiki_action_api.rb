@@ -57,6 +57,23 @@ class WikiActionApi
     response.data.dig('pages', 0) if response&.status == 200
   end
 
+  def get_user_info(userid: nil, name: nil)
+    # Setup basic query parameters
+    query_parameters = {
+      list: 'users',
+      formatversion: '2'
+    }
+
+    query_parameters['ususerids'] = [userid] if userid
+    query_parameters['ususers'] = [name] if name
+
+    # Fetch it
+    response = query(query_parameters:)
+
+    # If succesful, return just the page info
+    response.data.dig('users', 0) if response&.status == 200
+  end
+
   def get_all_revisions(pageid:)
     # Setup basic query parameters
     query_parameters = {
@@ -148,10 +165,12 @@ class WikiActionApi
     tries -= 1
     # Continue for typical errors so that the request can be retried, but wait
     # a short bit in the case of 429 — too many request — errors.
-    sleep 1 if too_many_requests?(e)
+    if too_many_requests?(e)
+      ap "WikiActionApi / Too many requests – Trys remaining: #{tries}"
+      sleep 1
+    end
     retry unless tries.zero?
     log_error(e)
-    return nil
   end
 
   def too_many_requests?(e)

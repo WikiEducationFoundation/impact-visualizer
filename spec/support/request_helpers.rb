@@ -6,6 +6,11 @@ module RequestHelpers
       .to_return(status: 503, body: '{}', headers: {})
   end
 
+  def stub_wikipedia_429_error
+    stub_request(:get, /.*wikipedia.*/)
+      .to_return(status: 429, body: '{}', headers: {})
+  end
+
   def stub_wiki_validation
     wikis = [
       'incubator.wikimedia.org',

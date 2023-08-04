@@ -2,12 +2,14 @@
 
 class ArticleTokenService
   def self.count_all_tokens(revision_id:, wiki:)
+    return 0
     wiki_who_api = WikiWhoApi.new(wiki:)
     all_tokens = wiki_who_api.get_revision_tokens(revision_id)
     all_tokens.count
   end
 
   def self.count_attributed_tokens(revision_id:, topic:)
+    return 0
     wiki_who_api = WikiWhoApi.new(wiki: topic.wiki)
     all_tokens = wiki_who_api.get_revision_tokens(revision_id)
     count = 0

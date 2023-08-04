@@ -11,11 +11,11 @@ end
 #
 # Table name: topic_users
 #
-#  id         :integer          not null, primary key
+#  id         :bigint           not null, primary key
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
-#  topic_id   :integer          not null
-#  user_id    :integer          not null
+#  topic_id   :bigint           not null
+#  user_id    :bigint           not null
 #
 # Indexes
 #
@@ -24,6 +24,6 @@ end
 #
 # Foreign Keys
 #
-#  topic_id  (topic_id => topics.id)
-#  user_id   (user_id => users.id)
+#  fk_rails_...  (topic_id => topics.id)
+#  fk_rails_...  (user_id => users.id)
 #

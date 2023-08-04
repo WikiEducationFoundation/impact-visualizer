@@ -18,13 +18,27 @@ class Article < ApplicationRecord
       first_revision_by_id.present? &&
       first_revision_at.present?
   end
+
+  def update_details
+    stats_service = ArticleStatsService.new
+    stats_service.update_details_for_article(article: self)
+  end
+
+  ## Class Methods
+  def self.update_details_for_all_articles
+    total_count = Article.count
+    Article.all.each_with_index do |article, index|
+      ap "Updating #{index + 1}/#{total_count}"
+      article.update_details
+    end
+  end
 end
 
 # == Schema Information
 #
 # Table name: articles
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint           not null, primary key
 #  first_revision_at      :datetime
 #  first_revision_by_name :string
 #  pageid                 :integer

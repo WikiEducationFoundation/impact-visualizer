@@ -11,9 +11,12 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2023_07_28_204352) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "article_bag_articles", force: :cascade do |t|
-    t.integer "article_bag_id", null: false
-    t.integer "article_id", null: false
+    t.bigint "article_bag_id", null: false
+    t.bigint "article_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["article_bag_id"], name: "index_article_bag_articles_on_article_bag_id"
@@ -22,7 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_28_204352) do
 
   create_table "article_bags", force: :cascade do |t|
     t.string "name"
-    t.integer "topic_id", null: false
+    t.bigint "topic_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["topic_id"], name: "index_article_bags_on_topic_id"
@@ -33,7 +36,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_28_204352) do
     t.integer "article_length"
     t.integer "revisions_count"
     t.date "timestamp"
-    t.integer "article_id", null: false
+    t.bigint "article_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "wp10_prediction"
@@ -58,9 +61,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_28_204352) do
     t.integer "attributed_length_delta"
     t.integer "attributed_revisions_count_delta"
     t.datetime "attributed_creation_at"
-    t.integer "topic_timepoint_id", null: false
-    t.integer "article_timepoint_id", null: false
-    t.integer "attributed_creator_id"
+    t.bigint "topic_timepoint_id", null: false
+    t.bigint "article_timepoint_id", null: false
+    t.bigint "attributed_creator_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "token_count_delta"
@@ -88,7 +91,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_28_204352) do
     t.integer "token_count_delta"
     t.integer "timepoint_count"
     t.float "average_wp10_prediction"
-    t.integer "topic_id", null: false
+    t.bigint "topic_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["topic_id"], name: "index_topic_summaries_on_topic_id"
@@ -105,7 +108,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_28_204352) do
     t.integer "attributed_revisions_count_delta"
     t.integer "attributed_articles_created_delta"
     t.date "timestamp"
-    t.integer "topic_id", null: false
+    t.bigint "topic_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "wp10_prediction"
@@ -118,8 +121,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_28_204352) do
   end
 
   create_table "topic_users", force: :cascade do |t|
-    t.integer "topic_id", null: false
-    t.integer "user_id", null: false
+    t.bigint "topic_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["topic_id"], name: "index_topic_users_on_topic_id"

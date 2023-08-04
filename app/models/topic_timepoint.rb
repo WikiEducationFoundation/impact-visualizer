@@ -10,7 +10,7 @@ end
 #
 # Table name: topic_timepoints
 #
-#  id                                :integer          not null, primary key
+#  id                                :bigint           not null, primary key
 #  articles_count                    :integer
 #  articles_count_delta              :integer
 #  attributed_articles_created_delta :integer
@@ -29,7 +29,7 @@ end
 #  wp10_prediction                   :float
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
-#  topic_id                          :integer          not null
+#  topic_id                          :bigint           not null
 #
 # Indexes
 #
@@ -37,5 +37,5 @@ end
 #
 # Foreign Keys
 #
-#  topic_id  (topic_id => topics.id)
+#  fk_rails_...  (topic_id => topics.id)
 #

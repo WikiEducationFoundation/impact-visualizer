@@ -13,7 +13,7 @@ end
 #
 # Table name: articles
 #
-#  id                     :integer          not null, primary key
+#  id                     :bigint           not null, primary key
 #  first_revision_at      :datetime
 #  first_revision_by_name :string
 #  pageid                 :integer

@@ -9,6 +9,11 @@ class ArticleStatsService
     @lift_wing_api = LiftWingApi.new(wiki)
   end
 
+  def update_title_for_article(article:)
+    page_info = @wiki_action_api.get_page_info(pageid: article.pageid)
+    article.update(title: page_info['title'])
+  end
+
   def update_details_for_article(article:)
     # Grab the title, if necessary
     if article.pageid && !article.title
@@ -30,6 +35,7 @@ class ArticleStatsService
 
   def update_first_revision_info(article:)
     first_revision = @wiki_action_api.get_first_revision(pageid: article.pageid)
+    return unless first_revision
     article.update(
       first_revision_id: first_revision['revid'],
       first_revision_at: first_revision['timestamp'],
@@ -68,14 +74,14 @@ class ArticleStatsService
     # Get the wp10 quality prediction
     quality = weighted_revision_quality(revision_id: revision['revid'])
 
-    # Get count of tokens at revition
+    # Get count of tokens at revision
     token_count = ArticleTokenService.count_all_tokens(revision_id: revision['revid'], wiki: @wiki)
 
     # Update the ArticleTimepoint
     article_timepoint.update(
       article_length: revision['size'],
       revision_id: revision['revid'],
-      revisions_count: revisions_count['count'],
+      revisions_count: revisions_count['count'] || 0,
       wp10_prediction: quality,
       token_count:
     )
