@@ -4,7 +4,30 @@ require 'rails_helper'
 require './spec/support/shared_contexts'
 
 describe TopicTimepointStatsService do
-  describe '.update_stats_for_topic_timepoint' do
+  describe '#update_closest_revision_id' do
+    # This shared context sets up 1 Topic with 2 Articles and 2 Timepoints
+    include_context 'topic with two timepoints'
+
+    let(:topic_timepoint_stats_service) { described_class.new }
+
+    it 'gets and saves the closest revision_id to timestamp across all of Wikipedia', vcr: true do
+      topic_timepoint_stats_service.update_closest_revision_id(
+        topic_timepoint: start_topic_timepoint
+      )
+      start_topic_timepoint.reload
+      expect(start_topic_timepoint.closest_revision_id).to eq(1130787318)
+    end
+
+    it 'does not make API if topic_timepoint already has closest_revision_id' do
+      start_topic_timepoint.update closest_revision_id: 123
+      expect_any_instance_of(WikiActionApi).not_to receive(:get_revision_at_timestamp)
+      topic_timepoint_stats_service.update_closest_revision_id(
+        topic_timepoint: start_topic_timepoint
+      )
+    end
+  end
+
+  describe '#update_stats_for_topic_timepoint' do
     # This shared context sets up 1 Topic with 2 Articles and 2 Timepoints
     include_context 'topic with two timepoints'
 

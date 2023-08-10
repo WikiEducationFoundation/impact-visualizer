@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=2364730&prop=info&redirects=true
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=58170849&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids&rvstart=2023-01-01T00:00:00Z
     body:
       encoding: US-ASCII
       string: ''
@@ -19,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 09 Aug 2023 21:29:59 GMT
+      - Wed, 09 Aug 2023 20:40:05 GMT
       Server:
-      - mw2398.codfw.wmnet
+      - mw2402.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -33,7 +33,7 @@ http_interactions:
       Cache-Control:
       - private, must-revalidate, max-age=0
       Content-Length:
-      - '267'
+      - '303'
       Content-Type:
       - application/json; charset=utf-8
       Age:
@@ -64,8 +64,8 @@ http_interactions:
       Accept-Ranges:
       - bytes
     body:
-      encoding: UTF-8
-      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
-        Game Reserve","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2023-08-07T12:02:25Z","lastrevid":1168844764,"length":9245}]}}'
-  recorded_at: Wed, 09 Aug 2023 21:29:59 GMT
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJjb250aW51ZSI6eyJydmNvbnRpbnVlIjoiMjAyMTA2MDUxODI0MTh8MTAyNzAzNTM5NCIsImNvbnRpbnVlIjoifHwifSwicXVlcnkiOnsicGFnZXMiOlt7InBhZ2VpZCI6NTgxNzA4NDksIm5zIjowLCJ0aXRsZSI6IkJhdHRsZSBvZiBCb3VyZ3Row6lyb3VsZGUiLCJyZXZpc2lvbnMiOlt7InJldmlkIjoxMDg0NTgxNTEyLCJwYXJlbnRpZCI6MTAyNzAzNTM5NCwidXNlciI6IlRoZSBNaWdodHkgRm9yZXN0IiwidXNlcmlkIjo0MjQyODMxMSwidGltZXN0YW1wIjoiMjAyMi0wNC0yNVQxMDoyMTo0NloiLCJzaXplIjo4NTUyfV19XX19
+  recorded_at: Wed, 09 Aug 2023 20:40:05 GMT
 recorded_with: VCR 6.1.0

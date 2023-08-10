@@ -36,7 +36,7 @@ class WikiWhoApi
   private
 
   def query_url(rev_id)
-    "#{@wiki.language}#{WIKI_WHO_API_PATH}rev_content/rev_id/#{rev_id}/?editor=true"
+    "#{@wiki.language}#{WIKI_WHO_API_PATH}rev_content/rev_id/#{rev_id}/?editor=true&o_rev_id=true"
   end
 
   def wiki_who_server

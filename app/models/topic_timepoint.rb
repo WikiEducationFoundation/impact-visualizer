@@ -4,6 +4,9 @@ class TopicTimepoint < ApplicationRecord
   # Associations
   belongs_to :topic
   has_many :topic_article_timepoints
+
+  # Delegates
+  delegate :wiki, to: :topic
 end
 
 # == Schema Information
@@ -29,6 +32,7 @@ end
 #  wp10_prediction                   :float
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
+#  closest_revision_id               :integer
 #  topic_id                          :bigint           not null
 #
 # Indexes

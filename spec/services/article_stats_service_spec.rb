@@ -55,9 +55,9 @@ describe ArticleStatsService do
         expect(article_timepoint.article_length).to eq(13079)
       end
 
-      it 'captures token_count', vcr: true do
-        expect(article_timepoint.token_count).to eq(2984)
-      end
+      # it 'captures token_count', vcr: true do
+      #   expect(article_timepoint.token_count).to eq(2984)
+      # end
 
       it 'updates revisions_count', :vcr do
         expect(article_timepoint.revisions_count).to eq(261)

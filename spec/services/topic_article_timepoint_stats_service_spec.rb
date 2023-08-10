@@ -23,7 +23,7 @@ describe TopicArticleTimepointStatsService do
       expect(service).to receive(:update_baseline_deltas)
       expect(service).to receive(:update_attributed_deltas)
       expect(service).to receive(:update_attributed_creation)
-      expect(service).to receive(:update_token_stats)
+      # expect(service).to receive(:update_token_stats)
       service.update_stats_for_topic_article_timepoint
     end
   end

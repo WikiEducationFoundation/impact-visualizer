@@ -58,13 +58,17 @@ class WikiRestApi
     # Continue for typical errors so that the request can be retried, but wait
     # a short bit in the case of 429 — too many request — errors.
     if too_many_requests?(e)
-      ap "WikiRestApi / Too many requests – Trys remaining: #{tries}"
-      sleep 1
+      unless Rails.env.test?
+        ap "WikiRestApi / Too many requests – Trys remaining: #{tries}"
+        sleep 1
+      end
       retry unless tries.zero?
     else
-      ap url
-      ap params
-      ap e
+      unless Rails.env.test?
+        ap url
+        ap params
+        ap e
+      end
     end
     raise e
   end

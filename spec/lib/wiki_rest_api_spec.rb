@@ -7,13 +7,11 @@ describe WikiRestApi do
     let(:subject) { described_class.new.get_page_edits_count(page_title: 'Jupiter') }
 
     it 'handles mediawiki 503 errors gracefully' do
-      allow(Rails.env).to receive(:production?).and_return(true)
       stub_wikipedia_503_error
       expect { subject }.to raise_error(Faraday::ClientError)
     end
 
     it 'handles mediawiki 429 errors gracefully' do
-      allow(Rails.env).to receive(:production?).and_return(true)
       stub_wikipedia_429_error
       expect { subject }.to raise_error(Faraday::ClientError)
     end

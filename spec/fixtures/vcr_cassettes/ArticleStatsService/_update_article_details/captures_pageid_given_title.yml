@@ -19,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 20 Jul 2023 20:31:44 GMT
+      - Wed, 09 Aug 2023 21:29:59 GMT
       Server:
-      - mw2401.codfw.wmnet
+      - mw2296.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -55,9 +55,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
       - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=20-Jul-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
-        21 Aug 2023 12:00:00 GMT
-      - WMF-Last-Access=20-Jul-2023;Path=/;HttpOnly;secure;Expires=Mon, 21 Aug 2023
+      - WMF-Last-Access-Global=09-Aug-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
+        10 Sep 2023 12:00:00 GMT
+      - WMF-Last-Access=09-Aug-2023;Path=/;HttpOnly;secure;Expires=Sun, 10 Sep 2023
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -66,6 +66,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"batchcomplete":true,"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
-        Game Reserve","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2023-07-20T10:06:07Z","lastrevid":1165512563,"length":8888}]}}'
-  recorded_at: Thu, 20 Jul 2023 20:31:44 GMT
+        Game Reserve","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2023-08-07T12:02:25Z","lastrevid":1168844764,"length":9245}]}}'
+  recorded_at: Wed, 09 Aug 2023 21:29:59 GMT
 recorded_with: VCR 6.1.0

@@ -62,7 +62,7 @@ class ArticleStatsService
     end
 
     # Get the Revision at timestamp
-    revision = @wiki_action_api.get_revision_at_timestamp(pageid:, timestamp:)
+    revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp:)
 
     # Get count of Revisions at timestamp
     revisions_count = @wiki_rest_api.get_page_edits_count(
@@ -75,15 +75,14 @@ class ArticleStatsService
     quality = weighted_revision_quality(revision_id: revision['revid'])
 
     # Get count of tokens at revision
-    token_count = ArticleTokenService.count_all_tokens(revision_id: revision['revid'], wiki: @wiki)
+    # token_count = ArticleTokenService.count_all_tokens(revision_id: revision['revid'], wiki: @wiki)
 
     # Update the ArticleTimepoint
     article_timepoint.update(
       article_length: revision['size'],
       revision_id: revision['revid'],
       revisions_count: revisions_count['count'] || 0,
-      wp10_prediction: quality,
-      token_count:
+      wp10_prediction: quality
     )
   end
 

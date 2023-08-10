@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=2364730&prop=info&redirects=true
+    uri: https://en.wikipedia.org/w/api.php?action=query&arvlimit=1&arvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids&arvstart=2023-01-01T00:00:00Z&format=json&formatversion=2&list=allrevisions&redirects=true&rvdir=older
     body:
       encoding: US-ASCII
       string: ''
@@ -19,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 09 Aug 2023 21:29:59 GMT
+      - Wed, 09 Aug 2023 20:39:58 GMT
       Server:
-      - mw2398.codfw.wmnet
+      - mw2442.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -33,7 +33,7 @@ http_interactions:
       Cache-Control:
       - private, must-revalidate, max-age=0
       Content-Length:
-      - '267'
+      - '383'
       Content-Type:
       - application/json; charset=utf-8
       Age:
@@ -65,7 +65,6 @@ http_interactions:
       - bytes
     body:
       encoding: UTF-8
-      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
-        Game Reserve","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2023-08-07T12:02:25Z","lastrevid":1168844764,"length":9245}]}}'
-  recorded_at: Wed, 09 Aug 2023 21:29:59 GMT
+      string: '{"warnings":{"main":{"warnings":"Unrecognized parameter: rvdir."}},"batchcomplete":true,"continue":{"arvcontinue":"20230101000000|1130787317","continue":"-||"},"query":{"allrevisions":[{"pageid":34745517,"revisions":[{"revid":1130787318,"parentid":1130773644,"user":"3PPYB6","userid":42453789,"timestamp":"2023-01-01T00:00:00Z","size":171376}],"ns":4,"title":"Wikipedia:Teahouse"}]}}'
+  recorded_at: Wed, 09 Aug 2023 20:39:58 GMT
 recorded_with: VCR 6.1.0

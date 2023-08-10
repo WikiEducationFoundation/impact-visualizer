@@ -26,6 +26,7 @@ end
 #  wp10_prediction                   :float
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
+#  closest_revision_id               :integer
 #  topic_id                          :bigint           not null
 #
 # Indexes

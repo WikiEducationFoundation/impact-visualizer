@@ -1,6 +1,18 @@
 # frozen_string_literal: true
 
 class TopicTimepointStatsService
+  def update_closest_revision_id(topic_timepoint:)
+    # Bail if we've already got a revision_id
+    return if topic_timepoint.closest_revision_id.present?
+
+    # Get the revision ID closest to topic_timepoint's timestamp
+    api = WikiActionApi.new(topic_timepoint.wiki)
+    revision = api.get_revision_at_timestamp(timestamp: topic_timepoint.timestamp)
+
+    # Save the revision ID
+    topic_timepoint.update(closest_revision_id: revision['revid'])
+  end
+
   def update_stats_for_topic_timepoint(topic_timepoint:)
     # Grab all related topic_article_timpoints
     topic_article_timepoints = topic_timepoint.topic_article_timepoints

@@ -7,15 +7,13 @@ describe WikiActionApi do
     let(:subject) { described_class.new.get_page_info(pageid: 58170849) }
 
     it 'handles mediawiki 503 errors gracefully' do
-      allow(Rails.env).to receive(:production?).and_return(true)
       stub_wikipedia_503_error
-      expect(subject).to eq(nil)
+      expect { subject }.to raise_error(MediawikiApi::HttpError)
     end
 
     it 'handles mediawiki 429 errors gracefully' do
-      allow(Rails.env).to receive(:production?).and_return(true)
       stub_wikipedia_429_error
-      expect(subject).to eq(nil)
+      expect { subject }.to raise_error(MediawikiApi::HttpError)
     end
 
     it 'handles timeout errors gracefully' do
@@ -140,14 +138,25 @@ describe WikiActionApi do
     end
   end
 
-  describe '#get_revision_at_timestamp' do
+  describe '#get_page_revision_at_timestamp for article' do
     it 'returns the most recent revision at the given timestamp', vcr: true do
       wiki_api = described_class.new
       timestamp = Date.new(2023, 1, 1)
-      revision = wiki_api.get_revision_at_timestamp(pageid: 58170849, timestamp:)
+      revision = wiki_api.get_page_revision_at_timestamp(pageid: 58170849, timestamp:)
       expect(revision['user']).to eq('The Mighty Forest')
       expect(revision['revid']).to eq(1084581512)
       expect(revision['size']).to eq(8552)
+    end
+  end
+
+  describe '#get_revision_at_timestamp, article agnostic' do
+    it 'returns the most recent revision at the given timestamp', vcr: true do
+      wiki_api = described_class.new
+      timestamp = Date.new(2023, 1, 1)
+      revision = wiki_api.get_revision_at_timestamp(timestamp:)
+      expect(revision['user']).to eq('3PPYB6')
+      expect(revision['revid']).to eq(1130787318)
+      expect(revision['size']).to eq(171376)
     end
   end
 

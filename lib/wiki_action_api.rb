@@ -113,10 +113,9 @@ class WikiActionApi
     data.dig('pages', 0, 'revisions')
   end
 
-  def get_revision_at_timestamp(pageid:, timestamp:)
+  def get_page_revision_at_timestamp(pageid: nil, timestamp:)
     # Setup basic query parameters
     query_parameters = {
-      pageids: [pageid],
       prop: 'revisions',
       rvprop: %w[size user userid timestamp ids],
       rvlimit: 1,
@@ -126,11 +125,32 @@ class WikiActionApi
       formatversion: '2'
     }
 
+    query_parameters[:pageids] = [pageid] if pageid
+
     # Fetch revision
     response = query(query_parameters:)
 
     # Return just the revisions
     response.data.dig('pages', 0, 'revisions', 0) if response&.status == 200
+  end
+
+  def get_revision_at_timestamp(timestamp:)
+    # Setup basic query parameters
+    query_parameters = {
+      list: 'allrevisions',
+      arvprop: %w[size user userid timestamp ids],
+      arvlimit: 1,
+      arvstart: timestamp&.beginning_of_day&.iso8601,
+      rvdir: 'older',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    # Fetch revision
+    response = query(query_parameters:)
+
+    # Return just the revisions
+    response.data.dig('allrevisions', 0, 'revisions', 0) if response&.status == 200
   end
 
   def get_first_revision(pageid:)
@@ -166,8 +186,10 @@ class WikiActionApi
     # Continue for typical errors so that the request can be retried, but wait
     # a short bit in the case of 429 — too many request — errors.
     if too_many_requests?(e)
-      ap "WikiActionApi / Too many requests – Trys remaining: #{tries}"
-      sleep 1
+      unless Rails.env.test?
+        puts "WikiActionApi / Too many requests – Trys remaining: #{tries}"
+        sleep 1
+      end
     end
     retry unless tries.zero?
     log_error(e)

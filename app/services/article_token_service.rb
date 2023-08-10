@@ -2,23 +2,47 @@
 
 class ArticleTokenService
   def self.count_all_tokens(revision_id:, wiki:)
-    return 0
     wiki_who_api = WikiWhoApi.new(wiki:)
     all_tokens = wiki_who_api.get_revision_tokens(revision_id)
     all_tokens.count
   end
 
+  def self.count_all_tokens_within_range(revision_id:, wiki:, start_revision_id:, end_revision_id:)
+    wiki_who_api = WikiWhoApi.new(wiki:)
+    tokens = wiki_who_api.get_revision_tokens(revision_id)
+    tokens_within_range(tokens:, start_revision_id:, end_revision_id:).count
+  end
+
   def self.count_attributed_tokens(revision_id:, topic:)
-    return 0
     wiki_who_api = WikiWhoApi.new(wiki: topic.wiki)
-    all_tokens = wiki_who_api.get_revision_tokens(revision_id)
-    count = 0
-    all_tokens.each do |token|
-      user_id = token['editor']&.to_i
-      next unless user_id
-      next unless topic.users.exists?(wiki_user_id: user_id)
-      count += 1
+    tokens = wiki_who_api.get_revision_tokens(revision_id)
+    user_ids = extract_user_ids(tokens:, topic:)
+    count_attributed(tokens:, user_ids:)
+  end
+
+  def self.count_attributed_tokens_within_range(revision_id:, topic:,
+                                                start_revision_id:, end_revision_id:)
+    wiki_who_api = WikiWhoApi.new(wiki: topic.wiki)
+    tokens = wiki_who_api.get_revision_tokens(revision_id)
+    tokens_within_range = tokens_within_range(tokens:, start_revision_id:, end_revision_id:)
+    user_ids = extract_user_ids(tokens: tokens_within_range, topic:)
+    count_attributed(tokens: tokens_within_range, user_ids:)
+  end
+
+  def self.tokens_within_range(tokens:, start_revision_id:, end_revision_id:)
+    tokens.select do |token|
+      token['o_rev_id'] > start_revision_id && token['o_rev_id'] < end_revision_id
     end
-    count
+  end
+
+  def self.extract_user_ids(topic:, tokens:)
+    editor_ids = tokens.pluck('editor')
+    topic.users.where(wiki_user_id: editor_ids).select('wiki_user_id').pluck(:wiki_user_id)
+  end
+
+  def self.count_attributed(tokens:, user_ids:)
+    tokens.count do |token|
+      user_ids.include?(token['editor']&.to_i)
+    end
   end
 end

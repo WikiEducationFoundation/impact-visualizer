@@ -34,7 +34,7 @@ class TopicArticleTimepointStatsService
     update_baseline_deltas
     update_attributed_deltas
     update_attributed_creation
-    update_token_stats
+    # update_token_stats
   end
 
   def update_attributed_creation
