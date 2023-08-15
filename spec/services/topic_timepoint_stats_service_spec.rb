@@ -11,6 +11,7 @@ describe TopicTimepointStatsService do
     let(:topic_timepoint_stats_service) { described_class.new }
 
     it 'gets and saves the closest revision_id to timestamp across all of Wikipedia', vcr: true do
+      start_topic_timepoint.update closest_revision_id: nil
       topic_timepoint_stats_service.update_closest_revision_id(
         topic_timepoint: start_topic_timepoint
       )

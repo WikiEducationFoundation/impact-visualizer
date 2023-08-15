@@ -1,5 +1,21 @@
 FactoryBot.define do
   factory :topic_timepoint do
+    articles_count { Faker::Number.number(digits: 5) }
+    articles_count_delta { Faker::Number.number(digits: 5) }
+    attributed_articles_created_delta { Faker::Number.number(digits: 5) }
+    attributed_length_delta { Faker::Number.number(digits: 5) }
+    attributed_revisions_count_delta { Faker::Number.number(digits: 5) }
+    attributed_token_count { Faker::Number.number(digits: 5) }
+    attributed_token_count_delta { Faker::Number.number(digits: 5) }
+    average_wp10_prediction { Faker::Number.number(digits: 2) }
+    length { Faker::Number.number(digits: 5) }
+    length_delta { Faker::Number.number(digits: 5) }
+    revisions_count { Faker::Number.number(digits: 5) }
+    revisions_count_delta { Faker::Number.number(digits: 5) }
+    timestamp { Faker::Date.backward(days: 365) }
+    token_count { Faker::Number.number(digits: 5) }
+    token_count_delta { Faker::Number.number(digits: 5) }
+    closest_revision_id { Faker::Number.number(digits: 5) }
   end
 end
 
