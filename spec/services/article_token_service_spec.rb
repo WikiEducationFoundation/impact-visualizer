@@ -28,6 +28,23 @@ describe ArticleTokenService do
       )
       expect(token_count).to eq(1689)
     end
+
+    it 'returns a count of all tokens for a revision, uses passed in tokens', :vcr do
+      wiki_who_api = WikiWhoApi.new(wiki: topic.wiki)
+      all_tokens = wiki_who_api.get_revision_tokens(revision_id)
+
+      expect_any_instance_of(WikiWhoApi).not_to receive(:get_revision_tokens)
+
+      token_count = described_class.count_all_tokens_within_range(
+        tokens: all_tokens,
+        revision_id:,
+        start_revision_id: 855254000,
+        end_revision_id: 900000000,
+        wiki: topic.wiki
+      )
+
+      expect(token_count).to eq(1689)
+    end
   end
 
   describe '.count_attributed_tokens' do
@@ -40,6 +57,22 @@ describe ArticleTokenService do
   describe '.count_attributed_tokens_within_range' do
     it 'returns a count of attributed tokens for a revision', :vcr do
       token_count = described_class.count_attributed_tokens_within_range(
+        revision_id:,
+        start_revision_id: 855254000,
+        end_revision_id: 900000000,
+        topic:
+      )
+      expect(token_count).to eq(2)
+    end
+
+    it 'returns a count of attributed tokens for a revision, uses passed in tokens', :vcr do
+      wiki_who_api = WikiWhoApi.new(wiki: topic.wiki)
+      all_tokens = wiki_who_api.get_revision_tokens(revision_id)
+
+      expect_any_instance_of(WikiWhoApi).not_to receive(:get_revision_tokens)
+
+      token_count = described_class.count_attributed_tokens_within_range(
+        tokens: all_tokens,
         revision_id:,
         start_revision_id: 855254000,
         end_revision_id: 900000000,

@@ -4,6 +4,9 @@ class ArticleTimepoint < ApplicationRecord
   ## Associations
   belongs_to :article
 
+  ## Delegates
+  delegate :first_revision_id, to: :article
+
   ## Class Methods
   def self.find_or_create_for_timestamp(article:, timestamp:)
     unless article.first_revision_info?
@@ -16,7 +19,10 @@ class ArticleTimepoint < ApplicationRecord
 
     ArticleTimepoint.find_or_create_by!(
       timestamp:, article:
-    )
+    ) do
+      # Block is yielded only for "created" records
+      yield if block_given?
+    end
   end
 end
 

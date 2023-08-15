@@ -14,19 +14,20 @@ class TopicArticleTimepointStatsService
     @article = @article_timepoint.article
     @previous_timestamp = @topic.timestamp_previous_to(@timestamp)
     @first_timestamp = @topic.first_timestamp
-    @previous_article_timepoint = ArticleTimepoint.find_by(
+  end
+
+  def previous_article_timepoint
+    @previous_article_timepoint ||= ArticleTimepoint.find_by(
       article: @article,
       timestamp: @previous_timestamp
     )
-    @previous_topic_article_timepoint = TopicArticleTimepoint.find_by_topic_article_and_timestamp(
+  end
+
+  def previous_topic_article_timepoint
+    @previous_topic_article_timepoint ||= TopicArticleTimepoint.find_by_topic_article_and_timestamp(
       topic: @topic,
       article: @article,
       timestamp: @previous_timestamp
-    )
-    @first_topic_article_timepoint = TopicArticleTimepoint.find_by_topic_article_and_timestamp(
-      topic: @topic,
-      article: @article,
-      timestamp: @first_timestamp
     )
   end
 
@@ -34,12 +35,11 @@ class TopicArticleTimepointStatsService
     update_baseline_deltas
     update_attributed_deltas
     update_attributed_creation
-    # update_token_stats
   end
 
   def update_attributed_creation
     # Bail if NOT the first timepoint
-    return if @previous_article_timepoint
+    return if previous_article_timepoint
 
     # See if Article created by a TopicUser
     attributed_creator = @topic.users.find_by wiki_user_id: @article.first_revision_by_id
@@ -53,46 +53,37 @@ class TopicArticleTimepointStatsService
     revisions_count_delta = 0
     token_count_delta = 0
 
-    if @previous_article_timepoint
+    if previous_article_timepoint
       # Calculate diffs based on previous article_timepoint and current article_timepoint
       length_delta =
-        @article_timepoint.article_length - @previous_article_timepoint.article_length
+        @article_timepoint.article_length - previous_article_timepoint.article_length
       revisions_count_delta =
-        @article_timepoint.revisions_count - @previous_article_timepoint.revisions_count
+        @article_timepoint.revisions_count - previous_article_timepoint.revisions_count
       token_count_delta =
-        @article_timepoint.token_count - @previous_article_timepoint.token_count
+        @article_timepoint.token_count - previous_article_timepoint.token_count
     end
 
     @topic_article_timepoint.update(length_delta:, token_count_delta:, revisions_count_delta:)
   end
 
-  def update_token_stats
-    topic = @topic
-    revision_id = @article_timepoint.revision_id
-
-    # Get the count of attributed tokens for the revision
-    attributed_token_count = ArticleTokenService.count_attributed_tokens(revision_id:, topic:)
-
-    # Capture initial attributed count if this is the first timepoint
-    if @timestamp == @first_timestamp
-      @topic_article_timepoint.update(
-        initial_attributed_token_count: attributed_token_count,
-        attributed_token_count: 0,
-        attributed_token_count_delta: 0
-      )
+  def update_token_stats(tokens:)
+    # If no previous, this must be the first. Set counts to 0
+    unless previous_topic_article_timepoint
+      @topic_article_timepoint.update attributed_token_count: 0, attributed_token_count_delta: 0
       return
     end
 
-    # If we made it here, it's not the first timepoint, so...
-    # Subtract the initial_attributed_token_count starting point
-    # Because... we only care about activity within Topic's timeframe
-    attributed_token_count -= @first_topic_article_timepoint.initial_attributed_token_count
+    # Setup variables
+    topic = @topic
+    start_revision_id = previous_topic_article_timepoint.revision_id
+    end_revision_id = @topic_article_timepoint.revision_id
 
-    # Find the delta, with the previous timepoint
-    previous_attributed_token_count = @previous_topic_article_timepoint.attributed_token_count
-    attributed_token_count_delta = attributed_token_count - previous_attributed_token_count
+    # Count the attributed tokens since since previous revision
+    attributed_token_count = ArticleTokenService.count_attributed_tokens_within_range(
+      tokens:, topic:, start_revision_id:, end_revision_id:
+    )
 
-    @topic_article_timepoint.update attributed_token_count:, attributed_token_count_delta:
+    @topic_article_timepoint.update attributed_token_count:
   end
 
   def update_attributed_deltas
@@ -112,7 +103,7 @@ class TopicArticleTimepointStatsService
       # Find the size of previous revision, so we can diff
       if index.zero?
         # If first revision in set, get size of previous revision from previous_article_timepoint
-        previous_size = @previous_article_timepoint.article_length
+        previous_size = previous_article_timepoint.article_length
       else
         # Otherwise, grab from previous array element
         previous_size = revisions[index - 1][:size]

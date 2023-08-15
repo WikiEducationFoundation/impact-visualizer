@@ -138,74 +138,36 @@ describe TopicArticleTimepointStatsService do
   end
 
   describe '#update_token_stats' do
-    it 'captures initial_attributed_token_count for first timepoint' do
-      # Reset the values to test
-      start_topic_article_timepoint_1.update(
-        attributed_token_count: nil,
-        initial_attributed_token_count: nil
+    it 'updates attributed_token_count_delta', vcr: true do
+      tokens = WikiWhoApi.new(wiki: Wiki.default_wiki).get_revision_tokens(
+        end_article_timepoint_1.revision_id
       )
 
-      service = described_class.new(topic_article_timepoint: start_topic_article_timepoint_1)
-      expect(ArticleTokenService).to(
-        receive(:count_attributed_tokens)
-          .with(revision_id: 991007374, topic:)
-          .and_return(20)
-      )
-      service.update_token_stats
-      start_topic_article_timepoint_1.reload
-      expect(start_topic_article_timepoint_1).to have_attributes(
-        attributed_token_count: 0,
-        initial_attributed_token_count: 20
-      )
-    end
+      # Give topic user a known editor ID from tokens
+      user.update wiki_user_id: 917223
 
-    it 'does not capture initial_attributed_token_count for later timepoint' do
-      # Reset the values to test
-      end_topic_article_timepoint_1.update(
-        attributed_token_count: nil,
-        initial_attributed_token_count: nil
-      )
-
-      service = described_class.new(topic_article_timepoint: end_topic_article_timepoint_1)
-      expect(ArticleTokenService).to(
-        receive(:count_attributed_tokens)
-          .with(revision_id: 1084581512, topic:)
-          .and_return(20)
-      )
-      service.update_token_stats
-      end_topic_article_timepoint_1.reload
-      expect(end_topic_article_timepoint_1).to have_attributes(
-        attributed_token_count: 10,
-        initial_attributed_token_count: nil
-      )
-    end
-
-    it 'updates attributed_token_count_delta' do
       # Reset the value to test
       end_topic_article_timepoint_1.update attributed_token_count_delta: nil
+
+      # Do it
       service = described_class.new(topic_article_timepoint: end_topic_article_timepoint_1)
-      expect(ArticleTokenService).to(
-        receive(:count_attributed_tokens)
-          .with(revision_id: 1084581512, topic:)
-          .and_return(20)
-      )
-      service.update_token_stats
+      service.update_token_stats(tokens:)
       end_topic_article_timepoint_1.reload
-      expect(end_topic_article_timepoint_1.attributed_token_count_delta).to eq(10)
+
+      expect(end_topic_article_timepoint_1.attributed_token_count).to eq(11)
     end
 
-    it 'set attributed_token_count_delta to ZERO if first timepoint' do
+    it 'set attributed_token_count_delta to ZERO if first timepoint', vcr: true do
+      tokens = WikiWhoApi.new(wiki: Wiki.default_wiki).get_revision_tokens(
+        end_article_timepoint_1.revision_id
+      )
+
       # Reset the value to test
       start_topic_article_timepoint_1.update attributed_token_count_delta: nil
       service = described_class.new(topic_article_timepoint: start_topic_article_timepoint_1)
-      expect(ArticleTokenService).to(
-        receive(:count_attributed_tokens)
-          .with(revision_id: 991007374, topic:)
-          .and_return(20)
-      )
-      service.update_token_stats
+      service.update_token_stats(tokens:)
       start_topic_article_timepoint_1.reload
-      expect(start_topic_article_timepoint_1.attributed_token_count_delta).to eq(0)
+      expect(start_topic_article_timepoint_1.attributed_token_count).to eq(0)
     end
   end
 end

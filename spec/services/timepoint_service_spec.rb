@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require './spec/support/shared_contexts'
 
 describe TimepointService do
-  let(:start_date) { Date.new(2023, 1, 1) }
-  let(:end_date) { Date.new(2023, 1, 30) }
-  let(:topic) { create(:topic, start_date:, end_date:, timepoint_day_interval: 7) }
-
   describe '.initialize' do
+    let(:start_date) { Date.new(2023, 1, 1) }
+    let(:end_date) { Date.new(2023, 1, 30) }
+    let(:topic) { create(:topic, start_date:, end_date:, timepoint_day_interval: 7) }
+
     it 'initializes and has @topic variable' do
       timepoint_service = described_class.new(topic:)
       expect(timepoint_service).to be_a(described_class)
@@ -16,6 +17,10 @@ describe TimepointService do
   end
 
   describe '#build_timepoints' do
+    let(:start_date) { Date.new(2023, 1, 1) }
+    let(:end_date) { Date.new(2023, 1, 30) }
+    let(:topic) { create(:topic, start_date:, end_date:, timepoint_day_interval: 7) }
+
     before do
       allow_any_instance_of(ArticleStatsService).to(
         receive(:update_stats_for_article_timepoint)
@@ -25,6 +30,9 @@ describe TimepointService do
       )
       allow_any_instance_of(TopicArticleTimepointStatsService).to(
         receive(:update_stats_for_topic_article_timepoint)
+      )
+      allow_any_instance_of(TopicArticleTimepointStatsService).to(
+        receive(:update_token_stats)
       )
       allow_any_instance_of(TopicTimepointStatsService).to(
         receive(:update_stats_for_topic_timepoint)
@@ -105,9 +113,24 @@ describe TimepointService do
       expect(TopicArticleTimepoint.count).to eq(topic_article_timepoint_count)
     end
 
-    it 'updates details for Article' do
+    it 'does NOT update details for Article, force_updates=false' do
       article_bag = create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
+
+      topic_timepoints_count = topic.timestamps.count
+      article_count = article_bag.articles.count
+      topic_article_timepoint_count = topic_timepoints_count * article_count
+
+      expect_any_instance_of(ArticleStatsService).not_to(
+        receive(:update_details_for_article)
+      )
+
+      timepoint_service.build_timepoints
+    end
+
+    it 'updates details for Article, force_updates=TRUE' do
+      article_bag = create(:small_article_bag, topic:)
+      timepoint_service = described_class.new(topic:, force_updates: true)
 
       topic_timepoints_count = topic.timestamps.count
       article_count = article_bag.articles.count
@@ -124,7 +147,14 @@ describe TimepointService do
       timepoint_service.build_timepoints
     end
 
-    it 'updates stats for ArticleTimepoints and TopicArticleTimepoints' do
+    it 'calls update_token_stats for each Article' do
+      create(:small_article_bag, topic:)
+      timepoint_service = described_class.new(topic:)
+      expect(timepoint_service).to receive(:update_token_stats).once
+      timepoint_service.build_timepoints
+    end
+
+    it 'updates stats for ArticleTimepoints/TopicArticleTimepoints, force_updates=TRUE' do
       article_bag = create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
 
@@ -156,6 +186,70 @@ describe TimepointService do
       timepoint_service.build_timepoints
 
       expect(call_count).to eq(article_timepoint_count)
+    end
+
+    it 'does not update stats for ArticleTimepoints/TopicArticleTimepoints, force_updates=FALSE' do
+      article_bag = create(:small_article_bag, topic:)
+      timepoint_service = described_class.new(topic:)
+
+      # Run to capture initial
+      timepoint_service.build_timepoints
+
+      # Get ready to run again
+      topic_timepoints_count = topic.timestamps.count
+
+      expect_any_instance_of(ArticleStatsService).not_to(
+        receive(:update_stats_for_article_timepoint)
+      )
+
+      expect_any_instance_of(TopicArticleTimepointStatsService).not_to(
+        receive(:update_stats_for_topic_article_timepoint)
+      )
+
+      expect_any_instance_of(TopicTimepointStatsService).to(
+        receive(:update_stats_for_topic_timepoint)
+          .exactly(topic_timepoints_count).times
+          .with(
+            topic_timepoint: kind_of(TopicTimepoint)
+          )
+      )
+
+      timepoint_service.build_timepoints
+    end
+  end
+
+  describe '#update_token_stats' do
+    # This shared context sets up 1 Topic with 2 Articles and 2 Timepoints
+    include_context 'topic with two timepoints'
+
+    before do
+      allow_any_instance_of(WikiWhoApi).to(
+        receive(:get_revision_tokens)
+      ).and_return([])
+    end
+
+    it 'hands off to TopicTimepointStatsService for each article*timepont' do
+      timepoint_service = described_class.new(topic:)
+
+      topic_timepoints_count = topic.timestamps.count
+      article_count = article_bag.articles.count
+      article_timepoint_count = topic_timepoints_count * article_count
+
+      article_call_count = 0
+      allow_any_instance_of(ArticleStatsService).to receive(:update_token_stats)
+        .with(article_timepoint: kind_of(ArticleTimepoint), tokens: kind_of(Array)) do
+          article_call_count += 1
+        end
+
+      topic_article_call_count = 0
+      allow_any_instance_of(TopicArticleTimepointStatsService).to receive(:update_token_stats)
+        .with(tokens: kind_of(Array)) do
+          topic_article_call_count += 1
+        end
+
+      timepoint_service.update_token_stats
+      expect(topic_article_call_count).to eq(article_timepoint_count)
+      expect(article_call_count).to eq(article_timepoint_count)
     end
   end
 end

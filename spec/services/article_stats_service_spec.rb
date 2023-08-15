@@ -55,10 +55,6 @@ describe ArticleStatsService do
         expect(article_timepoint.article_length).to eq(13079)
       end
 
-      # it 'captures token_count', vcr: true do
-      #   expect(article_timepoint.token_count).to eq(2984)
-      # end
-
       it 'updates revisions_count', :vcr do
         expect(article_timepoint.revisions_count).to eq(261)
       end
@@ -90,6 +86,21 @@ describe ArticleStatsService do
     it 'returns the weighted quality of revision', vcr: false do
       quality = article_stats_service.weighted_revision_quality(revision_id: 1100917005)
       expect(quality).to be_a(Numeric)
+    end
+  end
+
+  describe '#update_token_stats' do
+    let!(:article_stats_service) { described_class.new }
+    let!(:article) { create(:article, pageid: 2364730, title: 'Yankari Game Reserve') }
+    let!(:revision_id) { 1100917005 }
+    let!(:timestamp) { Date.new(2023, 1, 1) }
+    let!(:article_timepoint) { create(:article_timepoint, article:, timestamp:, revision_id:) }
+
+    it 'captures token_count', vcr: true do
+      tokens = WikiWhoApi.new(wiki: Wiki.default_wiki).get_revision_tokens(revision_id)
+      article_stats_service.update_first_revision_info(article:)
+      article_stats_service.update_token_stats(article_timepoint:, tokens:)
+      expect(article_timepoint.token_count).to eq(2937)
     end
   end
 end

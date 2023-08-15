@@ -19,6 +19,10 @@ class Article < ApplicationRecord
       first_revision_at.present?
   end
 
+  def details?
+    pageid.present? && title.present?
+  end
+
   def update_details
     stats_service = ArticleStatsService.new
     stats_service.update_details_for_article(article: self)

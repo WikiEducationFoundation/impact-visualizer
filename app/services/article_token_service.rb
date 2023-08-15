@@ -7,9 +7,9 @@ class ArticleTokenService
     all_tokens.count
   end
 
-  def self.count_all_tokens_within_range(revision_id:, wiki:, start_revision_id:, end_revision_id:)
-    wiki_who_api = WikiWhoApi.new(wiki:)
-    tokens = wiki_who_api.get_revision_tokens(revision_id)
+  def self.count_all_tokens_within_range(tokens: nil, revision_id: nil, wiki:,
+                                         start_revision_id:, end_revision_id:)
+    tokens ||= WikiWhoApi.new(wiki:).get_revision_tokens(revision_id)
     tokens_within_range(tokens:, start_revision_id:, end_revision_id:).count
   end
 
@@ -20,12 +20,12 @@ class ArticleTokenService
     count_attributed(tokens:, user_ids:)
   end
 
-  def self.count_attributed_tokens_within_range(revision_id:, topic:,
+  def self.count_attributed_tokens_within_range(tokens: nil, revision_id: nil, topic:,
                                                 start_revision_id:, end_revision_id:)
-    wiki_who_api = WikiWhoApi.new(wiki: topic.wiki)
-    tokens = wiki_who_api.get_revision_tokens(revision_id)
+    tokens ||= WikiWhoApi.new(wiki: topic.wiki).get_revision_tokens(revision_id)
     tokens_within_range = tokens_within_range(tokens:, start_revision_id:, end_revision_id:)
     user_ids = extract_user_ids(tokens: tokens_within_range, topic:)
+
     count_attributed(tokens: tokens_within_range, user_ids:)
   end
 

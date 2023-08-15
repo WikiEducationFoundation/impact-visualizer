@@ -70,6 +70,7 @@ class WikiRestApi
         ap e
       end
     end
+    ap e.response
     raise e
   end
 

@@ -74,9 +74,6 @@ class ArticleStatsService
     # Get the wp10 quality prediction
     quality = weighted_revision_quality(revision_id: revision['revid'])
 
-    # Get count of tokens at revision
-    # token_count = ArticleTokenService.count_all_tokens(revision_id: revision['revid'], wiki: @wiki)
-
     # Update the ArticleTimepoint
     article_timepoint.update(
       article_length: revision['size'],
@@ -84,6 +81,20 @@ class ArticleStatsService
       revisions_count: revisions_count['count'] || 0,
       wp10_prediction: quality
     )
+  end
+
+  def update_token_stats(article_timepoint:, tokens:)
+    revision_id = article_timepoint.revision_id
+    start_revision_id = article_timepoint.first_revision_id
+    end_revision_id = revision_id
+    wiki = @wiki
+
+    # Get count of tokens at revision
+    token_count = ArticleTokenService.count_all_tokens_within_range(
+      tokens:, revision_id:, wiki:, start_revision_id:, end_revision_id:
+    )
+
+    article_timepoint.update(token_count:)
   end
 
   def weighted_revision_quality(revision_id:)

@@ -2,25 +2,41 @@
 require 'benchmark'
 
 class TimepointService
-  attr_accessor :topic, :logging_enabled
+  attr_accessor :topic, :logging_enabled, :force_updates
 
-  def initialize(topic:)
+  def initialize(topic:, force_updates: false)
     @topic = topic
     @article_stats_service = ArticleStatsService.new
     @topic_timepoint_stats_service = TopicTimepointStatsService.new
     @topic_article_timepoint_stats_service = nil
+    @force_updates = force_updates
     @logging_enabled = !Rails.env.test?
   end
 
   def build_timepoints
     start_time = Time.zone.now
+
     # Loop through Topic's timestamps
     timestamps = @topic.timestamps
     timestamp_count = 0
+
+    # Build/update most everything for each timestamp
     timestamps.each do |timestamp|
       build_timepoints_for_timestamp(timestamp:)
       log "#build_timepoints_for_timestamp timestamp:#{timestamp_count}/#{timestamps.count}"
     end
+
+    # Handle tokens separately, because...
+    # WikiWho API only needs 1 API call per article (as opposed to per timepoint AND article)
+    update_token_stats
+
+    # Update TopicTimepoints with summarized stats
+    # This needs to happen AFTER token stats update
+    timestamps.each do |timestamp|
+      topic_timepoint = TopicTimepoint.find_or_create_by!(topic:, timestamp:)
+      @topic_timepoint_stats_service.update_stats_for_topic_timepoint(topic_timepoint:)
+    end
+
     log "#build_timepoints – Started at #{start_time}. Finished at #{Time.zone.now}"
   end
 
@@ -44,9 +60,6 @@ class TimepointService
         end
       end
     end
-
-    # Update TopicTimepoint with summarized stats
-    @topic_timepoint_stats_service.update_stats_for_topic_timepoint(topic_timepoint:)
   end
 
   def build_timepoints_for_article(article_bag_article:, topic_timepoint:)
@@ -54,28 +67,95 @@ class TimepointService
     article = article_bag_article.article
 
     # Update basic details of Article
-    @article_stats_service.update_details_for_article(article:)
+    if !article.details? || @force_updates
+      @article_stats_service.update_details_for_article(article:)
+    end
 
     # If Article was created after timestamp, skip it
     return unless article.exists_at_timestamp?(timestamp)
 
+    # Capture if ArticleTimepoint found or created
+    new_article_timepoint = false
+
     # Find or create ArticleTimepoint for each Article
     article_timepoint = ArticleTimepoint.find_or_create_for_timestamp(
       timestamp:, article:
-    )
+    ) { new_article_timepoint = true }
 
-    # Update ArticleTimepoint with stats
-    @article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
+    # Update ArticleTimepoint with stats, but only if new or force_updates
+    if new_article_timepoint || @force_updates
+      @article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
+    end
+
+    # Capture if TopicArticleTimepoint found or created
+    new_topic_article_timepoint = false
 
     # Find or create TopicArticleTimepoint for each Article
     topic_article_timepoint = TopicArticleTimepoint.find_or_create_by!(
       article_timepoint:, topic_timepoint:
+    ) { new_topic_article_timepoint = true }
+
+    if new_topic_article_timepoint || @force_updates
+      @topic_article_timepoint_stats_service = TopicArticleTimepointStatsService.new(
+        topic_article_timepoint:
+      )
+      @topic_article_timepoint_stats_service.update_stats_for_topic_article_timepoint
+    end
+  end
+
+  def update_token_stats
+    article_bag_articles = @topic.active_article_bag.article_bag_articles
+
+    # Loop through all Articles
+    article_bag_articles.each do |article_bag_article|
+      article = article_bag_article.article
+
+      # Update stats for all timestamps for article
+      update_token_stats_for_article(article:)
+    end
+  end
+
+  def update_token_stats_for_article(article:)
+    # Get the latest ArticeTimepoint and grab the revision_id
+    lastest_topic_article_timepoint = TopicArticleTimepoint.find_latest_for_article_and_topic(
+      topic: @topic, article:
     )
+
+    latest_revision_id = lastest_topic_article_timepoint&.article_timepoint&.revision_id
+
+    # Bail if not revision_id
+    return unless latest_revision_id
+
+    # Fetch all tokens for the most recent revision of article
+    tokens = WikiWhoApi.new(wiki: @topic.wiki).get_revision_tokens(latest_revision_id)
+
+    @topic.timestamps.each do |timestamp|
+      # For each timestamp, update the article's token stats
+      update_token_stats_for_article_timestamp(article:, timestamp:, tokens:)
+    end
+  end
+
+  def update_token_stats_for_article_timestamp(article:, timestamp:, tokens:)
+    # Find the ArticleTimepoint
+    article_timepoint = ArticleTimepoint.find_or_create_for_timestamp(timestamp:, article:)
+
+    # Find the TopicTimepoint
+    topic_timepoint = TopicTimepoint.find_or_create_by!(topic: @topic, timestamp:)
+
+    # Find each TopicArticleTimepoint for each Article
+    topic_article_timepoint = TopicArticleTimepoint.find_by(article_timepoint:, topic_timepoint:)
+
+    return unless topic_article_timepoint
 
     @topic_article_timepoint_stats_service = TopicArticleTimepointStatsService.new(
       topic_article_timepoint:
     )
-    @topic_article_timepoint_stats_service.update_stats_for_topic_article_timepoint
+
+    # Pass off to ArticleStatsService to update the stats
+    @article_stats_service.update_token_stats(article_timepoint:, tokens:)
+
+    # Pass off to TopicArticleTimepointStatsService to update the stats
+    @topic_article_timepoint_stats_service.update_token_stats(tokens:)
   end
 
   def log(message)

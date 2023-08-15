@@ -45,6 +45,10 @@ class Topic < ApplicationRecord
     timestamps.first
   end
 
+  def last_timestamp
+    timestamps.last
+  end
+
   def timestamp_previous_to(timestamp)
     timestamp_index = timestamps.index(timestamp)
     raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.nil?

@@ -29,6 +29,33 @@ RSpec.describe ArticleTimepoint do
       expect(article_timepoint).to be_a(described_class)
     end
 
+    it 'yields if new ArticleTimepoint' do
+      timestamp = Date.new(2023, 1, 1)
+      article.update first_revision_at: timestamp - 1.day
+      expect(described_class.count).to eq(0)
+      new_article_timepoint = false
+      article_timepoint = described_class.find_or_create_for_timestamp(
+        timestamp:, article:
+      ) { new_article_timepoint = true }
+      expect(described_class.count).to eq(1)
+      expect(new_article_timepoint).to eq(true)
+      expect(article_timepoint).to be_a(described_class)
+    end
+
+    it 'does not yield if existing ArticleTimepoint' do
+      timestamp = Date.new(2023, 1, 1)
+      article.update first_revision_at: timestamp - 1.day
+      existing_article_timepoint = described_class.find_or_create_by!(timestamp:, article:)
+      expect(described_class.count).to eq(1)
+      new_article_timepoint = false
+      article_timepoint = described_class.find_or_create_for_timestamp(
+        timestamp:, article:
+      ) { new_article_timepoint = true }
+      expect(described_class.count).to eq(1)
+      expect(new_article_timepoint).to eq(false)
+      expect(article_timepoint).to eq(existing_article_timepoint)
+    end
+
     it 'finds and return an existing ArticleTimepoint' do
       timestamp = Date.new(2023, 1, 1)
       article.update first_revision_at: timestamp - 1.day

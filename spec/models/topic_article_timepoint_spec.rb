@@ -7,7 +7,7 @@ RSpec.describe TopicArticleTimepoint do
   it { is_expected.to belong_to(:topic_timepoint) }
   it { is_expected.to belong_to(:article_timepoint) }
 
-  describe '#find_by_topic_article_and_timestamp' do
+  describe '.find_by_topic_article_and_timestamp' do
     # This shared context sets up 1 Topic with 2 Articles and 2 Timepoints
     include_context 'topic with two timepoints'
 
@@ -27,6 +27,19 @@ RSpec.describe TopicArticleTimepoint do
         timestamp: Date.new(2023, 1, 2)
       )
       expect(topic_article_timepoint).to be_nil
+    end
+  end
+
+  describe '.find_latest_for_article_and_topic' do
+    # This shared context sets up 1 Topic with 2 Articles and 2 Timepoints
+    include_context 'topic with two timepoints'
+
+    it 'returns the expected timepoint' do
+      topic_article_timepoint = described_class.find_latest_for_article_and_topic(
+        topic:,
+        article: article_1
+      )
+      expect(topic_article_timepoint).to eq(end_topic_article_timepoint_1)
     end
   end
 end

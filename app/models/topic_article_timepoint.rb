@@ -10,6 +10,7 @@ class TopicArticleTimepoint < ApplicationRecord
   delegate :timestamp, to: :topic_timepoint
   delegate :topic, to: :topic_timepoint
   delegate :article, to: :article_timepoint
+  delegate :revision_id, to: :article_timepoint
 
   ## Class Methods
 
@@ -22,6 +23,17 @@ class TopicArticleTimepoint < ApplicationRecord
              topic.id,
              article.id,
              timestamp.to_date)
+      .first
+  end
+
+  def self.find_latest_for_article_and_topic(topic:, article:)
+    return nil unless topic && article
+    joins(topic_timepoint: [:topic], article_timepoint: [:article])
+      .where('topics.id = ? AND
+              articles.id = ?',
+             topic.id,
+             article.id)
+      .order('topic_timepoints.timestamp DESC')
       .first
   end
 end
