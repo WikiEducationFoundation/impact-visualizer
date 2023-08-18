@@ -15,6 +15,7 @@ gem 'awesome_print'
 gem 'mediawiki_api'
 gem 'oj'
 gem "parallel", "~> 1.23"
+gem 'vite_rails'
 
 group :development do
   gem 'spring'

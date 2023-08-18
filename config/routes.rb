@@ -5,6 +5,5 @@ Rails.application.routes.draw do
     resources :topic_timepoints, only: [:index]
   end
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  root "pages#index"
 end
