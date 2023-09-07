@@ -1,0 +1,41 @@
+@define-mixin header-base {
+  font-weight: 300;
+  margin: 0;
+  line-height: 1.2;
+  margin-bottom: $global-padding;
+  position: relative;
+  color: $blue;
+}
+
+@define-mixin h1 {
+  @mixin header-base;
+  font-size: 2rem;
+  line-height: 1.1;
+  
+  @mixin above {    
+  }
+}
+
+@define-mixin h2 {
+  @mixin header-base;
+  font-size: 1.5rem;
+  @mixin above {
+  }
+}
+
+@define-mixin h3 {
+  @mixin header-base;
+  font-size: 1.15rem;
+  @mixin above {
+  }
+}
+
+@define-mixin h4 {
+  @mixin header-base;
+  @mixin above {
+  }
+}
+
+@define-mixin h5 {
+  @mixin header-base;
+}

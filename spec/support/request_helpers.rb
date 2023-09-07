@@ -11,6 +11,26 @@ module RequestHelpers
       .to_return(status: 429, body: '{}', headers: {})
   end
 
+  def stub_visualizer_tools_503_error
+    stub_request(:get, /.*impact-visualizer-tools.*/)
+      .to_return(status: 503, body: '{}', headers: {})
+  end
+
+  def stub_visualizer_tools_429_error
+    stub_request(:get, /.*impact-visualizer-tools.*/)
+      .to_return(status: 429, body: '{}', headers: {})
+  end
+
+  def stub_lift_wing_503_error
+    stub_request(:any, /.*inference.*/)
+      .to_return(status: 503, body: '{}', headers: {})
+  end
+
+  def stub_lift_wing_429_error
+    stub_request(:any, /.*inference.*/)
+      .to_return(status: 429, body: '{}', headers: {})
+  end
+
   def stub_wiki_validation
     wikis = [
       'incubator.wikimedia.org',

@@ -19,19 +19,24 @@ class LiftWingApi
   def initialize(wiki = nil)
     wiki ||= Wiki.default_wiki
     raise InvalidProjectError unless LiftWingApi.valid_wiki?(wiki)
+    @client = lift_wing_client
     @project_code = wiki.project == 'wikidata' ? 'wikidata' + 'wiki' : wiki.language + 'wiki'
     @project_quality_model = wiki.project == 'wikidata' ? 'itemquality' : 'articlequality'
   end
 
   def get_revision_quality(rev_id)
     body = { rev_id: }.to_json
-    response = lift_wing_server.post(quality_query_url, body)
-    parsed_response = Oj.load(response.body)
-    parsed_response.dig(@project_code, 'scores', rev_id.to_s,
-                        @project_quality_model, 'score', 'probability')
-  rescue StandardError => e
-    log_error(e)
-    return {}
+    # response = lift_wing_client.post(quality_query_url, body)
+    response = make_request('post', quality_query_url, body)
+
+    if response&.status == 200
+      parsed_response = Oj.load(response.body)
+
+      return parsed_response.dig(@project_code, 'scores', rev_id.to_s,
+                                 @project_quality_model, 'score', 'probability').to_hashugar
+    end
+
+    ap "LiftWingApi Error: #{response}"
   end
 
   class InvalidProjectError < StandardError
@@ -43,14 +48,32 @@ class LiftWingApi
     "/service/lw/inference/v1/models/#{@project_code}-#{@project_quality_model}:predict"
   end
 
-  def lift_wing_server
-    connection = Faraday.new(
+  def lift_wing_client
+    token = Rails.application.credentials.dig(:wiki, :token)
+    options = {
       url: LIFT_WING_SERVER_URL,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: "Authorization: Bearer #{token}"
       }
-    )
-    # connection.headers['User-Agent'] = ENV['visualizer_url'] + ' ' + Rails.env
+    }
+    connection = Faraday.new(options) do |faraday|
+      faraday.response :raise_error
+      faraday.adapter Faraday.default_adapter
+    end
     connection
+  end
+
+  def make_request(action, url, params)
+    tries ||= 0
+    response = @client.send(action, url, params)
+  rescue StandardError => e
+    tries += 1
+    unless Rails.env.test?
+      puts "LiftWingApi / Error – Trys remaining: #{tries}"
+      sleep 1 * tries
+    end
+    retry unless tries == 3
+    log_error(e, response)
   end
 end

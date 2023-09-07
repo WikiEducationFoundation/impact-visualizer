@@ -20,7 +20,6 @@ end
 #  attributed_length_delta           :integer
 #  attributed_revisions_count_delta  :integer
 #  attributed_token_count            :integer
-#  attributed_token_count_delta      :integer
 #  average_wp10_prediction           :float
 #  length                            :integer
 #  length_delta                      :integer
@@ -29,10 +28,8 @@ end
 #  timestamp                         :date
 #  token_count                       :integer
 #  token_count_delta                 :integer
-#  wp10_prediction                   :float
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
-#  closest_revision_id               :integer
 #  topic_id                          :bigint           not null
 #
 # Indexes

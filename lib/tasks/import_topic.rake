@@ -2,17 +2,24 @@
 
 require 'csv'
 
+# TOPIC = 'diptera'
+TOPIC = 'rana'
+
 task import_topic: :environment do
   wiki = Wiki.default_wiki
+
   topic = Topic.find_or_create_by(
-    slug: 'diptera'
+    name: TOPIC.titleize,
+    slug: TOPIC,
+    wiki:
   )
-  article_bag = ArticleBag.find_or_create_by topic:, name: 'Diptera Articles'
-  # article_bag = ArticleBag.find_or_create_by topic:, name: 'Diptera Articles (Small)'
+
+  article_bag = ArticleBag.find_or_create_by topic:, name: "#{TOPIC.titleize} Articles"
+
   return unless topic
 
-  articles_csv_file = 'topic-articles-diptera.csv'
-  users_csv_file = 'topic-users-diptera.csv'
+  articles_csv_file = "topic-articles-#{TOPIC}.csv"
+  users_csv_file = "topic-users-#{TOPIC}.csv"
   article_titles = CSV.read("spec/fixtures/#{articles_csv_file}", headers: false)
   user_names = CSV.read("spec/fixtures/#{users_csv_file}", headers: false)
 

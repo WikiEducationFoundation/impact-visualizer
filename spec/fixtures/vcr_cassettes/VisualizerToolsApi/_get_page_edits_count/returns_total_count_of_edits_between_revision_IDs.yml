@@ -1,0 +1,41 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://impact-visualizer-tools.wmcloud.org/count_revisions.php?from_rev_id=1159158915&page_id=15613&to_rev_id=1161912094
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.18.0
+      Date:
+      - Thu, 24 Aug 2023 23:07:55 GMT
+      Content-Type:
+      - text/html; charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Strict-Transport-Security:
+      - max-age=31622400
+      X-Clacks-Overhead:
+      - GNU Terry Pratchett
+    body:
+      encoding: ASCII-8BIT
+      string: '{ "success": true, "data": [{"count":"2"}] }'
+  recorded_at: Thu, 24 Aug 2023 23:07:55 GMT
+recorded_with: VCR 6.1.0

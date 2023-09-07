@@ -54,7 +54,7 @@ class WikiActionApi
     response = query(query_parameters:)
 
     # If succesful, return just the page info
-    response.data.dig('pages', 0) if response&.status == 200
+    response.data.dig('pages', 0).to_hashugar if response&.status == 200
   end
 
   def get_user_info(userid: nil, name: nil)
@@ -71,7 +71,7 @@ class WikiActionApi
     response = query(query_parameters:)
 
     # If succesful, return just the page info
-    response.data.dig('users', 0) if response&.status == 200
+    response.data.dig('users', 0).to_hashugar if response&.status == 200
   end
 
   def get_all_revisions(pageid:)
@@ -89,7 +89,7 @@ class WikiActionApi
     data = fetch_all(query_parameters:)
 
     # Return just the revisions
-    data.dig('pages', 0, 'revisions')
+    data.dig('pages', 0, 'revisions').to_hashugar
   end
 
   def get_all_revisions_in_range(pageid:, start_timestamp:, end_timestamp:)
@@ -110,7 +110,7 @@ class WikiActionApi
     data = fetch_all(query_parameters:)
 
     # Return just the revisions
-    data.dig('pages', 0, 'revisions')
+    data.dig('pages', 0, 'revisions').to_hashugar
   end
 
   def get_page_revision_at_timestamp(pageid: nil, timestamp:)
@@ -131,7 +131,7 @@ class WikiActionApi
     response = query(query_parameters:)
 
     # Return just the revisions
-    response.data.dig('pages', 0, 'revisions', 0) if response&.status == 200
+    response.data.dig('pages', 0, 'revisions', 0).to_hashugar if response&.status == 200
   end
 
   def get_revision_at_timestamp(timestamp:)
@@ -150,7 +150,7 @@ class WikiActionApi
     response = query(query_parameters:)
 
     # Return just the revisions
-    response.data.dig('allrevisions', 0, 'revisions', 0) if response&.status == 200
+    response.data.dig('allrevisions', 0, 'revisions', 0).to_hashugar if response&.status == 200
   end
 
   def get_first_revision(pageid:)
@@ -169,7 +169,7 @@ class WikiActionApi
     response = query(query_parameters:)
 
     # Return just the revisions
-    response.data.dig('pages', 0, 'revisions', 0) if response&.status == 200
+    response.data.dig('pages', 0, 'revisions', 0).to_hashugar if response&.status == 200
   end
 
   private
@@ -179,19 +179,15 @@ class WikiActionApi
   end
 
   def mediawiki(action, query)
-    tries ||= 3
+    tries ||= 0
     @client.send(action, query)
   rescue StandardError => e
-    tries -= 1
-    # Continue for typical errors so that the request can be retried, but wait
-    # a short bit in the case of 429 — too many request — errors.
-    if too_many_requests?(e)
-      unless Rails.env.test?
-        puts "WikiActionApi / Too many requests – Trys remaining: #{tries}"
-        sleep 1
-      end
+    tries += 1
+    unless Rails.env.test?
+      puts "WikiActionApi / Error – Trys remaining: #{tries}"
+      sleep 1 * tries
     end
-    retry unless tries.zero?
+    retry unless tries == 3
     log_error(e)
   end
 

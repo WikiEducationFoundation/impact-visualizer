@@ -15,7 +15,6 @@ describe TopicsController do
         attributed_length_delta: 200,
         attributed_revisions_count_delta: 10,
         attributed_token_count: 6,
-        attributed_token_count_delta: 6,
         average_wp10_prediction: 20.0,
         length: 900,
         length_delta: 600,
@@ -27,7 +26,7 @@ describe TopicsController do
     end
 
     it 'renders successfully and has the expected fields' do
-      get '/topics'
+      get '/api/topics'
       body = response.parsed_body
       expect(response.status).to eq(200)
       expect(body['topics'].count).to eq(10)
@@ -57,7 +56,6 @@ describe TopicsController do
         attributed_length_delta: 200,
         attributed_revisions_count_delta: 10,
         attributed_token_count: 6,
-        attributed_token_count_delta: 6,
         average_wp10_prediction: 20.0,
         length: 900,
         length_delta: 600,
@@ -69,7 +67,7 @@ describe TopicsController do
     end
 
     it 'renders successfully and has the expected fields' do
-      get "/topics/#{topic.id}"
+      get "/api/topics/#{topic.id}"
       body = response.parsed_body.with_indifferent_access
       expect(response.status).to eq(200)
       expect(body).to include(

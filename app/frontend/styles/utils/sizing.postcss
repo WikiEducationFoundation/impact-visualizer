@@ -1,0 +1,24 @@
+/* ----------------------- */
+/* Sizing Utility Classes  */
+/* ----------------------- */
+
+/* Width Limiters */
+
+@each $value in (5, 10, 15, 20, 25, 30, 35, 40, 45, 46, 47, 50, 55, 60, 70, 80, 90, 100) {
+  .u-limitWidth$(value) {
+    width: 100%;
+    max-width: $(value)rem !important;
+  }
+
+  .u-w$(value) {
+    width: $(value)% !important;
+  }
+}
+
+.u-widthAuto {
+  width: auto !important;
+}
+
+.u-fullHeight {
+  height: 100vh !important;
+}

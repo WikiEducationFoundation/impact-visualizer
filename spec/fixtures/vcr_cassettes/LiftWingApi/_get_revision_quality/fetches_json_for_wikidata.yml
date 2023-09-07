@@ -9,6 +9,8 @@ http_interactions:
     headers:
       Content-Type:
       - application/json
+      Authorization:
+      - 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJlN2JjYTYzZmJjMjBjMWJjNzdhNWQxZDM0N2JhNmQ1NiIsImp0aSI6Ijk5ODEyYTNlZDMwNzExYjQ4NTRmZTgzYWVjYWRhZjVlNGNhZjY5ZWMxNzQ5NmU3MWM5ODE2MTIwYjk2ZTQ5NmY3MjMzZmIyY2NlZmM1NWNhIiwiaWF0IjoxNjkzNTEyNTgzLjA4NDUzNiwibmJmIjoxNjkzNTEyNTgzLjA4NDU0LCJleHAiOjMzMjUwNDIxMzgzLjA3OTc1OCwic3ViIjoiMzE4NzgwNTkiLCJpc3MiOiJodHRwczovL21ldGEud2lraW1lZGlhLm9yZyIsInJhdGVsaW1pdCI6eyJyZXF1ZXN0c19wZXJfdW5pdCI6NTAwMCwidW5pdCI6IkhPVVIifSwic2NvcGVzIjpbImJhc2ljIiwiaGlnaHZvbHVtZSJdfQ.EfKPoTAveABId5iQ3j0THM2ZX-t8TAgrfQ-h0UQ4-LqrqTW_EKpw4-tMl7kWPpL_OyZmVExfpxJ3TRbuhDe1bswbWaEidE-TN5KdPdaki5ydSiXEdG2nixmFeE1Qt8oIzwa-tJs9_ZNJKw-zgO4jeKKY4BoPGKZBh3cwRqWHRljaLedFXGN2ZUJwC0EAVAnOY_9phkgKJ6gQnD2sG9t1D1J2Bh2nptuHpKML55z7aTj9RY1OzViUW7dZyqf1Wj4MSAVZNMxmIrW8ckUYTml0tYzlh8ae6EjEmi2PL6ALLyWvSkCoepNoy_9BLIKeaFCPuaAfaWqYLLNciqAmjX5hdzQ2hMJvmRXTnDat_lFdRG8iP43tQhELr1XxoS_RlfmEZRGUYU6Usbd4gOYDXxU5JYNmueE0Mz1T6pdVbKDmdi2Ub9eiHdwBDqtiZJ1Dhlxs1XdYr6LoQo54mnec7gfx4aayffYklL6qpXOlVEaIVYZyuSIPAZu8i20rPcyMqoZnKHR9dcn6QP3K80AjgC7jwed7tOi2e5JV5RvAQzP0uDgRsSCcLsq3QctDXkN6HO3_LgOlzKXlOkra2cMh_098UssO8FG7nBMnSR7ABC5blEgSta5_6zLE9fXKCKVXmQmWBVr1IyyUFgqXlO0h4I-cLaKjzx2kiEwYNgS2TE3Ogoc'
       User-Agent:
       - Faraday v0.17.6
       Accept-Encoding:
@@ -25,19 +27,21 @@ http_interactions:
       Content-Type:
       - application/json
       Date:
-      - Wed, 28 Jun 2023 19:48:18 GMT
+      - Thu, 31 Aug 2023 21:44:02 GMT
       Server:
       - envoy
+      Cache-Control:
+      - no-cache
       X-Ratelimit-Limit:
-      - 10000, 10000;w=3600
+      - 5000, 5000;w=3600
       X-Ratelimit-Remaining:
-      - '9985'
+      - '4988'
       X-Ratelimit-Reset:
-      - '702'
+      - '958'
       Age:
       - '0'
       X-Cache:
-      - cp4041 miss, cp4041 pass
+      - cp4041 pass, cp4041 pass
       X-Cache-Status:
       - pass
       Server-Timing:
@@ -57,5 +61,5 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"wikidatawiki":{"models":{"itemquality":{"version":"0.5.0"}},"scores":{"641962088":{"itemquality":{"score":{"prediction":"D","probability":{"A":0.002866885296096887,"B":0.005822416435812799,"C":0.08426574819712691,"D":0.894309818649275,"E":0.012735131421688263}}}}}}}'
-  recorded_at: Wed, 28 Jun 2023 19:48:18 GMT
+  recorded_at: Thu, 31 Aug 2023 21:44:02 GMT
 recorded_with: VCR 6.1.0

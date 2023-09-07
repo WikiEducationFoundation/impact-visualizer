@@ -27,7 +27,7 @@ class WikiRestApi
     end
     title = URI::DEFAULT_PARSER.escape(page_title.tr(' ', '_'))
     response = make_request('get', "page/#{title}/history/counts/edits", params)
-    Oj.load(response.body)
+    Oj.load(response.body).to_hashugar
   end
 
   class InvalidProjectError < StandardError

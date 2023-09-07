@@ -27,8 +27,7 @@ RSpec.shared_context 'topic with two timepoints' do
            article_timepoint: start_article_timepoint_1, length_delta: 0,
            revisions_count_delta: 0, attributed_length_delta: 0,
            attributed_revisions_count_delta: 0,
-           token_count_delta: 0, attributed_token_count_delta: 0,
-           attributed_token_count: 0, initial_attributed_token_count: 10,
+           attributed_token_count: 0, token_count_delta: 0,
            attributed_creator: user, attributed_creation_at: start_date)
   end
   let!(:start_article_timepoint_2) do
@@ -40,8 +39,7 @@ RSpec.shared_context 'topic with two timepoints' do
     create(:topic_article_timepoint, topic_timepoint: start_topic_timepoint,
            article_timepoint: start_article_timepoint_2, length_delta: 0,
            revisions_count_delta: 0, attributed_length_delta: 0,
-           token_count_delta: 0, attributed_token_count_delta: 0,
-           attributed_token_count: 0, initial_attributed_token_count: 10,
+           attributed_token_count: 0, token_count_delta: 0,
            attributed_revisions_count_delta: 0)
   end
 
@@ -57,7 +55,7 @@ RSpec.shared_context 'topic with two timepoints' do
     create(:topic_article_timepoint, topic_timepoint: end_topic_timepoint,
            article_timepoint: end_article_timepoint_1, length_delta: 100,
            revisions_count_delta: 2, attributed_length_delta: 50,
-           attributed_token_count: 20, attributed_token_count_delta: 10,
+           attributed_token_count: 20,
            token_count_delta: 30,
            attributed_revisions_count_delta: 1)
   end
@@ -70,7 +68,7 @@ RSpec.shared_context 'topic with two timepoints' do
     create(:topic_article_timepoint, topic_timepoint: end_topic_timepoint,
            article_timepoint: end_article_timepoint_2, length_delta: 100,
            revisions_count_delta: 2, attributed_length_delta: 50,
-           attributed_token_count: 20, attributed_token_count_delta: 10,
+           attributed_token_count: 20,
            token_count_delta: 30,
            attributed_revisions_count_delta: 1)
   end
@@ -119,7 +117,6 @@ RSpec.shared_context 'three topic_timepoints' do
       attributed_length_delta: 0,
       attributed_revisions_count_delta: 0,
       attributed_token_count: 0,
-      attributed_token_count_delta: 0,
       average_wp10_prediction: 10,
       length: 300,
       length_delta: 0,
@@ -139,7 +136,6 @@ RSpec.shared_context 'three topic_timepoints' do
       attributed_length_delta: 100,
       attributed_revisions_count_delta: 5,
       attributed_token_count: 4,
-      attributed_token_count_delta: 4,
       average_wp10_prediction: 20,
       length: 600,
       length_delta: 300,
@@ -159,7 +155,6 @@ RSpec.shared_context 'three topic_timepoints' do
       attributed_length_delta: 100,
       attributed_revisions_count_delta: 5,
       attributed_token_count: 6,
-      attributed_token_count_delta: 2,
       average_wp10_prediction: 30,
       length: 900,
       length_delta: 300,

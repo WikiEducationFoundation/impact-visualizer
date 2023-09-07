@@ -13,6 +13,8 @@ gem 'tzinfo-data', platforms: %i[ mingw mswin x64_mingw jruby ]
 gem 'bootsnap', require: false
 gem 'awesome_print'
 gem 'mediawiki_api'
+gem 'hashugar'
+gem 'oauth2'
 gem 'oj'
 gem "parallel", "~> 1.23"
 gem 'vite_rails'
@@ -40,5 +42,3 @@ group :test do
   gem 'vcr'
   gem 'webmock'
 end
-
-

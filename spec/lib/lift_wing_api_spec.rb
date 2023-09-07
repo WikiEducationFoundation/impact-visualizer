@@ -3,6 +3,28 @@
 require 'rails_helper'
 
 describe LiftWingApi do
+  describe 'error handling' do
+    let(:wikipedia) { create(:wiki, project: 'wikipedia', language: 'en') }
+    let(:subject) { described_class.new(wikipedia).get_revision_quality(641962088) }
+
+    it 'handles API errors gracefully' do
+      stub_lift_wing_503_error
+      expect { subject }.to raise_error(Faraday::ClientError)
+    end
+
+    it 'handles 429 errors gracefully' do
+      stub_lift_wing_429_error
+      expect { subject }.to raise_error(Faraday::ClientError)
+    end
+
+    it 'handles timeout errors gracefully' do
+      allow_any_instance_of(Faraday::Connection).to receive(:send)
+        .and_raise(Faraday::TimeoutError)
+      expect_any_instance_of(described_class).to receive(:log_error).once
+      expect(subject).to eq(nil)
+    end
+  end
+
   context 'when the wiki is not a wikipedia or wikidata' do
     before { stub_wiki_validation }
 
@@ -19,9 +41,14 @@ describe LiftWingApi do
     let(:ru_wikipedia) { create(:wiki, project: 'wikipedia', language: 'ru') }
     let(:wikidata) { create(:wiki, project: 'wikidata', language: 'en') }
 
+    it 'works with auth', vcr: false do
+      response = described_class.new(wikipedia).get_revision_quality(641962088)
+    end
+
     it 'fetches json for wikipedia', vcr: true do
       response = described_class.new(wikipedia).get_revision_quality(641962088)
-      expect(response).to be_a(Hash)
+      # ap response
+      expect(response).to be_a(Hashugar)
       expect(response['B']).to be_a(Numeric)
       expect(response['C']).to be_a(Numeric)
       expect(response['FA']).to be_a(Numeric)
@@ -32,36 +59,14 @@ describe LiftWingApi do
 
     it 'fetches json for ru wikipedia', vcr: true do
       response = described_class.new(ru_wikipedia).get_revision_quality(1)
-      expect(response).to be_a(Hash)
+      expect(response).to be_a(Hashugar)
       expect(response['I']).to be_a(Numeric)
     end
 
     it 'fetches json for wikidata', vcr: true do
       response = described_class.new(wikidata).get_revision_quality(641962088)
-      expect(response).to be_a(Hash)
+      expect(response).to be_a(Hashugar)
       expect(response['A']).to be_a(Numeric)
-    end
-  end
-
-  describe 'error handling and calls ApiErrorHandling method' do
-    let(:rev_ids) { [641962088, 12345] }
-    let(:wikipedia) { create(:wiki, project: 'wikipedia', language: 'en') }
-    let(:subject) do
-      described_class.new(wikipedia).get_revision_quality(rev_ids)
-    end
-
-    it 'handles timeout errors' do
-      stub_request(:any, %r{https://api.wikimedia.org/.*})
-        .to_raise(Errno::ETIMEDOUT)
-      expect_any_instance_of(described_class).to receive(:log_error).once
-      expect(subject).to be_empty
-    end
-
-    it 'handles connection refused errors' do
-      stub_request(:any, %r{https://api.wikimedia.org/.*})
-        .to_raise(Faraday::ConnectionFailed)
-      expect_any_instance_of(described_class).to receive(:log_error).once
-      expect(subject).to be_empty
     end
   end
 end

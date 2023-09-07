@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_09_211718) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_05_220931) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -67,9 +67,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_09_211718) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "token_count_delta"
-    t.integer "initial_attributed_token_count"
     t.integer "attributed_token_count"
-    t.integer "attributed_token_count_delta"
     t.index ["article_timepoint_id"], name: "index_topic_article_timepoints_on_article_timepoint_id"
     t.index ["attributed_creator_id"], name: "index_topic_article_timepoints_on_attributed_creator_id"
     t.index ["topic_timepoint_id"], name: "index_topic_article_timepoints_on_topic_timepoint_id"
@@ -82,7 +80,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_09_211718) do
     t.integer "attributed_length_delta"
     t.integer "attributed_revisions_count_delta"
     t.integer "attributed_token_count"
-    t.integer "attributed_token_count_delta"
     t.integer "length"
     t.integer "length_delta"
     t.integer "revisions_count"
@@ -111,13 +108,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_09_211718) do
     t.bigint "topic_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.float "wp10_prediction"
     t.float "average_wp10_prediction"
     t.integer "token_count"
     t.integer "token_count_delta"
     t.integer "attributed_token_count"
-    t.integer "attributed_token_count_delta"
-    t.integer "closest_revision_id"
     t.index ["topic_id"], name: "index_topic_timepoints_on_topic_id"
   end
 

@@ -1,0 +1,128 @@
+/* -------------------------- */
+/* Type Utility Classes    */
+/* -------------------------- */
+
+/* Header styles */
+
+.u-h1 {
+  @mixin h1;
+}
+
+.u-h2 {
+  @mixin h2;
+}
+
+.u-h3 {
+  @mixin h3;
+}
+
+.u-h4 {
+  @mixin h4;
+}
+
+.u-h5 {
+  @mixin h5;
+}
+
+
+/* Sizing */
+
+.u-small {
+  font-size: 0.875rem;
+}
+
+/* Case */
+
+.u-normalCase {
+  text-transform: none;
+}
+
+.u-upperCase {
+  text-transform: upper;
+}
+
+.u-lead {
+  color: $grey;
+}
+
+.u-lead-small {
+}
+
+.u-lead-medium {
+  font-size: 1.14rem;
+  line-height: 1.7rem;
+  color: $grey;
+  
+  @mixin above {
+    line-height: 2rem;
+    font-size: 1.5rem;
+  }
+}
+
+.u-lead-mediumLarge {
+  color: $grey;
+  font-size: 1.14rem;
+  line-height: 1.7rem;
+  
+  @mixin above {
+    font-size: 2rem;
+    line-height: 1.5;
+  }
+}
+
+.u-lead-large {
+  color: $grey;
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+  
+  @mixin above {
+    font-size: 2.75rem;
+    line-height: 3.5rem;
+  }
+}
+
+
+.u-huge-headline {
+  font-size: 2.5rem;
+  line-height: 1.1;
+  
+  @mixin above {
+    font-size: 6.25rem;
+  }
+}
+
+/* Weight */
+
+.u-normalWeight {
+  font-weight: normal;
+}
+
+.u-semiboldWeight {
+  font-weight: 500;
+}
+
+.u-bold {
+  font-weight: bold;
+}
+
+
+/* Style */
+
+.u-italic {
+  font-style: italic;
+}
+
+.u-alpha-50 {
+  opacity: 0.5;
+}
+
+.u-alpha-25 {
+  opacity: 0.25;
+}
+
+
+/* Borders */
+
+.u-bottomBorder {
+  border-bottom: 1px solid $lightGrey;
+}

@@ -17,7 +17,6 @@ end
 #  attributed_length_delta           :integer
 #  attributed_revisions_count_delta  :integer
 #  attributed_token_count            :integer
-#  attributed_token_count_delta      :integer
 #  average_wp10_prediction           :float
 #  length                            :integer
 #  length_delta                      :integer

@@ -47,8 +47,6 @@ end
 #  attributed_length_delta          :integer
 #  attributed_revisions_count_delta :integer
 #  attributed_token_count           :integer
-#  attributed_token_count_delta     :integer
-#  initial_attributed_token_count   :integer
 #  length_delta                     :integer
 #  revisions_count_delta            :integer
 #  token_count_delta                :integer

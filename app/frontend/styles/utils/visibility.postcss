@@ -1,0 +1,43 @@
+/* ----------------------------- */
+/* Visibility Utility Classes    */
+/* ----------------------------- */
+
+.u-hidden {
+  display: none !important;
+}
+
+.u-visible {
+  display: block !important;
+}
+
+.u-noMobile {
+  display: none !important;
+
+  @mixin above $medium {
+    display: block !important;
+  }
+}
+
+.u-noMobileFlex {
+  display: none !important;
+
+  @mixin above $medium {
+    display: flex !important;
+  }
+}
+
+.u-noMobileInlineBlock {
+  display: none !important;
+
+  @mixin above $medium {
+    display: inline-block !important;
+  }
+}
+
+.u-mobileOnly {
+  display: block !important;
+
+  @mixin above $medium {
+    display: none !important;
+  }
+}

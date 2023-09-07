@@ -24,7 +24,7 @@ class WikiWhoApi
     response = wiki_who_server.get(url_query)
     response_body = response.body
     wiki_who_data = Oj.load(response_body)
-    wiki_who_data.dig('revisions', 0, revision_id.to_s, 'tokens')
+    wiki_who_data.dig('revisions', 0, revision_id.to_s, 'tokens').to_hashugar
   rescue StandardError => e
     log_error(e)
     return {}

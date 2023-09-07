@@ -9,7 +9,7 @@ describe TopicTimepointsController do
     let!(:topic_timepoint) { topic_timepoints.first }
 
     it 'renders successfully and has the expected fields' do
-      get "/topics/#{topic.id}/topic_timepoints"
+      get "/api/topics/#{topic.id}/topic_timepoints"
       body = response.parsed_body
       expect(response.status).to eq(200)
       expect(body['topic_timepoints'].count).to eq(10)
@@ -23,7 +23,6 @@ describe TopicTimepointsController do
         attributed_length_delta: topic_timepoint.attributed_length_delta,
         attributed_revisions_count_delta: topic_timepoint.attributed_revisions_count_delta,
         attributed_token_count: topic_timepoint.attributed_token_count,
-        attributed_token_count_delta: topic_timepoint.attributed_token_count_delta,
         average_wp10_prediction: topic_timepoint.average_wp10_prediction,
         length: topic_timepoint.length,
         length_delta: topic_timepoint.length_delta,

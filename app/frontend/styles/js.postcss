@@ -1,0 +1,26 @@
+.swiper-slide {
+  width: fit-content;
+}
+
+.swiper {
+  overflow: visible;
+}
+
+.swiper .PreviewCard, .swiper .LeaderCard {
+  margin-right: 1.25rem;
+}
+
+.swiper-navigation {
+  display: none;
+  position: absolute;
+  top: -4rem;
+  right: 0;
+  
+  button:first-child {
+    margin-right: 0.3rem;
+  }
+
+  @mixin above {
+    display: block;
+  }
+}

@@ -1,0 +1,61 @@
+/* -------------------------- */
+/* Spacing Utility Classes    */
+/* -------------------------- */
+
+/* Spacing Mixins */
+
+@define-mixin generateSpacingClasses $prefix, $property {
+  @each $value in (0, "05", 1, 2, 3, 4, 5, 6, 7, 8) {
+    .u-$(prefix)$(value) {
+      @if $value == "05" {
+        $(property): 0.5rem !important;
+      } @else {
+        $(property): $(value)rem !important;
+      }
+    }
+
+    .u-sm-$(prefix)$(value) {
+      @mixin above $small {
+        @if $value == "05" {
+          $(property): 0.5rem !important;
+        } @else {
+          $(property): $(value)rem !important;
+        }
+      }
+    }
+
+    .u-md-$(prefix)$(value) {
+      @mixin above $medium {
+        @if $value == "05" {
+          $(property): 0.5rem !important;
+        } @else {
+          $(property): $(value)rem !important;
+        }
+      }
+    }
+
+    .u-lg-$(prefix)$(value) {
+      @mixin above $large {
+        @if $value == "05" {
+          $(property): 0.5rem !important;
+        } @else {
+          $(property): $(value)rem !important;
+        }
+      }
+    }
+  }
+}
+
+/* Margins */
+@mixin generateSpacingClasses m, margin;
+@mixin generateSpacingClasses mt, margin-top;
+@mixin generateSpacingClasses mb, margin-bottom;
+@mixin generateSpacingClasses ml, margin-left;
+@mixin generateSpacingClasses mr, margin-right;
+
+/* Padding */
+@mixin generateSpacingClasses p, padding;
+@mixin generateSpacingClasses pt, padding-top;
+@mixin generateSpacingClasses pb, padding-bottom;
+@mixin generateSpacingClasses pl, padding-left;
+@mixin generateSpacingClasses pr, padding-right;

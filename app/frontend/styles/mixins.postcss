@@ -1,0 +1,62 @@
+/* --------------- */
+/* Mixins          */
+/* --------------- */
+
+/* Utility Mixins */
+
+@define-mixin above $width: $medium {
+  @media screen and (min-width: $width){
+    @mixin-content;
+  }
+}
+
+@define-mixin below $width: $medium {
+  @media screen and (max-width: $width){
+    @mixin-content;
+  }
+}
+
+@define-mixin hoverAbove $width: $small {
+  @media screen and (min-width: $width){
+    &:hover {
+      @mixin-content;
+    }
+  }
+}
+
+@define-mixin antialiased {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@define-mixin no-flicker {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000;
+}
+
+@define-mixin util $name {
+  .u-$(name) {
+    @mixin-content;
+  }
+
+  .u-sm-$(name) {
+    @mixin above $small {
+      @mixin-content;
+    }
+  }
+
+  .u-md-$(name) {
+    @mixin above $medium {
+      @mixin-content;
+    }
+  }
+
+  .u-lg-$(name) {
+    @mixin above $large {
+      @mixin-content;
+    }
+  }
+}

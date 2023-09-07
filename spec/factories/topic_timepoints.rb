@@ -6,7 +6,6 @@ FactoryBot.define do
     attributed_length_delta { Faker::Number.number(digits: 5) }
     attributed_revisions_count_delta { Faker::Number.number(digits: 5) }
     attributed_token_count { Faker::Number.number(digits: 5) }
-    attributed_token_count_delta { Faker::Number.number(digits: 5) }
     average_wp10_prediction { Faker::Number.number(digits: 2) }
     length { Faker::Number.number(digits: 5) }
     length_delta { Faker::Number.number(digits: 5) }
@@ -15,7 +14,6 @@ FactoryBot.define do
     timestamp { Faker::Date.backward(days: 365) }
     token_count { Faker::Number.number(digits: 5) }
     token_count_delta { Faker::Number.number(digits: 5) }
-    closest_revision_id { Faker::Number.number(digits: 5) }
   end
 end
 
@@ -30,7 +28,6 @@ end
 #  attributed_length_delta           :integer
 #  attributed_revisions_count_delta  :integer
 #  attributed_token_count            :integer
-#  attributed_token_count_delta      :integer
 #  average_wp10_prediction           :float
 #  length                            :integer
 #  length_delta                      :integer
@@ -39,10 +36,8 @@ end
 #  timestamp                         :date
 #  token_count                       :integer
 #  token_count_delta                 :integer
-#  wp10_prediction                   :float
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
-#  closest_revision_id               :integer
 #  topic_id                          :bigint           not null
 #
 # Indexes

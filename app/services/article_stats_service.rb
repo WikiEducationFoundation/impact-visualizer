@@ -5,7 +5,7 @@ class ArticleStatsService
     wiki ||= Wiki.default_wiki
     @wiki = wiki
     @wiki_action_api = WikiActionApi.new(wiki)
-    @wiki_rest_api = WikiRestApi.new(wiki)
+    @visualizer_tools_api = VisualizerToolsApi.new(wiki)
     @lift_wing_api = LiftWingApi.new(wiki)
   end
 
@@ -65,8 +65,8 @@ class ArticleStatsService
     revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp:)
 
     # Get count of Revisions at timestamp
-    revisions_count = @wiki_rest_api.get_page_edits_count(
-      page_title: title,
+    revisions_count = @visualizer_tools_api.get_page_edits_count(
+      page_id: pageid,
       from_rev_id: article.first_revision_id,
       to_rev_id: revision['revid']
     )
@@ -78,7 +78,7 @@ class ArticleStatsService
     article_timepoint.update(
       article_length: revision['size'],
       revision_id: revision['revid'],
-      revisions_count: revisions_count['count'] || 0,
+      revisions_count: revisions_count || 0,
       wp10_prediction: quality
     )
   end

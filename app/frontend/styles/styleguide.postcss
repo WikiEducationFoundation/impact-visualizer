@@ -1,0 +1,176 @@
+/* --------------------------------------------- */
+/* Styleguide Classes                            */
+/* Not intended for usage outside of styleguide  */
+/* --------------------------------------------- */
+
+body.styleguide {
+  .Container {
+    max-width: 1300px;
+    padding: 0;
+    margin: 0 auto;
+    
+    @mixin above {
+      padding: 0;
+    }
+  }
+}
+
+.styleguide-nav {
+  display: none;
+  width: 11rem;
+  height: 100%;
+  background: $blue;
+
+   @mixin above $large {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 2rem;
+  }
+}
+
+.styleguide-logo {
+  display: block;
+  width: 100%;
+  max-width: 120px;
+  margin: 0 auto;
+  margin-top: -1rem;
+  margin-bottom: 0rem;
+}
+
+.styleguide-body {
+  @mixin above $large {
+    margin-left: 12rem;
+  }
+  padding: 1rem;
+}
+
+.styleguide-section {
+  margin-bottom: 3rem;
+}
+
+.styleguide-colorSwatch {
+  width: 100%;
+  height: 3rem;
+  margin-bottom: 1rem;
+}
+
+.styleguide-example {
+  background: #eee;
+  padding: 1rem;
+  overflow: hidden;
+  padding-bottom: 0;
+  margin-bottom: 2rem;
+  border-radius: 5px;
+
+  &:before {
+    display: block;
+    font-style: italic;
+    font-size: 0.85rem;
+    content: "Examples";
+    margin-bottom: 1rem;
+  }
+}
+
+.styleguide-example--spacing {
+  p {
+    margin-bottom: 0.5rem;
+    padding: 0.2rem;
+    text-align: center;
+    font-size: 0.75rem;
+    border-radius: 3px;
+    // background: $blue;
+  }
+}
+
+.styleguide-example--alignment {
+  p {
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 3px;
+    // background: $blue;
+
+    img {
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+.styleguide-example--grid {
+  .styleguide-column {
+    // background: $blue;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.5rem 0.4rem 0.5rem;
+  }
+}
+
+.styleguide-codeSample {
+  background: $blue;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  margin-top: 1rem;
+  padding: 1rem;
+
+  pre {
+    display: none;
+    background: $grey;
+    padding: 1rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: normal;
+    border-radius: 5px;
+    font: monospace;
+    overflow: hidden;
+    margin: 0;
+    margin-top: 1rem;
+  }
+}
+
+.styleguide-sourceButton {
+  display: block !important;
+  margin-bottom: 0 !important;
+}
+
+.styleguide-contrast {
+  background: $blue;
+  padding: 0.5rem;
+}
+
+.styleguide-pillContainer {
+  width: 300px;
+  height: 100px;
+  background: black;
+  margin-top: 1rem;
+  position: relative;
+}
+
+.styleguide-menu {
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+  text-align: center;
+  margin-top: 0;
+
+  li {
+    margin-left: 0;
+    padding-left: 0;
+
+    a {
+      font-size: 0.85rem;
+      border-bottom: none;
+      text-decoration: none;
+      border: none;
+      color: white;
+      font-weight: normal;
+
+      &:hover {
+        color: white;
+      }
+    }
+  }
+}

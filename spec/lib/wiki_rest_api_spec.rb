@@ -27,7 +27,7 @@ describe WikiRestApi do
     it 'returns total count of edits', :vcr do
       wiki_api = described_class.new
       data = wiki_api.get_page_edits_count(page_title: 'Jazz')
-      expect(data).to be_a(Hash)
+      expect(data).to be_a(Hashugar)
       expect(data['count']).to be_a(Integer)
       expect(data['limit']).to be_in([true, false])
     end
@@ -35,7 +35,7 @@ describe WikiRestApi do
     it 'returns total count of edits, with a title with spaces', :vcr do
       wiki_api = described_class.new
       data = wiki_api.get_page_edits_count(page_title: '& Juliet')
-      expect(data).to be_a(Hash)
+      expect(data).to be_a(Hashugar)
       expect(data['count']).to be_a(Integer)
       expect(data['limit']).to be_in([true, false])
     end
@@ -47,7 +47,7 @@ describe WikiRestApi do
         from_rev_id: 1159158915,
         to_rev_id: 1161912094
       )
-      expect(data).to be_a(Hash)
+      expect(data).to be_a(Hashugar)
       expect(data['count']).to eq(2)
       expect(data['limit']).to eq(false)
     end

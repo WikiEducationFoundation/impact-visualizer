@@ -22,18 +22,24 @@ class TimepointService
 
     # Build/update most everything for each timestamp
     timestamps.each do |timestamp|
-      build_timepoints_for_timestamp(timestamp:)
+      timestamp_count += 1
       log "#build_timepoints_for_timestamp timestamp:#{timestamp_count}/#{timestamps.count}"
+      build_timepoints_for_timestamp(timestamp:)
     end
 
     # Handle tokens separately, because...
     # WikiWho API only needs 1 API call per article (as opposed to per timepoint AND article)
+    log '#update_token_stats'
     update_token_stats
 
     # Update TopicTimepoints with summarized stats
     # This needs to happen AFTER token stats update
+
+    timestamp_count = 0
     timestamps.each do |timestamp|
+      timestamp_count += 1
       topic_timepoint = TopicTimepoint.find_or_create_by!(topic:, timestamp:)
+      log "#update_stats_for_topic_timepoint timestamp:#{timestamp_count}/#{timestamps.count}"
       @topic_timepoint_stats_service.update_stats_for_topic_timepoint(topic_timepoint:)
     end
 
@@ -106,9 +112,13 @@ class TimepointService
   def update_token_stats
     article_bag_articles = @topic.active_article_bag.article_bag_articles
 
+    article_count = 0
     # Loop through all Articles
     article_bag_articles.each do |article_bag_article|
       article = article_bag_article.article
+
+      article_count += 1
+      log "  #update_token_stats_for_article article:#{article_count}/#{article_bag_articles.count}"
 
       # Update stats for all timestamps for article
       update_token_stats_for_article(article:)
@@ -136,6 +146,9 @@ class TimepointService
   end
 
   def update_token_stats_for_article_timestamp(article:, timestamp:, tokens:)
+    # If Article was created after timestamp, skip it
+    return unless article.exists_at_timestamp?(timestamp)
+
     # Find the ArticleTimepoint
     article_timepoint = ArticleTimepoint.find_or_create_for_timestamp(timestamp:, article:)
 
@@ -147,12 +160,12 @@ class TimepointService
 
     return unless topic_article_timepoint
 
+    # Pass off to ArticleStatsService to update the stats
+    @article_stats_service.update_token_stats(article_timepoint:, tokens:)
+
     @topic_article_timepoint_stats_service = TopicArticleTimepointStatsService.new(
       topic_article_timepoint:
     )
-
-    # Pass off to ArticleStatsService to update the stats
-    @article_stats_service.update_token_stats(article_timepoint:, tokens:)
 
     # Pass off to TopicArticleTimepointStatsService to update the stats
     @topic_article_timepoint_stats_service.update_token_stats(tokens:)

@@ -1,0 +1,237 @@
+/* ------------------------- */
+/* Base HTML Elements        */
+/* No classes or IDs         */
+/* ------------------------- */
+
+html, body {
+  height: 100%;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: $mobile-base;
+
+  @mixin above $medium {
+    font-size: $desktop-base;
+  }
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  @mixin open-sans;
+  font-weight: 400;
+  @mixin antialiased;
+  background: #f5f5f5;
+  color: $grey;
+  font-size: 1rem;
+  line-height: $base-line-height;
+  -webkit-text-size-adjust: 100%;
+}
+
+p + h1, p + h2, p + h3, p + h4, p + h5, ul + h4, ol + h4, p + figure {
+  margin-top: 1.5rem;
+}
+
+h1 {
+  @mixin h1;
+}
+
+h2 {
+  @mixin h2;
+}
+
+h3 {
+  @mixin h3;
+}
+
+h4 {
+  @mixin h4;
+}
+
+h5 {
+  @mixin h5;
+}
+
+p, figure {
+  margin: 0;
+  margin-bottom: $global-padding;
+}
+
+figcaption {
+  font-size: 0.875rem;
+  color: #999;
+}
+
+p, blockquote, h1, h2, h3, h4,
+ul, section, pre, div, button, figure, a {
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #BBB;
+  margin-bottom: $global-padding;
+}
+
+a {
+  color: $blue;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color $hover-speed, border $hover-speed;
+  
+  &:hover {
+    color: $blue;
+  }
+}
+
+em {
+  font-style: italic;
+}
+
+strong {
+  font-weight: 500;
+}
+
+ol, ul {
+  padding-left: 1rem;
+  margin-bottom: $global-padding;
+
+  li {
+  }
+
+  ol, ul {
+  }
+}
+
+ol > li {
+}
+
+ul {
+}
+
+blockquote {
+  font-size: 1.2rem;
+  line-height: 1.4;
+  margin-left: 0;
+
+  footer {
+    text-align: right;
+    font-size: 0.875rem;
+  }
+}
+
+cite {
+}
+
+img {
+  max-width: 100%;
+}
+
+figure {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+table {
+  text-align: left;
+  border-spacing: 0;
+  margin-bottom: 1rem;
+}
+
+th, td {
+  font-size: 1rem;
+  margin: 0;
+  padding: 1rem 1rem;
+  line-height: 1.1;
+  border: none;
+}
+
+th {
+  background: $blue;
+  color: white;
+  font-weight: normal;
+  border-right: 1px solid white;
+}
+
+td {
+  border-right: 1px solid $lightGrey; 
+  border-bottom: 1px solid $lightGrey; 
+}
+
+td:last-child {
+  border-right: none; 
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+form {
+  border: none;
+  margin-left: 0;
+}
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  @mixin h3;
+}
+
+label {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: $grey;
+  font-weight: 500;
+}
+
+input, textarea {
+  display: block;
+  background: white; 
+  border: 1px #e4e4e4 solid;
+  margin-bottom: 1rem;
+  color: $grey;
+  padding: 0.75rem 0.75rem;
+  border-radius: 0;
+  font-size: 0.875rem;
+  border-radius: $radius;
+  transition: border $hover-speed;
+}
+
+input::placeholder, textarea::placeholder {
+  color: $lightGrey;
+}
+
+input[type=text],
+input[type=email],
+input[type=phone],
+input[type=password],
+textarea {
+  width: 100%;
+} 
+
+form {
+  *:focus, *:hover {
+    outline:none;
+  }
+}
+
+input:focus, textarea:focus {
+  border: 1px $blue solid;
+}
+
+select {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}

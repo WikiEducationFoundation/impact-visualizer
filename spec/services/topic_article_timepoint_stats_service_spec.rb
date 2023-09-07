@@ -38,6 +38,17 @@ describe TopicArticleTimepointStatsService do
       expect(end_topic_article_timepoint_1.length_delta).to eq(100)
     end
 
+    it 'updates to ZERO if article_timpoint missing data' do
+      # Reset length_delta so we can test it being updated
+      end_article_timepoint_1.update article_length: nil, revisions_count: nil
+      end_topic_article_timepoint_1.update length_delta: nil
+      service = described_class.new(topic_article_timepoint: end_topic_article_timepoint_1)
+      service.update_baseline_deltas
+      end_topic_article_timepoint_1.reload
+      expect(end_topic_article_timepoint_1.length_delta).to eq(0)
+      expect(end_topic_article_timepoint_1.revisions_count_delta).to eq(0)
+    end
+
     it 'updates to ZERO if no previous article_timpoint' do
       # Reset length_delta so we can test it being updated
       start_topic_article_timepoint_1.update(
@@ -50,8 +61,8 @@ describe TopicArticleTimepointStatsService do
       start_topic_article_timepoint_1.reload
       expect(start_topic_article_timepoint_1).to have_attributes(
         length_delta: 0,
-        token_count_delta: 0,
-        revisions_count_delta: 0
+        revisions_count_delta: 0,
+        token_count_delta: nil
       )
     end
 
@@ -62,15 +73,6 @@ describe TopicArticleTimepointStatsService do
       service.update_baseline_deltas
       end_topic_article_timepoint_1.reload
       expect(end_topic_article_timepoint_1.revisions_count_delta).to eq(2)
-    end
-
-    it 'updates token_count_delta' do
-      # Reset token_count_delta so we can test it being updated
-      end_topic_article_timepoint_1.update token_count_delta: nil
-      service = described_class.new(topic_article_timepoint: end_topic_article_timepoint_1)
-      service.update_baseline_deltas
-      end_topic_article_timepoint_1.reload
-      expect(end_topic_article_timepoint_1.token_count_delta).to eq(20)
     end
   end
 
@@ -147,7 +149,7 @@ describe TopicArticleTimepointStatsService do
       user.update wiki_user_id: 917223
 
       # Reset the value to test
-      end_topic_article_timepoint_1.update attributed_token_count_delta: nil
+      end_topic_article_timepoint_1.update attributed_token_count: nil, token_count_delta: nil
 
       # Do it
       service = described_class.new(topic_article_timepoint: end_topic_article_timepoint_1)
@@ -155,6 +157,7 @@ describe TopicArticleTimepointStatsService do
       end_topic_article_timepoint_1.reload
 
       expect(end_topic_article_timepoint_1.attributed_token_count).to eq(11)
+      expect(end_topic_article_timepoint_1.token_count_delta).to eq(20)
     end
 
     it 'set attributed_token_count_delta to ZERO if first timepoint', vcr: true do
@@ -163,11 +166,12 @@ describe TopicArticleTimepointStatsService do
       )
 
       # Reset the value to test
-      start_topic_article_timepoint_1.update attributed_token_count_delta: nil
+      start_topic_article_timepoint_1.update attributed_token_count: nil, token_count_delta: nil
       service = described_class.new(topic_article_timepoint: start_topic_article_timepoint_1)
       service.update_token_stats(tokens:)
       start_topic_article_timepoint_1.reload
       expect(start_topic_article_timepoint_1.attributed_token_count).to eq(0)
+      expect(start_topic_article_timepoint_1.token_count_delta).to eq(0)
     end
   end
 end

@@ -1,0 +1,23 @@
+/* -------------------------- */
+/* Color Variables    */
+/* -------------------------- */
+
+$white: #FFFFFF;
+$black: #000000;
+$grey: #2c2c2c;
+$lightGrey: #EEE;
+$blue: #676eb4;
+
+/* -------------------------- */
+/* Color Utility Classes    */
+/* -------------------------- */
+
+@each $name, $color in (white, black, grey, blue),
+                       ($white, $black, $grey, $blue) {
+  .u-color-$(name) {
+    color: $color !important;
+  }
+  .u-bg-$(name) {
+    background-color: $color !important;
+  }
+}

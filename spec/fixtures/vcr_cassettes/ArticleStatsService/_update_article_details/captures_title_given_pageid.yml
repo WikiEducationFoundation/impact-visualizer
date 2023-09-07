@@ -19,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 09 Aug 2023 21:29:59 GMT
+      - Thu, 24 Aug 2023 23:16:40 GMT
       Server:
-      - mw2398.codfw.wmnet
+      - mw2334.codfw.wmnet
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -29,7 +29,7 @@ http_interactions:
       Content-Disposition:
       - inline; filename=api-result.json
       Vary:
-      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
       Cache-Control:
       - private, must-revalidate, max-age=0
       Content-Length:
@@ -55,9 +55,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
       - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=09-Aug-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
-        10 Sep 2023 12:00:00 GMT
-      - WMF-Last-Access=09-Aug-2023;Path=/;HttpOnly;secure;Expires=Sun, 10 Sep 2023
+      - WMF-Last-Access-Global=24-Aug-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
+        25 Sep 2023 12:00:00 GMT
+      - WMF-Last-Access=24-Aug-2023;Path=/;HttpOnly;secure;Expires=Mon, 25 Sep 2023
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -66,6 +66,6 @@ http_interactions:
     body:
       encoding: UTF-8
       string: '{"batchcomplete":true,"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
-        Game Reserve","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2023-08-07T12:02:25Z","lastrevid":1168844764,"length":9245}]}}'
-  recorded_at: Wed, 09 Aug 2023 21:29:59 GMT
+        Game Reserve","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2023-08-24T21:37:53Z","lastrevid":1171823648,"length":9198}]}}'
+  recorded_at: Thu, 24 Aug 2023 23:16:40 GMT
 recorded_with: VCR 6.1.0

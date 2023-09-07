@@ -13,9 +13,24 @@
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.4",
+    "autoprefixer": "^10.4.15",
     "axios": "^1.4.0",
     "lodash": "^4.17.21",
+    "lost": "^9.0.2",
+    "moment": "^2.29.4",
+    "normalize.css": "^8.0.1",
+    "postcss": "^8.4.29",
+    "postcss-advanced-variables": "^2.3.3",
+    "postcss-color-function": "^4.0.1",
+    "postcss-each": "^0.10.0",
+    "postcss-import": "^11.1.0",
+    "postcss-math": "^0.0.10",
+    "postcss-mixins": "^6.2.0",
+    "postcss-scss": "^1.0.5",
+    "precss": "^3.1.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0",
+    "rucksack-css": "^1.0.2"
   }
 }

@@ -72,7 +72,7 @@ describe WikiActionApi do
     it 'returns page info given pageid' do
       wiki_api = described_class.new
       data = wiki_api.get_page_info(pageid: 58170849)
-      expect(data).to be_a(Hash)
+      expect(data).to be_a(Hashugar)
       expect(data['pageid']).to eq(58170849)
       expect(data['title']).to eq('Battle of Bourgthéroulde')
       expect(data['lastrevid']).to be_a(Integer)
@@ -82,7 +82,7 @@ describe WikiActionApi do
     it 'returns page info given title' do
       wiki_api = described_class.new
       data = wiki_api.get_page_info(title: 'Battle of Bourgthéroulde')
-      expect(data).to be_a(Hash)
+      expect(data).to be_a(Hashugar)
       expect(data['pageid']).to eq(58170849)
       expect(data['title']).to eq('Battle of Bourgthéroulde')
       expect(data['lastrevid']).to be_a(Integer)
@@ -94,7 +94,7 @@ describe WikiActionApi do
     it 'returns user info given userid', :vcr do
       wiki_api = described_class.new
       data = wiki_api.get_user_info(userid: 25848390)
-      expect(data).to be_a(Hash)
+      expect(data).to be_a(Hashugar)
       expect(data['userid']).to eq(25848390)
       expect(data['name']).to eq('TiltuM')
     end
@@ -102,7 +102,7 @@ describe WikiActionApi do
     it 'returns user info given name', :vcr do
       wiki_api = described_class.new
       data = wiki_api.get_user_info(name: 'TiltuM')
-      expect(data).to be_a(Hash)
+      expect(data).to be_a(Hashugar)
       expect(data['userid']).to eq(25848390)
       expect(data['name']).to eq('TiltuM')
     end
