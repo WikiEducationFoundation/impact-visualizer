@@ -1,6 +1,8 @@
 export default interface Topic {
   id: number,
   name: string,
+  description: string,
+  user_count: number,
   slug: string,
   start_date: string,
   end_date: string,

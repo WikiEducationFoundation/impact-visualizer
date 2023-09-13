@@ -70,10 +70,12 @@ describe TopicsController do
       get "/api/topics/#{topic.id}"
       body = response.parsed_body.with_indifferent_access
       expect(response.status).to eq(200)
+      ap body
       expect(body).to include(
         id: topic.id,
         name: topic.name,
         description: topic.description,
+        user_count: topic.user_count,
         start_date: topic.start_date,
         end_date: topic.end_date,
         slug: topic.slug,

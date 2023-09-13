@@ -10,7 +10,7 @@ function Root() {
       <header className="Header">
         <div className="Header-container">
           <img className="Header-logo" src="/images/logo.png" alt="WikiEdu" />
-          <h1>Visualizing Impact</h1>
+          <h1 className="u-h2">Visualizing Impact</h1>
         </div>
       </header>
       <Outlet />
