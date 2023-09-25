@@ -6,8 +6,8 @@ import { useLoaderData, Link } from "react-router-dom";
 
 import Topic from '../types/topic.type';
 import TopicTimepoint from '../types/topic-timepoint.type';
-import Chart from './chart.component';
 import StatBlock from './stat-block.component';
+import StatDetail from './stat-detail.component';
 
 function TopicDetail() {
   const [activeStat, setActiveStat] = useState('articles');
@@ -185,13 +185,11 @@ function TopicDetail() {
           {renderIntro()}
           {renderStatBlocks()}
 
-          {false &&
-            <Chart />
-          }
-
-          <div className='TopicTimepoints'>
-            {renderTopicTimepoints()}
-          </div>
+          <StatDetail
+            stat={activeStat}
+            topic={topic}
+            topicTimepoints={topicTimepoints}
+          />
         </div>
       </div>
     </section>
