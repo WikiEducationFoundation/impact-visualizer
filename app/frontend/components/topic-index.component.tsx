@@ -9,7 +9,7 @@ function TopicIndex() {
   const { topics } = useLoaderData() as { topics: Array<Topic> };
 
   return (
-    <section className="Section">
+    <section className="Section u-lg-pr05">
       <div className="Container Container--padded">
         <div className="TopicIndex">
           {topics.map(topic => (
