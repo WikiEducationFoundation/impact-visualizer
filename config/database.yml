@@ -15,3 +15,4 @@ production:
   user: <%= Rails.application.credentials.database[:user] %>
   password: <%= Rails.application.credentials.database[:password] %>
   host: localhost
+  pool: 100
