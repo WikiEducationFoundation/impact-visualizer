@@ -8,8 +8,7 @@ set :repo_url, "git@github.com:WikiEducationFoundation/impact-visualizer.git"
 set :deploy_to, "/var/www/impact-visualizer"
 
 set :passenger_restart_with_touch, false
-
-Rake::Task["deploy:assets:backup_manifest"].clear_actions
+set :assets_prefix, 'vite'
 
 
 # Default value for :linked_files is []

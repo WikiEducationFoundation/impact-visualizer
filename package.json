@@ -4,7 +4,6 @@
   "main": "index.js",
   "repository": "git@github.com:WikiEducationFoundation/impact-visualizer.git",
   "license": "MIT",
-  "devDependencies": {},
   "dependencies": {
     "@types/lodash": "^4.14.197",
     "@types/pluralize": "^0.0.30",
@@ -37,6 +36,7 @@
     "vega-embed": "^6.22.2",
     "vega-lite": "^5.15.0",
     "vite": "^4.4.9",
+    "vite-plugin-rails": "^0.1.0",
     "vite-plugin-ruby": "^3.2.2"
   }
 }

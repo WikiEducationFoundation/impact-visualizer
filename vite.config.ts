@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite'
-import RubyPlugin from 'vite-plugin-ruby'
+import ViteRails from 'vite-plugin-rails'
 import react from '@vitejs/plugin-react'
+import Environment from 'vite-plugin-environment';
 
 export default defineConfig({
   plugins: [
-    RubyPlugin(),
-    react()
+    ViteRails(),
+    react(),
+    Environment(['NODE_ENV'])
   ],
 })
