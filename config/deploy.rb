@@ -9,6 +9,9 @@ set :deploy_to, "/var/www/impact-visualizer"
 
 set :passenger_restart_with_touch, false
 
+Rake::Task["deploy:assets:backup_manifest"].clear_actions
+
+
 # Default value for :linked_files is []
 # append :linked_files, "config/database.yml", 'config/master.key'
 
