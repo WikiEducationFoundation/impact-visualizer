@@ -3,6 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.2.2'
 
+gem 'annotate'
 gem 'benchmark', '~> 0.2.1'
 gem 'rails', '~> 7.0.5'
 gem 'sqlite3', '~> 1.4'
@@ -25,7 +26,6 @@ group :development do
   gem 'capistrano-rvm', require: false
   gem 'capistrano-passenger', '0.2.0', require: false
   gem 'spring'
-  gem 'annotate'
 end
 
 group :development, :test do
