@@ -25,6 +25,7 @@ group :development do
   gem "capistrano-rails", "~> 1.3", require: false
   gem 'capistrano-rvm', require: false
   gem 'capistrano-passenger', '0.2.0', require: false
+  gem 'capistrano-yarn', require: false
   gem 'spring'
 end
 
