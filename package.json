@@ -5,10 +5,10 @@
   "repository": "git@github.com:WikiEducationFoundation/impact-visualizer.git",
   "license": "MIT",
   "devDependencies": {
-    "vite": "^4.4.9",
-    "vite-plugin-ruby": "^3.2.2"
   },
   "dependencies": {
+    "vite": "^4.4.9",
+    "vite-plugin-ruby": "^3.2.2",
     "@types/lodash": "^4.14.197",
     "@types/pluralize": "^0.0.30",
     "@types/react": "^18.2.20",
