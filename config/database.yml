@@ -11,7 +11,7 @@ test:
 
 production:
   adapter: postgresql
-  database: Rails.application.credentials.database[:name]
-  user: Rails.application.credentials.database[:user]
-  password: Rails.application.credentials.database[:password]
+  database: <%= Rails.application.credentials.database[:name] %>
+  user: <%= Rails.application.credentials.database[:user] %>
+  password: <%= Rails.application.credentials.database[:password] %>
   host: localhost
