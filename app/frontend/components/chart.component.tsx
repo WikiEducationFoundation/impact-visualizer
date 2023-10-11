@@ -27,7 +27,7 @@ function Chart({ spec }) {
       <div
         style={{
           width: '100%',
-          height: 400
+          height: 450
         }}
         ref={container}
       />
