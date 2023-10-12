@@ -48,30 +48,35 @@ function StatDetail({ stat, topicTimepoints }: Props) {
       attributed_delta_field = 'attributed_articles_created_delta';
   }
 
-  let min: number = _.reduce(topicTimepoints, (accum, topicTimepoint) => {
+  const min: number = _.reduce(topicTimepoints, (accum, topicTimepoint) => {
     return Math.min(accum as number, topicTimepoint[total_field] as number);
   }, topicTimepoints[0][total_field] as number);
 
-  let max: number = _.reduce(topicTimepoints, (accum, topicTimepoint) => {
+  const max: number = _.reduce(topicTimepoints, (accum, topicTimepoint) => {
     return Math.max(accum as number, topicTimepoint[total_field] as number);
   }, topicTimepoints[0][total_field] as number);
 
-  // const padding = max * .01;
-  // min = Math.max(Math.round(min - padding), 0);
-  // max = Math.round(max + padding);
-
   const startTotal = _.first(topicTimepoints)[total_field];
-  let total = startTotal;
-  let attributed = startTotal;
+  let attributedCounter = 0;
+  let unattributedCounter = 0;
 
-  const values: object = topicTimepoints.map((topicTimepoint) => {
-    total = total + topicTimepoint[delta_field];
-    attributed = attributed + topicTimepoint[attributed_delta_field]; 
-    return {
+  const values = [];
+
+  topicTimepoints.forEach((topicTimepoint) => {
+    attributedCounter += Math.max(0, topicTimepoint[attributed_delta_field]);
+    unattributedCounter += Math.max(0, topicTimepoint[delta_field] - topicTimepoint[attributed_delta_field]);
+
+    values.push({
       date: topicTimepoint.timestamp,
-      total,
-      attributed
-    }
+      value: unattributedCounter,
+      type: 'unattributed'
+    });
+
+    values.push({
+      date: topicTimepoint.timestamp,
+      value: attributedCounter,
+      type: 'attributed'
+    });
   })
 
   const spec = {
@@ -83,102 +88,104 @@ function StatDetail({ stat, topicTimepoints }: Props) {
     style: "cell",
     data: [
       {
-        "name": "data_0",
-        "values": []
-      },
-      {
-        "name": "data_1",
-        "source": "data_0",
+        name: 'data',
+        values: [],
         transform: [
-          {type: 'formula', expr: 'toDate(datum["date"])', as: 'date'}
+          {type: 'formula', expr: 'toDate(datum["date"])', as: 'date'},
+          {
+            type: 'stack',
+            offset: 'zero',
+            groupby: ['date'],
+            field: 'value',
+            sort: { field: 'type' }
+          },
+          {type: 'formula', expr: `datum['y0'] + ${min}`, as: 'ya'},
+          {type: 'formula', expr: `datum['y1'] + ${min}`, as: 'yb'},
         ]
       }
     ],
     signals: [
       {
-        "name": "width",
-        "init": "isFinite(containerSize()[0]) ? containerSize()[0] : 200",
-        "on": [
+        name: 'width',
+        init: 'isFinite(containerSize()[0]) ? containerSize()[0] : 200',
+        on: [
           {
-            "update": "isFinite(containerSize()[0]) ? containerSize()[0] : 200",
-            "events": "window:resize"
+            update: 'isFinite(containerSize()[0]) ? containerSize()[0] : 200',
+            events: 'window:resize'
           }
         ]
       },
       {
-        "name": "height",
-        "init": "isFinite(containerSize()[1]) ? containerSize()[1] : 200",
-        "on": [
+        name: 'height',
+        init: 'isFinite(containerSize()[1]) ? containerSize()[1] : 200',
+        on: [
           {
-            "update": "isFinite(containerSize()[1]) ? containerSize()[1] : 200",
-            "events": "window:resize"
+            update: 'isFinite(containerSize()[1]) ? containerSize()[1] : 200',
+            events: 'window:resize'
           }
         ]
-      }
-    ],
-    marks: [
-      {
-        name: "total_marks",
-        type: 'area',
-        clip: true,
-        from: { data: "data_1"},
-        encode: {
-          update: {
-            interpolate: { value: 'basis'},
-            fill: { value: '#676eb4'},
-            x: {scale: 'x', field: 'date'},
-            y: {scale: 'y', field: 'total'},
-            y2: {scale: 'y', value: 0}
-          }
-        }
-      },
-      {
-        name: 'attributed_marks',
-        type: 'area',
-        clip: true,
-        from: { data: 'data_1'},
-        encode: {
-          update: {
-            interpolate: { value: 'basis'},
-            fill: { value: '#B3B5E9'},            
-            x: { scale: 'x', field: 'date'},
-            y: { scale: 'y', field: 'attributed'},
-            y2: { scale: 'y', value: 0}
-          }
-        }
       }
     ],
     scales: [
       {
         name: 'x',
         type: 'time',
-        domain: {
-          fields: [
-            {data: 'data_1', field: 'date'}
-          ]
-        },
+        domain: {data: 'data', field: 'date'},
         range: [0, { signal: 'width' }]
       },
       {
         name: 'y',
         type: 'linear',
         domain: [min, max],
+        // domain: {data: 'data', field: 'y1'},
         range: [{signal: 'height'}, 0],
         zero: false
+      },
+      {
+        name: 'color',
+        type: 'ordinal',
+        range: 'category',
+        domain: { data: 'data', field: 'type' }
       }
     ],
     axes: [
+      { scale: 'x', orient: 'bottom', title: 'Date'},
+      { scale: 'y', orient: 'left', title: _.startCase(total_field) }
+    ],
+    marks: [
       {
-        "scale": "x",
-        "orient": "bottom",
-        title: 'Date'
-      },
-      {
-        "scale": "y",
-        "orient": "left",
-        title: _.startCase(total_field)
+        type: 'group',
+        clip: true,
+        from: {
+          facet: {
+            name: 'facet',
+            data: 'data',
+            groupby: 'type'
+          }
+        },
+        marks: [
+          {
+            type: 'area',
+            clip: false,
+            from: { data: 'facet'},
+            encode: {
+              enter: {
+                interpolate: { value: 'basis'},
+                x: { scale: 'x', field: 'date' },
+                y: { scale: 'y', field: 'ya' },
+                y2: { scale: 'y', field: 'yb' },
+                fill: { scale: 'color', field: 'type' }
+              }
+            }        
+          },
+        ]
       }
-    ],  
+    ],
+    legends: [
+      {
+        fill: 'color'
+      }
+    ],
     config: {
       axis: {
         labelColor: '#2c2c2c', 

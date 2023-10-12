@@ -12,7 +12,7 @@ function Chart({ spec }) {
       //   container: container.current as HTMLDivElement
       // });
       // view.runAsync();
-      vegaEmbed(container.current, spec)
+      vegaEmbed(container.current, spec, { renderer: 'svg' })
         .then(() => {
         })
         .catch((e) => {
