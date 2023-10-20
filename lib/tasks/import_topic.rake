@@ -11,7 +11,11 @@ task import_topic: :environment do
   topic = Topic.find_or_create_by(
     name: TOPIC.titleize,
     slug: TOPIC,
-    wiki:
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    wiki:,
+    start_date: Date.new(2022, 9, 1),
+    end_date: Date.new(2023, 1, 1),
+    timepoint_day_interval: 7
   )
 
   article_bag = ArticleBag.find_or_create_by topic:, name: "#{TOPIC.titleize} Articles"
@@ -42,6 +46,7 @@ task import_topic: :environment do
   user_names.each_with_index do |user_name, index|
     ap "Creating User #{index + 1}/#{user_names.count}"
     user = User.find_or_create_by name: user_name[0]
+    user.update_name_and_id(wiki:)
     TopicUser.find_or_create_by user:, topic:
   end
 
