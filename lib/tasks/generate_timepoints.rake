@@ -3,7 +3,7 @@
 require 'csv'
 
 task generate_timepoints: :environment do
-  topic = Topic.find(3)
+  topic = Topic.find_by(name: 'Rana')
   TimepointService.new(topic:).build_timepoints
   TopicSummaryService.new(topic:).create_summary
 end
