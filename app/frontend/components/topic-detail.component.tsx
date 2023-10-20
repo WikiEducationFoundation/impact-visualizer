@@ -8,6 +8,7 @@ import Topic from '../types/topic.type';
 import TopicTimepoint from '../types/topic-timepoint.type';
 import StatBlock from './stat-block.component';
 import StatDetail from './stat-detail.component';
+import SankeyStatDetail from './sankey-stat-detail.component';
 
 function TopicDetail() {
   const [activeStat, setActiveStat] = useState('articles');
@@ -185,11 +186,23 @@ function TopicDetail() {
           {renderIntro()}
           {renderStatBlocks()}
 
-          <StatDetail
-            stat={activeStat}
-            topic={topic}
-            topicTimepoints={topicTimepoints}
-          />
+          {activeStat !== 'wp10' &&
+            <StatDetail
+              stat={activeStat}
+              topic={topic}
+              topicTimepoints={topicTimepoints}
+            />
+          }
+
+          {activeStat === 'wp10' &&
+            <SankeyStatDetail
+              stat={activeStat}
+              topic={topic}
+              topicTimepoints={topicTimepoints}
+            />
+          }
+
+
         </div>
       </div>
     </section>

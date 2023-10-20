@@ -20,7 +20,7 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:start_article_timepoint_1) do
     create(:article_timepoint, article: article_1, timestamp: start_date,
            article_length: 100, revisions_count: 1, wp10_prediction: 25.0,
-           token_count: 10, revision_id: 991007374)
+           wp10_prediction_category: 'A', token_count: 10, revision_id: 991007374)
   end
   let!(:start_topic_article_timepoint_1) do
     create(:topic_article_timepoint, topic_timepoint: start_topic_timepoint,
@@ -33,6 +33,7 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:start_article_timepoint_2) do
     create(:article_timepoint, article: article_2, timestamp: start_date,
           article_length: 100, revisions_count: 2, wp10_prediction: 75.0,
+          wp10_prediction_category: 'A',
           token_count: 20, revision_id: 991007374)
   end
   let!(:start_topic_article_timepoint_2) do
@@ -49,6 +50,7 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:end_article_timepoint_1) do
     create(:article_timepoint, article: article_1, timestamp: end_date,
            article_length: 200, revisions_count: 3, wp10_prediction: 80,
+           wp10_prediction_category: 'B',
            token_count: 30, revision_id: 1084581512)
   end
   let!(:end_topic_article_timepoint_1) do
@@ -62,6 +64,7 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:end_article_timepoint_2) do
     create(:article_timepoint, article: article_2, timestamp: end_date,
            article_length: 200, revisions_count: 4, wp10_prediction: 30,
+           wp10_prediction_category: 'B',
            token_count: 40, revision_id: 1084581512)
   end
   let!(:end_topic_article_timepoint_2) do

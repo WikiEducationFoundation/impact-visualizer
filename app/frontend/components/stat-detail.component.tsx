@@ -69,13 +69,13 @@ function StatDetail({ stat, topicTimepoints }: Props) {
     values.push({
       date: topicTimepoint.timestamp,
       value: unattributedCounter,
-      type: 'unattributed'
+      type: 'Unattributed'
     });
 
     values.push({
       date: topicTimepoint.timestamp,
       value: attributedCounter,
-      type: 'attributed'
+      type: 'Attributed'
     });
   })
 
@@ -137,15 +137,14 @@ function StatDetail({ stat, topicTimepoints }: Props) {
         name: 'y',
         type: 'linear',
         domain: [min, max],
-        // domain: {data: 'data', field: 'y1'},
         range: [{signal: 'height'}, 0],
         zero: false
       },
       {
         name: 'color',
         type: 'ordinal',
-        range: 'category',
-        domain: { data: 'data', field: 'type' }
+        range: ['#676eb4', '#BFC4EE'],
+        domain: { data: 'data', field: 'type' },
       }
     ],
     axes: [
@@ -183,7 +182,8 @@ function StatDetail({ stat, topicTimepoints }: Props) {
     ],
     legends: [
       {
-        fill: 'color'
+        fill: 'color',
+        labelFontSize: 12
       }
     ],
     config: {

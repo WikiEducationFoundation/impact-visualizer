@@ -31,9 +31,8 @@ class LiftWingApi
 
     if response&.status == 200
       parsed_response = Oj.load(response.body)
-
       return parsed_response.dig(@project_code, 'scores', rev_id.to_s,
-                                 @project_quality_model, 'score', 'probability').to_hashugar
+                                 @project_quality_model, 'score').to_hashugar
     end
 
     ap "LiftWingApi Error: #{response}"

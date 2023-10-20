@@ -98,16 +98,17 @@ end
 #
 # Table name: article_timepoints
 #
-#  id              :bigint           not null, primary key
-#  article_length  :integer
-#  revisions_count :integer
-#  timestamp       :date
-#  token_count     :integer
-#  wp10_prediction :float
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  article_id      :bigint           not null
-#  revision_id     :integer
+#  id                       :bigint           not null, primary key
+#  article_length           :integer
+#  revisions_count          :integer
+#  timestamp                :date
+#  token_count              :integer
+#  wp10_prediction          :float
+#  wp10_prediction_category :string
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#  article_id               :bigint           not null
+#  revision_id              :integer
 #
 # Indexes
 #

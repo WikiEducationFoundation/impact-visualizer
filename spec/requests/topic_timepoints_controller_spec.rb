@@ -24,6 +24,7 @@ describe TopicTimepointsController do
         attributed_revisions_count_delta: topic_timepoint.attributed_revisions_count_delta,
         attributed_token_count: topic_timepoint.attributed_token_count,
         average_wp10_prediction: topic_timepoint.average_wp10_prediction,
+        wp10_prediction_categories: topic_timepoint.wp10_prediction_categories,
         length: topic_timepoint.length,
         length_delta: topic_timepoint.length_delta,
         revisions_count: topic_timepoint.revisions_count,

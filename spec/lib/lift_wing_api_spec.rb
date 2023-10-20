@@ -47,26 +47,28 @@ describe LiftWingApi do
 
     it 'fetches json for wikipedia', vcr: true do
       response = described_class.new(wikipedia).get_revision_quality(641962088)
-      # ap response
       expect(response).to be_a(Hashugar)
-      expect(response['B']).to be_a(Numeric)
-      expect(response['C']).to be_a(Numeric)
-      expect(response['FA']).to be_a(Numeric)
-      expect(response['GA']).to be_a(Numeric)
-      expect(response['Start']).to be_a(Numeric)
-      expect(response['Stub']).to be_a(Numeric)
+      expect(response['prediction']).to be_a(String)
+      expect(response['probability']['B']).to be_a(Numeric)
+      expect(response['probability']['C']).to be_a(Numeric)
+      expect(response['probability']['FA']).to be_a(Numeric)
+      expect(response['probability']['GA']).to be_a(Numeric)
+      expect(response['probability']['Start']).to be_a(Numeric)
+      expect(response['probability']['Stub']).to be_a(Numeric)
     end
 
     it 'fetches json for ru wikipedia', vcr: true do
       response = described_class.new(ru_wikipedia).get_revision_quality(1)
       expect(response).to be_a(Hashugar)
-      expect(response['I']).to be_a(Numeric)
+      expect(response['probability']['I']).to be_a(Numeric)
+      expect(response['prediction']).to be_a(String)
     end
 
     it 'fetches json for wikidata', vcr: true do
       response = described_class.new(wikidata).get_revision_quality(641962088)
       expect(response).to be_a(Hashugar)
-      expect(response['A']).to be_a(Numeric)
+      expect(response['probability']['A']).to be_a(Numeric)
+      expect(response['prediction']).to be_a(String)
     end
   end
 end

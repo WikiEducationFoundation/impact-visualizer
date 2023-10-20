@@ -25,6 +25,7 @@ class TopicTimepointStatsService
     token_count_delta = 0
     attributed_token_count = 0
     wp10_predictions = []
+    wp10_prediction_categories = []
 
     # Iterate and sum up stats
     topic_article_timepoints.each do |topic_article_timepoint|
@@ -40,6 +41,7 @@ class TopicTimepointStatsService
       attributed_token_count += topic_article_timepoint.attributed_token_count
       attributed_articles_created_delta += 1 if topic_article_timepoint.attributed_creator
       wp10_predictions << article_timepoint.wp10_prediction if article_timepoint.wp10_prediction
+      wp10_prediction_categories << article_timepoint.wp10_prediction_category
       articles_count += 1
     end
 
@@ -47,6 +49,9 @@ class TopicTimepointStatsService
       previous_count = previous_topic_timepoint.topic_article_timepoints.count
       articles_count_delta = articles_count - previous_count
     end
+
+    # Summarize wp10_prediction_categories
+    wp10_prediction_categories = wp10_prediction_categories.tally
 
     # Find average of wp10_predictions
     average_wp10_prediction = OresScoreTransformer.calulate_average_wp10_prediction(
@@ -58,7 +63,8 @@ class TopicTimepointStatsService
                            revisions_count:, revisions_count_delta:,
                            attributed_revisions_count_delta:,
                            attributed_length_delta:, attributed_articles_created_delta:,
-                           average_wp10_prediction:, token_count:, token_count_delta:,
+                           average_wp10_prediction:, wp10_prediction_categories:,
+                           token_count:, token_count_delta:,
                            attributed_token_count:)
   end
 end

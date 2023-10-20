@@ -61,6 +61,7 @@ describe ArticleStatsService do
 
       it 'updates wp10_prediction', vcr: true do
         expect(article_timepoint.wp10_prediction).to eq(57.03609606395922836)
+        expect(article_timepoint.wp10_prediction_category).to eq('C')
       end
     end
 
@@ -84,7 +85,9 @@ describe ArticleStatsService do
     let!(:article_stats_service) { described_class.new }
 
     it 'returns the weighted quality of revision', vcr: false do
-      quality = article_stats_service.weighted_revision_quality(revision_id: 1100917005)
+      lift_wing_api = LiftWingApi.new
+      lift_wing_response = lift_wing_api.get_revision_quality(1100917005)
+      quality = article_stats_service.weighted_revision_quality(lift_wing_response:)
       expect(quality).to be_a(Numeric)
     end
   end

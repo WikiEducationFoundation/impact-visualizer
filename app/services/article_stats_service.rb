@@ -72,14 +72,17 @@ class ArticleStatsService
     )
 
     # Get the wp10 quality prediction
-    quality = weighted_revision_quality(revision_id: revision['revid'])
+    lift_wing_response = @lift_wing_api.get_revision_quality(revision['revid'])
+    weighted_quality = weighted_revision_quality(lift_wing_response:)
+    predicted_category = lift_wing_response['prediction']
 
     # Update the ArticleTimepoint
     article_timepoint.update(
       article_length: revision['size'],
       revision_id: revision['revid'],
       revisions_count: revisions_count || 0,
-      wp10_prediction: quality
+      wp10_prediction: weighted_quality,
+      wp10_prediction_category: predicted_category
     )
   end
 
@@ -97,8 +100,8 @@ class ArticleStatsService
     article_timepoint.update(token_count:)
   end
 
-  def weighted_revision_quality(revision_id:)
-    probabilities = @lift_wing_api.get_revision_quality(revision_id)
+  def weighted_revision_quality(lift_wing_response:)
+    probabilities = lift_wing_response['probability']
     return nil unless probabilities
     language = @wiki.language
     OresScoreTransformer.weighted_mean_score_from_probabilities(probabilities:, language:)
