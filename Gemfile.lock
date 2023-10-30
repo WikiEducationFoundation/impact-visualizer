@@ -103,6 +103,7 @@ GEM
     crack (0.4.5)
       rexml
     crass (1.0.6)
+    daemons (1.4.1)
     date (3.3.3)
     debug (1.8.0)
       irb (>= 1.5.0)
@@ -336,6 +337,7 @@ DEPENDENCIES
   capistrano-rails-console
   capistrano-rake
   capistrano-rvm
+  daemons
   debug
   factory_bot_rails
   faker

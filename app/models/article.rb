@@ -8,7 +8,7 @@ class Article < ApplicationRecord
 
   ## Instance Methods
   def exists_at_timestamp?(timestamp)
-    raise ImpactVisualizerErrors::ArticleMissingFirstRevisionInfo unless first_revision_info?
+    raise ImpactVisualizerErrors::ArticleMissingFirstRevisionInfo.new(id) unless first_revision_info?
     first_revision_at < timestamp
   end
 

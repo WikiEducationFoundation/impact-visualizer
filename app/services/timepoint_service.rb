@@ -113,15 +113,22 @@ class TimepointService
     article_bag_articles = @topic.active_article_bag.article_bag_articles
 
     article_count = 0
+
     # Loop through all Articles
-    article_bag_articles.each do |article_bag_article|
-      article = article_bag_article.article
+    # article_bag_articles.each do |article_bag_article|
 
-      article_count += 1
-      log "  #update_token_stats_for_article article:#{article_count}/#{article_bag_articles.count}"
+    Parallel.each(article_bag_articles, in_threads: 25) do |article_bag_article|
+      ActiveRecord::Base.connection_pool.with_connection do
+        article = article_bag_article.article
 
-      # Update stats for all timestamps for article
-      update_token_stats_for_article(article:)
+        article_count += 1
+        log "  #update_token_stats_for_article article:#{article_count}/#{article_bag_articles.count} article_id: #{article.id}"
+
+        # Update stats for all timestamps for article
+        update_token_stats_for_article(article:)
+
+        ActiveRecord::Base.connection_pool.release_connection
+      end
     end
   end
 

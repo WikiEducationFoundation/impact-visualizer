@@ -2,30 +2,30 @@
 
 require 'csv'
 
-# TOPIC = 'diptera'
-TOPIC = 'rana'
-
 task import_topic: :environment do
   wiki = Wiki.default_wiki
 
-  topic = Topic.find_or_create_by(
-    name: TOPIC.titleize,
-    slug: TOPIC,
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    wiki:,
-    start_date: Date.new(2022, 9, 1),
-    end_date: Date.new(2023, 1, 1),
-    timepoint_day_interval: 7
-  )
+  # topic = Topic.find_or_create_by(
+  #   name: topic_slug.titleize,
+  #   slug: topic_slug,
+  #   description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+  #   wiki:,
+  #   start_date: Date.new(2022, 9, 1),
+  #   end_date: Date.new(2023, 1, 1),
+  #   timepoint_day_interval: 7
+  # )
 
-  article_bag = ArticleBag.find_or_create_by topic:, name: "#{TOPIC.titleize} Articles"
+  topic_slug = ARGV[1]
+  topic = Topic.find_by slug: topic_slug
 
   return unless topic
 
-  articles_csv_file = "topic-articles-#{TOPIC}.csv"
-  users_csv_file = "topic-users-#{TOPIC}.csv"
-  article_titles = CSV.read("spec/fixtures/#{articles_csv_file}", headers: false)
-  user_names = CSV.read("spec/fixtures/#{users_csv_file}", headers: false)
+  article_bag = ArticleBag.find_or_create_by topic:, name: "#{topic_slug.titleize} Articles"
+
+  articles_csv_file = "topic-articles-#{topic_slug}.csv"
+  users_csv_file = "topic-users-#{topic_slug}.csv"
+  article_titles = CSV.read("db/csv/#{articles_csv_file}", headers: false)
+  user_names = CSV.read("db/csv/#{users_csv_file}", headers: false)
 
   wiki_action_api = WikiActionApi.new
   count = 0
