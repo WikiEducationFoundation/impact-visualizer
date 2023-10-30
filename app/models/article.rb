@@ -31,9 +31,16 @@ class Article < ApplicationRecord
   ## Class Methods
   def self.update_details_for_all_articles
     total_count = Article.count
-    Article.all.each_with_index do |article, index|
-      ap "Updating #{index + 1}/#{total_count}"
-      article.update_details
+    counter = 0
+    Article.all.in_batches(of: 500) do |batch|
+      Parallel.each(batch, in_threads: 25) do |article|
+        ActiveRecord::Base.connection_pool.with_connection do
+          counter += 1
+          ap "Updating #{counter}/#{total_count}"
+          article.update_details
+          ActiveRecord::Base.connection_pool.release_connection
+        end
+      end
     end
   end
 end
