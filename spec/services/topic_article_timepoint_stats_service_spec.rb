@@ -49,11 +49,10 @@ describe TopicArticleTimepointStatsService do
       expect(end_topic_article_timepoint_1.revisions_count_delta).to eq(0)
     end
 
-    it 'updates to ZERO if no previous article_timpoint' do
+    it 'updates to ZERO if no previous article_timpoint AND is first timestamp in Topic' do
       # Reset length_delta so we can test it being updated
       start_topic_article_timepoint_1.update(
         length_delta: nil,
-        token_count_delta: nil,
         revisions_count_delta: nil
       )
       service = described_class.new(topic_article_timepoint: start_topic_article_timepoint_1)
@@ -61,8 +60,27 @@ describe TopicArticleTimepointStatsService do
       start_topic_article_timepoint_1.reload
       expect(start_topic_article_timepoint_1).to have_attributes(
         length_delta: 0,
-        revisions_count_delta: 0,
-        token_count_delta: nil
+        revisions_count_delta: 0
+      )
+    end
+
+    it 'uses full length for delta if no previous article_timpoint AND NOT first timestamp in Topic' do
+      # Reset length_delta so we can test it being updated
+      end_topic_article_timepoint_1.update(
+        length_delta: nil,
+        revisions_count_delta: nil
+      )
+
+      # Destroy the start timepoint, so this acts like a new article
+      start_topic_article_timepoint_1.destroy
+      start_article_timepoint_1.destroy
+
+      service = described_class.new(topic_article_timepoint: end_topic_article_timepoint_1)
+      service.update_baseline_deltas
+      end_topic_article_timepoint_1.reload
+      expect(end_topic_article_timepoint_1).to have_attributes(
+        length_delta: 200,
+        revisions_count_delta: 3
       )
     end
 
@@ -160,10 +178,14 @@ describe TopicArticleTimepointStatsService do
       expect(end_topic_article_timepoint_1.token_count_delta).to eq(20)
     end
 
-    it 'set attributed_token_count_delta to ZERO if first timepoint', vcr: true do
+    it 'set attributed_token_count_delta to ZERO if first
+        timepoint AND is first timestamp in Topic', vcr: true do
       tokens = WikiWhoApi.new(wiki: Wiki.default_wiki).get_revision_tokens(
         end_article_timepoint_1.revision_id
       )
+
+      # Give topic user a known editor ID from tokens
+      user.update wiki_user_id: 917223
 
       # Reset the value to test
       start_topic_article_timepoint_1.update attributed_token_count: nil, token_count_delta: nil
@@ -172,6 +194,29 @@ describe TopicArticleTimepointStatsService do
       start_topic_article_timepoint_1.reload
       expect(start_topic_article_timepoint_1.attributed_token_count).to eq(0)
       expect(start_topic_article_timepoint_1.token_count_delta).to eq(0)
+    end
+
+    it 'uses full count for attributed_token_count_delta if
+       first timepoint AND is NOT first timestamp in Topic', vcr: false do
+      tokens = WikiWhoApi.new(wiki: Wiki.default_wiki).get_revision_tokens(
+        end_article_timepoint_1.revision_id
+      )
+
+      # Give topic user a known editor ID from tokens
+      user.update wiki_user_id: 42428311
+
+      # Destroy first timepoints so this appears to be new to topic
+      start_topic_article_timepoint_1.destroy
+      start_article_timepoint_1.destroy
+
+      # Reset the value to test
+      end_topic_article_timepoint_1.update attributed_token_count: nil, token_count_delta: nil
+
+      service = described_class.new(topic_article_timepoint: end_topic_article_timepoint_1)
+      service.update_token_stats(tokens:)
+      end_topic_article_timepoint_1.reload
+      expect(end_topic_article_timepoint_1.attributed_token_count).to eq(26)
+      expect(end_topic_article_timepoint_1.token_count_delta).to eq(30)
     end
   end
 end

@@ -5,6 +5,9 @@ class TopicTimepoint < ApplicationRecord
   belongs_to :topic
   has_many :topic_article_timepoints
 
+  # Scopes
+  default_scope { order(timestamp: :asc) }
+
   # Delegates
   delegate :wiki, to: :topic
 end

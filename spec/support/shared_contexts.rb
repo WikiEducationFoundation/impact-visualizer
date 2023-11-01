@@ -126,7 +126,8 @@ RSpec.shared_context 'three topic_timepoints' do
       revisions_count: 200,
       revisions_count_delta: 0,
       token_count: 100,
-      token_count_delta: 0
+      token_count_delta: 0,
+      timestamp: Date.new(2023, 1, 1)
     )
   end
   let!(:topic_timepoint_2) do
@@ -145,7 +146,8 @@ RSpec.shared_context 'three topic_timepoints' do
       revisions_count: 210,
       revisions_count_delta: 10,
       token_count: 200,
-      token_count_delta: 100
+      token_count_delta: 100,
+      timestamp: Date.new(2023, 1, 2)
     )
   end
   let!(:topic_timepoint_3) do
@@ -164,7 +166,8 @@ RSpec.shared_context 'three topic_timepoints' do
       revisions_count: 220,
       revisions_count_delta: 10,
       token_count: 300,
-      token_count_delta: 100
+      token_count_delta: 100,
+      timestamp: Date.new(2023, 1, 3)
     )
   end
 end

@@ -34,7 +34,13 @@ class TimepointService
 
     # Update TopicTimepoints with summarized stats
     # This needs to happen AFTER token stats update
+    build_topic_timepoints
 
+    log "#build_timepoints – Started at #{start_time}. Finished at #{Time.zone.now}"
+  end
+
+  def build_topic_timepoints
+    timestamps = @topic.timestamps
     timestamp_count = 0
     timestamps.each do |timestamp|
       timestamp_count += 1
@@ -42,8 +48,6 @@ class TimepointService
       log "#update_stats_for_topic_timepoint timestamp:#{timestamp_count}/#{timestamps.count}"
       @topic_timepoint_stats_service.update_stats_for_topic_timepoint(topic_timepoint:)
     end
-
-    log "#build_timepoints – Started at #{start_time}. Finished at #{Time.zone.now}"
   end
 
   def build_timepoints_for_timestamp(timestamp:)

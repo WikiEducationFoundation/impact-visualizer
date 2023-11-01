@@ -5,7 +5,12 @@ require 'rails_helper'
 describe TopicTimepointsController do
   describe '#index' do
     let!(:topic) { create(:topic) }
-    let!(:topic_timepoints) { create_list(:topic_timepoint, 10, topic:) }
+    let!(:topic_timepoints) do
+      create_list(:topic_timepoint, 10, topic:) do |topic_timepoint, i|
+        topic_timepoint.timestamp = Date.new(2023, 1, i + 1)
+      end
+      topic.topic_timepoints
+    end
     let!(:topic_timepoint) { topic_timepoints.first }
 
     it 'renders successfully and has the expected fields' do
@@ -14,7 +19,6 @@ describe TopicTimepointsController do
       expect(response.status).to eq(200)
       expect(body['topic_timepoints'].count).to eq(10)
       first_response_topic_timepoint = body['topic_timepoints'][0].with_indifferent_access
-
       expect(first_response_topic_timepoint).to include(
         id: topic_timepoint.id,
         articles_count: topic_timepoint.articles_count,

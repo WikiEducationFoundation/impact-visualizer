@@ -25,6 +25,7 @@ class ArticleTokenService
                                                 start_revision_id:, end_revision_id:)
     tokens ||= WikiWhoApi.new(wiki: topic.wiki).get_revision_tokens(revision_id)
     return 0 unless tokens
+
     tokens_within_range = tokens_within_range(tokens:, start_revision_id:, end_revision_id:)
     user_ids = extract_user_ids(tokens: tokens_within_range, topic:)
 
@@ -33,7 +34,11 @@ class ArticleTokenService
 
   def self.tokens_within_range(tokens:, start_revision_id:, end_revision_id:)
     tokens.select do |token|
-      token['o_rev_id'] > start_revision_id && token['o_rev_id'] < end_revision_id
+      if start_revision_id == end_revision_id
+        token['o_rev_id'] == start_revision_id
+      else
+        token['o_rev_id'] > start_revision_id && token['o_rev_id'] <= end_revision_id
+      end
     end
   end
 

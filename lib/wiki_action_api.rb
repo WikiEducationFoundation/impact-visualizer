@@ -179,15 +179,17 @@ class WikiActionApi
   end
 
   def mediawiki(action, query)
+    total_tries = 3
     tries ||= 0
     @client.send(action, query)
   rescue StandardError => e
     tries += 1
     unless Rails.env.test?
-      puts "WikiActionApi / Error – Trys remaining: #{tries}"
-      sleep 1 * tries
+      sleep_time = 3**tries
+      puts "WikiActionApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries}) "
+      sleep sleep_time
     end
-    retry unless tries == 3
+    retry unless tries == total_tries
     log_error(e)
   end
 

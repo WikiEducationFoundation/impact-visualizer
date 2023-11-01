@@ -52,6 +52,14 @@ class TopicArticleTimepointStatsService
     length_delta = 0
     revisions_count_delta = 0
 
+    # If this is first timestamp for Topic, leave deltas at 0
+    unless @previous_timestamp
+      @topic_article_timepoint.update(length_delta:, revisions_count_delta:)
+      return
+    end
+
+    ## If not first timestamp AND there IS a previous timepoint, calulate the delta
+
     # Calculate length diff based on previous article_timepoint and current article_timepoint
     if previous_article_timepoint&.article_length&.positive? &&
        @article_timepoint.article_length&.positive?
@@ -64,6 +72,18 @@ class TopicArticleTimepointStatsService
        @article_timepoint&.revisions_count&.positive?
       revisions_count_delta = @article_timepoint.revisions_count -
                               previous_article_timepoint.revisions_count
+    end
+
+    ## If not first timestamp AND there IS NOT a previous timepoint, assume new article to topic...
+    # ... and use the full length and revision count as delta values
+
+    if !previous_article_timepoint && @article_timepoint.article_length&.positive?
+      length_delta = @article_timepoint.article_length
+    end
+
+    # Calculate revision diff based on previous article_timepoint and current article_timepoint
+    if !previous_article_timepoint && @article_timepoint&.revisions_count&.positive?
+      revisions_count_delta = @article_timepoint.revisions_count
     end
 
     @topic_article_timepoint.update(length_delta:, revisions_count_delta:)
@@ -112,15 +132,23 @@ class TopicArticleTimepointStatsService
   end
 
   def update_token_stats(tokens:)
-    # If no previous, this must be the first. Set counts to 0
-    unless previous_topic_article_timepoint
+    # If first timestamp set counts to 0
+    unless @previous_timestamp
       @topic_article_timepoint.update attributed_token_count: 0, token_count_delta: 0
       return
     end
 
     # Setup variables
     topic = @topic
-    start_revision_id = previous_topic_article_timepoint.revision_id
+
+    # If no previous timpoint, use this revision as beginning
+    start_revision_id = @topic_article_timepoint.revision_id
+
+    # If there is a previous timepoint, start from there
+    if previous_topic_article_timepoint
+      start_revision_id = previous_topic_article_timepoint.revision_id
+    end
+
     end_revision_id = @topic_article_timepoint.revision_id
 
     token_count_delta = 0
@@ -131,8 +159,13 @@ class TopicArticleTimepointStatsService
     )
 
     # Count the difference in total token_count since previous timestamp
-    if @article_timepoint.token_count&.positive?
+    if @article_timepoint.token_count&.positive? && previous_article_timepoint
       token_count_delta = @article_timepoint.token_count - previous_article_timepoint.token_count
+    end
+
+    # ... or use full count if this is first
+    if @article_timepoint.token_count&.positive? && !previous_article_timepoint
+      token_count_delta = @article_timepoint.token_count
     end
 
     @topic_article_timepoint.update attributed_token_count:, token_count_delta:
