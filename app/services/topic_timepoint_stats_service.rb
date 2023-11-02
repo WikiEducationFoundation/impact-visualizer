@@ -39,9 +39,9 @@ class TopicTimepointStatsService
       attributed_articles_created_delta += 1 if topic_article_timepoint.attributed_creator
       wp10_predictions << article_timepoint.wp10_prediction if article_timepoint.wp10_prediction
       wp10_prediction_categories << article_timepoint.wp10_prediction_category
-      token_count += article_timepoint.token_count
-      token_count_delta += topic_article_timepoint.token_count_delta
-      attributed_token_count += topic_article_timepoint.attributed_token_count
+      token_count += article_timepoint.token_count || 0
+      token_count_delta += topic_article_timepoint.token_count_delta || 0
+      attributed_token_count += topic_article_timepoint.attributed_token_count || 0
       articles_count += 1
     end
 
