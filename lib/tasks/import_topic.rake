@@ -33,11 +33,12 @@ task import_topic: :environment do
   Parallel.each(article_titles, in_threads: 10) do |article_title|
     ActiveRecord::Base.connection_pool.with_connection do
       count += 1
-      ap count
+      ap "Creating Article #{count}/#{article_titles.count}"
       page_info = wiki_action_api.get_page_info(title: article_title[0])
       title = page_info['title']
       next unless title
       article = Article.find_or_create_by(title:)
+      article.update_details
       ArticleBagArticle.find_or_create_by(article:, article_bag:)
       ActiveRecord::Base.connection_pool.release_connection
     end
