@@ -35,6 +35,7 @@ task import_topic: :environment do
       count += 1
       ap "Creating Article #{count}/#{article_titles.count}"
       page_info = wiki_action_api.get_page_info(title: article_title[0])
+      next unless page_info
       title = page_info['title']
       next unless title
       article = Article.find_or_create_by(title:)
