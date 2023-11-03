@@ -75,6 +75,8 @@ class LiftWingApi
       sleep sleep_time
     end
     retry unless tries == total_tries
+    puts url
+    puts params
     log_error(e, response)
   end
 end

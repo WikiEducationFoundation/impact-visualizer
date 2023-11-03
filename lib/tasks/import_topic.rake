@@ -34,7 +34,7 @@ task import_topic: :environment do
     ActiveRecord::Base.connection_pool.with_connection do
       count += 1
       ap "Creating Article #{count}/#{article_titles.count}"
-      page_info = wiki_action_api.get_page_info(title: article_title[0])
+      page_info = wiki_action_api.get_page_info(title: CGI.unescape(article_title[0]))
       next unless page_info
       title = page_info['title']
       next unless title
