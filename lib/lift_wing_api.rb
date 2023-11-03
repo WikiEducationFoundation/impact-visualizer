@@ -68,6 +68,8 @@ class LiftWingApi
     tries ||= 0
     response = @client.send(action, url, params)
   rescue StandardError => e
+    ap response
+    ap e
     tries += 1
     unless Rails.env.test?
       sleep_time = 3**tries

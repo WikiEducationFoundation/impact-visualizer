@@ -72,7 +72,12 @@ class ArticleStatsService
     )
 
     # Get the wp10 quality prediction
-    lift_wing_response = @lift_wing_api.get_revision_quality(revision['revid'])
+    begin
+      lift_wing_response = @lift_wing_api.get_revision_quality(revision['revid'])
+    rescue StandardError => e
+      puts "LiftWing Failure for revision: #{revision['revid']}, article: #{article.id}"
+    end
+
     weighted_quality = weighted_revision_quality(lift_wing_response:)
     predicted_category = lift_wing_response['prediction']
 
