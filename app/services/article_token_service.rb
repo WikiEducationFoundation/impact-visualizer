@@ -34,7 +34,7 @@ class ArticleTokenService
 
   def self.tokens_within_range(tokens:, start_revision_id:, end_revision_id:)
     tokens.select do |token|
-      if start_revision_id == end_revision_id
+      if (start_revision_id == end_revision_id) || !end_revision_id
         token['o_rev_id'] == start_revision_id
       else
         token['o_rev_id'] > start_revision_id && token['o_rev_id'] <= end_revision_id
