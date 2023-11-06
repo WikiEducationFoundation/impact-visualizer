@@ -23,6 +23,7 @@ class ArticleTokenService
 
   def self.count_attributed_tokens_within_range(tokens: nil, revision_id: nil, topic:,
                                                 start_revision_id:, end_revision_id:)
+    return unless start_revision_id && end_revision_id
     tokens ||= WikiWhoApi.new(wiki: topic.wiki).get_revision_tokens(revision_id)
     return 0 unless tokens
 
@@ -34,17 +35,10 @@ class ArticleTokenService
 
   def self.tokens_within_range(tokens:, start_revision_id:, end_revision_id:)
     tokens.select do |token|
-      begin
-        if (start_revision_id == end_revision_id) || !end_revision_id
-          token['o_rev_id'] == start_revision_id
-        else
-          token['o_rev_id'] > start_revision_id && token['o_rev_id'] <= end_revision_id
-        end
-      rescue StandardError => e
-        ap "token: #{token}"
-        ap "start_revision_id: #{start_revision_id}"
-        ap "end_revision_id #{end_revision_id}"
-        raise e
+      if start_revision_id == end_revision_id
+        token['o_rev_id'] == start_revision_id
+      else
+        token['o_rev_id'] > start_revision_id && token['o_rev_id'] <= end_revision_id
       end
     end
   end
