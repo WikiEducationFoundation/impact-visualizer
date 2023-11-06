@@ -9,6 +9,7 @@ class ArticleTokenService
 
   def self.count_all_tokens_within_range(tokens: nil, revision_id: nil, wiki:,
                                          start_revision_id:, end_revision_id:)
+    return unless start_revision_id && end_revision_id
     tokens ||= WikiWhoApi.new(wiki:).get_revision_tokens(revision_id)
     return 0 unless tokens
     tokens_within_range(tokens:, start_revision_id:, end_revision_id:).count
