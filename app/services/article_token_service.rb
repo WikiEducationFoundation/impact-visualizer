@@ -33,12 +33,19 @@ class ArticleTokenService
   end
 
   def self.tokens_within_range(tokens:, start_revision_id:, end_revision_id:)
-    tokens.select do |token|
-      if (start_revision_id == end_revision_id) || !end_revision_id
-        token['o_rev_id'] == start_revision_id
-      else
-        token['o_rev_id'] > start_revision_id && token['o_rev_id'] <= end_revision_id
+    begin
+      tokens.select do |token|
+        if (start_revision_id == end_revision_id) || !end_revision_id
+          token['o_rev_id'] == start_revision_id
+        else
+          token['o_rev_id'] > start_revision_id && token['o_rev_id'] <= end_revision_id
+        end
       end
+    rescue StandardError => e
+      ap "token: #{token}"
+      ap "start_revision_id: #{start_revision_id}"
+      ap "end_revision_id #{end_revision_id}"
+      raise e
     end
   end
 
