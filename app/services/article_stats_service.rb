@@ -75,7 +75,7 @@ class ArticleStatsService
     begin
       lift_wing_response = @lift_wing_api.get_revision_quality(revision['revid'])
     rescue StandardError => e
-      puts "LiftWing Failure for revision: #{revision['revid']}, article: #{article.id}"
+      puts "LiftWing Failure for revision: #{revision['revid']}, article: #{article.id}, article_timepoint: #{article_timepoint}"
     end
 
     weighted_quality = weighted_revision_quality(lift_wing_response:)
