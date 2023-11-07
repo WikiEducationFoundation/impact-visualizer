@@ -30,12 +30,12 @@ class TopicTimepointStatsService
     # Iterate and sum up stats
     topic_article_timepoints.each do |topic_article_timepoint|
       article_timepoint = topic_article_timepoint.article_timepoint
-      length += article_timepoint.article_length
-      length_delta += topic_article_timepoint.length_delta
-      revisions_count += article_timepoint.revisions_count
-      revisions_count_delta += topic_article_timepoint.revisions_count_delta
-      attributed_revisions_count_delta += topic_article_timepoint.attributed_revisions_count_delta
-      attributed_length_delta += topic_article_timepoint.attributed_length_delta
+      length += article_timepoint.article_length || 0
+      length_delta += topic_article_timepoint.length_delta || 0
+      revisions_count += article_timepoint.revisions_count || 0
+      revisions_count_delta += topic_article_timepoint.revisions_count_delta || 0
+      attributed_revisions_count_delta += topic_article_timepoint.attributed_revisions_count_delta || 0
+      attributed_length_delta += topic_article_timepoint.attributed_length_delta || 0
       attributed_articles_created_delta += 1 if topic_article_timepoint.attributed_creator
       wp10_predictions << article_timepoint.wp10_prediction if article_timepoint.wp10_prediction
       wp10_prediction_categories << article_timepoint.wp10_prediction_category
