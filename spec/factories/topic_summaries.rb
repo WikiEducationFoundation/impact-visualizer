@@ -23,6 +23,7 @@ end
 #  timepoint_count                   :integer
 #  token_count                       :integer
 #  token_count_delta                 :integer
+#  wp10_prediction_categories        :jsonb
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
 #  topic_id                          :bigint           not null

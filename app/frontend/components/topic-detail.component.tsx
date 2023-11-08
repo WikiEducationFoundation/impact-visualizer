@@ -7,8 +7,9 @@ import { useLoaderData, Link } from "react-router-dom";
 import Topic from '../types/topic.type';
 import TopicTimepoint from '../types/topic-timepoint.type';
 import StatBlock from './stat-block.component';
+import QualityStatBlock from './quality-stat-block.component';
 import StatDetail from './stat-detail.component';
-import SankeyStatDetail from './sankey-stat-detail.component';
+import QualityStatDetail from './quality-stat-detail.component';
 
 function TopicDetail() {
   const [activeStat, setActiveStat] = useState('articles');
@@ -46,37 +47,6 @@ function TopicDetail() {
       </div>
     );
   }
-
-  function renderTopicTimepoints() {
-    return topicTimepoints.map((timepoint : TopicTimepoint) => {
-      return (
-        <div
-          key={timepoint.id}
-          className='TopicTimepoint'
-        >
-          <h3>
-            {moment(timepoint.timestamp).format('L')}
-          </h3>
-          <ul>
-            <li>articles_count: {timepoint.articles_count}</li>
-            <li>articles_count_delta: {timepoint.articles_count_delta}</li>
-            <li>attributed_articles_created_delta: {timepoint.attributed_articles_created_delta}</li>
-            <li>attributed_length_delta: {timepoint.attributed_length_delta}</li>
-            <li>attributed_revisions_count_delta: {timepoint.attributed_revisions_count_delta}</li>
-            <li>attributed_token_count: {timepoint.attributed_token_count}</li>
-            <li>average_wp10_prediction: {timepoint.average_wp10_prediction}</li>
-            <li>length: {timepoint.length}</li>
-            <li>length_delta: {timepoint.length_delta}</li>
-            <li>revisions_count: {timepoint.revisions_count}</li>
-            <li>revisions_count_delta: {timepoint.revisions_count_delta}</li>
-            <li>timestamp: {timepoint.timestamp}</li>
-            <li>token_count: {timepoint.token_count}</li>
-            <li>token_count_delta: {timepoint.token_count_delta}</li>
-          </ul>
-        </div>
-      );
-    })
-  };
 
   function renderStatBlocks() {
     return (
@@ -121,25 +91,27 @@ function TopicDetail() {
           ]}
         />
 
-        <StatBlock
-          active={activeStat === 'length'}
-          onSelect={() => handleStatSelect('length')}
-          stats={[
-            {
-              label: 'Total Byte Size',
-              value: topic.length,
-              primary: true
-            },
-            {
-              label: 'Change in Byte Size',
-              value: topic.length_delta
-            },
-            {
-              label: 'Change in Byte Size by Topic Editors',
-              value: topic.attributed_length_delta
-            }
-          ]}
-        />
+        {false &&
+          <StatBlock
+            active={activeStat === 'length'}
+            onSelect={() => handleStatSelect('length')}
+            stats={[
+              {
+                label: 'Total Byte Size',
+                value: topic.length,
+                primary: true
+              },
+              {
+                label: 'Change in Byte Size',
+                value: topic.length_delta
+              },
+              {
+                label: 'Change in Byte Size by Topic Editors',
+                value: topic.attributed_length_delta
+              }
+            ]}
+          />
+        }
 
         <StatBlock
           active={activeStat === 'tokens'}
@@ -161,17 +133,10 @@ function TopicDetail() {
           ]}
         />
 
-        <StatBlock
+        <QualityStatBlock
           active={activeStat === 'wp10'}
           onSelect={() => handleStatSelect('wp10')}
-          center
-          stats={[
-            {
-              label: 'Average wp10 Prediction',
-              value: topic.average_wp10_prediction,
-              primary: true
-            }
-          ]}
+          stats={topic.wp10_prediction_categories}
         />
       </div>
     );
@@ -195,7 +160,7 @@ function TopicDetail() {
           }
 
           {activeStat === 'wp10' &&
-            <SankeyStatDetail
+            <QualityStatDetail
               stat={activeStat}
               topic={topic}
               topicTimepoints={topicTimepoints}

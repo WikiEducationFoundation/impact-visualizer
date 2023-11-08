@@ -47,12 +47,16 @@ class TopicSummaryService
     # Find average of wp10_predictions
     average_wp10_prediction = OresScoreTransformer.calulate_average_wp10_prediction(wp10_predictions)
 
+    # Summarize wp10_prediction_categories
+    wp10_prediction_categories = topic_timepoints.last.wp10_prediction_categories
+
     # Capture stats
     TopicSummary.create(topic: @topic, length:, length_delta:, articles_count:,
                         articles_count_delta:, revisions_count:, revisions_count_delta:,
                         attributed_revisions_count_delta:,
                         attributed_length_delta:, attributed_articles_created_delta:,
-                        average_wp10_prediction:, token_count:, token_count_delta:,
+                        average_wp10_prediction:, wp10_prediction_categories:,
+                        token_count:, token_count_delta:,
                         attributed_token_count:, timepoint_count:)
   end
 end

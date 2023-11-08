@@ -34,6 +34,12 @@ $indicatorSize: 10px;
   }
 }
 
+.StatBlock-stat--quality {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
 .StatBlock-statValue {
   color: $blue;
   font-weight: 400;
@@ -46,6 +52,23 @@ $indicatorSize: 10px;
   font-size: 0.8rem;
   line-height: 1.4;
   color: $mediumGrey;
+}
+
+.StatBlock-qualityValue {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: $mediumGrey;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  span {
+    font-weight: 600;
+    display: inline-block;
+    color: $blue;
+    margin-right: 0.5rem;
+  } 
 }
 
 .StatBlock-stat--primary {

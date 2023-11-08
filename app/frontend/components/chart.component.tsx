@@ -7,11 +7,6 @@ function Chart({ spec }) {
 
   useEffect(() => {
     if (container) {
-      // const view = new Vega.View(Vega.parse(spec), {
-      //   renderer:  'svg',
-      //   container: container.current as HTMLDivElement
-      // });
-      // view.runAsync();
       vegaEmbed(container.current, spec, { renderer: 'svg' })
         .then(() => {
         })

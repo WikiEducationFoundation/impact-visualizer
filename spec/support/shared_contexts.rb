@@ -127,6 +127,7 @@ RSpec.shared_context 'three topic_timepoints' do
       revisions_count_delta: 0,
       token_count: 100,
       token_count_delta: 0,
+      wp10_prediction_categories: { 'A' => 1, 'B' => 1, 'C' => 1 },
       timestamp: Date.new(2023, 1, 1)
     )
   end
@@ -141,6 +142,7 @@ RSpec.shared_context 'three topic_timepoints' do
       attributed_revisions_count_delta: 5,
       attributed_token_count: 4,
       average_wp10_prediction: 20,
+      wp10_prediction_categories: { 'A' => 1, 'B' => 1, 'C' => 1 },
       length: 600,
       length_delta: 300,
       revisions_count: 210,
@@ -161,6 +163,7 @@ RSpec.shared_context 'three topic_timepoints' do
       attributed_revisions_count_delta: 5,
       attributed_token_count: 6,
       average_wp10_prediction: 30,
+      wp10_prediction_categories: { 'A' => 2, 'B' => 2, 'C' => 2 },
       length: 900,
       length_delta: 300,
       revisions_count: 220,

@@ -1,4 +1,4 @@
-import React, { MouseEventHandler } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import cn from 'classnames';
 
@@ -12,22 +12,36 @@ interface Props {
   topicTimepoints: Array<TopicTimepoint>
 };
 
-function SankeyStatDetail({ stat, topicTimepoints }: Props) {
-  const values = [];
-  let categories = [];
+interface ChartTimepoint {
+  date: string,
+  count: number,
+  category: string,
+  categoryIndex: number
+};
+
+const categoryOrder = ['FA', 'FL', 'A', 'GA', 'B', 'C', 'Start', 'Stub', 'List'];
+
+function QualityStatDetail({ topicTimepoints }: Props) {
+  const values: Array<ChartTimepoint> = [];
+  let categories: Array<string> = [];
 
   topicTimepoints.forEach((topicTimepoint) => {
     categories.push(..._.keys(topicTimepoint.wp10_prediction_categories));
   })
 
   categories = _.uniq(categories);
-
+  categories = _.sortBy(categories, (category) => {
+    const index = _.indexOf(categoryOrder, category);
+    return index;
+  });
+  
   topicTimepoints.forEach((topicTimepoint) => {
     categories.forEach((category) => {
       values.push({
         date: topicTimepoint.timestamp,
         count: topicTimepoint.wp10_prediction_categories[category] || 0,
-        category: category
+        category: category,
+        categoryIndex: _.indexOf(categoryOrder, category)
       });
     })
   })
@@ -42,14 +56,14 @@ function SankeyStatDetail({ stat, topicTimepoints }: Props) {
     data: [
       {
         name: 'data',
-        values: [],
+        values: values,
         transform: [
-          {type: 'formula', expr: 'toDate(datum["date"])', as: 'date'},
+          { type: 'formula', expr: 'toDate(datum["date"])', as: 'date' },
           {
             type: 'stack',
             groupby: ['date'],
             field: 'count',
-            sort: { field: 'category', order: 'descending' }
+            sort: { field: 'categoryIndex', order: 'descending' }
           },
         ]
       }
@@ -98,7 +112,7 @@ function SankeyStatDetail({ stat, topicTimepoints }: Props) {
     ],
     axes: [
       { scale: 'x', orient: 'bottom', title: 'Date'},
-      { scale: 'y', orient: 'left', title: 'Predicted wp10 Categories' }
+      { scale: 'y', orient: 'left', title: 'Predicted Quality' }
     ],
     marks: [
       {
@@ -154,11 +168,10 @@ function SankeyStatDetail({ stat, topicTimepoints }: Props) {
 
   spec['data'][0]['values'] = values;
 
-
   return (
     <div
       className={cn({
-        SankeyStatDetail: true,
+        QualityStatDetail: true,
       })}
     >
       <Chart
@@ -168,4 +181,4 @@ function SankeyStatDetail({ stat, topicTimepoints }: Props) {
   );
 }
 
-export default SankeyStatDetail;
+export default QualityStatDetail;

@@ -14,6 +14,7 @@ export default interface Topic {
   attributed_revisions_count_delta: number,
   attributed_token_count: number,
   average_wp10_prediction: number,
+  wp10_prediction_categories: object,
   length: number,
   length_delta: number,
   revisions_count: number,

@@ -41,6 +41,7 @@ describe TopicSummaryService do
         token_count: 300,
         token_count_delta: 200
       )
+      expect(summary.wp10_prediction_categories).to eq({ 'A' => 2, 'B' => 2, 'C' => 2 })
     end
   end
 end
