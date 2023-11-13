@@ -13,6 +13,7 @@ end
 #
 #  id                     :bigint           not null, primary key
 #  description            :string
+#  editor_label           :string           default("participant")
 #  end_date               :datetime
 #  name                   :string
 #  slug                   :string

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 json.extract! topic, :id, :name, :description, :end_date, :slug,
-              :start_date, :timepoint_day_interval, :user_count
+              :start_date, :timepoint_day_interval, :user_count, :editor_label
 
 if topic.most_recent_summary
   json.extract! topic.most_recent_summary, :articles_count, :articles_count_delta,

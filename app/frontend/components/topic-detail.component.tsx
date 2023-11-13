@@ -17,6 +17,8 @@ function TopicDetail() {
   const { topic, topicTimepoints } = 
     useLoaderData() as { topic: Topic, topicTimepoints: Array<TopicTimepoint> };
 
+  const editorLabel = _.upperFirst(pluralize(topic.editor_label, topic.user_count));
+
   function handleStatSelect(key: string) {
     setActiveStat(key);
   }
@@ -30,7 +32,9 @@ function TopicDetail() {
           </h1>
           
           <h3>
-            {topic.user_count} Topic {pluralize('Editor', topic.user_count)}
+            {topic.user_count}
+            {' '}
+            {editorLabel}
           </h3>
 
           <h4>
@@ -65,7 +69,7 @@ function TopicDetail() {
               value: topic.articles_count_delta
             },
             {
-              label: 'Articles Created by Topic Editors',
+              label: `Articles Created by ${editorLabel}`,
               value: topic.attributed_articles_created_delta
             }
           ]}
@@ -85,7 +89,7 @@ function TopicDetail() {
               value: topic.revisions_count_delta
             },
             {
-              label: 'Revisions Created by Topic Editors',
+              label: `Revisions Created by ${editorLabel}`,
               value: topic.attributed_revisions_count_delta
             }
           ]}
@@ -106,7 +110,7 @@ function TopicDetail() {
                 value: topic.length_delta
               },
               {
-                label: 'Change in Byte Size by Topic Editors',
+                label: `Change in Byte Size by ${editorLabel}`,
                 value: topic.attributed_length_delta
               }
             ]}
@@ -127,7 +131,7 @@ function TopicDetail() {
               value: topic.token_count_delta
             },
             {
-              label: 'Tokens Created by Topic Editors',
+              label: `Tokens Created by ${editorLabel}`,
               value: topic.attributed_token_count
             }
           ]}
