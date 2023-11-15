@@ -2,7 +2,7 @@
 
 class TopicsController < ApplicationController
   def index
-    @topics = Topic.all
+    @topics = Topic.where(display: true)
   end
 
   def show
