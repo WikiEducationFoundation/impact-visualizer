@@ -9,4 +9,7 @@ export default defineConfig({
     react(),
     Environment(['NODE_ENV'])
   ],
+  css: {
+    devSourcemap: true    
+  }
 })

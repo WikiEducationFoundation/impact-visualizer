@@ -32,21 +32,23 @@ function TopicDetail() {
             {topic.name}
           </h1>
           
-          <h3>
+          <h3 className="u-mb05">
+            Focus Period: {moment(topic.start_date).format('MMMM YYYY')}
+            {' '}–{' '}
+            {topic.end_date ? moment(topic.end_date).format('MMMM YYYY') : moment().format('MMMM YYYY')}
+          </h3>
+          
+          <h4 className="u-mb1">
             {topic.user_count}
             {' '}
             {editorLabel}
-          </h3>
-
-          <h4>
-            {moment(topic.start_date).format('MMMM YYYY')}
-            {' '}–{' '}
-            {topic.end_date ? moment(topic.end_date).format('MMMM YYYY') : moment().format('MMMM YYYY')}
           </h4>
 
-          <p className='u-mb1'>
-            {topic.description}
-          </p>
+          {topic.description &&
+            <p className='u-mb1'>
+              {topic.description}
+            </p>
+          }
         </div>
         <hr />
       </div>
@@ -66,7 +68,7 @@ function TopicDetail() {
               primary: true
             },
             {
-              label: 'Articles Created',
+              label: `${pluralize('Article', topic.articles_count_delta)} Created`,
               value: topic.articles_count_delta
             },
             {
@@ -86,7 +88,7 @@ function TopicDetail() {
               primary: true
             },
             {
-              label: 'Revisions Created',
+              label: `${pluralize('Revision', topic.revisions_count_delta)} Created`,
               value: topic.revisions_count_delta
             },
             {
@@ -95,28 +97,6 @@ function TopicDetail() {
             }
           ]}
         />
-
-        {false &&
-          <StatBlock
-            active={activeStat === 'length'}
-            onSelect={() => handleStatSelect('length')}
-            stats={[
-              {
-                label: 'Total Byte Size',
-                value: topic.length,
-                primary: true
-              },
-              {
-                label: 'Change in Byte Size',
-                value: topic.length_delta
-              },
-              {
-                label: `Change in Byte Size by ${editorLabel}`,
-                value: topic.attributed_length_delta
-              }
-            ]}
-          />
-        }
 
         <StatBlock
           active={activeStat === 'tokens'}
@@ -128,7 +108,7 @@ function TopicDetail() {
               primary: true
             },
             {
-              label: 'Tokens Created',
+              label: `${pluralize('Token', topic.token_count_delta)} Created`,
               value: topic.token_count_delta
             },
             {

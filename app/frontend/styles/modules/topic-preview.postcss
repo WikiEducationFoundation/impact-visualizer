@@ -1,19 +1,20 @@
 .TopicPreview {
-  @extend .Box;
   flex: 1 1 resolve(100/3)%;
-  border: 1px solid #e2e2e2;
+  border: none;
   background: white;
-  padding: 1rem;
   margin-right: 1rem;
   margin-bottom: 1rem !important;
   cursor: pointer;
-  transition: border $hover-speed;
-  border: 4px solid $borderGrey;
   color: $grey;
+  display: flex;
+  flex-direction: column;
   
   &:hover {
-    border: 4px solid #aaa;
-    color: $grey;
+    .TopicPreview-body {
+      border: 4px solid #aaa;
+      border-top: none;
+      color: $grey;
+    }
   }
 }
 
@@ -30,6 +31,38 @@
   padding: 1rem;
   margin-right: 1rem;
   margin-bottom: 1rem !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.TopicPreview-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-bottom: 0.5rem;
+  background: $blue;
+  padding: 1rem;
+  align-items: center;
+  
+  h2, h3 {
+    color: white;
+    margin-bottom: 0;
+  }
+}
+
+.TopicPreview-body {
+  transition: border $hover-speed;
+  padding: 1rem;
+  border: 4px solid $borderGrey;
+  border-top: none;
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  
+  .Button {
+    margin-top: auto;
+  }
 }
 
 .TopicPreview-stats {
@@ -56,7 +89,8 @@
 .TopicPreview-innerStat {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: center;
 }
 
 .TopicPreview-statLabel {
