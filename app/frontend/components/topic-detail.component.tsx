@@ -10,6 +10,7 @@ import StatBlock from './stat-block.component';
 import QualityStatBlock from './quality-stat-block.component';
 import StatDetail from './stat-detail.component';
 import QualityStatDetail from './quality-stat-detail.component';
+import TopicUtils from '../utils/topic-utils';
 
 function TopicDetail() {
   const [activeStat, setActiveStat] = useState('articles');
@@ -70,7 +71,7 @@ function TopicDetail() {
             },
             {
               label: `Articles Created by ${editorLabel}`,
-              value: topic.attributed_articles_created_delta
+              value: TopicUtils.formatAttributedArticles(topic)
             }
           ]}
         />
@@ -90,7 +91,7 @@ function TopicDetail() {
             },
             {
               label: `Revisions Created by ${editorLabel}`,
-              value: topic.attributed_revisions_count_delta
+              value: TopicUtils.formatAttributedRevisions(topic)
             }
           ]}
         />
@@ -132,7 +133,7 @@ function TopicDetail() {
             },
             {
               label: `Tokens Created by ${editorLabel}`,
-              value: topic.attributed_token_count
+              value: TopicUtils.formatAttributedTokens(topic)
             }
           ]}
         />

@@ -10,7 +10,7 @@ interface Props {
 };
 
 interface Stat {
-  value: number,
+  value: string | number,
   label: string,
   primary?: boolean
 }
@@ -28,7 +28,7 @@ function StatBlock({ stats, center, active, onSelect }: Props) {
           })}
         >
           <div className="StatBlock-statValue">
-            {stat.value.toLocaleString('en-US')}  
+            {stat.value.toLocaleString('en-US')}
           </div>
           <div className="StatBlock-statLabel">
             {stat.label}

@@ -44,12 +44,19 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   
   &:last-child {
     border-bottom: 1px solid $borderGrey;
     padding-bottom: 0.75rem;
     margin-bottom: 0.75rem;
   }
+}
+
+.TopicPreview-innerStat {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .TopicPreview-statLabel {
@@ -62,6 +69,6 @@
   color: $blue;
   font-weight: 400;
   font-size: 1.25rem;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
   line-height: 1;
 }
