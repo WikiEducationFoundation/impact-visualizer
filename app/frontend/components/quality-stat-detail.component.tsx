@@ -102,11 +102,12 @@ function QualityStatDetail({ topicTimepoints }: Props) {
         type: 'linear',
         range: [{signal: 'height'}, 0],
         domain: { data: 'data', field: 'y1' }
+
       },
       {
         name: "color",
         type: "ordinal",
-        range: "category",
+        range: { scheme: "wiki" },
         domain: {data: 'data', field: 'category'}
       }
     ],
@@ -136,7 +137,10 @@ function QualityStatDetail({ topicTimepoints }: Props) {
                 x: { scale: 'x', field: 'date' },
                 y: { scale: 'y', field: 'y0' },
                 y2: { scale: 'y', field: 'y1' },
-                fill: { scale: 'color', field: 'category' }
+                fill: { 
+                  scale: 'color', 
+                  field: 'category'
+                }
               }
             }        
           },
