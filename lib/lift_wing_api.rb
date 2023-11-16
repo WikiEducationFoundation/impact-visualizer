@@ -79,6 +79,6 @@ class LiftWingApi
     retry unless tries == total_tries
     puts url
     puts params
-    log_error(e, response)
+    log_error(e, response, false)
   end
 end
