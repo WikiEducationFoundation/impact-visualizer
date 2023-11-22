@@ -19,9 +19,9 @@ RSpec.describe Topic do
       end_date = start_date + 30.days
       topic.update(start_date:, end_date:)
       schedule = topic.timestamps
-      expect(schedule.count).to eq(5)
+      expect(schedule.count).to eq(6)
       expect(schedule.first).to eq(Date.new(2023, 1, 1))
-      expect(schedule.last).to eq(Date.new(2023, 1, 29))
+      expect(schedule.last).to eq(Date.new(2023, 1, 31))
     end
 
     it 'returns the correct dates within timeframe, with custom interval' do
@@ -39,9 +39,20 @@ RSpec.describe Topic do
         start_date = Date.new(2023, 1, 1)
         topic.update(start_date:, end_date: nil)
         schedule = topic.timestamps
-        expect(schedule.count).to eq(5)
+        expect(schedule.count).to eq(6)
         expect(schedule.first).to eq(Date.new(2023, 1, 1))
-        expect(schedule.last).to eq(Date.new(2023, 1, 29))
+        expect(schedule.last).to eq(Date.new(2023, 1, 30))
+      end
+    end
+
+    it 'returns the correct dates within timeframe, with no end_date, and uses NOW' do
+      Timecop.freeze(Date.new(2023, 11, 22)) do
+        start_date = Date.new(2001, 1, 1)
+        topic.update(start_date:, end_date: nil, timepoint_day_interval: 365)
+        schedule = topic.timestamps
+        expect(schedule.count).to eq(24)
+        expect(schedule.first).to eq(Date.new(2001, 1, 1))
+        expect(schedule.last).to eq(Date.new(2023, 11, 22))
       end
     end
 
@@ -82,7 +93,7 @@ RSpec.describe Topic do
     end
 
     it 'returns nil if the provided timestamp is the last' do
-      expect(topic.timestamp_next_to(Date.new(2023, 1, 29))).to eq(nil)
+      expect(topic.timestamp_next_to(end_date)).to eq(nil)
     end
 
     it 'raises if provided timestamp is not valid' do

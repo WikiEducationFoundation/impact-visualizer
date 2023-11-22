@@ -37,6 +37,9 @@ class Topic < ApplicationRecord
       next_date += timepoint_day_interval.days
     end
 
+    # Make sure the end_date gets in there
+    output << now_or_end_date if output.last < now_or_end_date
+
     # Return final array of dates
     output
   end

@@ -6,9 +6,7 @@ import * as vega from "vega";
 function colorInterpolate(percent) {
   const color1 = "#3F479A";
   const color2 = "#FFFFFF";
-
-  console.log(percent);
-
+  
   // Convert the hex colors to RGB values
   const r1 = parseInt(color1.substring(1, 3), 16);
   const g1 = parseInt(color1.substring(3, 5), 16);

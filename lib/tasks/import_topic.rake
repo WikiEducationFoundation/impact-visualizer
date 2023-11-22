@@ -5,16 +5,6 @@ require 'csv'
 task import_topic: :environment do
   wiki = Wiki.default_wiki
 
-  # topic = Topic.find_or_create_by(
-  #   name: topic_slug.titleize,
-  #   slug: topic_slug,
-  #   description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  #   wiki:,
-  #   start_date: Date.new(2022, 9, 1),
-  #   end_date: Date.new(2023, 1, 1),
-  #   timepoint_day_interval: 7
-  # )
-
   topic_slug = ARGV[1]
   topic = Topic.find_by slug: topic_slug
 

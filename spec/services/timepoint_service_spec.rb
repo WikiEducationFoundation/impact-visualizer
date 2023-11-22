@@ -85,9 +85,9 @@ describe TimepointService do
       topic.update end_date: end_date + 7.days
       timepoint_service.build_timepoints
 
-      expect(TopicTimepoint.count).to eq(topic_timepoints_count + 1)
-      expect(TopicArticleTimepoint.count).to eq(topic_article_timepoint_count + article_count)
-      expect(ArticleTimepoint.count).to eq(article_timepoint_count + article_count)
+      expect(TopicTimepoint.count).to eq(topic_timepoints_count + 2)
+      expect(TopicArticleTimepoint.count).to eq(topic_article_timepoint_count + article_count + 4)
+      expect(ArticleTimepoint.count).to eq(article_timepoint_count + article_count + 4)
     end
 
     it 'skips articles that were created after timepoint' do
