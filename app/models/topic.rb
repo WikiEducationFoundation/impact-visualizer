@@ -19,7 +19,7 @@ class Topic < ApplicationRecord
     raise ImpactVisualizerErrors::TopicMissingStartDate unless start_date
 
     # If end_date is not set, fallback to "now"
-    now_or_end_date = end_date || Time.zone.now
+    now_or_end_date = end_date || Time.zone.now.beginning_of_day
 
     # Get total number of days within range... converted from seconds to days, with a 1 day buffer
     total_days = ((now_or_end_date - start_date) / 1.day.to_i) + 1
@@ -54,14 +54,38 @@ class Topic < ApplicationRecord
 
   def timestamp_previous_to(timestamp)
     timestamp_index = timestamps.index(timestamp)
+
+    unless timestamp_index
+      timestamps.each_with_index do |ts, index|
+        if ts > timestamp
+          timestamp_index = index - 1
+          break
+        end
+      end
+    end
+    
     raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.nil?
+    raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.negative?
+
     return nil unless timestamp_index.positive?
     timestamps[timestamp_index - 1]
   end
 
   def timestamp_next_to(timestamp)
     timestamp_index = timestamps.index(timestamp)
+
+    unless timestamp_index
+      timestamps.each_with_index do |ts, index|
+        if ts > timestamp
+          timestamp_index = index
+          break
+        end
+      end
+    end
+
     raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.nil?
+    raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.negative?
+
     return nil unless timestamp_index.positive?
     timestamps[timestamp_index + 1]
   end

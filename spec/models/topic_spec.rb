@@ -76,9 +76,14 @@ RSpec.describe Topic do
       expect(topic.timestamp_previous_to(Date.new(2023, 1, 1))).to eq(nil)
     end
 
+    it 'returns the expected timestamp if the end_date is not set' do
+      topic.update end_date: nil
+      expect(topic.timestamp_previous_to(start_date + 30.days)).to eq(Date.new(2023, 1, 22))
+    end
+
     it 'raises if provided timestamp is not valid' do
       expect do
-        topic.timestamp_previous_to(Date.new(2023, 1, 2))
+        topic.timestamp_previous_to(Date.new(2022, 1, 2))
       end.to raise_error(ImpactVisualizerErrors::InvalidTimestampForTopic)
     end
   end
@@ -96,9 +101,14 @@ RSpec.describe Topic do
       expect(topic.timestamp_next_to(end_date)).to eq(nil)
     end
 
+    it 'returns the expected timestamp if the end_date is not set' do
+      topic.update end_date: nil
+      expect(topic.timestamp_next_to(start_date + 30.days)).to eq(Date.new(2023, 2, 12))
+    end
+
     it 'raises if provided timestamp is not valid' do
       expect do
-        topic.timestamp_next_to(Date.new(2023, 1, 2))
+        topic.timestamp_next_to(Date.new(2024, 1, 2))
       end.to raise_error(ImpactVisualizerErrors::InvalidTimestampForTopic)
     end
   end
