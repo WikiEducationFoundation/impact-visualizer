@@ -64,13 +64,8 @@ class ArticleStatsService
     # Get the Revision at timestamp
     revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp:)
 
-    if !revision
-      ap revision
-      ap pageid
-      ap timestamp
-      ap @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp:)
-      raise StandardError
-    end
+    # If no revision, article probably was deleted
+    return unless revision
 
     # Get count of Revisions at timestamp
     revisions_count = @visualizer_tools_api.get_page_edits_count(

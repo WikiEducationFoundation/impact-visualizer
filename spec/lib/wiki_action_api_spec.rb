@@ -147,6 +147,13 @@ describe WikiActionApi do
       expect(revision['revid']).to eq(1084581512)
       expect(revision['size']).to eq(8552)
     end
+
+    it 'returns the most recent revision at the given timestamp, example', vcr: false do
+      wiki_api = described_class.new
+      timestamp = Date.new(2022, 11, 20)
+      revision = wiki_api.get_page_revision_at_timestamp(pageid: 74972833, timestamp:)
+      ap revision
+    end
   end
 
   describe '#get_revision_at_timestamp, article agnostic' do
