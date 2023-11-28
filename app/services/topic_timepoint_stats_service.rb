@@ -51,7 +51,7 @@ class TopicTimepointStatsService
     end
 
     # Summarize wp10_prediction_categories
-    wp10_prediction_categories = wp10_prediction_categories.tally
+    wp10_prediction_categories = wp10_prediction_categories.compact.tally
 
     # Find average of wp10_predictions
     average_wp10_prediction = OresScoreTransformer.calulate_average_wp10_prediction(

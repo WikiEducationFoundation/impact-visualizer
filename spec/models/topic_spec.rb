@@ -60,6 +60,15 @@ RSpec.describe Topic do
       expect(topic.timestamp_previous_to(Date.new(2023, 1, 1))).to eq(nil)
     end
 
+    it 'still works if end_date is not midnight' do
+      start_date = Date.new(2001, 1, 1)
+      end_date = Date.new(2023, 11, 28) + 8.hours
+      test_date = Date.new(2023, 11, 28)
+      timepoint_day_interval = 365
+      topic = create(:topic, start_date:, end_date:, timepoint_day_interval:)
+      expect(topic.timestamp_previous_to(test_date)).to eq(Date.new(2022, 12, 27))
+    end
+
     it 'raises if provided timestamp is not valid' do
       expect do
         topic.timestamp_previous_to(Date.new(2022, 1, 2))

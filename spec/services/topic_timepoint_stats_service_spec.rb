@@ -45,7 +45,7 @@ describe TopicTimepointStatsService do
         attributed_token_count: 0
       )
 
-      expect(start_topic_timepoint.wp10_prediction_categories).to eq({ 'A' => 2 })
+      expect(start_topic_timepoint.wp10_prediction_categories).to eq({ 'A' => 1 })
     end
 
     it 'captures summarized stats for end TopicTimepoint' do

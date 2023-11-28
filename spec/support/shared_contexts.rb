@@ -33,7 +33,7 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:start_article_timepoint_2) do
     create(:article_timepoint, article: article_2, timestamp: start_date,
           article_length: 100, revisions_count: 2, wp10_prediction: 75.0,
-          wp10_prediction_category: 'A',
+          wp10_prediction_category: nil,
           token_count: 20, revision_id: 991007374)
   end
   let!(:start_topic_article_timepoint_2) do

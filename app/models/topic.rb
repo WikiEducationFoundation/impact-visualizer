@@ -19,15 +19,18 @@ class Topic < ApplicationRecord
     raise ImpactVisualizerErrors::TopicMissingStartDate unless start_date
     raise ImpactVisualizerErrors::TopicMissingEndDate unless end_date
 
+    clean_start_date = start_date.beginning_of_day
+    clean_end_date = end_date.beginning_of_day
+
     # Get total number of days within range... converted from seconds to days, with a 1 day buffer
-    total_days = ((end_date - start_date) / 1.day.to_i) + 1
+    total_days = ((clean_end_date - clean_start_date) / 1.day.to_i) + 1
 
     # Calculate how many timestamps fit within range
     total_timepoints = (total_days / timepoint_day_interval).ceil
 
     # Initialize variables for loop
     output = []
-    next_date = start_date
+    next_date = clean_start_date
 
     # Build array of dates
     total_timepoints.times do
@@ -36,7 +39,7 @@ class Topic < ApplicationRecord
     end
 
     # Make sure the end_date gets in there
-    output << end_date if output.last < end_date
+    output << clean_end_date if output.last < clean_end_date
 
     # Return final array of dates
     output
@@ -53,15 +56,6 @@ class Topic < ApplicationRecord
   def timestamp_previous_to(timestamp)
     timestamp_index = timestamps.index(timestamp)
 
-    unless timestamp_index
-      timestamps.each_with_index do |ts, index|
-        if ts > timestamp
-          timestamp_index = index - 1
-          break
-        end
-      end
-    end
-
     raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.nil?
     raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.negative?
 
@@ -71,15 +65,6 @@ class Topic < ApplicationRecord
 
   def timestamp_next_to(timestamp)
     timestamp_index = timestamps.index(timestamp)
-
-    unless timestamp_index
-      timestamps.each_with_index do |ts, index|
-        if ts > timestamp
-          timestamp_index = index
-          break
-        end
-      end
-    end
 
     raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.nil?
     raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.negative?
