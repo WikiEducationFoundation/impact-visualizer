@@ -26,7 +26,6 @@ class LiftWingApi
 
   def get_revision_quality(rev_id)
     body = { rev_id: }.to_json
-    # response = lift_wing_client.post(quality_query_url, body)
     response = make_request('post', quality_query_url, body)
 
     if response&.status == 200
@@ -68,17 +67,19 @@ class LiftWingApi
     tries ||= 0
     response = @client.send(action, url, params)
   rescue StandardError => e
-    ap response
-    ap e
-    tries += 1
-    unless Rails.env.test?
-      sleep_time = 3**tries
-      puts "LiftWingApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries}) "
-      sleep sleep_time
+    status = e.response && e.response[:status]
+
+    # Don't retry if missing revision
+    if status != 400
+      tries += 1
+      unless Rails.env.test?
+        sleep_time = 3**tries
+        puts "LiftWingApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries}) "
+        sleep sleep_time
+      end
+      retry unless tries == total_tries
     end
-    retry unless tries == total_tries
-    puts url
-    puts params
+
     log_error(e, response, false)
   end
 end

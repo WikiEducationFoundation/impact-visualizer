@@ -17,12 +17,10 @@ class Topic < ApplicationRecord
   ## Instance methods
   def timestamps
     raise ImpactVisualizerErrors::TopicMissingStartDate unless start_date
-
-    # If end_date is not set, fallback to "now"
-    now_or_end_date = end_date || Time.zone.now.beginning_of_day
+    raise ImpactVisualizerErrors::TopicMissingEndDate unless end_date
 
     # Get total number of days within range... converted from seconds to days, with a 1 day buffer
-    total_days = ((now_or_end_date - start_date) / 1.day.to_i) + 1
+    total_days = ((end_date - start_date) / 1.day.to_i) + 1
 
     # Calculate how many timestamps fit within range
     total_timepoints = (total_days / timepoint_day_interval).ceil
@@ -38,7 +36,7 @@ class Topic < ApplicationRecord
     end
 
     # Make sure the end_date gets in there
-    output << now_or_end_date if output.last < now_or_end_date
+    output << end_date if output.last < end_date
 
     # Return final array of dates
     output
@@ -63,7 +61,7 @@ class Topic < ApplicationRecord
         end
       end
     end
-    
+
     raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.nil?
     raise ImpactVisualizerErrors::InvalidTimestampForTopic if timestamp_index.negative?
 

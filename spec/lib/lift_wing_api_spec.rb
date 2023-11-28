@@ -17,6 +17,12 @@ describe LiftWingApi do
       expect { subject }.to raise_error(Faraday::ClientError)
     end
 
+    it 'handles 400 error as expected', vcr: true do
+      expect do
+        described_class.new(wikipedia).get_revision_quality(398357283)
+      end.not_to raise_error(Faraday::ClientError)
+    end
+
     it 'handles timeout errors gracefully' do
       allow_any_instance_of(Faraday::Connection).to receive(:send)
         .and_raise(Faraday::TimeoutError)
@@ -41,7 +47,7 @@ describe LiftWingApi do
     let(:ru_wikipedia) { create(:wiki, project: 'wikipedia', language: 'ru') }
     let(:wikidata) { create(:wiki, project: 'wikidata', language: 'en') }
 
-    it 'works with auth', vcr: false do
+    it 'works with auth', vcr: true do
       response = described_class.new(wikipedia).get_revision_quality(641962088)
     end
 

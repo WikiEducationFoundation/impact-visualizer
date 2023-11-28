@@ -34,32 +34,16 @@ RSpec.describe Topic do
       expect(schedule.last).to eq(Date.new(2023, 1, 31))
     end
 
-    it 'returns the correct dates within timeframe, with no end_date, and uses NOW' do
-      Timecop.freeze(Date.new(2023, 1, 30)) do
-        start_date = Date.new(2023, 1, 1)
-        topic.update(start_date:, end_date: nil)
-        schedule = topic.timestamps
-        expect(schedule.count).to eq(6)
-        expect(schedule.first).to eq(Date.new(2023, 1, 1))
-        expect(schedule.last).to eq(Date.new(2023, 1, 30))
-      end
-    end
-
-    it 'returns the correct dates within timeframe, with no end_date, and uses NOW' do
-      Timecop.freeze(Date.new(2023, 11, 22)) do
-        start_date = Date.new(2001, 1, 1)
-        topic.update(start_date:, end_date: nil, timepoint_day_interval: 365)
-        schedule = topic.timestamps
-        expect(schedule.count).to eq(24)
-        expect(schedule.first).to eq(Date.new(2001, 1, 1))
-        expect(schedule.last).to eq(Date.new(2023, 11, 22))
-      end
-    end
-
     it 'raises with missing start_date' do
-      topic.update(start_date: nil, end_date: nil)
+      topic.update(start_date: nil, end_date: Time.zone.now)
       expect { topic.timestamps }
         .to raise_error(ImpactVisualizerErrors::TopicMissingStartDate)
+    end
+
+    it 'raises with missing end_date' do
+      topic.update(start_date: Time.zone.now, end_date: nil)
+      expect { topic.timestamps }
+        .to raise_error(ImpactVisualizerErrors::TopicMissingEndDate)
     end
   end
 
@@ -74,11 +58,6 @@ RSpec.describe Topic do
 
     it 'returns nil if the provided timestamp is the first' do
       expect(topic.timestamp_previous_to(Date.new(2023, 1, 1))).to eq(nil)
-    end
-
-    it 'returns the expected timestamp if the end_date is not set' do
-      topic.update end_date: nil
-      expect(topic.timestamp_previous_to(start_date + 30.days)).to eq(Date.new(2023, 1, 22))
     end
 
     it 'raises if provided timestamp is not valid' do
@@ -99,11 +78,6 @@ RSpec.describe Topic do
 
     it 'returns nil if the provided timestamp is the last' do
       expect(topic.timestamp_next_to(end_date)).to eq(nil)
-    end
-
-    it 'returns the expected timestamp if the end_date is not set' do
-      topic.update end_date: nil
-      expect(topic.timestamp_next_to(start_date + 30.days)).to eq(Date.new(2023, 2, 12))
     end
 
     it 'raises if provided timestamp is not valid' do
