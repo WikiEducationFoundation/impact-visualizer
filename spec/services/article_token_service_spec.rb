@@ -81,4 +81,32 @@ describe ArticleTokenService do
       expect(token_count).to eq(2)
     end
   end
+
+  describe '.tokens_within_range' do
+    it 'includes start_revision_id tokens in range', vcr: true do
+      start_revision_id = 523728984
+      end_revision_id = 1149232773
+      tokens = WikiWhoApi.new(wiki: Wiki.default_wiki).get_revision_tokens(end_revision_id)
+      in_range = described_class.tokens_within_range(
+        tokens:,
+        start_revision_id:,
+        end_revision_id:,
+        start_inclusive: true
+      ).count
+      expect(in_range).to eq(1170)
+    end
+
+    it 'does NOT include start_revision_id tokens in range', vcr: true do
+      start_revision_id = 523728984
+      end_revision_id = 1149232773
+      tokens = WikiWhoApi.new(wiki: Wiki.default_wiki).get_revision_tokens(end_revision_id)
+      in_range = described_class.tokens_within_range(
+        tokens:,
+        start_revision_id:,
+        end_revision_id:,
+        start_inclusive: false
+      ).count
+      expect(in_range).to eq(759)
+    end
+  end
 end

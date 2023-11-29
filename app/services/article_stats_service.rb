@@ -102,7 +102,7 @@ class ArticleStatsService
 
     # Get count of tokens at revision
     token_count = ArticleTokenService.count_all_tokens_within_range(
-      tokens:, revision_id:, wiki:, start_revision_id:, end_revision_id:
+      tokens:, revision_id:, wiki:, start_revision_id:, end_revision_id:, start_inclusive: true
     )
 
     article_timepoint.update(token_count:)

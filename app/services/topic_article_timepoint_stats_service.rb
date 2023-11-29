@@ -143,10 +143,12 @@ class TopicArticleTimepointStatsService
 
     # If no previous timpoint, use this revision as beginning
     start_revision_id = @topic_article_timepoint.revision_id
+    start_inclusive = true
 
     # If there is a previous timepoint, start from there
     if previous_topic_article_timepoint
       start_revision_id = previous_topic_article_timepoint.revision_id
+      start_inclusive = false
     end
 
     end_revision_id = @topic_article_timepoint.revision_id
@@ -155,7 +157,7 @@ class TopicArticleTimepointStatsService
 
     # Count the attributed tokens since since previous revision
     attributed_token_count = ArticleTokenService.count_attributed_tokens_within_range(
-      tokens:, topic:, start_revision_id:, end_revision_id:
+      tokens:, topic:, start_revision_id:, end_revision_id:, start_inclusive:
     )
 
     # Count the difference in total token_count since previous timestamp

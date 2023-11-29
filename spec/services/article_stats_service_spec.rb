@@ -103,7 +103,7 @@ describe ArticleStatsService do
       tokens = WikiWhoApi.new(wiki: Wiki.default_wiki).get_revision_tokens(revision_id)
       article_stats_service.update_first_revision_info(article:)
       article_stats_service.update_token_stats(article_timepoint:, tokens:)
-      expect(article_timepoint.token_count).to eq(2937)
+      expect(article_timepoint.token_count).to eq(2984)
     end
   end
 end
