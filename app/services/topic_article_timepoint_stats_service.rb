@@ -61,17 +61,15 @@ class TopicArticleTimepointStatsService
     ## If not first timestamp AND there IS a previous timepoint, calulate the delta
 
     # Calculate length diff based on previous article_timepoint and current article_timepoint
-    if previous_article_timepoint&.article_length&.positive? &&
-       @article_timepoint.article_length&.positive?
-      length_delta = @article_timepoint.article_length -
-                     previous_article_timepoint.article_length
+    if previous_article_timepoint && @article_timepoint.article_length&.positive?
+      previous_length = previous_article_timepoint.article_length || 0
+      length_delta = @article_timepoint.article_length - previous_length
     end
 
     # Calculate revision diff based on previous article_timepoint and current article_timepoint
-    if previous_article_timepoint&.revisions_count&.positive? &&
-       @article_timepoint&.revisions_count&.positive?
-      revisions_count_delta = @article_timepoint.revisions_count -
-                              previous_article_timepoint.revisions_count
+    if previous_article_timepoint && @article_timepoint&.revisions_count&.positive?
+      previous_revisions_count_delta = previous_article_timepoint.revisions_count || 0
+      revisions_count_delta = @article_timepoint.revisions_count - previous_revisions_count_delta
     end
 
     ## If not first timestamp AND there IS NOT a previous timepoint, assume new article to topic...
