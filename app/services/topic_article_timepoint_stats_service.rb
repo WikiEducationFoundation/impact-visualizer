@@ -161,12 +161,12 @@ class TopicArticleTimepointStatsService
     )
 
     # Count the difference in total token_count since previous timestamp
-    if @article_timepoint.token_count&.positive? && previous_article_timepoint
+    if @article_timepoint.token_count && previous_article_timepoint
       token_count_delta = @article_timepoint.token_count - (previous_article_timepoint.token_count || 0)
     end
 
     # ... or use full count if this is first
-    if @article_timepoint.token_count&.positive? && !previous_article_timepoint
+    if @article_timepoint.token_count && !previous_article_timepoint
       token_count_delta = @article_timepoint.token_count
     end
 
