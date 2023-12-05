@@ -9,7 +9,6 @@ import TopicTimepoint from '../types/topic-timepoint.type';
 import StatBlock from './stat-block.component';
 import QualityStatBlock from './quality-stat-block.component';
 import StatDetail from './stat-detail.component';
-import QualityStatDetail from './quality-stat-detail.component';
 import TopicUtils from '../utils/topic-utils';
 import ChartUtils from '../utils/chart-utils';
 
@@ -137,24 +136,12 @@ function TopicDetail() {
           {renderIntro()}
           {renderStatBlocks()}
 
-          {activeStat !== 'wp10' &&
-            <StatDetail
-              stat={activeStat}
-              topic={topic}
-              topicTimepoints={topicTimepoints}
-              fields={ChartUtils.fieldsForStat(activeStat)}
-            />
-          }
-
-          {activeStat === 'wp10' &&
-            <QualityStatDetail
-              stat={activeStat}
-              topic={topic}
-              topicTimepoints={topicTimepoints}
-            />
-          }
-
-
+          <StatDetail
+            stat={activeStat}
+            topic={topic}
+            topicTimepoints={topicTimepoints}
+            fields={ChartUtils.fieldsForStat(activeStat)}
+          />
         </div>
       </div>
     </section>

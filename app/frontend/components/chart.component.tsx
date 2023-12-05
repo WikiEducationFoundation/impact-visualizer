@@ -32,7 +32,14 @@ function Chart({ spec }) {
 
   useEffect(() => {
     if (container) {
-      vegaEmbed(container.current, spec, { renderer: 'svg', actions: false })
+      vegaEmbed(
+        container.current as HTMLDivElement,
+        spec,
+        { 
+          renderer: 'svg',
+          actions: false 
+        }
+      )
         .then(() => {
         })
         .catch((e) => {

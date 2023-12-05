@@ -1,8 +1,10 @@
 import _ from 'lodash';
 
 import ChartTimepoint from '../types/chart-timepoint.type';
+import StatFields from '../types/stat-fields.type';
 
 const ChartUtils = {
+  categoryOrder: ['FA', 'FL', 'A', 'GA', 'B', 'C', 'Start', 'Stub', 'List'],
 
   minForChart(timepoints, totalField): number {
     return _.reduce(timepoints, (accum, timepoint) => {
@@ -16,9 +18,8 @@ const ChartUtils = {
     }, timepoints[0][totalField] as number);
   },
 
-  prepValues(options): values {
-    const { timepoints, attributedDeltaField,
-            deltaField, totalField } = options;
+  prepValues(options): ChartTimepoint[] {
+    const { timepoints, attributedDeltaField, deltaField } = options;
     
     const values: ChartTimepoint[] = [];
 
@@ -45,43 +46,73 @@ const ChartUtils = {
     return values;
   },
 
-  fieldsForStat(stat: String) {
-    switch(stat) {
-      case 'articles':
-        return {
-          totalField: 'articles_count',
-          deltaField: 'articles_count_delta',
-          attributedDeltaField: 'attributed_articles_created_delta'
-        }
-        break;
-      case 'revisions':
-        return {
-          totalField: 'revisions_count',
-          deltaField: 'revisions_count_delta',
-          attributedDeltaField: 'attributed_revisions_count_delta'
-        }
-        break;
-      case 'length':
-        return {
-          totalField: 'length',
-          deltaField: 'length_delta',
-          attributedDeltaField: 'attributed_length_delta'
-        }
-        break;
-      case 'tokens':
-        return {
-          totalField: 'token_count',
-          deltaField: 'token_count_delta',
-          attributedDeltaField: 'attributed_token_count'
-        }
-        break;
-      case 'wp10':
-        return {
-          totalField: 'average_wp10_prediction',
-          deltaField: 'articles_count_delta',
-          attributedDeltaField: 'attributed_articles_created_delta',
-        }
-        break;
+  prepQualityValues(options): ChartTimepoint[] {
+    const { timepoints } = options;
+
+    const values: Array<ChartTimepoint> = [];
+    let categories: Array<string> = [];
+    
+    timepoints.forEach((timepoint) => {
+      categories.push(..._.keys(timepoint.wp10_prediction_categories));
+    })
+
+    categories = _.uniq(categories);
+    categories = _.sortBy(categories, (category) => {
+      const index = _.indexOf(this.categoryOrder, category);
+      return index;
+    });
+    
+    timepoints.forEach((timepoint) => {
+      categories.forEach((category) => {
+        values.push({
+          date: timepoint.timestamp,
+          count: timepoint.wp10_prediction_categories[category] || 0,
+          category: category,
+          categoryIndex: _.indexOf(this.categoryOrder, category)
+        });
+      })
+    })
+
+    return values;
+  },
+
+  fieldsForStat(stat: String): StatFields {
+    if (stat === 'articles') {
+      return {
+        totalField: 'articles_count',
+        deltaField: 'articles_count_delta',
+        attributedDeltaField: 'attributed_articles_created_delta'
+      }
+    }
+
+    if (stat === 'revisions') {
+      return {
+        totalField: 'revisions_count',
+        deltaField: 'revisions_count_delta',
+        attributedDeltaField: 'attributed_revisions_count_delta'
+      }
+    }
+
+    if (stat == 'length') {
+      return {
+        totalField: 'length',
+        deltaField: 'length_delta',
+        attributedDeltaField: 'attributed_length_delta'
+      }
+    }
+    
+    if (stat == 'tokens') {
+      return {
+        totalField: 'token_count',
+        deltaField: 'token_count_delta',
+        attributedDeltaField: 'attributed_token_count'
+      }
+    }
+    
+    return {
+      totalField: 'average_wp10_prediction',
+      deltaField: 'articles_count_delta',
+      attributedDeltaField: 'attributed_articles_created_delta',
     }
   }
 }
