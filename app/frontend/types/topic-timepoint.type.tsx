@@ -15,5 +15,5 @@ export default interface TopicTimepoint {
   revisions_count_delta: number,
   token_count: number,
   token_count_delta: number,
-  [index: string]: number | string
+  [index: string]: any
 }

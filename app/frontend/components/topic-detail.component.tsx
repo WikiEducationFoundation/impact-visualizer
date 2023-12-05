@@ -11,6 +11,7 @@ import QualityStatBlock from './quality-stat-block.component';
 import StatDetail from './stat-detail.component';
 import QualityStatDetail from './quality-stat-detail.component';
 import TopicUtils from '../utils/topic-utils';
+import ChartUtils from '../utils/chart-utils';
 
 function TopicDetail() {
   const [activeStat, setActiveStat] = useState('articles');
@@ -141,6 +142,7 @@ function TopicDetail() {
               stat={activeStat}
               topic={topic}
               topicTimepoints={topicTimepoints}
+              fields={ChartUtils.fieldsForStat(activeStat)}
             />
           }
 

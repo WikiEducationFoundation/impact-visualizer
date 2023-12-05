@@ -3,17 +3,11 @@ import _ from 'lodash';
 import cn from 'classnames';
 
 interface Props {
-  stats: Array<number>,
+  stats: object,
   center?: boolean,
   active?: boolean,
   onSelect?: MouseEventHandler
 };
-
-interface Stat {
-  value: number,
-  label: string,
-  primary?: boolean
-}
 
 const categoryOrder = ['FA', 'FL', 'A', 'GA', 'B', 'C', 'Start', 'Stub', 'List'];
 
