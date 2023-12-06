@@ -1,26 +1,29 @@
-.swiper-slide {
-  width: fit-content;
-}
-
-.swiper {
-  overflow: visible;
-}
-
-.swiper .PreviewCard, .swiper .LeaderCard {
-  margin-right: 1.25rem;
-}
-
-.swiper-navigation {
-  display: none;
-  position: absolute;
-  top: -4rem;
-  right: 0;
+#vg-tooltip-element {
+  @mixin open-sans;
   
-  button:first-child {
-    margin-right: 0.3rem;
+  h2 {
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 0;
   }
 
-  @mixin above {
-    display: block;
+  table {
+    margin: 0;
+  }
+
+  td {
+    max-width: 100% !important;
+    font-size: 0.875rem;
+    border: none;
+    padding: 7px 0 0 0 !important;
+    text-align: left !important;
+  }
+
+  td.key {
+    padding-right: 0.25rem !important;
+  }
+
+  td.value {
+    font-weight: 600;
   }
 }

@@ -6,19 +6,26 @@ import StatFields from '../types/stat-fields.type';
 const ChartUtils = {
   categoryOrder: ['FA', 'FL', 'A', 'GA', 'B', 'C', 'Start', 'Stub', 'List'],
 
-  minForChart(timepoints, totalField): number {
+  minForCumulativeChart(timepoints, totalField): number {
     return _.reduce(timepoints, (accum, timepoint) => {
       return Math.min(accum as number, timepoint[totalField] as number);
     }, timepoints[0][totalField] as number);
   },
 
-  maxForChart(timepoints, totalField): number {
+  maxForCumulativeChart(timepoints, totalField): number {
     return _.reduce(timepoints, (accum, timepoint) => {
       return Math.max(accum as number, timepoint[totalField] as number);
     }, timepoints[0][totalField] as number);
   },
 
-  prepValues(options): ChartTimepoint[] {
+  maxForDeltaChart(timepoints, deltaField): number {
+    const max = _.maxBy(timepoints, (timepoint) => {
+      return timepoint[deltaField] as number;
+    });
+    return max[deltaField]
+  },
+
+  prepCumulativeValues(options): ChartTimepoint[] {
     const { timepoints, attributedDeltaField, deltaField } = options;
     
     const values: ChartTimepoint[] = [];
@@ -33,13 +40,38 @@ const ChartUtils = {
       values.push({
         date: timepoint.timestamp,
         value: unattributedCounter,
-        type: 'Unattributed'
+        type: 'Other editors'
       });
 
       values.push({
         date: timepoint.timestamp,
         value: attributedCounter,
-        type: 'Attributed'
+        type: 'Our participants'
+      });
+    })
+
+    return values;
+  },
+
+  prepDeltaValues(options): ChartTimepoint[] {
+    const { timepoints, attributedDeltaField, deltaField } = options;
+    
+    const values: ChartTimepoint[] = [];
+
+    timepoints.forEach((timepoint) => {
+      const attributed = Math.max(0, timepoint[attributedDeltaField]);
+      const unattributed = Math.max(0, timepoint[deltaField] - timepoint[attributedDeltaField]);
+
+      values.push({
+        date: timepoint.timestamp,
+        value: unattributed,
+        type: 'Other editors'
+      });
+
+      values.push({
+        date: timepoint.timestamp,
+        value: attributed,
+        type: 'Our participants'
       });
     })
 

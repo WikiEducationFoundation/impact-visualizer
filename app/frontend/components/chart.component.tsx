@@ -37,7 +37,7 @@ function Chart({ spec }) {
         spec,
         { 
           renderer: 'svg',
-          actions: false 
+          actions: false
         }
       )
         .then(() => {
@@ -54,8 +54,7 @@ function Chart({ spec }) {
       <div
         style={{
           width: '100%',
-          height: 450,
-          border: '1px solid #e2e2e2'
+          height: 450
         }}
         ref={container}
       />

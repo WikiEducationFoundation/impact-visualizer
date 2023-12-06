@@ -141,7 +141,19 @@ function TopicDetail() {
             topic={topic}
             topicTimepoints={topicTimepoints}
             fields={ChartUtils.fieldsForStat(activeStat)}
+            type='delta'
           />
+
+          <br />
+          {activeStat !== 'wp10' &&
+            <StatDetail
+              stat={activeStat}
+              topic={topic}
+              topicTimepoints={topicTimepoints}
+              fields={ChartUtils.fieldsForStat(activeStat)}
+              type='cumulative'
+            />
+          }
         </div>
       </div>
     </section>
