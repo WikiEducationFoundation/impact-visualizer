@@ -1,11 +1,11 @@
 import _ from 'lodash';
 
 const ChartSpec = {
-  prepare({ min, max, yLabel, values, stat, type }) {
+  prepare({ min, max, yLabel, values, stat, type, timeUnit }) {
 
     const axes = this.axes({ type, stat, yLabel });
     const marks = this.marks({ type, stat, yLabel });
-    const data = this.data({ min, values, type, stat });
+    const data = this.data({ min, values, type, stat, timeUnit });
     const scales = this.scales({ min, max, type, stat});
 
     const spec = {
@@ -67,7 +67,7 @@ const ChartSpec = {
     return spec;
   },
 
-  data({ min, values, type, stat }): object {
+  data({ min, values, type, stat, timeUnit }): object {
     if (stat === 'wp10') {
       return [
         {
@@ -96,7 +96,8 @@ const ChartSpec = {
             {
               type: 'timeunit',
               field: 'date',
-              maxbins: 15,
+              // maxbins: [10],
+              units: [timeUnit],
               signal: 'tbin'
             },
             {
@@ -277,6 +278,7 @@ const ChartSpec = {
           encode: {
             enter: {
               x: { scale: 'x', field: 'unit0' },
+              // x2: { scale: 'x', field: 'unit1' },
               width: { scale: 'x', band: 1 },
               y: { scale: 'y', field: 'y0' },
               y2: { scale: 'y', field: 'y1' },

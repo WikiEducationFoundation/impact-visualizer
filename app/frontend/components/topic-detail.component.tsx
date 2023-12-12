@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { useState } from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import { useLoaderData, Link } from "react-router-dom";
+import { useLoaderData, Link, useNavigate, useLocation } from "react-router-dom";
 
 import Topic from '../types/topic.type';
 import TopicTimepoint from '../types/topic-timepoint.type';
@@ -13,7 +13,12 @@ import TopicUtils from '../utils/topic-utils';
 import ChartUtils from '../utils/chart-utils';
 
 function TopicDetail() {
-  const [activeStat, setActiveStat] = useState('articles');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const defaultStat = _.replace(location.hash, '#', '') || 'articles';
+
+  const [activeStat, setActiveStat] = useState(defaultStat);
 
   const { topic, topicTimepoints } = 
     useLoaderData() as { topic: Topic, topicTimepoints: Array<TopicTimepoint> };
@@ -21,6 +26,7 @@ function TopicDetail() {
   const editorLabel = _.upperFirst(pluralize(topic.editor_label, topic.user_count));
 
   function handleStatSelect(key: string) {
+    navigate(`#${key}`);
     setActiveStat(key);
   }
 

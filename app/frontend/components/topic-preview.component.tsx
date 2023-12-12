@@ -33,7 +33,7 @@ function TopicPreview({topic}: {topic: Topic}) {
         </h3>
         
         <h4 className="u-mb1">
-          {topic.user_count}
+          {topic.user_count.toLocaleString('en-US')}
           {' '}
           {editorLabel}
         </h4>

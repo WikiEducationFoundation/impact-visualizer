@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_15_203831) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_12_205619) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -139,6 +139,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_15_203831) do
     t.integer "wiki_id"
     t.string "editor_label", default: "participant"
     t.boolean "display", default: true
+    t.string "chart_time_unit", default: "year"
   end
 
   create_table "users", force: :cascade do |t|

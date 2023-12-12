@@ -52,10 +52,7 @@ function Chart({ spec }) {
   return (
     <div>
       <div
-        style={{
-          width: '100%',
-          height: 450
-        }}
+        className="Chart"
         ref={container}
       />
     </div>

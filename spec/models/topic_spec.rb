@@ -128,6 +128,7 @@ end
 # Table name: topics
 #
 #  id                     :bigint           not null, primary key
+#  chart_time_unit        :string           default("year")
 #  description            :string
 #  display                :boolean          default(TRUE)
 #  editor_label           :string           default("participant")

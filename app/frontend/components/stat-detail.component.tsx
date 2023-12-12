@@ -19,7 +19,7 @@ interface Props {
   topicTimepoints: Array<TopicTimepoint>
 };
 
-function StatDetail({ topicTimepoints, fields, stat, type }: Props) {
+function StatDetail({ topicTimepoints, fields, stat, type, topic }: Props) {
   const { totalField, deltaField, attributedDeltaField } = fields;
 
   let values: ChartTimepoint[] = [];
@@ -61,7 +61,10 @@ function StatDetail({ topicTimepoints, fields, stat, type }: Props) {
     }
   }
   
-  const spec = ChartSpec.prepare({ values, yLabel, min, max, stat, type })
+  const spec = ChartSpec.prepare({
+    values, yLabel, min, max, stat,
+    type, timeUnit: topic.chart_time_unit 
+  })
 
   return (
     <div
