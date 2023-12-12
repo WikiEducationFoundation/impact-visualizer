@@ -278,18 +278,12 @@ const ChartSpec = {
           encode: {
             enter: {
               x: { scale: 'x', field: 'unit0' },
-              // x2: { scale: 'x', field: 'unit1' },
               width: { scale: 'x', band: 1 },
               y: { scale: 'y', field: 'y0' },
               y2: { scale: 'y', field: 'y1' },
               fill: { scale: 'color', field: 'type' },
               tooltip: {
                 signal: tooltip
-              }
-            },
-            hover: {
-              fillOpacity: {
-                value: 0.9
               }
             }
           }
