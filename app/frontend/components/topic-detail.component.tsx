@@ -16,10 +16,8 @@ function TopicDetail() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const defaultStat = _.replace(location.hash, '#', '') || 'articles';
-
-  const [activeStat, setActiveStat] = useState(defaultStat);
-
+  const activeStat = _.replace(location.hash, '#', '') || 'articles';
+  
   const { topic, topicTimepoints } = 
     useLoaderData() as { topic: Topic, topicTimepoints: Array<TopicTimepoint> };
 
@@ -27,7 +25,6 @@ function TopicDetail() {
 
   function handleStatSelect(key: string) {
     navigate(`#${key}`);
-    setActiveStat(key);
   }
 
   function renderIntro() {

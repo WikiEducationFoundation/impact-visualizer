@@ -7,6 +7,7 @@ export default interface Topic {
   slug: string,
   start_date: string,
   end_date: string,
+  chart_time_unit: string,
   timepoint_day_interval: number
   articles_count: number,
   articles_count_delta: number,

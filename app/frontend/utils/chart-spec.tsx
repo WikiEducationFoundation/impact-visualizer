@@ -96,8 +96,7 @@ const ChartSpec = {
             {
               type: 'timeunit',
               field: 'date',
-              // maxbins: [10],
-              units: [timeUnit],
+              units: ['year', timeUnit],
               signal: 'tbin'
             },
             {
