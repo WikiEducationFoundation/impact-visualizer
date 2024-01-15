@@ -44,3 +44,7 @@ node_modules
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
 
+# CSV
+/db/csv/*
+!/db/csv/topic-articles-example.csv
+!/db/csv/topic-users-example.csv

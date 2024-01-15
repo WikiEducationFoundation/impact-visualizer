@@ -10,6 +10,7 @@ set :deploy_to, "/var/www/impact-visualizer"
 set :passenger_restart_with_touch, false
 set :assets_prefix, 'vite'
 
+append :linked_dirs, "db/csv"
 
 # Default value for :linked_files is []
 # append :linked_files, "config/database.yml", 'config/master.key'
