@@ -134,3 +134,21 @@ If you would like to force existing analysis to be recomputed, you may force upd
 ### Run Tests
 
 1. `rspec` (tests are located in */spec* directory)
+
+## Deploying Updates to Server
+TODO, but briefly...
+
+1. Server will pull from *production* branch, so: `git push production`
+2. `cap production deploy`
+
+## Configuring and Deploying to new Server
+TODO, but briefly...
+
+1. Setup new Debian server
+2. Add SSH key to server
+3. Install Ruby and Bundler
+4. Install Git and add server key to Github
+5. Install Postgres and create db: *impact-visualizer-production*
+6. Create project directory at `/var/www/impact-visualizer`
+7. Install and configure NGINX and Passenger
+8. Locally, run `cap production deploy` to deploy code
