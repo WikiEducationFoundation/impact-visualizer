@@ -136,19 +136,21 @@ If you would like to force existing analysis to be recomputed, you may force upd
 1. `rspec` (tests are located in */spec* directory)
 
 ## Deploying Updates to Server
-TODO, but briefly...
 
-1. Server will pull from *production* branch, so: `git push production`
-2. `cap production deploy`
+1. Ensure server has your public SSH key 
+2. Server will pull from *production* branch, so: `git push production`
+3. `cap production deploy`
+
+In addition to deploying the latest code, the above deploy command will run any pending Rails migrations and will also compile front-end resources. To learn more about other, more granular, Capistrano commands [see their documentation](https://capistranorb.com/documentation/overview/what-is-capistrano/).
 
 ## Configuring and Deploying to new Server
-TODO, but briefly...
 
 1. Setup new Debian server
-2. Add SSH key to server
-3. Install Ruby and Bundler
-4. Install Git and add server key to Github
-5. Install Postgres and create db: *impact-visualizer-production*
-6. Create project directory at `/var/www/impact-visualizer`
-7. Install and configure NGINX and Passenger
-8. Locally, run `cap production deploy` to deploy code
+2. [Add SSH key to server](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys-on-debian-11)
+3. [Install Ruby and Bundler using RVM](https://tecadmin.net/install-ruby-on-debian/)
+4. [Install Node](https://nodejs.org/en/download/package-manager#debian-and-ubuntu-based-linux-distributions)
+5. [Install Git](https://www.digitalocean.com/community/tutorials/how-to-install-git-on-debian-10) and [add server key to Github](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+6. [Install Postgres](https://www.postgresql.org/download/linux/debian/) and create db: *impact-visualizer-production*
+7. Create project directory at `/var/www/impact-visualizer`
+8. [Install and configure NGINX and Passenger](https://www.phusionpassenger.com/docs/advanced_guides/install_and_upgrade/nginx/install/oss/bullseye.html)
+9. Locally, run `cap production deploy` to deploy code
