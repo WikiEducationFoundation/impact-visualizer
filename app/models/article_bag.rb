@@ -7,6 +7,15 @@ class ArticleBag < ApplicationRecord
   has_many :articles, through: :article_bag_articles
 
   default_scope { order(created_at: :asc) }
+
+  # For ActiveAdmin
+  def self.ransackable_associations(auth_object = nil)
+    ["article_bag_articles", "articles", "topic"]
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    ["created_at", "id", "name", "topic_id", "updated_at"]
+  end
 end
 
 # == Schema Information

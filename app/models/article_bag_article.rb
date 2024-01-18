@@ -4,6 +4,12 @@ class ArticleBagArticle < ApplicationRecord
   # Associations
   belongs_to :article_bag
   belongs_to :article
+
+  # For ActiveAdmin
+  def self.ransackable_attributes(auth_object = nil)
+    ["article_bag_id", "article_id", "created_at", "id", "updated_at"]
+  end
+
 end
 
 # == Schema Information

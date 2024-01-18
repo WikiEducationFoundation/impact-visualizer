@@ -27,6 +27,12 @@ module ImpactVisualizer
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # For ActiveAdmin
+    config.middleware.use Rack::MethodOverride
+    config.middleware.use ActionDispatch::Flash
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
+
     config.generators do |g|
       g.test_framework :rspec,
         fixtures: true,

@@ -94,6 +94,16 @@ class Topic < ApplicationRecord
   def most_recent_summary
     topic_summaries.last
   end
+
+  # For ActiveAdmin
+  def self.ransackable_associations(auth_object = nil)
+    ['article_bags', 'articles', 'topic_summaries', 'topic_timepoints', 'topic_users', 'users', 'wiki']
+  end
+
+  # For ActiveAdmin
+  def self.ransackable_attributes(auth_object = nil)
+    ["chart_time_unit", "created_at", "description", "display", "editor_label", "end_date", "id", "name", "slug", "start_date", "timepoint_day_interval", "updated_at", "wiki_id"]
+  end
 end
 
 # == Schema Information

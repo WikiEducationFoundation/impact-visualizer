@@ -63,6 +63,20 @@ class Wiki < ApplicationRecord
   def rest_api_url
     "#{base_url}/w/rest.php/v1/"
   end
+
+  # For ActiveAdmin
+  def self.ransackable_associations(auth_object = nil)
+    ['topics']
+  end
+
+  def self.ransackable_attributes(auth_object = nil)
+    ['created_at', 'id', 'language', 'project', 'updated_at']
+  end
+
+  def name
+    "#{project} (#{language})"
+  end
+
 end
 
 # == Schema Information

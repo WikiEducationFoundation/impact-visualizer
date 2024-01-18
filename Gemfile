@@ -3,8 +3,11 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.2.2'
 
+gem 'activeadmin'
 gem 'annotate'
 gem 'benchmark', '~> 0.2.1'
+gem 'dalli'
+gem 'devise'
 gem 'rails', '~> 7.0.5'
 gem 'sqlite3', '~> 1.4'
 gem 'puma', '~> 5.0'
@@ -18,6 +21,8 @@ gem 'hashugar'
 gem 'oauth2'
 gem 'oj'
 gem "parallel", "~> 1.23"
+gem 'sprockets', '<4'
+gem 'sass-rails'
 gem 'vite_rails'
 
 group :development do

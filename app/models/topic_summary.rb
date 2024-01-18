@@ -1,5 +1,10 @@
 class TopicSummary < ApplicationRecord
   belongs_to :topic
+
+  # For ActiveAdmin
+  def self.ransackable_attributes(auth_object = nil)
+    ["articles_count", "articles_count_delta", "attributed_articles_created_delta", "attributed_length_delta", "attributed_revisions_count_delta", "attributed_token_count", "average_wp10_prediction", "created_at", "id", "length", "length_delta", "revisions_count", "revisions_count_delta", "timepoint_count", "token_count", "token_count_delta", "topic_id", "updated_at", "wp10_prediction_categories"]
+  end
 end
 
 # == Schema Information
