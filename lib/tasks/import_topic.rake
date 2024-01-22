@@ -44,4 +44,6 @@ task import_topic: :environment do
 
   ap "Topic article count: #{topic.articles.count}"
   ap "Topic user count: #{topic.users.count}"
+
+  exit!
 end

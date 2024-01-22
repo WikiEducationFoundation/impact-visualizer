@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
-json.topics @topics do |topic|
-  json.partial! 'topics/topic', topic:
+json.cache! @topics do
+  json.topics @topics do |topic|
+    json.partial! 'topics/topic', topic:
+  end
 end

@@ -9,4 +9,6 @@ task generate_timepoints: :environment do
   topic = Topic.find_by(slug: topic_slug)
   TimepointService.new(topic:, force_updates:).build_timepoints
   TopicSummaryService.new(topic:).create_summary
+  topic.touch
+  exit!
 end

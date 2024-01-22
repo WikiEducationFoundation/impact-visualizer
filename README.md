@@ -55,8 +55,8 @@ Two CSV files are required for the importing of Topic data, one for Articles and
 1. CSV files should be named using the following pattern:
 	- `topic-articles-topic_slug.csv` where "topic_slug" is the Topic's slug.
 	- `topic-users-topic_slug.csv` where "topic_slug" is the Topic's slug.
-2. CSV files should contain Article titles (example: "California red-legged frog" OR User screen names (example: "MattFordham"). Each entry should be on its own line/row. Only the 1 column should be present. In other words, the files should contain no commas. 
-3. If running locally, the CSV files should be placed within the *csv/* directory, alongside the aforementioned example files. If running on server, the files should be placed in the project's "shared/csv" directory, which will likely be somewhere like */var/www/impact-visualizer/shared/csv*.
+2. CSV files should contain Article titles (example: "California red-legged frog" OR User screen names (example: "MattFordham"). Each entry should be on its own line/row. Only the 1 column should be present. If User names or Article titles contain commas, the name/title must be wrapped in double quotes. There should be no commas outside of quoted text.
+3. If running locally, the CSV files should be placed within the *db/csv/* directory, alongside the aforementioned example files. If running on server, the files should be placed in the project's "shared/db/csv" directory, which will likely be somewhere like */var/www/impact-visualizer/shared/db/csv*.
 
 ### Import Script
 

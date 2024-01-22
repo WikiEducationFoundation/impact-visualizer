@@ -113,6 +113,7 @@ GEM
       capistrano (~> 3.0)
       sshkit (~> 1.2)
     concurrent-ruby (1.2.2)
+    connection_pool (2.4.1)
     crack (0.4.5)
       rexml
     crass (1.0.6)
@@ -414,6 +415,7 @@ DEPENDENCIES
   capistrano-rails-console
   capistrano-rake
   capistrano-rvm
+  connection_pool
   dalli
   debug
   devise
