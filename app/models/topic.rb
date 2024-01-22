@@ -113,7 +113,7 @@ end
 #  id                     :bigint           not null, primary key
 #  chart_time_unit        :string           default("year")
 #  description            :string
-#  display                :boolean          default(TRUE)
+#  display                :boolean          default(FALSE)
 #  editor_label           :string           default("participant")
 #  end_date               :datetime
 #  name                   :string

@@ -14,8 +14,8 @@ task import_topic: :environment do
 
   articles_csv_file = "topic-articles-#{topic_slug}.csv"
   users_csv_file = "topic-users-#{topic_slug}.csv"
-  article_titles = CSV.read("db/csv/#{articles_csv_file}", headers: false)
-  user_names = CSV.read("db/csv/#{users_csv_file}", headers: false)
+  article_titles = CSV.read("db/csv/#{articles_csv_file}", headers: false, skip_blanks: true)
+  user_names = CSV.read("db/csv/#{users_csv_file}", headers: false, skip_blanks: true)
 
   wiki_action_api = WikiActionApi.new
   count = 0
