@@ -6,7 +6,8 @@ ActiveAdmin.register Topic do
   filter :slug
 
   permit_params :name, :description, :slug, :timepoint_day_interval, :start_date,
-                :end_date, :wiki_id, :editor_label, :display, :chart_time_unit
+                :end_date, :wiki_id, :editor_label, :display, :chart_time_unit,
+                :users_csv, :articles_csv
 
   index do
     selectable_column
@@ -21,11 +22,110 @@ ActiveAdmin.register Topic do
       record.users.count
     end
     column :timeframe do |record|
-      raw "#{record.start_date.strftime('%-m/%-d/%Y')}&ndash;#{record.end_date&.strftime('%-m/%-d/%Y') || 'Now'}"
+      end_date = 'Now'
+      end_date = record.end_date.strftime('%-m/%-d/%Y') if record.end_date
+      if record.start_date && end_date
+        raw "#{record.start_date.strftime('%-m/%-d/%Y')}&ndash;#{end_date}"
+      end
     end
     column :timepoint_day_interval
     column :display
     actions
+  end
+
+  show do
+    panel 'Actions' do
+      if topic.users_csv.attached? && topic.articles_csv.attached?
+        div class: 'attributes_table' do
+          table do
+            tbody do
+              tr do
+                th do
+                  'Generate Timepoints'
+                end
+                td do
+                  'Coming Soon 😉'
+                end
+              end
+              tr do
+                th do
+                  'Import Articles'
+                end
+                td do
+                  if topic.article_import_job_id
+                    div do
+                      output = []
+                      if Sidekiq::Status::status(topic.article_import_job_id) == :working
+                        percent = Sidekiq::Status::pct_complete(topic.article_import_job_id)
+                        output << status_tag("Working #{percent}%", class: 'green')
+                      else
+                        output << status_tag(Sidekiq::Status::status(topic.article_import_job_id), class: 'orange')
+                      end
+                      output << link_to('(More detail)', "/admin/sidekiq/statuses/#{topic.article_import_job_id}")
+                      output.join.html_safe
+                    end
+                  else
+                    link_to 'Queue Articles import', import_articles_admin_topic_path
+                  end
+                end
+              end
+              tr do
+                th do
+                  'Import Users'
+                end
+                td do
+                  if topic.users_import_job_id
+                    span do
+                      if Sidekiq::Status::status(topic.users_import_job_id) == :working
+                        percent = Sidekiq::Status::pct_complete(topic.users_import_job_id)
+                        status_tag("Working #{percent}%", class: 'green')
+                      else
+                        status_tag(Sidekiq::Status::status(topic.users_import_job_id), class: 'orange')
+                      end
+                    end
+                    span style: 'margin-left: 5px' do
+                      link_to('(More detail)', "/admin/sidekiq/statuses/#{topic.users_import_job_id}")
+                    end
+                  else
+                    link_to 'Queue Users import', import_users_admin_topic_path
+                  end
+                end
+              end
+            end
+          end
+        end
+      else
+        para 'Please upload both "Users CSV" and "Articles CSV" in order to import or generate timepoints.', style: 'font-weight: bold; margin-bottom: 0'
+      end
+    end
+
+    attributes_table do
+      row :id
+      row :name
+      row :slug
+      row :wiki
+      row :editor_label
+      row :description
+      row :display
+      row :start_date
+      row :end_date
+      row :timepoint_day_interval
+      row :chart_time_unit
+      row :users_csv do
+        if topic.users_csv.attached?
+          link_to topic.users_csv.filename.to_s, url_for(topic.users_csv)
+        end
+      end
+      row :articles_csv do
+        if topic.articles_csv.attached?
+          link_to topic.articles_csv.filename.to_s, url_for(topic.articles_csv)
+        end
+      end
+      row :created_at
+      row :updated_at
+    end
+
+    active_admin_comments
   end
 
   form do |f|
@@ -41,9 +141,27 @@ ActiveAdmin.register Topic do
       input :timepoint_day_interval, hint: 'How many days between timepoints? WARNING: this number has a significant impact on the processing time required to generate timepoints. Set as high as possible for the time frame.'
       input :start_date, as: :date_select
       input :end_date, as: :date_select
+      input :users_csv,
+            as: :file,
+            label: 'Users CSV',
+            hint: topic.users_csv.attached? ? "Currently attached: #{topic.users_csv.filename.to_s}" : nil
+      input :articles_csv,
+            as: :file,
+            label: 'Articles CSV',
+            hint: topic.articles_csv.attached? ? "Currently attached: #{topic.articles_csv.filename.to_s}" : nil
     end
 
     f.actions
+  end
+
+  member_action :import_users, method: [:get] do
+    resource.queue_users_import
+    redirect_to resource_path(resource), notice: 'User import queued'
+  end
+
+  member_action :import_articles, method: [:get] do
+    resource.queue_articles_import
+    redirect_to resource_path(resource), notice: 'Article import queued'
   end
 end
 

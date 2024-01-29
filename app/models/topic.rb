@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 class Topic < ApplicationRecord
-  ## TODO
-  # - High-level caching of deltas between first/last topic_timepoints.
-  #   Perhaps with another model though? ... so snapshots can be taken over time.
+  ## Mixins
+  has_one_attached :users_csv
+  has_one_attached :articles_csv
 
   ## Associations
   belongs_to :wiki
@@ -81,8 +81,6 @@ class Topic < ApplicationRecord
     users.count
   end
 
-  # TODO
-  # Add a field to capture active article bag, but fall back to most recent
   def active_article_bag
     article_bags.last
   end
@@ -93,6 +91,16 @@ class Topic < ApplicationRecord
 
   def most_recent_summary
     topic_summaries.last
+  end
+
+  def queue_articles_import
+    job_id = ImportArticlesJob.perform_async(id)
+    update article_import_job_id: job_id
+  end
+
+  def queue_users_import
+    job_id = ImportUsersJob.perform_async(id)
+    update users_import_job_id: job_id
   end
 
   # For ActiveAdmin
@@ -110,17 +118,20 @@ end
 #
 # Table name: topics
 #
-#  id                     :bigint           not null, primary key
-#  chart_time_unit        :string           default("year")
-#  description            :string
-#  display                :boolean          default(FALSE)
-#  editor_label           :string           default("participant")
-#  end_date               :datetime
-#  name                   :string
-#  slug                   :string
-#  start_date             :datetime
-#  timepoint_day_interval :integer          default(7)
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  wiki_id                :integer
+#  id                        :bigint           not null, primary key
+#  chart_time_unit           :string           default("year")
+#  description               :string
+#  display                   :boolean          default(FALSE)
+#  editor_label              :string           default("participant")
+#  end_date                  :datetime
+#  name                      :string
+#  slug                      :string
+#  start_date                :datetime
+#  timepoint_day_interval    :integer          default(7)
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  article_import_job_id     :string
+#  timepoint_generate_job_id :string
+#  users_import_job_id       :string
+#  wiki_id                   :integer
 #

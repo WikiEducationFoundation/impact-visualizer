@@ -21,9 +21,12 @@ gem 'mediawiki_api'
 gem 'hashugar'
 gem 'oauth2'
 gem 'oj'
-gem "parallel", "~> 1.23"
-gem 'sprockets', '<4'
+gem 'parallel', "~> 1.23"
 gem 'sass-rails'
+gem 'sidekiq'
+gem 'sidekiq-history'
+gem 'sidekiq-status'
+gem 'sprockets', '<4'
 gem 'vite_rails'
 
 group :development do
@@ -50,6 +53,7 @@ group :development, :test do
 end
 
 group :test do
+  gem 'rspec-sidekiq'
   gem 'shoulda-matchers', '~> 5.0'
   gem 'vcr'
   gem 'webmock'

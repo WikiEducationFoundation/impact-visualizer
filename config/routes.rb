@@ -1,6 +1,15 @@
+# frozen_string_literal: true
+
+require 'sidekiq/web'
+require 'sidekiq-status/web'
+
 Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
+  
+  authenticate :admin_user, lambda { |u| u.present? } do
+    mount Sidekiq::Web => '/admin/sidekiq'
+  end
   
   scope '/api' do
     resources :topics, only: [:index, :show] do

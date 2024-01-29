@@ -112,6 +112,8 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
+    chronic_duration (0.10.6)
+      numerizer (~> 0.1.1)
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
     crack (0.4.5)
@@ -228,6 +230,7 @@ GEM
       racc (~> 1.4)
     nokogiri (1.15.2-x86_64-linux)
       racc (~> 1.4)
+    numerizer (0.1.1)
     oauth2 (2.0.9)
       faraday (>= 0.17.3, < 3.0)
       jwt (>= 1.0, < 3.0)
@@ -284,6 +287,8 @@ GEM
       activerecord (>= 6.1.5)
       activesupport (>= 6.1.5)
       i18n
+    redis-client (0.19.1)
+      connection_pool
     regexp_parser (2.8.1)
     reline (0.3.5)
       io-console (~> 0.5)
@@ -307,6 +312,11 @@ GEM
       rspec-expectations (~> 3.12)
       rspec-mocks (~> 3.12)
       rspec-support (~> 3.12)
+    rspec-sidekiq (4.1.0)
+      rspec-core (~> 3.0)
+      rspec-expectations (~> 3.0)
+      rspec-mocks (~> 3.0)
+      sidekiq (>= 5, < 8)
     rspec-support (3.12.0)
     rubocop (1.52.1)
       json (~> 2.3)
@@ -349,6 +359,16 @@ GEM
       tilt
     shoulda-matchers (5.3.0)
       activesupport (>= 5.2.0)
+    sidekiq (7.2.1)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      rack (>= 2.2.4)
+      redis-client (>= 0.19.0)
+    sidekiq-history (0.0.13)
+      sidekiq (>= 6.5.0)
+    sidekiq-status (3.0.3)
+      chronic_duration
+      sidekiq (>= 6.0, < 8)
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
@@ -431,12 +451,16 @@ DEPENDENCIES
   puma (~> 5.0)
   rails (~> 7.0.5)
   rspec-rails (~> 6.0.0)
+  rspec-sidekiq
   rubocop
   rubocop-performance
   rubocop-rails
   rubocop-rspec
   sass-rails
   shoulda-matchers (~> 5.0)
+  sidekiq
+  sidekiq-history
+  sidekiq-status
   spring
   spring-commands-rspec
   sprockets (< 4)

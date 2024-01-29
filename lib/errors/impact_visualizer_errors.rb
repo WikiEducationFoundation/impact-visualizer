@@ -8,4 +8,5 @@ class ImpactVisualizerErrors
   class ArticleMissingPageTitle < StandardError; end
   class ArticleMissingFirstRevisionInfo < StandardError; end
   class ArticleCreatedAfterTimestamp < StandardError; end
+  class CsvMissingForImport < StandardError; end
 end

@@ -1,0 +1,610 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=info&redirects=true&titles=California%20red-legged%20frog
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 29 Jan 2024 19:30:13 GMT
+      Server:
+      - mw2326.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '274'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=29-Jan-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Fri,
+        01 Mar 2024 12:00:00 GMT
+      - WMF-Last-Access=29-Jan-2024;Path=/;HttpOnly;secure;Expires=Fri, 01 Mar 2024
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":3451780,"ns":0,"title":"California
+        red-legged frog","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-01-24T06:51:08Z","lastrevid":1184207219,"length":20698}]}}'
+  recorded_at: Mon, 29 Jan 2024 19:30:13 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=info&redirects=true&titles=Cascades%20frog
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 29 Jan 2024 19:30:13 GMT
+      Server:
+      - mw2319.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '261'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=29-Jan-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Fri,
+        01 Mar 2024 12:00:00 GMT
+      - WMF-Last-Access=29-Jan-2024;Path=/;HttpOnly;secure;Expires=Fri, 01 Mar 2024
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":12408856,"ns":0,"title":"Cascades
+        frog","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-01-24T06:51:20Z","lastrevid":1197384765,"length":9234}]}}'
+  recorded_at: Mon, 29 Jan 2024 19:30:13 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=info&redirects=true&titles=Agile%20frog
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 29 Jan 2024 19:30:13 GMT
+      Server:
+      - mw-api-ext.codfw.main-7dd8699559-56m2h
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '257'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=29-Jan-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Fri,
+        01 Mar 2024 12:00:00 GMT
+      - WMF-Last-Access=29-Jan-2024;Path=/;HttpOnly;secure;Expires=Fri, 01 Mar 2024
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":4272709,"ns":0,"title":"Agile
+        frog","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-01-24T06:51:09Z","lastrevid":1178631675,"length":7592}]}}'
+  recorded_at: Mon, 29 Jan 2024 19:30:13 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=info&redirects=true&titles=California%20red-legged%20frog
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 29 Jan 2024 19:30:13 GMT
+      Server:
+      - mw2402.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '274'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=29-Jan-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Fri,
+        01 Mar 2024 12:00:00 GMT
+      - WMF-Last-Access=29-Jan-2024;Path=/;HttpOnly;secure;Expires=Fri, 01 Mar 2024
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":3451780,"ns":0,"title":"California
+        red-legged frog","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-01-24T06:51:08Z","lastrevid":1184207219,"length":20698}]}}'
+  recorded_at: Mon, 29 Jan 2024 19:30:13 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=info&redirects=true&titles=Agile%20frog
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 29 Jan 2024 19:30:13 GMT
+      Server:
+      - mw-api-ext.codfw.main-7dd8699559-fxw5k
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '257'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=29-Jan-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Fri,
+        01 Mar 2024 12:00:00 GMT
+      - WMF-Last-Access=29-Jan-2024;Path=/;HttpOnly;secure;Expires=Fri, 01 Mar 2024
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":4272709,"ns":0,"title":"Agile
+        frog","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-01-24T06:51:09Z","lastrevid":1178631675,"length":7592}]}}'
+  recorded_at: Mon, 29 Jan 2024 19:30:13 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=info&redirects=true&titles=Cascades%20frog
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 29 Jan 2024 19:30:13 GMT
+      Server:
+      - mw2350.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '261'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      - WMF-Last-Access-Global=29-Jan-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Fri,
+        01 Mar 2024 12:00:00 GMT
+      - WMF-Last-Access=29-Jan-2024;Path=/;HttpOnly;secure;Expires=Fri, 01 Mar 2024
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":12408856,"ns":0,"title":"Cascades
+        frog","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-01-24T06:51:20Z","lastrevid":1197384765,"length":9234}]}}'
+  recorded_at: Mon, 29 Jan 2024 19:30:13 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=3451780&prop=revisions&redirects=true&rvdir=newer&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=29-Jan-2024;
+        WMF-Last-Access-Global=29-Jan-2024
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 29 Jan 2024 19:30:14 GMT
+      Server:
+      - mw2372.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '290'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"rvcontinue":"20051217172058|31746379","continue":"||"},"query":{"pages":[{"pageid":3451780,"ns":0,"title":"California
+        red-legged frog","revisions":[{"revid":31746337,"parentid":0,"user":"Eugene
+        van der Pijll","userid":22016,"timestamp":"2005-12-17T17:20:35Z","size":1237}]}]}}'
+  recorded_at: Mon, 29 Jan 2024 19:30:14 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=4272709&prop=revisions&redirects=true&rvdir=newer&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=29-Jan-2024;
+        WMF-Last-Access-Global=29-Jan-2024
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 29 Jan 2024 19:30:14 GMT
+      Server:
+      - mw2319.codfw.wmnet
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '266'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"rvcontinue":"20060304113051|42184767","continue":"||"},"query":{"pages":[{"pageid":4272709,"ns":0,"title":"Agile
+        frog","revisions":[{"revid":42184709,"parentid":0,"user":"Carabinieri","userid":389283,"timestamp":"2006-03-04T11:29:59Z","size":3342}]}]}}'
+  recorded_at: Mon, 29 Jan 2024 19:30:14 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=12408856&prop=revisions&redirects=true&rvdir=newer&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=29-Jan-2024;
+        WMF-Last-Access-Global=29-Jan-2024
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Mon, 29 Jan 2024 19:30:14 GMT
+      Server:
+      - mw-api-ext.codfw.main-7dd8699559-6m2m8
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Length:
+      - '268'
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+    body:
+      encoding: UTF-8
+      string: '{"continue":{"rvcontinue":"20070805043829|149282140","continue":"||"},"query":{"pages":[{"pageid":12408856,"ns":0,"title":"Cascades
+        frog","revisions":[{"revid":146627025,"parentid":0,"user":"Polbot","userid":4477315,"timestamp":"2007-07-23T22:24:17Z","size":1027}]}]}}'
+  recorded_at: Mon, 29 Jan 2024 19:30:14 GMT
+recorded_with: VCR 6.1.0

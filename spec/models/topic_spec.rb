@@ -11,6 +11,26 @@ RSpec.describe Topic do
   it { is_expected.to have_many(:topic_summaries) }
   it { is_expected.to belong_to(:wiki) }
 
+  describe '#queue_articles_import' do
+    let(:topic) { create(:topic) }
+
+    it 'queues ImportArticlesJob for Topic' do
+      expect(ImportArticlesJob).to receive(:perform_async).and_return('abc123')
+      topic.queue_articles_import
+      expect(topic.reload.article_import_job_id).to eq('abc123')
+    end
+  end
+
+  describe '#queue_users_import' do
+    let(:topic) { create(:topic) }
+
+    it 'queues ImportUsersJob for Topic' do
+      expect(ImportUsersJob).to receive(:perform_async).and_return('abc123')
+      topic.queue_users_import
+      expect(topic.reload.users_import_job_id).to eq('abc123')
+    end
+  end
+
   describe '#timestamps' do
     let(:topic) { create(:topic, timepoint_day_interval: 7) }
 
@@ -127,17 +147,20 @@ end
 #
 # Table name: topics
 #
-#  id                     :bigint           not null, primary key
-#  chart_time_unit        :string           default("year")
-#  description            :string
-#  display                :boolean          default(FALSE)
-#  editor_label           :string           default("participant")
-#  end_date               :datetime
-#  name                   :string
-#  slug                   :string
-#  start_date             :datetime
-#  timepoint_day_interval :integer          default(7)
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  wiki_id                :integer
+#  id                        :bigint           not null, primary key
+#  chart_time_unit           :string           default("year")
+#  description               :string
+#  display                   :boolean          default(FALSE)
+#  editor_label              :string           default("participant")
+#  end_date                  :datetime
+#  name                      :string
+#  slug                      :string
+#  start_date                :datetime
+#  timepoint_day_interval    :integer          default(7)
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  article_import_job_id     :string
+#  timepoint_generate_job_id :string
+#  users_import_job_id       :string
+#  wiki_id                   :integer
 #

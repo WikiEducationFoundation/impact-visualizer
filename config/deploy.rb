@@ -11,6 +11,7 @@ set :passenger_restart_with_touch, false
 set :assets_prefix, 'vite'
 
 append :linked_dirs, "db/csv"
+append :linked_dirs, "storage"
 
 # Default value for :linked_files is []
 # append :linked_files, "config/database.yml", 'config/master.key'
