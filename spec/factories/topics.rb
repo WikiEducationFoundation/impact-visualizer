@@ -4,6 +4,7 @@ FactoryBot.define do
     description { Faker::Lorem.sentence }
     slug { Faker::Internet.slug }
     wiki { Wiki.default_wiki }
+    display { true }
   end
 end
 
