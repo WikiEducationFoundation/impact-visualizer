@@ -11,6 +11,16 @@ RSpec.describe Topic do
   it { is_expected.to have_many(:topic_summaries) }
   it { is_expected.to belong_to(:wiki) }
 
+  describe '#queue_generate_timepoints' do
+    let(:topic) { create(:topic) }
+
+    it 'queues GenerateTimepointsJob for Topic' do
+      expect(GenerateTimepointsJob).to receive(:perform_async).and_return('abc123')
+      topic.queue_generate_timepoints
+      expect(topic.reload.timepoint_generate_job_id).to eq('abc123')
+    end
+  end
+
   describe '#queue_articles_import' do
     let(:topic) { create(:topic) }
 

@@ -44,7 +44,25 @@ ActiveAdmin.register Topic do
                   'Generate Timepoints'
                 end
                 td do
-                  'Coming Soon 😉'
+                  if topic.timepoint_generate_job_id
+                    span do
+                      if Sidekiq::Status::status(topic.timepoint_generate_job_id) == :working
+                        percent = Sidekiq::Status::pct_complete(topic.timepoint_generate_job_id)
+                        status_tag("Working #{percent}%", class: 'green')
+                      else
+                        status_tag(Sidekiq::Status::status(topic.timepoint_generate_job_id), class: 'orange')
+                      end
+                    end
+                    span style: 'margin-left: 5px' do
+                      link_to('(More detail)', "/admin/sidekiq/statuses/#{topic.timepoint_generate_job_id}")
+                    end
+                  else
+                    output = []
+                    output << link_to('Queue Timepoint Generation (Force Updates)', generate_timepoints_admin_topic_path(force_updates: true))
+                    output << '<br>'
+                    output << link_to('Queue Timepoint Generation (Changes Only)', generate_timepoints_admin_topic_path(force_updates: false))
+                    output.join.html_safe
+                  end
                 end
               end
               tr do
@@ -53,16 +71,16 @@ ActiveAdmin.register Topic do
                 end
                 td do
                   if topic.article_import_job_id
-                    div do
-                      output = []
+                    span do
                       if Sidekiq::Status::status(topic.article_import_job_id) == :working
                         percent = Sidekiq::Status::pct_complete(topic.article_import_job_id)
-                        output << status_tag("Working #{percent}%", class: 'green')
+                        status_tag("Working #{percent}%", class: 'green')
                       else
-                        output << status_tag(Sidekiq::Status::status(topic.article_import_job_id), class: 'orange')
+                        status_tag(Sidekiq::Status::status(topic.article_import_job_id), class: 'orange')
                       end
-                      output << link_to('(More detail)', "/admin/sidekiq/statuses/#{topic.article_import_job_id}")
-                      output.join.html_safe
+                    end
+                    span style: 'margin-left: 5px' do
+                      link_to('(More detail)', "/admin/sidekiq/statuses/#{topic.article_import_job_id}")
                     end
                   else
                     link_to 'Queue Articles import', import_articles_admin_topic_path
@@ -162,6 +180,11 @@ ActiveAdmin.register Topic do
   member_action :import_articles, method: [:get] do
     resource.queue_articles_import
     redirect_to resource_path(resource), notice: 'Article import queued'
+  end
+
+  member_action :generate_timepoints, method: [:get] do
+    resource.queue_generate_timepoints(force_updates: params[:force_updates])
+    redirect_to resource_path(resource), notice: 'Timepoint generation queued'
   end
 end
 

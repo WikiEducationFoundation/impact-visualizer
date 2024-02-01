@@ -4,13 +4,21 @@ require 'benchmark'
 class TimepointService
   attr_accessor :topic, :logging_enabled, :force_updates
 
-  def initialize(topic:, force_updates: false)
+  def initialize(topic:, force_updates: false, logging_enabled: false, total: nil, at: nil)
     @topic = topic
     @article_stats_service = ArticleStatsService.new
     @topic_timepoint_stats_service = TopicTimepointStatsService.new
     @topic_article_timepoint_stats_service = nil
     @force_updates = force_updates
-    @logging_enabled = !Rails.env.test?
+    @logging_enabled = !Rails.env.test? && logging_enabled
+    @progress_count = 0
+
+    # Capture Sidekiq Status methods
+    @at = at
+    @total = total
+
+    # Setup total count for Sidekiq Status
+    initialize_progress_count
   end
 
   def build_timepoints
@@ -23,6 +31,7 @@ class TimepointService
     # Build/update most everything for each timestamp
     timestamps.each do |timestamp|
       timestamp_count += 1
+      increment_progress_count
       log "#build_timepoints_for_timestamp timestamp:#{timestamp_count}/#{timestamps.count}"
       build_timepoints_for_timestamp(timestamp:)
     end
@@ -44,6 +53,7 @@ class TimepointService
     timestamp_count = 0
     timestamps.each do |timestamp|
       timestamp_count += 1
+      increment_progress_count
       topic_timepoint = TopicTimepoint.find_or_create_by!(topic:, timestamp:)
       log "#update_stats_for_topic_timepoint timestamp:#{timestamp_count}/#{timestamps.count}"
       @topic_timepoint_stats_service.update_stats_for_topic_timepoint(topic_timepoint:)
@@ -126,6 +136,7 @@ class TimepointService
         article = article_bag_article.article
 
         article_count += 1
+        increment_progress_count
         log "  #update_token_stats_for_article article:#{article_count}/#{article_bag_articles.count} article_id: #{article.id}"
 
         # Update stats for all timestamps for article
@@ -180,6 +191,30 @@ class TimepointService
 
     # Pass off to TopicArticleTimepointStatsService to update the stats
     @topic_article_timepoint_stats_service.update_token_stats(tokens:)
+  end
+
+  def initialize_progress_count
+    timestamp_count = @topic.timestamps.count
+    article_count = @topic.active_article_bag&.article_bag_articles&.count
+
+    return 0 unless timestamp_count && article_count
+
+    # Setup total count with timestamp count, for build_timepoints_for_timestamp loop
+    total_progress_steps = timestamp_count
+
+    # Add Article count for update_token_stats loop
+    total_progress_steps += article_count
+
+    # Add timestamp count again, for build_topic_timepoints loop
+    total_progress_steps += timestamp_count
+
+    # Lock in the total count
+    @total&.call(total_progress_steps)
+  end
+
+  def increment_progress_count
+    @progress_count += 1
+    @at&.call(@progress_count)
   end
 
   def log(message)

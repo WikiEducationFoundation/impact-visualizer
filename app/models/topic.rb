@@ -103,6 +103,11 @@ class Topic < ApplicationRecord
     update users_import_job_id: job_id
   end
 
+  def queue_generate_timepoints(force_updates: false)
+    job_id = GenerateTimepointsJob.perform_async(id, force_updates)
+    update timepoint_generate_job_id: job_id
+  end
+
   # For ActiveAdmin
   def self.ransackable_associations(auth_object = nil)
     ['article_bags', 'articles', 'topic_summaries', 'topic_timepoints', 'topic_users', 'users', 'wiki']

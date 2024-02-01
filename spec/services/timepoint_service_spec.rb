@@ -41,13 +41,23 @@ describe TimepointService do
 
     it 'builds all timepoints for Topic' do
       article_bag = create(:small_article_bag, topic:)
-      timepoint_service = described_class.new(topic:)
-      timepoint_service.build_timepoints
 
       topic_timepoints_count = topic.timestamps.count
       article_count = article_bag.articles.count
       topic_article_timepoint_count = topic_timepoints_count * article_count
       article_timepoint_count = topic_timepoints_count * article_count
+
+      counter = instance_double('counter')
+      total_progress_steps = (topic_timepoints_count * 2) + article_count
+      expect(counter).to receive(:total).once.with(total_progress_steps)
+      expect(counter).to receive(:at).exactly(total_progress_steps).times
+
+      timepoint_service = described_class.new(
+        topic:,
+        total: counter.method(:total),
+        at: counter.method(:at)
+      )
+      timepoint_service.build_timepoints
 
       expect(TopicTimepoint.count).to eq(topic_timepoints_count)
       expect(TopicArticleTimepoint.count).to eq(topic_article_timepoint_count)
