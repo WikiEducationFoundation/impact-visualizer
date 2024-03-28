@@ -1,17 +1,16 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import TopicDataService from '../services/topics.service';
-import '~/styles/main.postcss';
+import TopicDataService from "../services/topics.service";
+import "~/styles/main.postcss";
 
-import Root from '../components/root.component';
+import Root from "../components/root.component";
 
-import TopicIndex from '../components/topic-index.component';
-import TopicDetail from '../components/topic-detail.component';
+import TopicIndex from "../components/topic-index.component";
+import TopicDetail from "../components/topic-detail.component";
+import WikipediaCategoryPage from "../components/wikipedia-category-page.component";
+import QueryBuilder from "../components/query-builder.component";
 
 async function topicIndexLoader() {
   const topics = await TopicDataService.getAll();
@@ -30,19 +29,27 @@ const router = createBrowserRouter([
     element: <Root />,
     children: [
       {
-        path: '/',
+        path: "/",
         loader: topicIndexLoader,
-        element: <TopicIndex />
+        element: <TopicIndex />,
       },
       {
-        path: '/topics/:id',
+        path: "/topics/:id",
         loader: topicDetailLoader,
-        element: <TopicDetail />
-      }
-    ]
+        element: <TopicDetail />,
+      },
+      {
+        path: "/search/wikidata-tool",
+        element: <QueryBuilder />,
+      },
+      {
+        path: "/search/wikipedia-category-tool",
+        element: <WikipediaCategoryPage />,
+      },
+    ],
   },
 ]);
 
-const container = document.getElementById('root');
+const container = document.getElementById("root");
 const root = createRoot(container!);
-root.render(<RouterProvider router={router}/>);
+root.render(<RouterProvider router={router} />);
