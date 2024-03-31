@@ -3,7 +3,7 @@ import React from "react";
 
 export default function LoadingOval({ visible }: { visible: boolean }) {
   return (
-    <div className="oval-container">
+    <div className="OvalContainer">
       <Oval
         visible={visible}
         height="120"

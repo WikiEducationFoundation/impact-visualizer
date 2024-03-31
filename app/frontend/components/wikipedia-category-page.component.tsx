@@ -53,7 +53,7 @@ export default function WikipediaCategoryPage() {
         </button>
       </form>
       {isLoading ? (
-        <div className="oval-container">
+        <div className="OvalContainer">
           <LoadingOval visible={isLoading} />
         </div>
       ) : SubcatsData ? (

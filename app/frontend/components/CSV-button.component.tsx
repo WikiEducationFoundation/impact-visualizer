@@ -14,7 +14,7 @@ export default function CSVButton<T>({
     downloadAsCSV(csvContent);
   };
   return (
-    <button onClick={handleExportCSV} className="export-csv-button">
+    <button onClick={handleExportCSV} className="Button">
       Export to CSV
     </button>
   );

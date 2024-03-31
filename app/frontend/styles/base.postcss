@@ -3,7 +3,8 @@
 /* No classes or IDs         */
 /* ------------------------- */
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -16,7 +17,9 @@ html {
   }
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: inherit;
 }
 
@@ -31,7 +34,14 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
-p + h1, p + h2, p + h3, p + h4, p + h5, ul + h4, ol + h4, p + figure {
+p + h1,
+p + h2,
+p + h3,
+p + h4,
+p + h5,
+ul + h4,
+ol + h4,
+p + figure {
   margin-top: 1.5rem;
 }
 
@@ -55,7 +65,8 @@ h5 {
   @mixin h5;
 }
 
-p, figure {
+p,
+figure {
   margin: 0;
   margin-bottom: $global-padding;
 }
@@ -65,8 +76,19 @@ figcaption {
   color: #999;
 }
 
-p, blockquote, h1, h2, h3, h4,
-ul, section, pre, div, button, figure, a {
+p,
+blockquote,
+h1,
+h2,
+h3,
+h4,
+ul,
+section,
+pre,
+div,
+button,
+figure,
+a {
   &:last-child {
     margin-bottom: 0;
   }
@@ -84,7 +106,7 @@ a {
   text-decoration: none;
   cursor: pointer;
   transition: color $hover-speed, border $hover-speed;
-  
+
   &:hover {
     color: $blue;
   }
@@ -98,14 +120,16 @@ strong {
   font-weight: 500;
 }
 
-ol, ul {
+ol,
+ul {
   padding-left: 1rem;
   margin-bottom: $global-padding;
 
   li {
   }
 
-  ol, ul {
+  ol,
+  ul {
   }
 }
 
@@ -145,7 +169,8 @@ table {
   margin-bottom: 1rem;
 }
 
-th, td {
+th,
+td {
   font-size: 1rem;
   margin: 0;
   padding: 1rem 1rem;
@@ -161,12 +186,12 @@ th {
 }
 
 td {
-  border-right: 1px solid $lightGrey; 
-  border-bottom: 1px solid $lightGrey; 
+  border-right: 1px solid $lightGrey;
+  border-bottom: 1px solid $lightGrey;
 }
 
 td:last-child {
-  border-right: none; 
+  border-right: none;
 }
 
 tr:last-child td {
@@ -196,11 +221,12 @@ label {
   font-weight: 500;
 }
 
-input, textarea {
+input,
+select,
+textarea {
   display: block;
-  background: white; 
+  background: white;
   border: 1px #e4e4e4 solid;
-  margin-bottom: 1rem;
   color: $grey;
   padding: 0.75rem 0.75rem;
   border-radius: 0;
@@ -209,29 +235,31 @@ input, textarea {
   transition: border $hover-speed;
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: $lightGrey;
 }
 
-input[type=text],
-input[type=email],
-input[type=phone],
-input[type=password],
+input[type="text"],
+input[type="email"],
+input[type="phone"],
+input[type="password"],
 textarea {
   width: 100%;
-} 
+}
 
 form {
-  *:focus, *:hover {
-    outline:none;
+  *:focus,
+  *:hover {
+    outline: none;
   }
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
   border: 1px $blue solid;
 }
 
 select {
   font-size: 1rem;
-  margin-bottom: 1rem;
 }

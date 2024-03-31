@@ -98,11 +98,11 @@ export default function QueryBuilder() {
     return queriedArticlesJSON;
   }
   return (
-    <div className="query-builder">
+    <div className="Container Container--padded">
       <h1>Impact Search</h1>
 
       <form onSubmit={(e) => handleSubmit(e)}>
-        <label>Select Properties</label>
+        <h3>Select Properties</h3>
         {queryItemsData.map((property, index) => (
           <QueryItem
             handleChange={(index, value) =>
@@ -122,21 +122,21 @@ export default function QueryBuilder() {
         {queryItemsData.length < 5 && (
           <button
             type="button"
-            className="add-button"
+            className="AddButton u-mt1"
             onClick={handleAddQueryItem}
           >
-            Add
+            +
           </button>
         )}
         <div>
-          <button type="submit" className="submit-button">
+          <button type="submit" className="Button u-mt2">
             Run Query
           </button>
         </div>
       </form>
 
       {isLoading ? (
-        <div className="oval-container">
+        <div className="OvalContainer">
           <LoadingOval visible={isLoading} />
         </div>
       ) : articles.length > 0 ? (

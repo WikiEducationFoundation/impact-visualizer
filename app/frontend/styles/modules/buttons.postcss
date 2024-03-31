@@ -4,7 +4,7 @@
   border-radius: 0;
   padding: 0;
   line-height: 1;
-  
+
   &:hover {
     border: none;
     background: none;
@@ -24,7 +24,28 @@
   text-align: center;
   padding: 0.5rem 0.75rem;
   text-decoration: none;
-  transition: all .15s ease-out,color .15s ease-out;
+  transition: all 0.15s ease-out, color 0.15s ease-out;
+}
+
+.AddButton {
+  background-color: transparent;
+  border: 2px solid $blue;
+  border-radius: 50%;
+  color: $blue;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1.4rem;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.15s ease-out, color 0.15s ease-out;
+
+  &:hover {
+    background-color: $blue;
+    color: white;
+  }
 }
 
 .Button--block {

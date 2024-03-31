@@ -1,4 +1,5 @@
 import React from "react";
+import { BiSolidTrashAlt } from "react-icons/bi";
 
 export default function QueryItem({
   handleChange,
@@ -10,7 +11,7 @@ export default function QueryItem({
   index,
 }: QueryItemProps) {
   return (
-    <div className="query-item">
+    <div className="Box QueryItem u-mt1">
       <select
         onChange={(e) => handleChange(index, e.target.value)}
         value={property}
@@ -29,9 +30,12 @@ export default function QueryItem({
         required
       />
       {properties.length > 1 && (
-        <button type="button" onClick={() => handleRemoveQueryItem(index)}>
-          Remove
-        </button>
+        <div
+          className="RemoveIcon"
+          onClick={() => handleRemoveQueryItem(index)}
+        >
+          <BiSolidTrashAlt size={28} />
+        </div>
       )}
     </div>
   );

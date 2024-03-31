@@ -10,11 +10,16 @@ export default function ArticlesTable({
 }) {
   return (
     <>
-      <CSVButton articles={articles} csvConvert={convertSPARQLArticlesToCSV} />
       <table className="articles-table">
         <thead>
           <tr>
-            <th>Article</th>
+            <th>
+              Article
+              <CSVButton
+                articles={articles}
+                csvConvert={convertSPARQLArticlesToCSV}
+              />
+            </th>
           </tr>
         </thead>
         <tbody>
