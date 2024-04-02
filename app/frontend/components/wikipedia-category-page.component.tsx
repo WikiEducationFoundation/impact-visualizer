@@ -39,7 +39,7 @@ export default function WikipediaCategoryPage() {
   };
 
   return (
-    <div className="category-container">
+    <div className="Container Container--padded">
       <form onSubmit={(e) => handleSubmit(e)}>
         <input
           type="text"
@@ -48,7 +48,7 @@ export default function WikipediaCategoryPage() {
           placeholder="Enter a Category URL"
           required
         />
-        <button type="submit" className="submit-button" disabled={isLoading}>
+        <button type="submit" className="Button u-mt1" disabled={isLoading}>
           Run Query
         </button>
       </form>

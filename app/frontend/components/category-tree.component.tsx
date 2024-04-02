@@ -13,7 +13,7 @@ import { CategoryNode } from "../types/search-tool.type";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 import { fetchSubcatsAndPages } from "../services/articles.service";
 import { convertResponseToTree } from "../utils/search-utils";
-import SelectedNodesDisplay from "./SelectedNodesDisplay";
+import SelectedNodesDisplay from "./selected-nodes-display.component";
 
 export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
   const [categoryTree, setCategoryTree] = useState<INode<IFlatMetadata>[]>(
@@ -132,7 +132,7 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
     }
   };
   return (
-    <div className="category-tree-container">
+    <div className="TreeContainer">
       <div className="checkbox">
         <TreeView
           data={categoryTree}
