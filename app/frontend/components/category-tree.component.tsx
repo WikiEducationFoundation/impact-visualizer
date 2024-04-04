@@ -101,7 +101,24 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
     });
   };
 
-  const handleNodeSelect = (selectProps: ITreeViewOnNodeSelectProps) => {
+  const handleNodeSelect = async (selectProps: ITreeViewOnNodeSelectProps) => {
+    if (
+      selectProps.isSelected &&
+      !selectProps.isBranch &&
+      !nodesAlreadyLoaded.includes(selectProps.element) &&
+      selectProps.element?.parent === 0
+    ) {
+      const fetchedSubcatsAndPages = await fetchSubcatsAndPages(
+        selectProps.element.id,
+        true
+      );
+      if (!fetchedSubcatsAndPages) {
+        console.error("Invalid Response (possibly null)");
+        return [];
+      }
+      convertResponseToTree(fetchedSubcatsAndPages, selectProps.element);
+      setNodesAlreadyLoaded([...nodesAlreadyLoaded, selectProps.element]);
+    }
     selectProps.isSelected &&
       setManuallySelectedNodes((prevSelectedMap) =>
         new Map(prevSelectedMap).set(

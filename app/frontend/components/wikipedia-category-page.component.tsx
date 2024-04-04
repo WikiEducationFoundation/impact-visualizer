@@ -41,6 +41,9 @@ export default function WikipediaCategoryPage() {
   return (
     <div className="Container Container--padded">
       <form onSubmit={(e) => handleSubmit(e)}>
+        <h1>Impact Search</h1>
+        <h3>Enter a category URL, select and browse subcategories</h3>
+
         <input
           type="text"
           value={categoryURL}

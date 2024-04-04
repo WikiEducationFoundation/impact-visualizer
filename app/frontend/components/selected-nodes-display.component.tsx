@@ -22,12 +22,12 @@ export default function SelectedNodesDisplay({
     setArticlesCount(count);
   }, [selectedNodes]);
   return (
-    <div className="selected-nodes">
+    <div className="SelectedNodes Box">
       <CSVButton
         articles={selectedNodes.values()}
         csvConvert={convertCategoryArticlesToCSV}
       />
-      <h3>Selected Articles</h3>
+      <h3 className="u-mt1">Selected Articles</h3>
       {articlesCount} articles from {selectedNodes.size} categories
       <ul>
         {[...selectedNodes.values()].map((node) => {

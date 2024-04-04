@@ -61,18 +61,41 @@
         transform: rotate(90deg);
       }
     }
-    @keyframes spinner {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(360deg);
-      }
-    }
 
     .loading-icon {
       animation: spinner 1.5s linear infinite;
       margin-left: 5px;
     }
   }
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.SelectedNodes {
+  flex: 1;
+
+  padding: 20px;
+  margin-left: 20px;
+  max-height: 700px;
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1px;
+    padding: 5px;
+    font-size: 15px;
+  }
+  overflow-y: auto;
 }
