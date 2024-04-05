@@ -19,9 +19,8 @@ export default function WikipediaCategoryPage() {
     event.preventDefault();
     setIsLoading(true);
     try {
-      const fetchedSubcatsAndPages = await fetchSubcatsAndPages(
-        categoryURL.split("/").slice(-1)[0]
-      );
+      const categoryName = categoryURL.split("/").slice(-1)[0];
+      const fetchedSubcatsAndPages = await fetchSubcatsAndPages(categoryName);
       if (!fetchedSubcatsAndPages) {
         throw new Error("Invalid Response (possibly null)");
       }
@@ -29,7 +28,12 @@ export default function WikipediaCategoryPage() {
         throw new Error(fetchedSubcatsAndPages.error.info);
       }
       setSubcatsData(
-        convertInitialResponseToTree(fetchedSubcatsAndPages, [], 0)
+        convertInitialResponseToTree(
+          fetchedSubcatsAndPages,
+          [],
+          0,
+          categoryName
+        )
       );
     } catch (error) {
       console.error(error);

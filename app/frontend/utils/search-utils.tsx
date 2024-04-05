@@ -83,16 +83,25 @@ function downloadAsCSV(csvContent: string, fileName = "articles.csv"): void {
 const convertInitialResponseToTree = (
   response: MediaWikiResponse,
   existingIDs: INode<IFlatMetadata>[],
-  elementId: number
+  elementId: number,
+  parentName: string
 ): CategoryNode => {
   const pages = response.query.pages;
+
+  const parentNode: CategoryNode = {
+    name: parentName,
+    isBranch: true,
+    id: elementId + 1,
+    metadata: {},
+    children: [],
+  };
 
   const rootNode: CategoryNode = {
     name: "root",
     isBranch: true,
     id: elementId,
     metadata: {},
-    children: [],
+    children: [parentNode],
   };
 
   for (const [, value] of Object.entries(pages)) {
@@ -111,15 +120,15 @@ const convertInitialResponseToTree = (
         value.title.slice(9) /* slice out "category:" prefix */
       } (${value.categoryinfo.subcats} C, ${value.categoryinfo.pages} P)`;
 
-      rootNode.children?.push({
+      parentNode.children?.push({
         name: categoryName,
         id: value.pageid,
         isBranch: value.categoryinfo.subcats > 0,
         metadata: {},
         children: [],
       });
-    } else if (rootNode.metadata) {
-      rootNode.metadata[value.pageid] = value.title;
+    } else if (parentNode.metadata) {
+      parentNode.metadata[value.pageid] = value.title;
     }
   }
 

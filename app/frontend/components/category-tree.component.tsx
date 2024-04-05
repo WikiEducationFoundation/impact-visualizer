@@ -106,7 +106,7 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
       selectProps.isSelected &&
       !selectProps.isBranch &&
       !nodesAlreadyLoaded.includes(selectProps.element) &&
-      selectProps.element?.parent === 0
+      selectProps.element?.parent === 1 // This is the hardcoded id for the top-level parent node
     ) {
       const fetchedSubcatsAndPages = await fetchSubcatsAndPages(
         selectProps.element.id,
