@@ -14,6 +14,7 @@ import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 import { fetchSubcatsAndPages } from "../services/articles.service";
 import { convertResponseToTree } from "../utils/search-utils";
 import SelectedNodesDisplay from "./selected-nodes-display.component";
+import toast from "react-hot-toast";
 
 export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
   const [categoryTree, setCategoryTree] = useState<INode<IFlatMetadata>[]>(
@@ -60,7 +61,7 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
     }
     const fetchedSubcatsAndPages = await fetchSubcatsAndPages(node.id, true);
     if (!fetchedSubcatsAndPages) {
-      console.error("Invalid Response (possibly null)");
+      toast.error("Failed to fetch subcategories");
       return [];
     }
     const parsedData = convertResponseToTree(fetchedSubcatsAndPages, node);
@@ -113,7 +114,7 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
         true
       );
       if (!fetchedSubcatsAndPages) {
-        console.error("Invalid Response (possibly null)");
+        toast.error("Failed to fetch subcategories");
         return [];
       }
       convertResponseToTree(fetchedSubcatsAndPages, selectProps.element);

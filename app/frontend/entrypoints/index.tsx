@@ -11,6 +11,7 @@ import TopicIndex from "../components/topic-index.component";
 import TopicDetail from "../components/topic-detail.component";
 import WikipediaCategoryPage from "../components/wikipedia-category-page.component";
 import QueryBuilder from "../components/query-builder.component";
+import { Toaster } from "react-hot-toast";
 
 async function topicIndexLoader() {
   const topics = await TopicDataService.getAll();
@@ -52,4 +53,9 @@ const router = createBrowserRouter([
 
 const container = document.getElementById("root");
 const root = createRoot(container!);
-root.render(<RouterProvider router={router} />);
+root.render(
+  <>
+    <RouterProvider router={router} />
+    <Toaster />
+  </>
+);

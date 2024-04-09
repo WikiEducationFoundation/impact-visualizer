@@ -5,6 +5,7 @@ import LoadingOval from "./loading-oval.component";
 import { convertInitialResponseToTree } from "../utils/search-utils";
 import { fetchSubcatsAndPages } from "../services/articles.service";
 import React from "react";
+import toast from "react-hot-toast";
 
 export default function WikipediaCategoryPage() {
   const [categoryURL, setCategoryURL] = useState<string>("");
@@ -35,8 +36,13 @@ export default function WikipediaCategoryPage() {
           categoryName
         )
       );
-    } catch (error) {
-      console.error(error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error("Failed to fetch subcategories");
+        console.error(error.message);
+      } else {
+        toast.error("Something went wrong!");
+      }
     }
 
     setIsLoading(false);

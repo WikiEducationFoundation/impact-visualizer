@@ -3,8 +3,6 @@ import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 
-import TopicIndex from "./topic-index.component";
-
 function Root() {
   return (
     <>

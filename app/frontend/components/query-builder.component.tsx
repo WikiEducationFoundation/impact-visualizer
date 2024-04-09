@@ -5,6 +5,7 @@ import { buildWikidataQuery } from "../utils/search-utils";
 import ArticlesTable from "./articles-table.component";
 import LoadingOval from "./loading-oval.component";
 import React from "react";
+import toast from "react-hot-toast";
 
 export default function QueryBuilder() {
   const [queryItemsData, setQueryItemsData] = useState<QueryProperty[]>([
@@ -86,10 +87,14 @@ export default function QueryBuilder() {
       if (!response.ok) {
         throw new Error("Network response was not ok.");
       }
-
       queriedArticlesJSON = await response.json();
     } catch (error) {
-      console.error("Error fetching articles: ", error);
+      if (error instanceof Error) {
+        toast.error(`Error fetching articles`);
+        console.error(error.message);
+      } else {
+        toast.error(`Something went wrong!`);
+      }
       queriedArticlesJSON = { head: { vars: [] }, results: { bindings: [] } };
     }
 
