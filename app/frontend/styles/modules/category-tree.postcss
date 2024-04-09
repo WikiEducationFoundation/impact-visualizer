@@ -1,0 +1,101 @@
+.TreeContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  .checkbox {
+    flex: 1;
+    font-size: 16px;
+    user-select: none;
+    min-height: 320px;
+    padding: 20px;
+    box-sizing: content-box;
+
+    .tree,
+    .tree-node,
+    .tree-node-group {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .tree-leaf-list-item {
+      margin-left: 21px;
+    }
+
+    .tree-branch-wrapper,
+    .tree-node__leaf {
+      outline: none;
+    }
+
+    .tree-node {
+      cursor: pointer;
+      display: inline-block;
+
+      .name {
+        &:hover {
+          background: rgba(0, 0, 0, 0.1);
+        }
+      }
+
+      &--focused .name {
+        background: rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    .checkbox-icon {
+      margin: 0 5px;
+      vertical-align: middle;
+    }
+
+    button {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .arrow {
+      margin-left: 5px;
+      vertical-align: middle;
+
+      &--open {
+        transform: rotate(90deg);
+      }
+    }
+
+    .loading-icon {
+      animation: spinner 1.5s linear infinite;
+      margin-left: 5px;
+    }
+  }
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.SelectedNodes {
+  flex: 1;
+
+  padding: 20px;
+  margin-left: 20px;
+  max-height: 700px;
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  li {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1px;
+    padding: 5px;
+    font-size: 15px;
+  }
+  overflow-y: auto;
+}

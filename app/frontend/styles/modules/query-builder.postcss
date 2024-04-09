@@ -1,0 +1,28 @@
+.QueryItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.RemoveIcon {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.RemoveIcon:hover {
+  transform: scale(1.2);
+}
+
+table {
+  width: 100%;
+  background-color: white;
+  th {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .Button {
+      background-color: #34375b;
+    }
+  }
+}
