@@ -157,7 +157,6 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
           aria-label="Checkbox tree"
           multiSelect
           propagateSelect
-          propagateSelectUpwards
           togglableSelect
           onLoadData={wrappedOnLoadData}
           onSelect={handleNodeSelect}
