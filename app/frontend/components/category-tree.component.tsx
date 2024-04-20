@@ -105,7 +105,7 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
   const handleNodeSelect = async (selectProps: ITreeViewOnNodeSelectProps) => {
     if (
       selectProps.isSelected &&
-      !selectProps.isBranch &&
+      !selectProps.element.isBranch &&
       !nodesAlreadyLoaded.includes(selectProps.element) &&
       selectProps.element?.parent === 1 // This is the hardcoded id for the top-level parent node
     ) {
@@ -165,12 +165,14 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
             isBranch,
             isExpanded,
             isSelected,
+            isDisabled,
             isHalfSelected,
             getNodeProps,
             level,
             handleSelect,
             handleExpand,
           }) => {
+            isDisabled = !!(element.isBranch && element.children.length === 0);
             const branchNode = (
               isExpanded: boolean,
               element: INode<IFlatMetadata>
@@ -184,19 +186,34 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
             return (
               <div
                 {...getNodeProps({ onClick: handleExpand })}
-                style={{ marginLeft: 40 * (level - 1) }}
+                style={{
+                  marginLeft: 40 * (level - 1),
+                }}
               >
                 {isBranch && branchNode(isExpanded, element)}
                 <CheckBoxIcon
                   onClick={(e) => {
-                    handleSelect(e);
+                    if (!isDisabled) {
+                      handleSelect(e);
+                    }
                     e.stopPropagation();
                   }}
                   variant={
-                    isHalfSelected ? "some" : isSelected ? "all" : "none"
+                    isDisabled
+                      ? "disabled"
+                      : isHalfSelected
+                      ? "some"
+                      : isSelected
+                      ? "all"
+                      : "none"
                   }
                 />
-                <span className="name">{element.name}</span>
+                <span
+                  className="name"
+                  style={{ opacity: isDisabled ? 0.5 : 1 }}
+                >
+                  {element.name}
+                </span>
               </div>
             );
           }}
@@ -216,6 +233,14 @@ const ArrowIcon: FC<ArrowIconProps> = ({ isOpen, className = "" }) => {
 
 const CheckBoxIcon: FC<CheckBoxIconProps> = ({ variant, onClick }) => {
   switch (variant) {
+    case "disabled":
+      return (
+        <FaSquare
+          onClick={onClick}
+          className="checkbox-icon"
+          style={{ opacity: 0.5 }}
+        />
+      );
     case "all":
       return <FaCheckSquare onClick={onClick} className="checkbox-icon" />;
     case "none":
@@ -228,7 +253,7 @@ const CheckBoxIcon: FC<CheckBoxIconProps> = ({ variant, onClick }) => {
 };
 
 type CheckBoxIconProps = {
-  variant: "all" | "none" | "some";
+  variant: "all" | "none" | "some" | "disabled";
   onClick: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
 };
 
