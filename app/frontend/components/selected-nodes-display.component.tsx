@@ -11,15 +11,22 @@ export default function SelectedNodesDisplay({
   selectedNodes: Map<NodeId, INode<IFlatMetadata>>;
 }) {
   const [articlesCount, setArticlesCount] = useState<number>(0);
+  const [categoriesCount, setCategoriesCount] = useState<number>(0);
 
   useEffect(() => {
-    let count = 0;
+    let totalNodeArticlesCount = 0;
+    let totalNodeCategoriesCount = 0;
     selectedNodes.forEach((node) => {
       if (node.metadata) {
-        count += Object.keys(node.metadata).length;
+        const nodeArticlesCount = Object.keys(node.metadata).length;
+        if (nodeArticlesCount > 0) {
+          totalNodeCategoriesCount += 1;
+        }
+        totalNodeArticlesCount += nodeArticlesCount;
       }
     });
-    setArticlesCount(count);
+    setArticlesCount(totalNodeArticlesCount);
+    setCategoriesCount(totalNodeCategoriesCount);
   }, [selectedNodes]);
   return (
     <div className="SelectedNodes Box">
@@ -28,7 +35,7 @@ export default function SelectedNodesDisplay({
         csvConvert={convertCategoryArticlesToCSV}
       />
       <h3 className="u-mt1">Selected Articles</h3>
-      {articlesCount} articles from {selectedNodes.size} categories
+      {articlesCount} articles from {categoriesCount} categories
       <ul>
         {[...selectedNodes.values()].map((node) => {
           return node.metadata
