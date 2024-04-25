@@ -20,11 +20,12 @@ export default function WikipediaCategoryPage() {
     event.preventDefault();
     setIsLoading(true);
     try {
-      let categoryName;
-      if (categoryURL.startsWith("Category:")) {
-        categoryName = categoryURL;
+      let categoryName = categoryURL;
+      if (categoryURL.startsWith("https://")) {
+        categoryName = categoryURL.split("/").slice(-1)[0];
+      } else if (!categoryURL.toUpperCase().startsWith("CATEGORY:")) {
+        categoryName = "Category:" + categoryURL;
       }
-      categoryName = categoryURL.split("/").slice(-1)[0];
       const fetchedSubcatsAndPages = await fetchSubcatsAndPages(categoryName);
       if (!fetchedSubcatsAndPages) {
         throw new Error("Invalid Response (possibly null)");

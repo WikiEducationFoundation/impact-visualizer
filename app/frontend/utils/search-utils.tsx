@@ -86,10 +86,11 @@ const convertInitialResponseToTree = (
   elementId: number,
   parentName: string
 ): CategoryNode => {
+  let articleCount = 0;
   const pages = response.query.pages;
 
   const parentNode: CategoryNode = {
-    name: parentName,
+    name: parentName.slice(9).replaceAll("_", " "),
     isBranch: true,
     id: elementId + 1,
     metadata: {},
@@ -129,8 +130,11 @@ const convertInitialResponseToTree = (
       });
     } else if (parentNode.metadata) {
       parentNode.metadata[value.pageid] = value.title;
+      articleCount += 1;
     }
   }
+  parentNode.name =
+    parentNode.name + ` (${parentNode?.children?.length} C, ${articleCount} P)`;
 
   return rootNode;
 };
