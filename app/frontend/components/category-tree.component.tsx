@@ -1,6 +1,7 @@
 import React, { FC, useState } from "react";
 import TreeView, {
   INode,
+  ITreeViewOnExpandProps,
   ITreeViewOnLoadDataProps,
   ITreeViewOnNodeSelectProps,
   NodeId,
@@ -34,7 +35,7 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
     children: INode<IFlatMetadata>[]
   ) => {
     const data = currentTree.map((node) => {
-      if (node.id === id) {
+      if (node.id === id && node.children.length === 0) {
         node.children = children.map((el) => {
           return el.id;
         });
@@ -149,6 +150,8 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
       setNodesAlreadyLoaded([...nodesAlreadyLoaded, loadProps.element]);
     }
   };
+
+  const handleExpand = (expandProps: ITreeViewOnExpandProps) => {};
   return (
     <div className="TreeContainer">
       <div className="checkbox">
@@ -160,6 +163,7 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
           togglableSelect
           onLoadData={wrappedOnLoadData}
           onSelect={handleNodeSelect}
+          onExpand={handleExpand}
           nodeRenderer={({
             element,
             isBranch,
