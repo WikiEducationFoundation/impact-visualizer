@@ -16,6 +16,7 @@ import { fetchSubcatsAndPages } from "../services/articles.service";
 import { convertResponseToTree } from "../utils/search-utils";
 import SelectedNodesDisplay from "./selected-nodes-display.component";
 import toast from "react-hot-toast";
+import { BsExclamationCircleFill } from "react-icons/bs";
 
 export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
   const [categoryTree, setCategoryTree] = useState<INode<IFlatMetadata>[]>(
@@ -152,6 +153,17 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
   };
 
   const handleExpand = (expandProps: ITreeViewOnExpandProps) => {};
+
+  // This function checks for any unselected children that may belong to a parent node
+  // This is used as a flag to display to the user whether or not there are unfetched/unselected child nodes further down the tree
+  const hasUnselectedChildNodes = (element: INode<IFlatMetadata>) => {
+    console.log(element);
+    return element.children.some((childNodeId) => {
+      const childNode = manuallySelectedNodes.get(childNodeId);
+      return childNode?.isBranch && childNode.children.length === 0;
+    });
+  };
+
   return (
     <div className="TreeContainer">
       <div className="checkbox">
@@ -218,6 +230,24 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
                 >
                   {element.name}
                 </span>
+                {isSelected && hasUnselectedChildNodes(element) ? (
+                  <span
+                    data-title={
+                      "This category is missing certain subcategories at a lower depth"
+                    }
+                  >
+                    <BsExclamationCircleFill
+                      color="#71afef"
+                      style={{
+                        verticalAlign: "middle",
+                        marginLeft: 5,
+                        marginBottom: 5,
+                      }}
+                    />
+                  </span>
+                ) : (
+                  ""
+                )}
               </div>
             );
           }}
