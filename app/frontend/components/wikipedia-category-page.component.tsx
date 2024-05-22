@@ -6,6 +6,8 @@ import { convertInitialResponseToTree } from "../utils/search-utils";
 import { fetchSubcatsAndPages } from "../services/articles.service";
 import React from "react";
 import toast from "react-hot-toast";
+import { BsExclamationCircleFill } from "react-icons/bs";
+import { CheckBoxIcon } from "./tree-icons.component";
 
 export default function WikipediaCategoryPage() {
   const [categoryURL, setCategoryURL] = useState<string>("");
@@ -57,8 +59,31 @@ export default function WikipediaCategoryPage() {
     <div className="Container Container--padded">
       <form onSubmit={(e) => handleSubmit(e)}>
         <h1>Impact Search</h1>
-        <h3>Enter a category URL, select and browse subcategories</h3>
+        <p>
+          This tool allows users to browse a wikipedia category and all of its
+          subcategories. Whenever a category is expanded for the first time, the
+          tool will retrieve the data for the subcategories 2 levels down.
+        </p>
+        <h3>Legend</h3>
+        <div>
+          <BsExclamationCircleFill color="#71afef" /> Indicates that the given
+          category has missing subcategories
+        </div>
+        <div>
+          <CheckBoxIcon onClick={() => {}} variant={"all"} /> Indicates that the
+          given category is selected
+        </div>
+        <div>
+          <CheckBoxIcon onClick={() => {}} variant={"some"} /> Indicates that
+          the given category is selected, but has unselected subcategories
+        </div>
+        <div>
+          <CheckBoxIcon onClick={() => {}} variant={"none"} /> Indicates that
+          the given category is not selected
+        </div>
+        <br />
 
+        <h3>Enter a category URL, select and browse subcategories</h3>
         <input
           type="text"
           value={categoryURL}
