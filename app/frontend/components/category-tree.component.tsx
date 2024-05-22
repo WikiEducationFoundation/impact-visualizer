@@ -17,6 +17,7 @@ import { convertResponseToTree } from "../utils/search-utils";
 import SelectedNodesDisplay from "./selected-nodes-display.component";
 import toast from "react-hot-toast";
 import { BsExclamationCircleFill } from "react-icons/bs";
+import { ArrowIcon, CheckBoxIcon } from "./tree-icons.component";
 
 export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
   const [categoryTree, setCategoryTree] = useState<INode<IFlatMetadata>[]>(
@@ -257,41 +258,3 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
     </div>
   );
 }
-
-const ArrowIcon: FC<ArrowIconProps> = ({ isOpen, className = "" }) => {
-  const classes = `arrow ${
-    isOpen ? "arrow--open" : "arrow--closed"
-  } ${className}`;
-  return <IoMdArrowDropright className={classes} />;
-};
-
-const CheckBoxIcon: FC<CheckBoxIconProps> = ({ variant, onClick }) => {
-  switch (variant) {
-    case "disabled":
-      return (
-        <FaSquare
-          onClick={onClick}
-          className="checkbox-icon"
-          style={{ opacity: 0.5 }}
-        />
-      );
-    case "all":
-      return <FaCheckSquare onClick={onClick} className="checkbox-icon" />;
-    case "none":
-      return <FaSquare onClick={onClick} className="checkbox-icon" />;
-    case "some":
-      return <FaMinusSquare onClick={onClick} className="checkbox-icon" />;
-    default:
-      return null;
-  }
-};
-
-type CheckBoxIconProps = {
-  variant: "all" | "none" | "some" | "disabled";
-  onClick: (event: React.MouseEvent<SVGElement, MouseEvent>) => void;
-};
-
-type ArrowIconProps = {
-  isOpen: boolean;
-  className?: string;
-};
