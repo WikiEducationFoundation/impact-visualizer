@@ -49,7 +49,7 @@ function buildWikidataQuery(
 function convertSPARQLArticlesToCSV(
   articles: SPARQLResponse["results"]["bindings"]
 ): string {
-  let csvContent = "data:text/csv;charset=utf-8,Articles\n";
+  let csvContent = "data:text/csv;charset=utf-8,";
 
   articles.forEach((item) => {
     csvContent += `"${item.personLabel.value}"\n`;
@@ -61,7 +61,7 @@ function convertSPARQLArticlesToCSV(
 function convertCategoryArticlesToCSV(
   categories: IterableIterator<INode<IFlatMetadata>>
 ): string {
-  let csvContent = "data:text/csv;charset=utf-8,Articles\n";
+  let csvContent = "data:text/csv;charset=utf-8,";
   for (const category of categories) {
     const metadata = category.metadata || {};
     for (const article of Object.values(metadata)) {
