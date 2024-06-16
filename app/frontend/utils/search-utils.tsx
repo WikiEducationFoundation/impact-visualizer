@@ -105,6 +105,7 @@ const convertInitialResponseToTree = (
     children: [parentNode],
   };
 
+  let hasSubcategories = false;
   for (const [, value] of Object.entries(pages)) {
     if (value.categoryinfo) {
       let isDuplicateNode = false;
@@ -128,6 +129,7 @@ const convertInitialResponseToTree = (
         metadata: {},
         children: [],
       });
+      hasSubcategories = true;
     } else if (parentNode.metadata) {
       parentNode.metadata[value.pageid] = value.title;
       articleCount += 1;
@@ -136,6 +138,9 @@ const convertInitialResponseToTree = (
   parentNode.name =
     parentNode.name + ` (${parentNode?.children?.length} C, ${articleCount} P)`;
 
+  if (!hasSubcategories && rootNode.children) {
+    rootNode.children[0].isBranch = false;
+  }
   return rootNode;
 };
 
