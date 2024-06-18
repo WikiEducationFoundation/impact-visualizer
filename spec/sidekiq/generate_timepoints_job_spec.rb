@@ -9,7 +9,7 @@ RSpec.describe GenerateTimepointsJob, type: :job do
     expect(TimepointService).to receive(:new).with(
       topic:,
       force_updates: false,
-      logging_enabled: false,
+      logging_enabled: true,
       total: kind_of(Method),
       at: kind_of(Method)
     ).and_call_original

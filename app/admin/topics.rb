@@ -117,6 +117,18 @@ ActiveAdmin.register Topic do
       end
     end
 
+    attributes_table title: 'Stats' do
+      row :articles do |record|
+        record.articles.count
+      end
+      row :users do |record|
+        record.users.count
+      end
+      row :timepoints do |record|
+        record.topic_timepoints.count
+      end
+    end
+
     attributes_table do
       row :id
       row :name

@@ -8,6 +8,7 @@ require 'capistrano/passenger'
 require 'capistrano/rvm'
 require 'capistrano/rails/console'
 require 'capistrano/rake'
+require 'capistrano/sidekiq'
 
 # Load the SCM plugin appropriate to your project:
 #
@@ -19,6 +20,9 @@ require 'capistrano/rake'
 # or
 require 'capistrano/scm/git'
 install_plugin Capistrano::SCM::Git
+
+install_plugin Capistrano::Sidekiq
+install_plugin Capistrano::Sidekiq::Systemd
 
 # Include tasks from other gems included in your Gemfile
 #

@@ -112,6 +112,10 @@ GEM
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
+    capistrano-sidekiq (2.3.1)
+      capistrano (>= 3.9.0)
+      capistrano-bundler
+      sidekiq (>= 6.0)
     chronic_duration (0.10.6)
       numerizer (~> 0.1.1)
     concurrent-ruby (1.2.2)
@@ -435,6 +439,7 @@ DEPENDENCIES
   capistrano-rails-console
   capistrano-rake
   capistrano-rvm
+  capistrano-sidekiq
   connection_pool
   dalli
   debug
