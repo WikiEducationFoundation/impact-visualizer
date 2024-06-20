@@ -4,6 +4,12 @@ require 'sidekiq/web'
 require 'sidekiq-status/web'
 
 Rails.application.routes.draw do
+  devise_for :topic_editors, controllers: { omniauth_callbacks: 'omniauth_callbacks' }
+
+  devise_scope :topic_editor do
+    get 'logout', to: 'devise/sessions#destroy'
+  end
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   

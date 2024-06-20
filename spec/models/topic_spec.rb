@@ -9,6 +9,8 @@ RSpec.describe Topic do
   it { is_expected.to have_many(:users).through(:topic_users) }
   it { is_expected.to have_many(:topic_timepoints) }
   it { is_expected.to have_many(:topic_summaries) }
+  it { is_expected.to have_many(:topic_editor_topics) }
+  it { is_expected.to have_many(:topic_editors).through(:topic_editor_topics) }
   it { is_expected.to belong_to(:wiki) }
 
   describe '#queue_generate_timepoints' do

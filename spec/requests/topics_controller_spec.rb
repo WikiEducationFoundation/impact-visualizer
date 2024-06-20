@@ -4,7 +4,14 @@ require 'rails_helper'
 
 describe TopicsController do
   describe '#index' do
-    let!(:topics) { create_list(:topic, 10) }
+    let!(:topics) { create_list(:topic, 10, display: true) }
+    let!(:topic_editor) do
+      topic_editor = create(:topic_editor)
+      create_list(:topic, 8, display: false) do |topic|
+        topic_editor.topics << topic
+      end
+      topic_editor
+    end
     let!(:topic) { topics.first }
     let!(:topic_summary) do
       TopicSummary.create!(
@@ -25,24 +32,38 @@ describe TopicsController do
       )
     end
 
-    it 'renders successfully and has the expected fields' do
-      get '/api/topics'
-      body = response.parsed_body
-      expect(response.status).to eq(200)
-      expect(body['topics'].count).to eq(10)
-      first_response_topic = body['topics'][0].with_indifferent_access
-      expect(first_response_topic).to include(
-        id: topic.id,
-        name: topic.name,
-        description: topic.description,
-        editor_label: topic.editor_label,
-        start_date: topic.start_date,
-        end_date: topic.end_date,
-        slug: topic.slug,
-        timepoint_day_interval: topic.timepoint_day_interval,
-        articles_count: topic_summary.articles_count,
-        articles_count_delta: topic_summary.articles_count_delta
-      )
+    context 'with no topic_editor' do
+      it 'returns only public "displayed" Topics and has the expected fields' do
+        get '/api/topics'
+        body = response.parsed_body
+        expect(response.status).to eq(200)
+        expect(body['topics'].count).to eq(10)
+        first_response_topic = body['topics'][0].with_indifferent_access
+        expect(first_response_topic).to include(
+          id: topic.id,
+          name: topic.name,
+          description: topic.description,
+          editor_label: topic.editor_label,
+          start_date: topic.start_date,
+          end_date: topic.end_date,
+          slug: topic.slug,
+          timepoint_day_interval: topic.timepoint_day_interval,
+          articles_count: topic_summary.articles_count,
+          articles_count_delta: topic_summary.articles_count_delta
+        )
+      end
+    end
+
+    context 'with topic_editor' do
+      it 'returns only Topics belonging to topic_editor' do
+        sign_in topic_editor
+        get '/api/topics', params: { owned: true }
+        body = response.parsed_body
+        expect(response.status).to eq(200)
+        expect(body['topics'].count).to eq(8)
+        topic = Topic.find(body['topics'][0]['id'])
+        expect(topic_editor.topic_editor_topics.exists?(topic:)).to eq(true)
+      end
     end
   end
 

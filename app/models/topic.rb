@@ -7,12 +7,14 @@ class Topic < ApplicationRecord
 
   ## Associations
   belongs_to :wiki
-  has_many :article_bags, -> { order(created_at: :desc) }
+  has_many :article_bags, -> { order(created_at: :desc) }, dependent: :delete_all
   has_many :articles, through: :article_bags
-  has_many :topic_users
+  has_many :topic_users, dependent: :delete_all
   has_many :users, through: :topic_users
-  has_many :topic_timepoints
-  has_many :topic_summaries
+  has_many :topic_timepoints, dependent: :delete_all
+  has_many :topic_summaries, dependent: :delete_all
+  has_many :topic_editor_topics, dependent: :delete_all
+  has_many :topic_editors, through: :topic_editor_topics
 
   ## Instance methods
   def timestamps
@@ -109,13 +111,14 @@ class Topic < ApplicationRecord
   end
 
   # For ActiveAdmin
-  def self.ransackable_associations(auth_object = nil)
-    ['article_bags', 'articles', 'topic_summaries', 'topic_timepoints', 'topic_users', 'users', 'wiki']
+  def self.ransackable_associations(_auth_object = nil)
+    %w[article_bags articles topic_summaries topic_timepoints topic_users users wiki]
   end
 
   # For ActiveAdmin
-  def self.ransackable_attributes(auth_object = nil)
-    ["chart_time_unit", "created_at", "description", "display", "editor_label", "end_date", "id", "name", "slug", "start_date", "timepoint_day_interval", "updated_at", "wiki_id"]
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[chart_time_unit created_at description display editor_label end_date id name
+       slug start_date timepoint_day_interval updated_at wiki_id]
   end
 end
 

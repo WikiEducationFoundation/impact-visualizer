@@ -24,6 +24,15 @@ export async function topicDetailLoader({ params }) {
   return { topic, topicTimepoints };
 }
 
+declare global {
+  interface Window {
+    app: {
+      signedIn: boolean,
+      username: string | undefined
+    }
+  }
+}
+
 const router = createBrowserRouter([
   {
     path: "/",

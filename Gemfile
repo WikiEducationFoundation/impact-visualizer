@@ -21,6 +21,8 @@ gem 'mediawiki_api'
 gem 'hashugar'
 gem 'oauth2'
 gem 'oj'
+gem 'omniauth-mediawiki', git: 'https://github.com/ragesoss/omniauth-mediawiki.git'
+gem 'omniauth-rails_csrf_protection'
 gem 'parallel', "~> 1.23"
 gem 'sass-rails'
 gem 'sidekiq'
