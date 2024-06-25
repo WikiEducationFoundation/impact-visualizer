@@ -1,5 +1,6 @@
 import _ from "lodash";
 import React from "react";
+import { Link } from "react-router-dom";
 
 function UserStatus() {
   const csrfToken = _.get(document.querySelector('meta[name=csrf-token]'), 'content');
@@ -16,6 +17,9 @@ function UserStatus() {
 
       {signedIn &&
         <div>
+          <Link className="Button u-mr1" to="/my-topics">
+            Manage Your Topics
+          </Link>
           <span className="u-mr1">
             Signed in as <strong>{username}</strong>
           </span>
