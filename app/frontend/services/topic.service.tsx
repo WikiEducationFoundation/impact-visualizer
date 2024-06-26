@@ -41,6 +41,16 @@ class DataService {
         return _.get(response, 'data.topic_timepoints');
       })
   }
+
+  createTopic(params) {
+    return http.post<Topic>(
+      '/topics',
+      { topic: params },
+      { headers: { 'Content-Type': 'multipart/form-data'} })
+      .then((response: AxiosResponse) => {
+        return _.get(response, 'data');
+      })
+  }
 }
 
 export default new DataService();

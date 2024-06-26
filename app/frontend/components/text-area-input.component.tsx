@@ -1,20 +1,18 @@
-import React from 'react'
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React from "react"
 import { UseControllerProps, useController,
-         FieldValues } from 'react-hook-form';
+         FieldValues } from "react-hook-form";
 
 type Props = {
   label: String,
   hint?: String
 } & UseControllerProps<FieldValues>
 
-export default function DateInput(props: Props) {
+export default function TextAreaInput(props: Props) {
   const { label, hint, rules } = props;
   const { field, fieldState } = useController(props);
 
   return (
-    <div className="Input Input--input">
+    <div className="Input Input--textArea">
       <label>
         {label}
         {rules?.required &&
@@ -22,13 +20,9 @@ export default function DateInput(props: Props) {
         }
       </label>
 
-      <div className='Input-dateWrapper'>
-        <DatePicker
-          selected={field.value}
-          onChange={field.onChange}
-          onSelect={field.onChange}
-        />
-      </div>
+      <textarea
+        {...field}
+      />
 
       {hint &&
         <div className="Input-hint">{hint}</div>

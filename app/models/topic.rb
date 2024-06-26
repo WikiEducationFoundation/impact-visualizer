@@ -80,7 +80,7 @@ class Topic < ApplicationRecord
   end
 
   def user_count
-    users.count
+    users.count || 0
   end
 
   def active_article_bag
@@ -88,7 +88,8 @@ class Topic < ApplicationRecord
   end
 
   def articles_count
-    active_article_bag&.articles&.count
+    puts '???'
+    active_article_bag&.articles&.count || 0
   end
 
   def most_recent_summary

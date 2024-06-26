@@ -2,7 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import DataService from "../services/data.service";
+import TopicService from "../services/topic.service";
 import "~/styles/main.postcss";
 
 import Root from "../components/root.component";
@@ -11,29 +11,36 @@ import TopicIndex from "../components/topic-index.component";
 import MyTopicIndex from "../components/my-topic-index.component";
 import TopicDetail from "../components/topic-detail.component";
 import NewTopic from "../components/new-topic.component";
+import EditTopic from "../components/edit-topic.component";
 import WikipediaCategoryPage from "../components/wikipedia-category-page.component";
 import QueryBuilder from "../components/query-builder.component";
 import { Toaster } from "react-hot-toast";
 
 async function topicIndexLoader() {
-  const topics = await DataService.getAllTopics();
+  const topics = await TopicService.getAllTopics();
   return { topics };
 }
 
 async function wikisLoader() {
-  const wikis = await DataService.getAllWikis();
+  const wikis = await TopicService.getAllWikis();
   return { wikis };
 }
 
 async function myTopicIndexLoader() {
-  const topics = await DataService.getAllOwnedTopics();
+  const topics = await TopicService.getAllOwnedTopics();
   return { topics };
 }
 
 export async function topicDetailLoader({ params }) {
-  const topic = await DataService.getTopic(params.id);
-  const topicTimepoints = await DataService.getTopicTimepoints(params.id);
+  const topic = await TopicService.getTopic(params.id);
+  const topicTimepoints = await TopicService.getTopicTimepoints(params.id);
   return { topic, topicTimepoints };
+}
+
+export async function topicEditLoader({ params }) {
+  const topic = await TopicService.getTopic(params.id);
+  const wikis = await TopicService.getAllWikis();
+  return { wikis, topic };
 }
 
 declare global {
@@ -64,6 +71,11 @@ const router = createBrowserRouter([
         path: "/my-topics/new",
         loader: wikisLoader,
         element: <NewTopic />,
+      },
+      {
+        path: "/my-topics/edit/:id",
+        loader: topicEditLoader,
+        element: <EditTopic />,
       },
       {
         path: "/topics/:id",

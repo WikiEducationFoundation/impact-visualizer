@@ -2,7 +2,10 @@
 import _ from 'lodash';
 import React from 'react';
 import { SubmitHandler, FieldValues } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router-dom';
+
+// Types
+import Topic from '../types/topic.type';
 
 // Components
 import TopicForm from './topic-form.component';
@@ -10,15 +13,9 @@ import TopicForm from './topic-form.component';
 // Misc
 import TopicService from '../services/topic.service';
 
-const defaultValues = {
-  name: '',
-  description: '',
-  slug: '',
-  editor_label: 'participant',
-  timepoint_day_interval: 30
-}
+function EditTopic() {
+  const { topic } = useLoaderData() as { topic: Topic };
 
-function NewTopic() {
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
     return
@@ -39,11 +36,11 @@ function NewTopic() {
             <Link to='/my-topics'>← Back to My Topics</Link>
           </div>
           
-          <h1>Create New Topic</h1>
+          <h1>Edit Topic</h1>
 
           <TopicForm
             onSubmit={onSubmit}
-            defaultValues={defaultValues}
+            defaultValues={topic}
           />
         </div>
       </div>
@@ -51,4 +48,4 @@ function NewTopic() {
   )
 }
 
-export default NewTopic;
+export default EditTopic;

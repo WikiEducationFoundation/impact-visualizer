@@ -9,7 +9,7 @@ type Props = {
   min?: number
 } & UseControllerProps<FieldValues>
 
-export default function Input(props: Props) {
+export default function GenericInput(props: Props) {
   const { label, hint, type, rules, min } = props;
   const { field, fieldState } = useController(props);
 

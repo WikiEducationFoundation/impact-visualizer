@@ -22,6 +22,7 @@
     height: 80px;
     min-height: 40px;
     max-height: 100px;
+    line-height: 1.3;
     resize: vertical;
   }
 }
@@ -49,4 +50,27 @@
   font-size: 0.8rem;
   font-weight: 600;
   color: $red;
+}
+
+.Input-select {
+}
+
+.Select .Select-control {
+  background: white;
+  border: 1px #e4e4e4 solid;
+  color: $grey;
+  padding: 2px 0;
+  font-size: 0.875rem;
+  border-radius: $radius;
+  transition: border $hover-speed;
+}
+
+.Input-dateWrapper {
+  display: flex;
+  flex-direction: row;
+  
+  .react-datepicker-wrapper {
+    display: block;
+    width: 100%;
+  }
 }

@@ -9,7 +9,7 @@ function MyTopicIndex() {
   const { topics } = useLoaderData() as { topics: Array<Topic> };
 
   const filteredTopics = _.filter(topics, (topic): Boolean => {
-    return !!(topic.name && topic.slug && topic.start_date);
+    return !!(topic.name && topic.slug);
   }) as Array<Topic>;
 
   return (
