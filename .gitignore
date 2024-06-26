@@ -8,6 +8,7 @@ spec/examples.txt
 
 # Ignore bundler config.
 /.bundle
+.yarn/*
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
