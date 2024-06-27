@@ -16,6 +16,11 @@
   gap: 1rem;
 }
 
+.FormRow--actions {
+  justify-content: space-between;
+  align-items: center;
+}
+
 .Input--textArea {
   
   textarea {
@@ -73,4 +78,18 @@
     display: block;
     width: 100%;
   }
+}
+
+.FileInput-fieldWrapper {
+  border: 1px #e4e4e4 solid;
+  color: $grey;
+  padding: 2px 0;
+  font-size: 0.875rem;
+  border-radius: $radius;
+  transition: border $hover-speed; 
+  padding: 0.75rem;
+}
+
+.FileInput-current {
+  margin-bottom: 0.75rem; 
 }

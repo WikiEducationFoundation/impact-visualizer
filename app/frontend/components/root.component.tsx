@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, ScrollRestoration } from "react-router-dom";
 import { MdOutlineArrowDropDown } from "react-icons/md";
 
 import UserStatus from "./user-status.component";
@@ -15,7 +15,9 @@ function Root() {
               <img className="Header-logo" src="/images/logo.png" alt="WikiEdu" />
             </Link>
 
-            <h1 className="u-h2 u-mr3 Header-title">Visualizing Impact</h1>
+            <Link to={"/"}>
+              <h1 className="u-h2 u-mr3 Header-title">Visualizing Impact</h1>
+            </Link>
             
             <div className="Header-nav">
               <div className="dropdown">
@@ -37,6 +39,7 @@ function Root() {
           </div>
         </div>
       </header>
+      <ScrollRestoration />
       <Outlet />
     </>
   );

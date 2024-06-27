@@ -1,161 +1,213 @@
+// NPM
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React from 'react';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import { useLoaderData, Link, useNavigate, useLocation } from "react-router-dom";
+import { useQuery } from '@tanstack/react-query';
+import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 
-import Topic from '../types/topic.type';
-import TopicTimepoint from '../types/topic-timepoint.type';
+// Components
+import Spinner from './spinner.component';
 import StatBlock from './stat-block.component';
 import QualityStatBlock from './quality-stat-block.component';
 import StatDetail from './stat-detail.component';
+import TopicActions from './topic-actions.component';
+
+// Misc
+import TopicService from '../services/topic.service';
 import TopicUtils from '../utils/topic-utils';
 import ChartUtils from '../utils/chart-utils';
 
+function renderLoading() {
+  return (
+    <section className="Section">
+      <div className="Container Container--padded">
+        <Spinner />
+      </div>
+    </section>
+  )
+};
+
+function renderIntro({ topic, editorLabel }) {
+  return (
+    <div className='TopicDetailIntro u-mb2'>
+      <div className="u-limitWidth50">
+        <h1 className='u-mt1 u-h1'>
+          {topic.name}
+        </h1>
+        
+        <h3 className="u-mb05">
+          Focus Period: {moment(topic.start_date).format('MMMM YYYY')}
+          {' '}–{' '}
+          {topic.end_date ? moment(topic.end_date).format('MMMM YYYY') : moment().format('MMMM YYYY')}
+        </h3>
+        
+        <h4 className="u-mb1">
+          {topic.user_count}
+          {' '}
+          {editorLabel}
+        </h4>
+
+        {topic.description &&
+          <p>
+            {topic.description}
+          </p>
+        }
+      </div>
+
+      {topic.owned && <TopicActions topic={topic} />}
+    </div>
+  );
+}
+
+function renderStatBlocks({ activeStat, handleStatSelect, topic, editorLabel }) {
+  return (
+    <div className='StatBlocks u-mb2'>
+      <StatBlock
+        active={activeStat === 'articles'}
+        onSelect={() => handleStatSelect('articles')}
+        stats={[
+          {
+            label: 'Total Articles',
+            value: topic.articles_count,
+            primary: true
+          },
+          {
+            label: `${pluralize('Article', topic.articles_count_delta)} Created`,
+            value: topic.articles_count_delta
+          },
+          {
+            label: `Articles Created by ${editorLabel}`,
+            value: TopicUtils.formatAttributedArticles(topic)
+          }
+        ]}
+      />
+
+      <StatBlock
+        active={activeStat === 'revisions'}
+        onSelect={() => handleStatSelect('revisions')}
+        stats={[
+          {
+            label: 'Total Revisions',
+            value: topic.revisions_count,
+            primary: true
+          },
+          {
+            label: `${pluralize('Revision', topic.revisions_count_delta)} Created`,
+            value: topic.revisions_count_delta
+          },
+          {
+            label: `Revisions Created by ${editorLabel}`,
+            value: TopicUtils.formatAttributedRevisions(topic)
+          }
+        ]}
+      />
+
+      <StatBlock
+        active={activeStat === 'tokens'}
+        onSelect={() => handleStatSelect('tokens')}
+        stats={[
+          {
+            label: 'Total Tokens',
+            value: topic.token_count,
+            primary: true
+          },
+          {
+            label: `${pluralize('Token', topic.token_count_delta)} Created`,
+            value: topic.token_count_delta
+          },
+          {
+            label: `Tokens Created by ${editorLabel}`,
+            value: TopicUtils.formatAttributedTokens(topic)
+          }
+        ]}
+      />
+
+      <QualityStatBlock
+        active={activeStat === 'wp10'}
+        onSelect={() => handleStatSelect('wp10')}
+        stats={topic.wp10_prediction_categories}
+      />
+    </div>
+  );
+}
+
 function TopicDetail() {
+  const { id } = useParams() as { id: string };
   const navigate = useNavigate();
   const location = useLocation();
 
-  const activeStat = _.replace(location.hash, '#', '') || 'articles';
-  
-  const { topic, topicTimepoints } = 
-    useLoaderData() as { topic: Topic, topicTimepoints: Array<TopicTimepoint> };
+  const { status, data: topic } = useQuery({
+    queryKey: ['topic', id],
+    queryFn: ({ queryKey }) => TopicService.getTopic(queryKey[1]),
+    refetchInterval: (query) => {
+      const owned = _.get(query, 'state.data.owned', false);
+      return owned ? 5000 : false;
+    }
+  });
 
+  const { data: topicTimepoints } = useQuery({
+    queryKey: ['topicTimepoints', id],
+    queryFn: ({ queryKey }) => TopicService.getTopicTimepoints(queryKey[1])
+  });
+  
+  if (status === 'pending' || !topic) {
+    return renderLoading();
+  }
+
+  const activeStat = _.replace(location.hash, '#', '') || 'articles';  
   const editorLabel = _.upperFirst(pluralize(topic.editor_label, topic.user_count));
 
   function handleStatSelect(key: string) {
-    navigate(`#${key}`);
-  }
-
-  function renderIntro() {
-    return (
-      <div className='u-mb2'>
-        <div className="u-limitWidth50">
-          <h1 className='u-mt1 u-h1'>
-            {topic.name}
-          </h1>
-          
-          <h3 className="u-mb05">
-            Focus Period: {moment(topic.start_date).format('MMMM YYYY')}
-            {' '}–{' '}
-            {topic.end_date ? moment(topic.end_date).format('MMMM YYYY') : moment().format('MMMM YYYY')}
-          </h3>
-          
-          <h4 className="u-mb1">
-            {topic.user_count}
-            {' '}
-            {editorLabel}
-          </h4>
-
-          {topic.description &&
-            <p className='u-mb1'>
-              {topic.description}
-            </p>
-          }
-        </div>
-        <hr />
-      </div>
-    );
-  }
-
-  function renderStatBlocks() {
-    return (
-      <div className='StatBlocks u-mb2'>
-        <StatBlock
-          active={activeStat === 'articles'}
-          onSelect={() => handleStatSelect('articles')}
-          stats={[
-            {
-              label: 'Total Articles',
-              value: topic.articles_count,
-              primary: true
-            },
-            {
-              label: `${pluralize('Article', topic.articles_count_delta)} Created`,
-              value: topic.articles_count_delta
-            },
-            {
-              label: `Articles Created by ${editorLabel}`,
-              value: TopicUtils.formatAttributedArticles(topic)
-            }
-          ]}
-        />
-
-        <StatBlock
-          active={activeStat === 'revisions'}
-          onSelect={() => handleStatSelect('revisions')}
-          stats={[
-            {
-              label: 'Total Revisions',
-              value: topic.revisions_count,
-              primary: true
-            },
-            {
-              label: `${pluralize('Revision', topic.revisions_count_delta)} Created`,
-              value: topic.revisions_count_delta
-            },
-            {
-              label: `Revisions Created by ${editorLabel}`,
-              value: TopicUtils.formatAttributedRevisions(topic)
-            }
-          ]}
-        />
-
-        <StatBlock
-          active={activeStat === 'tokens'}
-          onSelect={() => handleStatSelect('tokens')}
-          stats={[
-            {
-              label: 'Total Tokens',
-              value: topic.token_count,
-              primary: true
-            },
-            {
-              label: `${pluralize('Token', topic.token_count_delta)} Created`,
-              value: topic.token_count_delta
-            },
-            {
-              label: `Tokens Created by ${editorLabel}`,
-              value: TopicUtils.formatAttributedTokens(topic)
-            }
-          ]}
-        />
-
-        <QualityStatBlock
-          active={activeStat === 'wp10'}
-          onSelect={() => handleStatSelect('wp10')}
-          stats={topic.wp10_prediction_categories}
-        />
-      </div>
-    );
+    navigate(`#${key}`, { preventScrollReset: true });
   }
 
   return (
     <section className="Section">
       <div className="Container Container--padded">
         <div className='TopicDetail'>
-          <Link to='/'>← Back to all Topics</Link>
+          <div className='TopicDetail-header'>
+            {!topic.owned &&
+              <Link to='/'>← Back to all Topics</Link>
+            }
 
-          {renderIntro()}
-          {renderStatBlocks()}
+            {topic.owned &&
+              <Link to='/my-topics'>← Back to My Topics</Link>
+            }
+          </div>
 
-          <StatDetail
-            stat={activeStat}
-            topic={topic}
-            topicTimepoints={topicTimepoints}
-            fields={ChartUtils.fieldsForStat(activeStat)}
-            type='delta'
-          />
+          {renderIntro({ topic, editorLabel })}
 
-          <br />
-          {activeStat !== 'wp10' &&
-            <StatDetail
-              stat={activeStat}
-              topic={topic}
-              topicTimepoints={topicTimepoints}
-              fields={ChartUtils.fieldsForStat(activeStat)}
-              type='cumulative'
-            />
+          {(topic.has_stats && topicTimepoints) &&
+            <>
+              {renderStatBlocks({ topic, handleStatSelect, editorLabel, activeStat })}
+              
+              <StatDetail
+                stat={activeStat}
+                topic={topic}
+                topicTimepoints={topicTimepoints}
+                fields={ChartUtils.fieldsForStat(activeStat)}
+                type='delta'
+              />
+
+              <br />
+              
+              {activeStat !== 'wp10' &&
+                <StatDetail
+                  stat={activeStat}
+                  topic={topic}
+                  topicTimepoints={topicTimepoints}
+                  fields={ChartUtils.fieldsForStat(activeStat)}
+                  type='cumulative'
+                />
+              }
+            </>
+          }
+
+          {!topic.has_stats &&
+            <div className="TopicDetail-noStats">
+              This Topic has not yet been analyzed
+            </div>
           }
         </div>
       </div>

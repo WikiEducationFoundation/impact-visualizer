@@ -1,12 +1,24 @@
+// NPM
 import _ from 'lodash';
 import React from 'react';
-import { useLoaderData, Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
-import Topic from '../types/topic.type';
+// Components
 import TopicPreview from './topic-preview.component';
+import Spinner from './spinner.component';
+
+// Types
+import Topic from '../types/topic.type';
+
+// Services
+import TopicService from '../services/topic.service';
 
 function MyTopicIndex() {
-  const { topics } = useLoaderData() as { topics: Array<Topic> };
+  const { status, data: topics } = useQuery({
+    queryKey: ['my-topics'],
+    queryFn: TopicService.getAllOwnedTopics
+  });
 
   const filteredTopics = _.filter(topics, (topic): Boolean => {
     return !!(topic.name && topic.slug);
@@ -24,6 +36,8 @@ function MyTopicIndex() {
           </Link>
         </div>
         <div className="TopicIndex">
+          {status === 'pending' && <Spinner />}
+
           {filteredTopics.map(topic => (
             <TopicPreview key={topic.id} topic={topic} />
           ))}

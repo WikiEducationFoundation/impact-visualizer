@@ -56,7 +56,8 @@ class TopicsController < ApiController
   def generate_timepoints
     topic = current_topic_editor.topics.find(params[:id])
     topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
-    topic_service.generate_timepoints
+    force_updates = ActiveModel::Type::Boolean.new.cast(params[:force_updates]) || false
+    topic_service.generate_timepoints(force_updates:)
     @topic = topic.reload
     render :show
   end

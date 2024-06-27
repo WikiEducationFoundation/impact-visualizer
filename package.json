@@ -5,6 +5,8 @@
   "repository": "git@github.com:WikiEducationFoundation/impact-visualizer.git",
   "license": "MIT",
   "dependencies": {
+    "@tanstack/react-query": "^5.48.0",
+    "@tanstack/react-query-devtools": "^5.48.0",
     "@types/lodash": "^4.14.197",
     "@types/pluralize": "^0.0.30",
     "@types/react": "^18.2.20",
@@ -29,6 +31,7 @@
     "postcss-scss": "^1.0.5",
     "precss": "^3.1.2",
     "prop-types": "^15.8.1",
+    "query-string": "^9.0.0",
     "react": "^18.2.0",
     "react-accessible-treeview": "^2.8.3",
     "react-datepicker": "^7.1.0",

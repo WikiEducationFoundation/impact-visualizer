@@ -2,6 +2,7 @@
 
 class Topic < ApplicationRecord
   ## Mixins
+  include Rails.application.routes.url_helpers
   has_one_attached :users_csv
   has_one_attached :articles_csv
 
@@ -83,12 +84,31 @@ class Topic < ApplicationRecord
     users.count || 0
   end
 
+  def users_csv_filename
+    return nil unless users_csv.attached?
+    users_csv&.filename&.to_s
+  end
+
+  def articles_csv_filename
+    return nil unless articles_csv.attached?
+    articles_csv&.filename&.to_s
+  end
+
+  def users_csv_url
+    return nil unless users_csv.attached?
+    rails_blob_path(users_csv, disposition: 'attachment', only_path: true)
+  end
+
+  def articles_csv_url
+    return nil unless articles_csv.attached?
+    rails_blob_path(articles_csv, disposition: 'attachment', only_path: true)
+  end
+
   def active_article_bag
     article_bags.last
   end
 
   def articles_count
-    puts '???'
     active_article_bag&.articles&.count || 0
   end
 
@@ -109,6 +129,36 @@ class Topic < ApplicationRecord
   def queue_generate_timepoints(force_updates: false)
     job_id = GenerateTimepointsJob.perform_async(id, force_updates)
     update timepoint_generate_job_id: job_id
+  end
+
+  def users_import_status
+    return :idle unless users_import_job_id
+    Sidekiq::Status::status(users_import_job_id)
+  end
+
+  def articles_import_status
+    return :idle unless article_import_job_id
+    Sidekiq::Status::status(article_import_job_id)
+  end
+
+  def timepoint_generate_status
+    return :idle unless timepoint_generate_job_id
+    Sidekiq::Status::status(timepoint_generate_job_id)
+  end
+
+  def users_import_percent_complete
+    return nil unless users_import_job_id
+    Sidekiq::Status::pct_complete(users_import_job_id)
+  end
+
+  def articles_import_percent_complete
+    return nil unless article_import_job_id
+    Sidekiq::Status::pct_complete(article_import_job_id)
+  end
+
+  def timepoint_generate_percent_complete
+    return nil unless timepoint_generate_job_id
+    Sidekiq::Status::pct_complete(timepoint_generate_job_id)
   end
 
   # For ActiveAdmin

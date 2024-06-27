@@ -9,7 +9,7 @@ import TopicUtils from '../utils/topic-utils';
 
 function TopicPreview({topic}: {topic: Topic}) {
   const editorLabel = _.upperFirst(pluralize(topic.editor_label, topic.user_count));
-  const showStats = topic.articles_count_delta || topic.revisions_count_delta || topic.token_count_delta;
+  const showStats = topic.has_stats;
 
   return (
     <Link
@@ -47,68 +47,62 @@ function TopicPreview({topic}: {topic: Topic}) {
 
         {showStats &&
           <ul className="TopicPreview-stats u-mb1">
-            {topic.articles_count_delta &&
-              <li className="TopicPreview-stat">
-                <div className="TopicPreview-innerStat">
-                  <div className="TopicPreview-statValue">
-                    {topic.articles_count_delta.toLocaleString('en-US')}
-                  </div>
-                  <div className="TopicPreview-statLabel">
-                    {pluralize('Article', topic.articles_count_delta)} Created
-                  </div>
+            <li className="TopicPreview-stat">
+              <div className="TopicPreview-innerStat">
+                <div className="TopicPreview-statValue">
+                  {topic.articles_count_delta.toLocaleString('en-US')}
                 </div>
-                <div className="TopicPreview-innerStat">
-                  <div className="TopicPreview-statValue">
-                    {TopicUtils.formatAttributedArticles(topic, { percentageOnly: true })}
-                  </div>
-                  <div className="TopicPreview-statLabel">
-                    Created by {editorLabel}
-                  </div>
+                <div className="TopicPreview-statLabel">
+                  {pluralize('Article', topic.articles_count_delta)} Created
                 </div>
-              </li>
-            }
+              </div>
+              <div className="TopicPreview-innerStat">
+                <div className="TopicPreview-statValue">
+                  {TopicUtils.formatAttributedArticles(topic, { percentageOnly: true })}
+                </div>
+                <div className="TopicPreview-statLabel">
+                  Created by {editorLabel}
+                </div>
+              </div>
+            </li>
 
-            {topic.revisions_count_delta &&
-              <li className="TopicPreview-stat">
-                <div className="TopicPreview-innerStat">
-                  <div className="TopicPreview-statValue">
-                    {topic.revisions_count_delta.toLocaleString('en-US')}
-                  </div>
-                  <div className="TopicPreview-statLabel">
-                    {pluralize('Revision', topic.revisions_count_delta)} Created
-                  </div>
+            <li className="TopicPreview-stat">
+              <div className="TopicPreview-innerStat">
+                <div className="TopicPreview-statValue">
+                  {topic.revisions_count_delta.toLocaleString('en-US')}
                 </div>
-                <div className="TopicPreview-innerStat">
-                  <div className="TopicPreview-statValue">
-                    {TopicUtils.formatAttributedRevisions(topic, { percentageOnly: true })}
-                  </div>
-                  <div className="TopicPreview-statLabel">
-                    Created by {editorLabel}
-                  </div>
+                <div className="TopicPreview-statLabel">
+                  {pluralize('Revision', topic.revisions_count_delta)} Created
                 </div>
-              </li>
-            }
-
-            {topic.token_count_delta &&
-              <li className="TopicPreview-stat">
-                <div className="TopicPreview-innerStat">
-                  <div className="TopicPreview-statValue">
-                    {topic.token_count_delta.toLocaleString('en-US')}
-                  </div>
-                  <div className="TopicPreview-statLabel">
-                    {pluralize('Token', topic.token_count_delta)} Created
-                  </div>
+              </div>
+              <div className="TopicPreview-innerStat">
+                <div className="TopicPreview-statValue">
+                  {TopicUtils.formatAttributedRevisions(topic, { percentageOnly: true })}
                 </div>
-                <div className="TopicPreview-innerStat">
-                  <div className="TopicPreview-statValue">
-                    {TopicUtils.formatAttributedTokens(topic, { percentageOnly: true })}
-                  </div>
-                  <div className="TopicPreview-statLabel">
-                    Created by {editorLabel}
-                  </div>
+                <div className="TopicPreview-statLabel">
+                  Created by {editorLabel}
                 </div>
-              </li>
-            }
+              </div>
+            </li>
+          
+            <li className="TopicPreview-stat">
+              <div className="TopicPreview-innerStat">
+                <div className="TopicPreview-statValue">
+                  {topic.token_count_delta.toLocaleString('en-US')}
+                </div>
+                <div className="TopicPreview-statLabel">
+                  {pluralize('Token', topic.token_count_delta)} Created
+                </div>
+              </div>
+              <div className="TopicPreview-innerStat">
+                <div className="TopicPreview-statValue">
+                  {TopicUtils.formatAttributedTokens(topic, { percentageOnly: true })}
+                </div>
+                <div className="TopicPreview-statLabel">
+                  Created by {editorLabel}
+                </div>
+              </div>
+            </li>
           </ul>
         }
 

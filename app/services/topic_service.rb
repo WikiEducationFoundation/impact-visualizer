@@ -40,11 +40,11 @@ class TopicService
     topic.queue_articles_import
   end
 
-  def generate_timepoints
+  def generate_timepoints(force_updates: false)
     raise ImpactVisualizerErrors::TopicMissing unless topic
     unless topic.user_count.positive? && topic.articles_count.positive?
       raise ImpactVisualizerErrors::TopicNotReadyForTimepointGeneration
     end
-    topic.queue_generate_timepoints
+    topic.queue_generate_timepoints(force_updates:)
   end
 end

@@ -2,10 +2,11 @@
 import _ from 'lodash';
 import React from 'react';
 import { useForm, FieldValues } from 'react-hook-form';
-import { useLoaderData } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
-// Types
-import Wiki from '../types/wiki.type';
+// Misc
+import TopicService from '../services/topic.service';
 
 // Components
 import GenericInput from './generic-input.component';
@@ -14,8 +15,26 @@ import SelectInput from './select-input.component';
 import DateInput from './date-input.component';
 import TextAreaInput from './text-area-input.component';
 
-function TopicForm({ onSubmit, defaultValues }) {
-  const { wikis } = useLoaderData() as { wikis: Array<Wiki> };
+function TopicForm({ onSubmit, defaultValues, saving }) {
+  const navigate = useNavigate();
+
+  const { data: wikis } = useQuery({
+    queryKey: ['wikis'],
+    queryFn: TopicService.getAllWikis
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => {
+      return TopicService.deleteTopic(id);
+    },
+    onSuccess: () => {
+      navigate('/my-topics');
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  })
+
   const { handleSubmit, control } = useForm<FieldValues>({ defaultValues })
 
   const wikiOptions = _.map(wikis, (wiki) => {
@@ -24,6 +43,12 @@ function TopicForm({ onSubmit, defaultValues }) {
       value: wiki.id
     }
   })
+
+  function handleDeleteClick() {
+    if (confirm('Are you sure you want to delete this Topic? This cannot be undone.')) {
+      deleteMutation.mutate(defaultValues.id);
+    }
+  }
 
   return (
     <form
@@ -62,6 +87,7 @@ function TopicForm({ onSubmit, defaultValues }) {
           name="wiki_id"
           options={wikiOptions}
           label="Related Wiki Project"
+          rules={{ required: 'A Wiki Project is required' }}
           control={control}
         />
 
@@ -69,6 +95,7 @@ function TopicForm({ onSubmit, defaultValues }) {
           name="editor_label"
           label="Participant Label"
           hint='Default is "participant"'
+          rules={{ required: 'A participant label is required' }}
           control={control}
         />
       </div>
@@ -78,6 +105,7 @@ function TopicForm({ onSubmit, defaultValues }) {
           name="start_date"
           label="Start Date"
           hint='The start date for the topic analysis'
+          rules={{ required: 'A start date is required' }}
           control={control}
         />
 
@@ -85,6 +113,7 @@ function TopicForm({ onSubmit, defaultValues }) {
           name="end_date"
           label="End Date"
           hint='The end date for the topic analysis'
+          rules={{ required: 'An end date is required' }}
           control={control}
         />
       </div>
@@ -94,9 +123,22 @@ function TopicForm({ onSubmit, defaultValues }) {
           name="timepoint_day_interval"
           label="Timepoint Day Interval"
           type='number'
+          rules={{ required: 'A timepoint day interval is required' }}
           min={7}
           hint='The number of days between each analysis timepoint. Smaller values will provide greater analysis resolution but result in longer computation processes. 30 days is generally a good starting value.'
           control={control}
+        />
+
+        <SelectInput
+          name="chart_time_unit"
+          options={[
+            { value: 'year', label: 'Year' },
+            { value: 'month', label: 'Month' },
+            { value: 'week', label: 'Week' }
+          ]}
+          label="Chart Time Unit"
+          control={control}
+          hint="The default segmentation of time on resulting charts. The most appropriate setting will depend on your Topic's timeframe. Changing will not require reanalysis."
         />
       </div>
 
@@ -106,6 +148,8 @@ function TopicForm({ onSubmit, defaultValues }) {
           label="Users CSV"
           hint='A CSV file containing information related to topic Users'
           control={control}
+          currentFilename={defaultValues.users_csv_filename}
+          currentFilePath={defaultValues.users_csv_url}
         />
 
         <FileInput
@@ -113,14 +157,26 @@ function TopicForm({ onSubmit, defaultValues }) {
           label="Articles CSV"
           hint='A CSV file containing information related to topic Articles'
           control={control}
+          currentFilename={defaultValues.articles_csv_filename}
+          currentFilePath={defaultValues.articles_csv_url}
         />
       </div>
       
-      <div className="FormRow">
+      <div className="FormRow FormRow--actions">
         <input
           className="Button"
           type="submit"
+          disabled={saving}
         />
+        {defaultValues.id &&
+          <button
+            className="TextButton TextButton--red"
+            onClick={handleDeleteClick}
+            disabled={deleteMutation.isPending}
+          >
+            Delete Topic
+          </button>
+        }
       </div>
     </form>
   );

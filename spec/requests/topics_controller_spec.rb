@@ -274,11 +274,28 @@ describe TopicsController do
   end
 
   describe '#generate_timepoints' do
-    it 'initiates timepoint generation for a Topic belonging to Topic editor' do
+    it 'initiates timepoint generation (force_updates=false) for a Topic belonging to Topic editor' do
       sign_in topic_editor
       topic = topic_editor.topics.first
-      expect_any_instance_of(TopicService).to receive(:generate_timepoints).and_return(true)
+      expect_any_instance_of(TopicService)
+        .to(receive(:generate_timepoints)
+              .with(force_updates: false)
+              .and_return(true))
       get("/api/topics/#{topic.id}/generate_timepoints")
+      body = response.parsed_body.with_indifferent_access
+      topic.reload
+      expect(body[:name]).to eq(topic.name)
+      expect(response.status).to eq(200)
+    end
+
+    it 'initiates timepoint generation (force_updates=true) for a Topic belonging to Topic editor' do
+      sign_in topic_editor
+      topic = topic_editor.topics.first
+      expect_any_instance_of(TopicService)
+        .to(receive(:generate_timepoints)
+              .with(force_updates: true)
+              .and_return(true))
+      get("/api/topics/#{topic.id}/generate_timepoints?force_updates=true")
       body = response.parsed_body.with_indifferent_access
       topic.reload
       expect(body[:name]).to eq(topic.name)

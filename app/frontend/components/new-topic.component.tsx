@@ -2,7 +2,8 @@
 import _ from 'lodash';
 import React from 'react';
 import { SubmitHandler, FieldValues } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 
 // Components
 import TopicForm from './topic-form.component';
@@ -15,20 +16,25 @@ const defaultValues = {
   description: '',
   slug: '',
   editor_label: 'participant',
-  timepoint_day_interval: 30
+  timepoint_day_interval: 30,
+  chart_time_unit: 'month'
 }
 
 function NewTopic() {
+  const navigate = useNavigate();
+
+  const createMutation = useMutation({
+    mutationFn: TopicService.createTopic,
+    onSuccess: (response) => {
+      navigate(`/topics/${response.id}`);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  })
+
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
-    return
-    TopicService.createTopic(data)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+    createMutation.mutate(data);
   }
 
   return (
@@ -44,6 +50,7 @@ function NewTopic() {
           <TopicForm
             onSubmit={onSubmit}
             defaultValues={defaultValues}
+            saving={createMutation.isPending}
           />
         </div>
       </div>

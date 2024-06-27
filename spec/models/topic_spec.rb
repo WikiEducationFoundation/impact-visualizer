@@ -13,6 +13,86 @@ RSpec.describe Topic do
   it { is_expected.to have_many(:topic_editors).through(:topic_editor_topics) }
   it { is_expected.to belong_to(:wiki) }
 
+  describe 'job status methods' do
+    let(:topic) { create(:topic) }
+
+    it 'returns user import status' do
+      expect(topic.users_import_status).to eq(:idle)
+      topic.update users_import_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
+      expect(topic.users_import_status).to eq(:working)
+    end
+
+    it 'returns user import percent complete' do
+      expect(topic.users_import_percent_complete).to be_nil
+      topic.update users_import_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
+      expect(topic.users_import_percent_complete).to eq(30)
+    end
+
+    it 'returns articles import status' do
+      expect(topic.articles_import_status).to eq(:idle)
+      topic.update article_import_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
+      expect(topic.articles_import_status).to eq(:working)
+    end
+
+    it 'returns articles import percent complete' do
+      expect(topic.articles_import_percent_complete).to be_nil
+      topic.update article_import_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
+      expect(topic.articles_import_percent_complete).to eq(30)
+    end
+
+    it 'returns timepoint generate status' do
+      expect(topic.timepoint_generate_status).to eq(:idle)
+      topic.update timepoint_generate_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
+      expect(topic.timepoint_generate_status).to eq(:working)
+    end
+
+    it 'returns timepoint generate percent complete' do
+      expect(topic.timepoint_generate_percent_complete).to be_nil
+      topic.update timepoint_generate_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
+      expect(topic.timepoint_generate_percent_complete).to eq(30)
+    end
+  end
+
+  describe 'CSV instance methods' do
+    let(:topic) { create(:topic) }
+
+    before do
+      topic.articles_csv.attach(
+        io: File.open('spec/fixtures/csv/topic-articles-test.csv'),
+        filename: 'topic-articles-test.csv'
+      )
+
+      topic.users_csv.attach(
+        io: File.open('spec/fixtures/csv/topic-users-test.csv'),
+        filename: 'topic-users-test.csv'
+      )
+    end
+
+    it 'returns users_csv_filename' do
+      expect(topic.users_csv_filename).to eq('topic-users-test.csv')
+    end
+
+    it 'returns articles_csv_filename' do
+      expect(topic.articles_csv_filename).to eq('topic-articles-test.csv')
+    end
+
+    it 'returns users_csv_url' do
+      expect(topic.users_csv_url).to include('topic-users-test.csv')
+      expect(topic.users_csv_url).to include('/rails/active_storage/blobs/redirect')
+    end
+
+    it 'returns articles_csv_url' do
+      expect(topic.articles_csv_url).to include('topic-articles-test.csv')
+      expect(topic.articles_csv_url).to include('/rails/active_storage/blobs/redirect')
+    end
+  end
+
   describe '#queue_generate_timepoints' do
     let(:topic) { create(:topic) }
 

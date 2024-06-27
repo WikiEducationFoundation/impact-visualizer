@@ -22,5 +22,20 @@ export default interface Topic {
   revisions_count: number,
   revisions_count_delta: number,
   token_count: number,
-  token_count_delta: number
+  token_count_delta: number,
+  has_stats: boolean,
+  owned: boolean
+  users_csv_url: string,
+  users_csv_filename: string,
+  articles_csv_url: string,
+  articles_csv_filename: string,
+  timepoint_generate_job_id: string,
+  users_import_job_id: string, 
+  article_import_job_id: string,
+  timepoint_generate_percent_complete: number,
+  articles_import_percent_complete: number, 
+  users_import_percent_complete: number,
+  articles_import_status: string, 
+  timepoint_generate_status: string,
+  users_import_status: string
 }

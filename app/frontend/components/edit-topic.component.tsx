@@ -2,30 +2,39 @@
 import _ from 'lodash';
 import React from 'react';
 import { SubmitHandler, FieldValues } from 'react-hook-form';
-import { Link, useLoaderData } from 'react-router-dom';
-
-// Types
-import Topic from '../types/topic.type';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
 // Components
 import TopicForm from './topic-form.component';
+import Spinner from './spinner.component';
 
 // Misc
 import TopicService from '../services/topic.service';
 
 function EditTopic() {
-  const { topic } = useLoaderData() as { topic: Topic };
+  const navigate = useNavigate();
+  const { id } = useParams() as { id: string };
+
+  const { status, data: topic } = useQuery({
+    queryKey: ['topic', id],
+    queryFn: ({ queryKey }) => TopicService.getTopic(queryKey[1])
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: FieldValues) => {
+      return TopicService.updateTopic(id, data);
+    },
+    onSuccess: (response) => {
+      navigate(`/topics/${response.id}`);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
+  })
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
-    return
-    TopicService.createTopic(data)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
+    updateMutation.mutate(data);
   }
 
   return (
@@ -33,15 +42,23 @@ function EditTopic() {
       <div className="Container Container--padded">
         <div>
           <div className='u-mb1'>
-            <Link to='/my-topics'>← Back to My Topics</Link>
+            <Link
+              to={`/topics/${id}`}
+            >
+              ← Back
+            </Link>
           </div>
           
           <h1>Edit Topic</h1>
 
-          <TopicForm
-            onSubmit={onSubmit}
-            defaultValues={topic}
-          />
+          {status === 'pending' && <Spinner />}
+          {(status !== 'pending' && topic) &&
+            <TopicForm
+              onSubmit={onSubmit}
+              defaultValues={topic}
+              saving={updateMutation.isPending}
+            />
+          }
         </div>
       </div>
     </section>

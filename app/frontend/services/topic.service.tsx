@@ -1,12 +1,15 @@
 import _ from 'lodash';
 import { AxiosResponse } from 'axios';
+import { FieldValues } from 'react-hook-form';
+import queryString from 'query-string';
 
 import http from './http-common';
 import Topic from '../types/topic.type';
 import Wiki from '../types/wiki.type';
 import TopicTimepoint from '../types/topic-timepoint.type';
 
-class DataService {
+
+class TopicService {
   getAllTopics() {
     return http.get<Array<Topic>>('/topics')
       .then((response: AxiosResponse) => {
@@ -21,7 +24,7 @@ class DataService {
       })
   }
 
-  getTopic(id: string) {
+  getTopic(id: number | string) {
     return http.get<Topic>(`/topics/${id}`)
       .then((response: AxiosResponse) => {
         return _.get(response, 'data');
@@ -35,14 +38,14 @@ class DataService {
       })
   }
 
-  getTopicTimepoints(id: string) {
+  getTopicTimepoints(id: number | string) {
     return http.get<Array<TopicTimepoint>>(`/topics/${id}/topic_timepoints`)
       .then((response: AxiosResponse) => {
         return _.get(response, 'data.topic_timepoints');
       })
   }
 
-  createTopic(params) {
+  createTopic(params: FieldValues) {
     return http.post<Topic>(
       '/topics',
       { topic: params },
@@ -51,6 +54,45 @@ class DataService {
         return _.get(response, 'data');
       })
   }
+
+  updateTopic(id: number | string, params: FieldValues) {
+    return http.put<Topic>(
+      `/topics/${id}`,
+      { topic: params },
+      { headers: { 'Content-Type': 'multipart/form-data'} })
+      .then((response: AxiosResponse) => {
+        return _.get(response, 'data');
+      })
+  }
+
+  deleteTopic(id: number | string) {
+    return http.delete(`/topics/${id}`)
+      .then((response: AxiosResponse) => {
+        return _.get(response, 'data');
+      })
+  }
+
+  import_users(id: number | string) {
+    return http.get<Topic>(`/topics/${id}/import_users`)
+      .then((response: AxiosResponse) => {
+        return _.get(response, 'data');
+      })
+  }
+
+  import_articles(id: number | string) {
+    return http.get<Topic>(`/topics/${id}/import_articles`)
+      .then((response: AxiosResponse) => {
+        return _.get(response, 'data');
+      })
+  }
+
+  generate_timepoints(id: number | string, params) {
+    return http.get<Topic>(`/topics/${id}/generate_timepoints?${queryString.stringify(params)}`)
+      .then((response: AxiosResponse) => {
+        return _.get(response, 'data');
+      })
+  }
+
 }
 
-export default new DataService();
+export default new TopicService();
