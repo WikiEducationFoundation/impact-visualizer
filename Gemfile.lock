@@ -485,6 +485,7 @@ DEPENDENCIES
   pg
   puma (~> 5.0)
   rails (~> 7.0.5)
+  rexml
   rspec-rails (~> 6.0.0)
   rspec-sidekiq
   rubocop

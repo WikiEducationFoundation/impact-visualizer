@@ -24,6 +24,7 @@ gem 'oj'
 gem 'omniauth-mediawiki', git: 'https://github.com/ragesoss/omniauth-mediawiki.git'
 gem 'omniauth-rails_csrf_protection'
 gem 'parallel', "~> 1.23"
+gem 'rexml'
 gem 'sass-rails'
 gem 'sidekiq'
 gem 'sidekiq-history'
