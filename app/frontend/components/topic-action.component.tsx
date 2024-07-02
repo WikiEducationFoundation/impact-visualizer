@@ -3,7 +3,7 @@ import _ from 'lodash';
 import React from 'react';
 import cn from 'classnames';
 import { Link } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Mutation, UseMutateFunction, useMutation, UseMutationResult, useQueryClient } from '@tanstack/react-query';
 import pluralize from 'pluralize';
 
 // Types
@@ -27,6 +27,17 @@ const actions = {
     },
     progress: (topic: Topic) => {
       return topic.articles_import_percent_complete;
+    },
+    renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+      const actionLabel = topic.articles_count > 0 ? 'Reimport' : 'Import';
+      return (
+        <button
+          className="Button Button--outlined"
+          onClick={() => mutate()}
+        >
+          {actionLabel} Articles from CSV
+        </button>
+      )
     },
     renderNotReady: (topic: Topic) => {
       return (
@@ -66,6 +77,17 @@ const actions = {
     progress: (topic: Topic) => {
       return topic.users_import_percent_complete;
     },
+    renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+      const actionLabel = topic.user_count > 0 ? 'Reimport' : 'Import';
+      return (
+        <button
+          className="Button Button--outlined"
+          onClick={() => mutate()}
+        >
+          {actionLabel} Users from CSV
+        </button>
+      )
+    },
     renderNotReady: (topic: Topic) => { 
       return (
         <span>
@@ -97,6 +119,30 @@ const actions = {
     progress: (topic: Topic) => {
       return topic.timepoint_generate_percent_complete;
     },
+    renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+      const actionLabel = topic.timepoints_count > 0 ? 'Generate new' : 'Generate';
+      return (
+        <>
+          <button
+            className="Button Button--outlined"
+            onClick={() => mutate()}
+          >
+            {actionLabel} Timepoints
+          </button>
+
+          {topic.timepoints_count > 0 &&
+            <div className='u-mt05'>
+              <button
+                className="Button Button--outlined"
+                onClick={() => mutate({ force_updates: true })}
+              >
+                Regenerate all Timepoints
+              </button>
+            </div>
+          }
+        </>
+      )
+    },
     renderNotReady: () => {
       return (
         <span>You must import Users and Articles before generating timepoints</span>
@@ -116,7 +162,6 @@ const actions = {
 function TopicAction({ topic, actionKey }) {
   const queryClient = useQueryClient()
   const action = actions[actionKey];
-  const timepoints = actionKey === 'timepoints';
 
   const mutation = useMutation({
     mutationFn: (params) => action.mutationFn(topic.id, params),
@@ -136,27 +181,8 @@ function TopicAction({ topic, actionKey }) {
   return (
     <div className="TopicAction">
       <h4>{action.label}</h4>
-      {(isReady && !isBusy) &&
-        <>
-          <button
-            className="Button Button--outlined"
-            onClick={() => mutation.mutate()}
-          >
-            {action.buttonLabel} {timepoints && '(updates only)'}
-          </button>
-
-          {timepoints &&
-            <div className='u-mt05'>
-              <button
-                className="Button Button--outlined"
-                onClick={() => mutation.mutate({ force_updates: true })}
-              >
-                {action.buttonLabel} (refresh all)
-              </button>
-            </div>
-          }
-        </>
-      }
+      
+      {(isReady && !isBusy) && action.renderButtons(topic, mutation.mutate)}
 
       {(isReady && isBusy) &&
         <div className="TopicAction-statusAndProgress">
