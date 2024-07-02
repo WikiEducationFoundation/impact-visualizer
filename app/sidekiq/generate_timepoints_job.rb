@@ -13,6 +13,6 @@ class GenerateTimepointsJob
     )
     timepoint_service.build_timepoints
     TopicSummaryService.new(topic:).create_summary
-    topic.update timepoint_generate_job_id: nil
+    topic.reload.update(timepoint_generate_job_id: nil)
   end
 end

@@ -15,6 +15,7 @@ class TopicsController < ApiController
 
   def show
     @topic = Topic.find(params[:id])
+    @enable_caching = !current_topic_editor&.can_edit_topic?(@topic)
   end
 
   def create
