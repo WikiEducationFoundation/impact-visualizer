@@ -5,6 +5,7 @@ ruby '3.2.2'
 
 gem 'activeadmin'
 gem 'annotate'
+gem 'base64', '0.1.1' # Server Passenger error https://www.reddit.com/r/rails/comments/18105z2/ruby_on_rails_phusion_passenger_error/
 gem 'benchmark', '~> 0.2.1'
 gem 'connection_pool'
 gem 'dalli'
