@@ -4,11 +4,21 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+# Spec
 spec/examples.txt
 
 # Ignore bundler config.
 /.bundle
+
+# Yarn
+# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 .yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
