@@ -6,7 +6,8 @@ json.extract! topic, :id, :name, :description, :end_date, :slug,
               :start_date, :timepoint_day_interval, :user_count, :editor_label,
               :chart_time_unit, :wiki_id, :articles_count, :users_csv_url,
               :users_csv_filename, :articles_csv_url, :articles_csv_filename,
-              :timepoint_generate_job_id, :users_import_job_id, :article_import_job_id
+              :timepoint_generate_job_id, :users_import_job_id, :article_import_job_id,
+              :timepoints_count
 
 json.has_stats topic.most_recent_summary.present?
 json.owned owned

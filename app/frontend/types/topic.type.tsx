@@ -21,6 +21,7 @@ export default interface Topic {
   length_delta: number,
   revisions_count: number,
   revisions_count_delta: number,
+  timepoints_count: number,
   token_count: number,
   token_count_delta: number,
   has_stats: boolean,

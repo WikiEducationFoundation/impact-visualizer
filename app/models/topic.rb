@@ -80,6 +80,10 @@ class Topic < ApplicationRecord
     users.find_by(wiki_user_id:)
   end
 
+  def timepoints_count
+    topic_timepoints.count || 0
+  end
+
   def user_count
     users.count || 0
   end

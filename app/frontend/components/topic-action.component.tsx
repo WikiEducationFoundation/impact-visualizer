@@ -4,6 +4,7 @@ import React from 'react';
 import cn from 'classnames';
 import { Link } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import pluralize from 'pluralize';
 
 // Types
 import Topic from '../types/topic.type';
@@ -14,7 +15,7 @@ import TopicService from '../services/topic.service';
 const actions = {
   articles: {
     label: 'Articles',
-    buttonLabel: 'Import Articles',
+    buttonLabel: 'Import Articles from CSV',
     isReady: (topic: Topic) => {
       return !!topic.articles_csv_filename;
     },
@@ -41,11 +42,18 @@ const actions = {
         </span>
       );
     },
+    renderCurrentCount: (topic: Topic) => {
+      return (
+        <div className='TopicAction-currentCount'>
+          Topic currently has <strong>{topic.articles_count}</strong> {`${pluralize('Article', topic.articles_count)}`}
+        </div>
+      )
+    },
     mutationFn: TopicService.import_articles
   },
   users: {
     label: 'Users',
-    buttonLabel: 'Import Users',
+    buttonLabel: 'Import Users from CSV',
     isReady: (topic: Topic) => {
       return !!topic.users_csv_filename;
     },
@@ -64,6 +72,13 @@ const actions = {
           You must <Link className="u-bottomBorder" to={`/my-topics/edit/${topic.id}`}>attach a CSV file</Link> containing Users data before importing.
         </span>
       );
+    },
+    renderCurrentCount: (topic: Topic) => {
+      return (
+        <div className='TopicAction-currentCount'>
+          Topic currently has <strong>{topic.user_count}</strong> {`${pluralize('User', topic.user_count)}`}
+        </div>
+      )
     },
     mutationFn: TopicService.import_users
   },
@@ -86,6 +101,13 @@ const actions = {
       return (
         <span>You must import Users and Articles before generating timepoints</span>
       );
+    },
+    renderCurrentCount: (topic: Topic) => {
+      return (
+        <div className='TopicAction-currentCount'>
+          Topic currently has <strong>{topic.timepoints_count}</strong> {`${pluralize('Timepoint', topic.timepoints_count)}`}
+        </div>
+      )
     },
     mutationFn: TopicService.generate_timepoints
   }
@@ -151,6 +173,8 @@ function TopicAction({ topic, actionKey }) {
           </span>
         </div>
       }
+
+      {isReady && action.renderCurrentCount(topic)}
 
       {!isReady && action.renderNotReady(topic)}
     </div>
