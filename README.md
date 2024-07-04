@@ -135,6 +135,16 @@ If you would like to force existing analysis to be recomputed, you may force upd
 
 1. `rspec` (tests are located in */spec* directory)
 
+## Configuring React Environment
+
+### Local setup
+
+In the project's root directory, create a `.env.local` file following the format of the `.env.example` file
+
+### Server setup
+
+In the project's root directory, create a `.env.production` file following the format of the `.env.example` file
+
 ## Deploying Updates to Server
 
 1. Ensure server has your public SSH key 
