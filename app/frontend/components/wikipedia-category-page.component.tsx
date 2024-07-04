@@ -64,7 +64,16 @@ export default function WikipediaCategoryPage() {
           subcategories. Whenever a category is expanded for the first time, the
           tool will retrieve the data for the subcategories 2 levels down.
         </p>
-        <h3>Legend</h3>
+        <h3>Legend</h3>{" "}
+        <button
+          type="button"
+          onClick={() => {
+            throw new Error("Sentry Test Error");
+          }}
+        >
+          Break the world
+        </button>
+        ;
         <div>
           <BsExclamationCircleFill color="#71afef" /> Indicates that the given
           category has missing subcategories
@@ -82,7 +91,6 @@ export default function WikipediaCategoryPage() {
           the given category is not selected
         </div>
         <br />
-
         <h3>Enter a category URL, select and browse subcategories</h3>
         <input
           type="text"

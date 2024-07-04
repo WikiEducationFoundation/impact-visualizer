@@ -5,6 +5,7 @@
   "repository": "git@github.com:WikiEducationFoundation/impact-visualizer.git",
   "license": "MIT",
   "dependencies": {
+    "@sentry/react": "^8.13.0",
     "@types/lodash": "^4.14.197",
     "@types/pluralize": "^0.0.30",
     "@types/react": "^18.2.20",
