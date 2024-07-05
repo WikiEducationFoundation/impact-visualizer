@@ -22,6 +22,10 @@ interface Props {
 function StatDetail({ topicTimepoints, fields, stat, type, topic }: Props) {
   const { totalField, deltaField, attributedDeltaField } = fields;
 
+  if (topicTimepoints.length === 0) {
+    return null;
+  }
+
   let values: ChartTimepoint[] = [];
   let yLabel: string = '';
   let min: number = 0;

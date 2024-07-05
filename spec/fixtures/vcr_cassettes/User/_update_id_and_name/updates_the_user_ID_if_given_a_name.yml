@@ -19,21 +19,19 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 02 Aug 2023 21:37:23 GMT
+      - Tue, 02 Jul 2024 23:01:34 GMT
       Server:
-      - mw2366.codfw.wmnet
+      - mw-api-ext.codfw.main-68d8749ff4-45hcl
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
-      - SAMEORIGIN
+      - DENY
       Content-Disposition:
       - inline; filename=api-result.json
       Vary:
       - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
       Cache-Control:
       - private, must-revalidate, max-age=0
-      Content-Length:
-      - '78'
       Content-Type:
       - application/json; charset=utf-8
       Age:
@@ -44,27 +42,21 @@ http_interactions:
       - pass
       Server-Timing:
       - cache;desc="pass", host;desc="cp4041"
-      Strict-Transport-Security:
-      - max-age=106384710; includeSubDomains; preload
-      Report-To:
-      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
-        }] }'
-      Nel:
-      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
-        0.0}'
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
-      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=02-Aug-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
-        03 Sep 2023 12:00:00 GMT
-      - WMF-Last-Access=02-Aug-2023;Path=/;HttpOnly;secure;Expires=Sun, 03 Sep 2023
+      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
+      - WMF-Last-Access-Global=02-Jul-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sat,
+        03 Aug 2024 12:00:00 GMT
+      - WMF-Last-Access=02-Jul-2024;Path=/;HttpOnly;secure;Expires=Sat, 03 Aug 2024
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
       Accept-Ranges:
       - bytes
+      Transfer-Encoding:
+      - chunked
     body:
-      encoding: UTF-8
+      encoding: ASCII-8BIT
       string: '{"batchcomplete":true,"query":{"users":[{"userid":25848390,"name":"TiltuM"}]}}'
-  recorded_at: Wed, 02 Aug 2023 21:37:23 GMT
+  recorded_at: Tue, 02 Jul 2024 23:01:34 GMT
 recorded_with: VCR 6.1.0

@@ -3,6 +3,8 @@
 class Wiki < ApplicationRecord
   ## Associations
   has_many :topics
+  has_many :articles
+  has_many :users
 
   ## Constants
   PROJECTS = %w[

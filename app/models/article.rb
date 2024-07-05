@@ -2,6 +2,7 @@
 
 class Article < ApplicationRecord
   ## Associations
+  belongs_to :wiki
   has_many :article_bag_articles
   has_many :article_bags, through: :article_bag_articles
   has_many :article_timepoints
@@ -24,7 +25,7 @@ class Article < ApplicationRecord
   end
 
   def update_details
-    stats_service = ArticleStatsService.new
+    stats_service = ArticleStatsService.new(wiki)
     stats_service.update_details_for_article(article: self)
   end
 
@@ -58,4 +59,13 @@ end
 #  updated_at             :datetime         not null
 #  first_revision_by_id   :integer
 #  first_revision_id      :integer
+#  wiki_id                :bigint           not null
+#
+# Indexes
+#
+#  index_articles_on_wiki_id  (wiki_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (wiki_id => wikis.id)
 #

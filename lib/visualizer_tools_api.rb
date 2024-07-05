@@ -3,12 +3,12 @@
 class VisualizerToolsApi
   include ApiErrorHandling
 
-  AVAILABLE_WIKIPEDIAS = %w[en eu fa fr gl nl pt ru sv tr uk].freeze
+  AVAILABLE_WIKIPEDIAS = %w[en de eu fa fr gl nl pt ru sv tr uk].freeze
 
-  def initialize(wiki = nil)
-    wiki ||= Wiki.default_wiki
+  def initialize(wiki)
+    @wiki = wiki
     @client = impact_visualizer_tools_client
-    raise InvalidProjectError unless VisualizerToolsApi.valid_wiki?(wiki)
+    raise InvalidProjectError unless VisualizerToolsApi.valid_wiki?(@wiki)
   end
 
   def self.valid_wiki?(wiki)
@@ -17,7 +17,11 @@ class VisualizerToolsApi
   end
 
   def get_page_edits_count(page_id:, from_rev_id: nil, to_rev_id: nil)
-    params = { page_id: }
+    params = {
+      page_id:,
+      lang: @wiki.language,
+      project: @wiki.project
+    }
     if from_rev_id && to_rev_id
       params[:from_rev_id] = from_rev_id
       params[:to_rev_id] = to_rev_id

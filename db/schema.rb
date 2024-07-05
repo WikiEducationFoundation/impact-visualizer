@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_06_20_181836) do
+ActiveRecord::Schema[7.0].define(version: 2024_07_02_225510) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -108,6 +108,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_20_181836) do
     t.string "first_revision_by_name"
     t.integer "first_revision_by_id"
     t.datetime "first_revision_at"
+    t.bigint "wiki_id", null: false
+    t.index ["wiki_id"], name: "index_articles_on_wiki_id"
   end
 
   create_table "topic_article_timepoints", force: :cascade do |t|
@@ -222,6 +224,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_20_181836) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "wiki_id", null: false
+    t.index ["wiki_id"], name: "index_users_on_wiki_id"
   end
 
   create_table "wikis", force: :cascade do |t|
@@ -238,6 +242,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_20_181836) do
   add_foreign_key "article_bag_articles", "articles"
   add_foreign_key "article_bags", "topics"
   add_foreign_key "article_timepoints", "articles"
+  add_foreign_key "articles", "wikis"
   add_foreign_key "topic_article_timepoints", "article_timepoints"
   add_foreign_key "topic_article_timepoints", "topic_timepoints"
   add_foreign_key "topic_article_timepoints", "users", column: "attributed_creator_id"
@@ -247,4 +252,5 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_20_181836) do
   add_foreign_key "topic_timepoints", "topics"
   add_foreign_key "topic_users", "topics"
   add_foreign_key "topic_users", "users"
+  add_foreign_key "users", "wikis"
 end

@@ -34,7 +34,7 @@ export default function SelectInput(props: Props) {
         classNames={{
           control: () => 'Select-control'
         }}
-        defaultValue={defaultOption}
+        value={defaultOption}
         options={options}
         onBlur={field.onBlur}
         onChange={(selected) => {

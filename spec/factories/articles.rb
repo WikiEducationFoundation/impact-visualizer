@@ -6,6 +6,7 @@ FactoryBot.define do
     first_revision_by_name { 'username' }
     first_revision_by_id { 1234 }
     first_revision_id { 3456 }
+    wiki { Wiki.default_wiki }
   end
 end
 
@@ -22,4 +23,13 @@ end
 #  updated_at             :datetime         not null
 #  first_revision_by_id   :integer
 #  first_revision_id      :integer
+#  wiki_id                :bigint           not null
+#
+# Indexes
+#
+#  index_articles_on_wiki_id  (wiki_id)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (wiki_id => wikis.id)
 #

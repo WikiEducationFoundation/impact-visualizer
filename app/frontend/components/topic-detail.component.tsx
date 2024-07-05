@@ -41,11 +41,15 @@ function renderIntro({ topic, editorLabel }) {
           {' '}–{' '}
           {topic.end_date ? moment(topic.end_date).format('MMMM YYYY') : moment().format('MMMM YYYY')}
         </h3>
-        
-        <h4 className="u-mb1">
+      
+        <h4 className="u-mb05">
           {topic.user_count}
           {' '}
           {editorLabel}
+        </h4>
+
+        <h4 className="u-mb1">
+          Project: {_.get(topic, 'wiki.language')}.{_.get(topic, 'wiki.project')}
         </h4>
 
         {topic.description &&
@@ -123,11 +127,13 @@ function renderStatBlocks({ activeStat, handleStatSelect, topic, editorLabel }) 
         ]}
       />
 
-      <QualityStatBlock
-        active={activeStat === 'wp10'}
-        onSelect={() => handleStatSelect('wp10')}
-        stats={topic.wp10_prediction_categories}
-      />
+      {!_.isEmpty(topic.wp10_prediction_categories) &&
+        <QualityStatBlock
+          active={activeStat === 'wp10'}
+          onSelect={() => handleStatSelect('wp10')}
+          stats={topic.wp10_prediction_categories}
+        />
+      }
     </div>
   );
 }

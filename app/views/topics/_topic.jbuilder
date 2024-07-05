@@ -9,6 +9,12 @@ json.extract! topic, :id, :name, :description, :end_date, :slug,
               :timepoint_generate_job_id, :users_import_job_id, :article_import_job_id,
               :timepoints_count
 
+if topic.wiki
+  json.wiki do
+    json.extract! topic.wiki, :id, :language, :project
+  end
+end
+
 json.has_stats topic.most_recent_summary.present?
 json.owned owned
 

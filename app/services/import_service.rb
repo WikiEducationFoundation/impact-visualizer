@@ -5,7 +5,26 @@ class ImportService
 
   def initialize(topic:)
     @topic = topic
-    @wiki_action_api = WikiActionApi.new(@topic.wiki)
+    @wiki = topic.wiki
+    @wiki_action_api = WikiActionApi.new(@wiki)
+  end
+
+  def reset_topic
+    @topic.topic_timepoints.each do |topic_timepoint|
+      topic_timepoint.topic_article_timepoints.destroy_all
+    end
+
+    @topic.topic_timepoints.destroy_all
+
+    @topic.articles.each do |article|
+      article.article_timepoints.destroy_all
+      article.article_bag_articles.destroy_all
+      article.destroy
+    end
+
+    @topic.users.destroy_all
+    @topic.topic_summaries.destroy_all
+    @topic.article_bags.destroy_all
   end
 
   def import_articles(total: nil, at: nil)
@@ -31,7 +50,7 @@ class ImportService
     title = page_info['title']
     pageid = page_info['pageid']
     return unless pageid
-    article = Article.find_or_create_by(title:)
+    article = Article.find_or_create_by(title:, wiki: @wiki)
     article.update_details
     ArticleBagArticle.find_or_create_by(article:, article_bag:)
   end
@@ -45,8 +64,8 @@ class ImportService
       ActiveRecord::Base.connection_pool.with_connection do
         count += 1
         at&.call(count)
-        user = User.find_or_create_by name: user_name[0]
-        user.update_name_and_id(wiki: @topic.wiki)
+        user = User.find_or_create_by(name: user_name[0], wiki: @wiki)
+        user.update_name_and_id
         TopicUser.find_or_create_by user:, topic: @topic
         ActiveRecord::Base.connection_pool.release_connection
       end
