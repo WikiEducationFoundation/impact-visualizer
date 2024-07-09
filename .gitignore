@@ -49,3 +49,6 @@ node_modules
 /db/csv/*
 !/db/csv/topic-articles-example.csv
 !/db/csv/topic-users-example.csv
+
+# JS-specific files
+package-lock.json
