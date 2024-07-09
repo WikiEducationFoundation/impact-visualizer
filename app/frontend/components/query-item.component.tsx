@@ -1,5 +1,6 @@
 import React from "react";
 import { BiSolidTrashAlt } from "react-icons/bi";
+import AutocompleteInput from "./autocomplete-input.component";
 
 export default function QueryItem({
   handleChange,
@@ -22,13 +23,12 @@ export default function QueryItem({
         <option value="ethnicity">Ethnicity</option>
         <option value="occupation">Occupation</option>
       </select>
-      <input
-        type="text"
-        value={qValue}
-        onChange={(e) => handleTextFieldChange(index, e.target.value)}
-        placeholder="Enter a Value"
-        required
+      <AutocompleteInput
+        qValue={qValue}
+        property={property}
+        onValueChange={(value) => handleTextFieldChange(index, value)}
       />
+
       {properties.length > 1 && (
         <div
           className="RemoveIcon"
