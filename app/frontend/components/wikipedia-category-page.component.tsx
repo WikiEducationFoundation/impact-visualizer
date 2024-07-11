@@ -82,7 +82,6 @@ export default function WikipediaCategoryPage() {
           the given category is not selected
         </div>
         <br />
-
         <h3>Enter a category URL, select and browse subcategories</h3>
         <input
           type="text"
