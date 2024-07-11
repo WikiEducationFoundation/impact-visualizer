@@ -96,7 +96,7 @@ export default function WikipediaCategoryPage() {
       </form>
       {isLoading ? (
         <div className="OvalContainer">
-          <LoadingOval visible={isLoading} />
+          <LoadingOval visible={isLoading} height="100" width="100" />
         </div>
       ) : SubcatsData ? (
         <CategoryTree treeData={SubcatsData} />

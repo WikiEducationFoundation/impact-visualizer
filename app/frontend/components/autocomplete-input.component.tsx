@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import LoadingOval from "./loading-oval.component";
 
 const AutocompleteInput = ({ qValue, property, onValueChange }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [debouncedValue, setDebouncedValue] = useState(qValue);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -24,6 +26,7 @@ const AutocompleteInput = ({ qValue, property, onValueChange }) => {
   }, [debouncedValue, property]);
 
   const fetchSuggestions = async (query) => {
+    setIsLoading(true);
     try {
       const response = await fetch(
         `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${query}&language=en&uselang=en&type=item&format=json&formatversion=2&errorformat=plaintext&origin=*&limit=12`
@@ -32,13 +35,21 @@ const AutocompleteInput = ({ qValue, property, onValueChange }) => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      const labels = data.search.map((item) => item.display.label.value);
+      const suggestions = data.search.map((item) => ({
+        label: item.display.label.value,
+        description: item.display.description
+          ? item.display.description.value
+          : "No description found",
+        id: item.id,
+      }));
 
-      setSuggestions(labels);
+      setSuggestions(suggestions);
       setShowSuggestions(true);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
       setShowSuggestions(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,17 +72,29 @@ const AutocompleteInput = ({ qValue, property, onValueChange }) => {
         required
         className="AutocompleteInput"
       />
+
       {showSuggestions && (
         <ul className="SuggestionsList">
-          {suggestions.map((suggestion, i) => (
-            <li
-              key={i}
-              onClick={() => handleSuggestionClick(suggestion)}
-              className="SuggestionItem"
-            >
-              {suggestion}
-            </li>
-          ))}
+          {isLoading ? (
+            <div className=" u-mb1">
+              <LoadingOval visible={isLoading} height="100" width="100" />
+            </div>
+          ) : suggestions.length > 0 ? (
+            suggestions.map((suggestion, i) => (
+              <li
+                key={i}
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="SuggestionItem"
+              >
+                <div className="SuggestionLabel">{suggestion.label}</div>
+                <div className="SuggestionDescription">
+                  {suggestion.description}
+                </div>
+              </li>
+            ))
+          ) : (
+            <li className="NoSuggestionsItem">No suggestions found</li>
+          )}
         </ul>
       )}
     </div>

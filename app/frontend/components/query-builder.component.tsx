@@ -142,7 +142,7 @@ export default function QueryBuilder() {
 
       {isLoading ? (
         <div className="OvalContainer">
-          <LoadingOval visible={isLoading} />
+          <LoadingOval visible={isLoading} height="120" width="120" />
         </div>
       ) : articles.length > 0 ? (
         <ArticlesTable articles={articles} />
