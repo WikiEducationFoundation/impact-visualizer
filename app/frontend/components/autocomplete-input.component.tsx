@@ -1,31 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import LoadingOval from "./loading-oval.component";
 
-const AutocompleteInput = ({ qValue, property, onValueChange }) => {
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [debouncedValue, setDebouncedValue] = useState(qValue);
+const AutocompleteInput = ({
+  index,
+  property,
+  handleQValueChange,
+}: {
+  index: number;
+  property: string;
+  handleQValueChange: (index: number, value: Suggestion) => void;
+}) => {
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [query, setQuery] = useState<string>("");
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [debouncedValue, setDebouncedValue] = useState<string>(query);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedValue(qValue);
+      setDebouncedValue(query);
     }, 300);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [qValue]);
+  }, [query]);
 
   useEffect(() => {
     if (debouncedValue && property) {
-      fetchSuggestions(debouncedValue);
+      fetchSuggestions();
     } else {
       setShowSuggestions(false);
     }
   }, [debouncedValue, property]);
 
-  const fetchSuggestions = async (query) => {
+  const fetchSuggestions = async () => {
     setIsLoading(true);
     try {
       const response = await fetch(
@@ -53,12 +62,13 @@ const AutocompleteInput = ({ qValue, property, onValueChange }) => {
     }
   };
 
-  const handleInputChange = (e) => {
-    onValueChange(e.target.value);
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
   };
 
-  const handleSuggestionClick = (value) => {
-    onValueChange(value);
+  const handleSuggestionClick = (suggestion: Suggestion) => {
+    handleQValueChange(index, suggestion);
+    setQuery(suggestion.label);
     setShowSuggestions(false);
   };
 
@@ -66,7 +76,7 @@ const AutocompleteInput = ({ qValue, property, onValueChange }) => {
     <div className="Autocomplete">
       <input
         type="text"
-        value={qValue}
+        value={query}
         onChange={handleInputChange}
         placeholder="Enter a Value"
         required
@@ -99,6 +109,12 @@ const AutocompleteInput = ({ qValue, property, onValueChange }) => {
       )}
     </div>
   );
+};
+
+type Suggestion = {
+  label: string;
+  description: string;
+  id: string;
 };
 
 export default AutocompleteInput;
