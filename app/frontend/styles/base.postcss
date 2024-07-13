@@ -233,6 +233,9 @@ textarea {
   font-size: 0.875rem;
   border-radius: $radius;
   transition: border $hover-speed;
+  &[disabled] {
+    background-color: #f8f8f8;
+  }
 }
 
 input::placeholder,

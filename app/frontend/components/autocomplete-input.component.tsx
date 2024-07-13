@@ -76,11 +76,12 @@ const AutocompleteInput = ({
     <div className="Autocomplete">
       <input
         type="text"
+        className="AutocompleteInput"
         value={query}
         onChange={handleInputChange}
         placeholder="Enter a Value"
+        disabled={!property}
         required
-        className="AutocompleteInput"
       />
 
       {showSuggestions && (
