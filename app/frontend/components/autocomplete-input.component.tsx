@@ -1,5 +1,7 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, RefObject } from "react";
 import LoadingOval from "./loading-oval.component";
+import useOutsideClick from "../hooks/useOutsideClick";
+import { debounce } from "lodash";
 
 const AutocompleteInput = ({
   index,
@@ -13,28 +15,26 @@ const AutocompleteInput = ({
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [query, setQuery] = useState<string>("");
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-  const [debouncedValue, setDebouncedValue] = useState<string>(query);
+  const [isSelection, setIsSelection] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(query);
-    }, 300);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [query]);
+  const suggestionsRef = useOutsideClick(() => setShowSuggestions(false));
 
   useEffect(() => {
-    if (debouncedValue && property) {
-      fetchSuggestions();
-    } else {
-      setShowSuggestions(false);
+    if (!isSelection) {
+      debouncedFetchSuggestions(query);
     }
-  }, [debouncedValue, property]);
+    return () => {
+      debouncedFetchSuggestions.cancel();
+    };
+  }, [query, property]);
 
-  const fetchSuggestions = async () => {
+  const debouncedFetchSuggestions = debounce(async (query: string) => {
+    if (!query || !property) {
+      setShowSuggestions(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await fetch(
@@ -60,16 +60,18 @@ const AutocompleteInput = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, 300);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
+    setIsSelection(false);
   };
 
   const handleSuggestionClick = (suggestion: Suggestion) => {
     handleQValueChange(index, suggestion);
-    setQuery(suggestion.label);
     setShowSuggestions(false);
+    setQuery(suggestion.label);
+    setIsSelection(true);
   };
 
   return (
@@ -85,7 +87,10 @@ const AutocompleteInput = ({
       />
 
       {showSuggestions && (
-        <ul className="SuggestionsList">
+        <ul
+          className="SuggestionsList"
+          ref={suggestionsRef as RefObject<HTMLUListElement>}
+        >
           {isLoading ? (
             <div className=" u-mb1">
               <LoadingOval visible={isLoading} height="100" width="100" />
