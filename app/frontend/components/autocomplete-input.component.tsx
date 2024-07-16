@@ -1,7 +1,18 @@
-import React, { useState, useEffect, ChangeEvent, RefObject } from "react";
+import React, {
+  useState,
+  useEffect,
+  ChangeEvent,
+  RefObject,
+  KeyboardEvent,
+  useRef,
+} from "react";
 import LoadingOval from "./loading-oval.component";
 import useOutsideClick from "../hooks/useOutsideClick";
+
 import { debounce } from "lodash";
+import SuggestionsList, {
+  SuggestionsListHandle,
+} from "./suggestions-list.component";
 
 const AutocompleteInput = ({
   index,
@@ -17,8 +28,10 @@ const AutocompleteInput = ({
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [isSelection, setIsSelection] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [activeSuggestion, setActiveSuggestion] = useState<number>(-1);
 
   const suggestionsRef = useOutsideClick(() => setShowSuggestions(false));
+  const suggestionsListRef = useRef<SuggestionsListHandle>(null);
 
   useEffect(() => {
     if (!isSelection) {
@@ -28,6 +41,10 @@ const AutocompleteInput = ({
       debouncedFetchSuggestions.cancel();
     };
   }, [query, property]);
+
+  useEffect(() => {
+    suggestionsListRef.current?.scrollToSuggestion(activeSuggestion);
+  }, [activeSuggestion]);
 
   const debouncedFetchSuggestions = debounce(async (query: string) => {
     if (!query || !property) {
@@ -54,6 +71,7 @@ const AutocompleteInput = ({
 
       setSuggestions(suggestions);
       setShowSuggestions(true);
+      setActiveSuggestion(-1);
     } catch (error) {
       console.error("Error fetching suggestions:", error);
       setShowSuggestions(false);
@@ -74,6 +92,33 @@ const AutocompleteInput = ({
     setIsSelection(true);
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions) return;
+
+    switch (e.key) {
+      case "ArrowDown":
+        setActiveSuggestion((prev) =>
+          prev === suggestions.length - 1 ? 0 : prev + 1
+        );
+        break;
+      case "ArrowUp":
+        setActiveSuggestion((prev) =>
+          prev === 0 ? suggestions.length - 1 : prev - 1
+        );
+
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (activeSuggestion >= 0 && activeSuggestion < suggestions.length) {
+          handleSuggestionClick(suggestions[activeSuggestion]);
+        }
+        break;
+      case "Escape":
+        setShowSuggestions(false);
+        break;
+    }
+  };
+
   return (
     <div className="Autocomplete">
       <input
@@ -81,37 +126,24 @@ const AutocompleteInput = ({
         className="AutocompleteInput"
         value={query}
         onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
         placeholder="Enter a Value"
         disabled={!property}
         required
       />
 
       {showSuggestions && (
-        <ul
-          className="SuggestionsList"
-          ref={suggestionsRef as RefObject<HTMLUListElement>}
-        >
-          {isLoading ? (
-            <div className=" u-mb1">
-              <LoadingOval visible={isLoading} height="100" width="100" />
-            </div>
-          ) : suggestions.length > 0 ? (
-            suggestions.map((suggestion, i) => (
-              <li
-                key={i}
-                onClick={() => handleSuggestionClick(suggestion)}
-                className="SuggestionItem"
-              >
-                <div className="SuggestionLabel">{suggestion.label}</div>
-                <div className="SuggestionDescription">
-                  {suggestion.description}
-                </div>
-              </li>
-            ))
-          ) : (
-            <li className="NoSuggestionsItem">No suggestions found</li>
-          )}
-        </ul>
+        <div ref={suggestionsRef as RefObject<HTMLDivElement>}>
+          <SuggestionsList
+            ref={suggestionsListRef}
+            suggestions={suggestions}
+            activeSuggestion={activeSuggestion}
+            setActiveSuggestion={setActiveSuggestion}
+            handleSuggestionClick={handleSuggestionClick}
+            isLoading={isLoading}
+            LoadingOval={LoadingOval}
+          />
+        </div>
       )}
     </div>
   );

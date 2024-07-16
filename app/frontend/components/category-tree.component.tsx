@@ -158,7 +158,6 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
   // This function checks for any unselected children that may belong to a parent node
   // This is used as a flag to display to the user whether or not there are unfetched/unselected child nodes further down the tree
   const hasUnselectedChildNodes = (element: INode<IFlatMetadata>) => {
-    console.log(element);
     return element.children.some((childNodeId) => {
       const childNode = manuallySelectedNodes.get(childNodeId);
       return childNode?.isBranch && childNode.children.length === 0;
