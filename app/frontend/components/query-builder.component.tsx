@@ -10,10 +10,11 @@ import ArticlesTable from "./articles-table.component";
 import LoadingOval from "./loading-oval.component";
 import React from "react";
 import toast from "react-hot-toast";
+import { v4 as uuidv4 } from "uuid";
 
 export default function QueryBuilder() {
   const [queryItemsData, setQueryItemsData] = useState<QueryProperty[]>([
-    { property: "", qValue: { id: "", label: "" } },
+    { key: uuidv4(), property: "", qValue: { id: "", label: "" } },
   ]);
   const [articles, setArticles] = useState<
     {
@@ -34,15 +35,15 @@ export default function QueryBuilder() {
     if (queryItemsData.length < 5) {
       setQueryItemsData([
         ...queryItemsData,
-        { property: "", qValue: { id: "", label: "" } },
+        { key: uuidv4(), property: "", qValue: { id: "", label: "" } },
       ]);
     }
   };
 
-  const handleRemoveQueryItem = (index: number) => {
+  const handleRemoveQueryItem = (indexToRemove: number) => {
     if (queryItemsData.length > 1) {
       const updatedProperties = queryItemsData.filter(
-        (_, idx) => idx !== index
+        (_, idx) => idx !== indexToRemove
       );
       setQueryItemsData(updatedProperties);
     }
@@ -118,13 +119,13 @@ export default function QueryBuilder() {
 
       <form onSubmit={(e) => handleSubmit(e)}>
         <h3>Select Properties</h3>
-        {queryItemsData.map((_, index) => (
+        {queryItemsData.map((item, index) => (
           <QueryItem
             handlePropertyChange={handlePropertyChange}
             handleQValueChange={handleQValueChange}
             handleRemoveQueryItem={handleRemoveQueryItem}
             index={index}
-            key={index}
+            key={item.key}
             queryItemsData={queryItemsData}
           />
         ))}

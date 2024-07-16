@@ -58,6 +58,7 @@ type CategoryNode = {
 };
 
 type QueryProperty = {
+  key: string;
   property: string;
   qValue: { id: string; label: string };
 };
