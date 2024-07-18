@@ -1,7 +1,5 @@
 FactoryBot.define do
   factory :wiki do
-    language { "MyString" }
-    project { "MyString" }
   end
 end
 

@@ -3,7 +3,7 @@
 class TopicArticleTimepointStatsService
   def initialize(topic_article_timepoint:)
     @topic_article_timepoint = topic_article_timepoint
-    @wiki_action_api = WikiActionApi.new
+    @wiki_action_api = WikiActionApi.new(@topic_article_timepoint.topic.wiki)
     setup_context
   end
 

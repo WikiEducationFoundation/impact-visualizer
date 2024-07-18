@@ -5,8 +5,7 @@ class WikiActionApi
 
   attr_accessor :client
 
-  def initialize(wiki = nil)
-    wiki ||= Wiki.default_wiki
+  def initialize(wiki)
     @api_url = wiki.action_api_url
     @client = api_client
   end

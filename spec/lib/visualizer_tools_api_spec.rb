@@ -3,8 +3,10 @@
 require 'rails_helper'
 
 describe VisualizerToolsApi do
+  let(:wiki) { Wiki.default_wiki }
+
   describe 'error handling' do
-    let(:subject) { described_class.new.get_page_edits_count(page_id: 15613) }
+    let(:subject) { described_class.new(wiki).get_page_edits_count(page_id: 15613) }
 
     it 'handles API errors gracefully' do
       stub_visualizer_tools_503_error
@@ -26,14 +28,22 @@ describe VisualizerToolsApi do
 
   describe '#get_page_edits_count' do
     it 'returns total count of edits', :vcr do
-      visualizer_tools_api = described_class.new
+      visualizer_tools_api = described_class.new(wiki)
       count = visualizer_tools_api.get_page_edits_count(page_id: 15613)
       expect(count).to be_a(Integer)
-      expect(count).to eq(11679)
+      expect(count).to eq(11726)
+    end
+
+    it 'returns total count of edits, German Wiki', vcr: true do
+      wiki = Wiki.create(language: 'de', project: 'wikipedia')
+      visualizer_tools_api = described_class.new(wiki)
+      count = visualizer_tools_api.get_page_edits_count(page_id: 19129)
+      expect(count).to be_a(Integer)
+      expect(count).to eq(104)
     end
 
     it 'returns total count of edits between revision IDs', :vcr do
-      visualizer_tools_api = described_class.new
+      visualizer_tools_api = described_class.new(wiki)
       count = visualizer_tools_api.get_page_edits_count(
         page_id: 15613,
         from_rev_id: 1159158915,

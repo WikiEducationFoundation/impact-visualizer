@@ -1,0 +1,161 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://de.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=19129&prop=revisions&redirects=true&rvdir=newer&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 02 Jul 2024 22:43:37 GMT
+      Server:
+      - mw-api-ext.codfw.main-68d8749ff4-cdhvt
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
+      - WMF-Last-Access-Global=02-Jul-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sat,
+        03 Aug 2024 12:00:00 GMT
+      - WMF-Last-Access=02-Jul-2024;Path=/;HttpOnly;secure;Expires=Sat, 03 Aug 2024
+        12:00:00 GMT
+      X-Client-Ip:
+      - 67.170.51.150
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '243'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"continue":{"rvcontinue":"20030127171522|102738","continue":"||"},"query":{"pages":[{"pageid":19129,"ns":0,"title":"MACHO","revisions":[{"revid":70514,"parentid":0,"user":"Wing","userid":550,"timestamp":"2003-01-27T15:23:10Z","size":448}]}]}}'
+  recorded_at: Tue, 02 Jul 2024 22:43:37 GMT
+- request:
+    method: get
+    uri: https://de.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=19129&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids&rvstart=2024-06-01T00:00:00Z
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=02-Jul-2024;
+        WMF-Last-Access-Global=02-Jul-2024
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Tue, 02 Jul 2024 22:43:37 GMT
+      Server:
+      - mw-api-ext.codfw.main-68d8749ff4-9f7qv
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4041 miss, cp4041 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4041"
+      X-Client-Ip:
+      - 67.170.51.150
+      Set-Cookie:
+      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '270'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"continue":{"rvcontinue":"20231105190914|238828604","continue":"||"},"query":{"pages":[{"pageid":19129,"ns":0,"title":"MACHO","revisions":[{"revid":243145509,"parentid":238828604,"user":"Jonntek2012","userid":4363350,"timestamp":"2024-03-15T20:44:16Z","size":3531}]}]}}'
+  recorded_at: Tue, 02 Jul 2024 22:43:37 GMT
+- request:
+    method: get
+    uri: https://impact-visualizer-tools.wmcloud.org/count_revisions.php?from_rev_id=70514&lang=de&page_id=19129&project=wikipedia&to_rev_id=243145509
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.18.0
+      Date:
+      - Tue, 02 Jul 2024 22:43:37 GMT
+      Content-Type:
+      - text/html; charset=UTF-8
+      Content-Length:
+      - '46'
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31622400
+      X-Clacks-Overhead:
+      - GNU Terry Pratchett
+      Permissions-Policy:
+      - browsing-topics=()
+    body:
+      encoding: ASCII-8BIT
+      string: '{ "success": true, "data": [{"count":"102"}] }'
+  recorded_at: Tue, 02 Jul 2024 22:43:37 GMT
+recorded_with: VCR 6.1.0

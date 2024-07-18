@@ -3,8 +3,10 @@
 require 'rails_helper'
 
 describe WikiActionApi do
+  let!(:wiki) { Wiki.default_wiki }
+
   describe 'error handling and calls ApiErrorHandling method' do
-    let(:subject) { described_class.new.get_page_info(pageid: 58170849) }
+    let(:subject) { described_class.new(wiki).get_page_info(pageid: 58170849) }
 
     it 'handles mediawiki 503 errors gracefully' do
       stub_wikipedia_503_error
@@ -40,7 +42,7 @@ describe WikiActionApi do
 
   describe '#query' do
     it 'executes a generic Wiki API query request', vcr: true do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
 
       query_parameters = {
         prop: 'revisions',
@@ -70,7 +72,7 @@ describe WikiActionApi do
 
   describe '#get_page_info' do
     it 'returns page info given pageid' do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       data = wiki_api.get_page_info(pageid: 58170849)
       expect(data).to be_a(Hashugar)
       expect(data['pageid']).to eq(58170849)
@@ -80,7 +82,7 @@ describe WikiActionApi do
     end
 
     it 'returns page info given title' do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       data = wiki_api.get_page_info(title: 'Battle of Bourgthéroulde')
       expect(data).to be_a(Hashugar)
       expect(data['pageid']).to eq(58170849)
@@ -92,7 +94,7 @@ describe WikiActionApi do
 
   describe '#get_user_info' do
     it 'returns user info given userid', :vcr do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       data = wiki_api.get_user_info(userid: 25848390)
       expect(data).to be_a(Hashugar)
       expect(data['userid']).to eq(25848390)
@@ -100,7 +102,7 @@ describe WikiActionApi do
     end
 
     it 'returns user info given name', :vcr do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       data = wiki_api.get_user_info(name: 'TiltuM')
       expect(data).to be_a(Hashugar)
       expect(data['userid']).to eq(25848390)
@@ -110,7 +112,7 @@ describe WikiActionApi do
 
   describe '#fetch_all' do
     it 'returns the same data as a single complete query would', vcr: true do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
 
       # With a low palimit, this query will need to continue
       continue_query = { titles: %w[Apple Fruit Ecosystem Pear],
@@ -130,7 +132,7 @@ describe WikiActionApi do
 
   describe '#get_first_revision' do
     it 'gets the first revision', :vcr do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       revision = wiki_api.get_first_revision(pageid: 58170849)
       expect(revision['user']).to eq('AngevinKnight1154')
       expect(revision['revid']).to eq(855254384)
@@ -140,7 +142,7 @@ describe WikiActionApi do
 
   describe '#get_page_revision_at_timestamp for article' do
     it 'returns the most recent revision at the given timestamp', vcr: true do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       timestamp = Date.new(2023, 1, 1)
       revision = wiki_api.get_page_revision_at_timestamp(pageid: 58170849, timestamp:)
       expect(revision['user']).to eq('The Mighty Forest')
@@ -149,7 +151,7 @@ describe WikiActionApi do
     end
 
     it 'returns the most recent revision at the given timestamp, example', vcr: false do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       timestamp = Date.new(2022, 11, 20)
       revision = wiki_api.get_page_revision_at_timestamp(pageid: 74972833, timestamp:)
       ap revision
@@ -158,7 +160,7 @@ describe WikiActionApi do
 
   describe '#get_revision_at_timestamp, article agnostic' do
     it 'returns the most recent revision at the given timestamp', vcr: true do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       timestamp = Date.new(2023, 1, 1)
       revision = wiki_api.get_revision_at_timestamp(timestamp:)
       expect(revision['user']).to eq('3PPYB6')
@@ -169,7 +171,7 @@ describe WikiActionApi do
 
   describe '#get_all_revisions' do
     it 'fetches all revisions for a given article', vcr: true do
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       revisions = wiki_api.get_all_revisions(pageid: 58170849)
       expect(revisions.count).to be > 0
       expect(revisions[0]['user']).to be_a(String)
@@ -183,7 +185,7 @@ describe WikiActionApi do
     it 'fetches all revisions in range for a given article', vcr: true do
       start_timestamp = Date.new(2020, 1, 1)
       end_timestamp = Date.new(2023, 1, 1)
-      wiki_api = described_class.new
+      wiki_api = described_class.new(wiki)
       revisions = wiki_api.get_all_revisions_in_range(
         pageid: 58170849,
         start_timestamp:,

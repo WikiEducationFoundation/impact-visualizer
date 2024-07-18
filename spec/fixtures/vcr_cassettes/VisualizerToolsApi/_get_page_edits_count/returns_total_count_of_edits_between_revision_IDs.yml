@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://impact-visualizer-tools.wmcloud.org/count_revisions.php?from_rev_id=1159158915&page_id=15613&to_rev_id=1161912094
+    uri: https://impact-visualizer-tools.wmcloud.org/count_revisions.php?from_rev_id=1159158915&lang=en&page_id=15613&project=wikipedia&to_rev_id=1161912094
     body:
       encoding: US-ASCII
       string: ''
@@ -23,19 +23,23 @@ http_interactions:
       Server:
       - nginx/1.18.0
       Date:
-      - Thu, 24 Aug 2023 23:07:55 GMT
+      - Tue, 02 Jul 2024 22:42:58 GMT
       Content-Type:
       - text/html; charset=UTF-8
-      Transfer-Encoding:
-      - chunked
+      Content-Length:
+      - '44'
       Connection:
       - keep-alive
+      Vary:
+      - Accept-Encoding
       Strict-Transport-Security:
       - max-age=31622400
       X-Clacks-Overhead:
       - GNU Terry Pratchett
+      Permissions-Policy:
+      - browsing-topics=()
     body:
       encoding: ASCII-8BIT
       string: '{ "success": true, "data": [{"count":"2"}] }'
-  recorded_at: Thu, 24 Aug 2023 23:07:55 GMT
+  recorded_at: Tue, 02 Jul 2024 22:42:58 GMT
 recorded_with: VCR 6.1.0

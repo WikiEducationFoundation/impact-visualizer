@@ -1,8 +1,29 @@
 # frozen_string_literal: true
 
+owned = current_topic_editor&.can_edit_topic?(topic) || false
+
 json.extract! topic, :id, :name, :description, :end_date, :slug,
               :start_date, :timepoint_day_interval, :user_count, :editor_label,
-              :chart_time_unit
+              :chart_time_unit, :wiki_id, :articles_count, :users_csv_url,
+              :users_csv_filename, :articles_csv_url, :articles_csv_filename,
+              :timepoint_generate_job_id, :users_import_job_id, :article_import_job_id,
+              :timepoints_count
+
+if topic.wiki
+  json.wiki do
+    json.extract! topic.wiki, :id, :language, :project
+  end
+end
+
+json.has_stats topic.most_recent_summary.present?
+json.owned owned
+
+if owned
+  json.extract! topic, :timepoint_generate_percent_complete,
+                :articles_import_percent_complete, :users_import_percent_complete,
+                :articles_import_status, :timepoint_generate_status,
+                :users_import_status
+end
 
 if topic.most_recent_summary
   json.extract! topic.most_recent_summary, :articles_count, :articles_count_delta,

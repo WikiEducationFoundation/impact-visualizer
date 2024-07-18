@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_29_182947) do
+ActiveRecord::Schema[7.0].define(version: 2024_07_02_225510) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -108,6 +108,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_29_182947) do
     t.string "first_revision_by_name"
     t.integer "first_revision_by_id"
     t.datetime "first_revision_at"
+    t.bigint "wiki_id", null: false
+    t.index ["wiki_id"], name: "index_articles_on_wiki_id"
   end
 
   create_table "topic_article_timepoints", force: :cascade do |t|
@@ -126,6 +128,24 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_29_182947) do
     t.index ["article_timepoint_id"], name: "index_topic_article_timepoints_on_article_timepoint_id"
     t.index ["attributed_creator_id"], name: "index_topic_article_timepoints_on_attributed_creator_id"
     t.index ["topic_timepoint_id"], name: "index_topic_article_timepoints_on_topic_timepoint_id"
+  end
+
+  create_table "topic_editor_topics", force: :cascade do |t|
+    t.bigint "topic_id", null: false
+    t.bigint "topic_editor_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["topic_editor_id"], name: "index_topic_editor_topics_on_topic_editor_id"
+    t.index ["topic_id"], name: "index_topic_editor_topics_on_topic_id"
+  end
+
+  create_table "topic_editors", force: :cascade do |t|
+    t.datetime "remember_created_at"
+    t.string "provider"
+    t.string "uid"
+    t.string "username"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "topic_summaries", force: :cascade do |t|
@@ -204,6 +224,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_29_182947) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "wiki_id", null: false
+    t.index ["wiki_id"], name: "index_users_on_wiki_id"
   end
 
   create_table "wikis", force: :cascade do |t|
@@ -220,11 +242,15 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_29_182947) do
   add_foreign_key "article_bag_articles", "articles"
   add_foreign_key "article_bags", "topics"
   add_foreign_key "article_timepoints", "articles"
+  add_foreign_key "articles", "wikis"
   add_foreign_key "topic_article_timepoints", "article_timepoints"
   add_foreign_key "topic_article_timepoints", "topic_timepoints"
   add_foreign_key "topic_article_timepoints", "users", column: "attributed_creator_id"
+  add_foreign_key "topic_editor_topics", "topic_editors"
+  add_foreign_key "topic_editor_topics", "topics"
   add_foreign_key "topic_summaries", "topics"
   add_foreign_key "topic_timepoints", "topics"
   add_foreign_key "topic_users", "topics"
   add_foreign_key "topic_users", "users"
+  add_foreign_key "users", "wikis"
 end

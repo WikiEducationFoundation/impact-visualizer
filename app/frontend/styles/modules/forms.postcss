@@ -1,0 +1,95 @@
+.Form {
+  background: white;
+  padding: 1rem;
+  max-width: 700px;
+  display: grid;
+  gap: 2rem;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+}
+
+.FormRow {
+  width: 100%;
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.FormRow--actions {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Input--textArea {
+  
+  textarea {
+    height: 80px;
+    min-height: 40px;
+    max-height: 100px;
+    line-height: 1.3;
+    resize: vertical;
+  }
+}
+
+.Input {
+  flex: 1 1 100%;
+  display: grid;
+  gap: 0.5rem;
+  
+  label {
+    margin-bottom: 0;
+  }
+
+  input {
+    width: 100%;
+  }
+}
+
+.Input-hint {
+  font-size: 0.8rem;
+  color: $mediumLightGrey;
+}
+
+.Input-error {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: $red;
+}
+
+.Input-select {
+}
+
+.Select .Select-control {
+  background: white;
+  border: 1px #e4e4e4 solid;
+  color: $grey;
+  padding: 2px 0;
+  font-size: 0.875rem;
+  border-radius: $radius;
+  transition: border $hover-speed;
+}
+
+.Input-dateWrapper {
+  display: flex;
+  flex-direction: row;
+  
+  .react-datepicker-wrapper {
+    display: block;
+    width: 100%;
+  }
+}
+
+.FileInput-fieldWrapper {
+  border: 1px #e4e4e4 solid;
+  color: $grey;
+  padding: 2px 0;
+  font-size: 0.875rem;
+  border-radius: $radius;
+  transition: border $hover-speed; 
+  padding: 0.75rem;
+}
+
+.FileInput-current {
+  margin-bottom: 0.75rem; 
+}

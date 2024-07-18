@@ -9,4 +9,8 @@ class ImpactVisualizerErrors
   class ArticleMissingFirstRevisionInfo < StandardError; end
   class ArticleCreatedAfterTimestamp < StandardError; end
   class CsvMissingForImport < StandardError; end
+  class TopicEditorMissing < StandardError; end
+  class TopicMissing < StandardError; end
+  class TopicEditorNotAuthorizedForTopic < StandardError; end
+  class TopicNotReadyForTimepointGeneration < StandardError; end
 end

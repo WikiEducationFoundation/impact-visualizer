@@ -14,6 +14,15 @@ describe TimepointService do
       expect(timepoint_service).to be_a(described_class)
       expect(timepoint_service.topic).to eq(topic)
     end
+
+    it 'initializes with Topic wiki' do
+      wiki = Wiki.create language: 'de', project: 'wikipedia'
+      topic.update(wiki:)
+      expect_any_instance_of(ArticleStatsService).to receive(:initialize).with(wiki)
+      timepoint_service = described_class.new(topic:)
+      expect(timepoint_service).to be_a(described_class)
+      expect(timepoint_service.topic).to eq(topic)
+    end
   end
 
   describe '#build_timepoints' do

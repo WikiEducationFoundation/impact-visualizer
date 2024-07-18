@@ -8,6 +8,6 @@ class ImportUsersJob
     topic = Topic.find topic_id
     import_service = ImportService.new(topic:)
     import_service.import_users(total: method(:total), at: method(:at))
-    topic.update users_import_job_id: nil
+    topic.reload.update(users_import_job_id: nil)
   end
 end

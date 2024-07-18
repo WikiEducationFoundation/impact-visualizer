@@ -8,5 +8,14 @@
   <%= vite_client_tag %>
   <%= vite_react_refresh_tag nonce: false %>
   <%= vite_javascript_tag 'index.tsx' %>
-  <div id="root"></div>
+
+  <script type="text/javascript">
+    window.app = <%= raw @js_params.deep_transform_keys{|k| k.to_s.camelcase(:lower) }.to_json %>
+  </script>
+
 </head>
+<body>  
+  <div
+    id="root"
+  ></div>
+</body>

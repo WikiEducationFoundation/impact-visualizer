@@ -1,0 +1,45 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://impact-visualizer-tools.wmcloud.org/count_revisions.php?lang=de&page_id=19129&project=wikipedia
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - Faraday v0.17.6
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.18.0
+      Date:
+      - Tue, 02 Jul 2024 22:42:57 GMT
+      Content-Type:
+      - text/html; charset=UTF-8
+      Content-Length:
+      - '46'
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=31622400
+      X-Clacks-Overhead:
+      - GNU Terry Pratchett
+      Permissions-Policy:
+      - browsing-topics=()
+    body:
+      encoding: ASCII-8BIT
+      string: '{ "success": true, "data": [{"count":"104"}] }'
+  recorded_at: Tue, 02 Jul 2024 22:42:57 GMT
+recorded_with: VCR 6.1.0

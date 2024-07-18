@@ -8,7 +8,7 @@ const TopicUtils = {
     
     let formattedPercentage = `${percentage}%`;
     
-    if (percentage < 1) {
+    if (percentage < 1 || isNaN(percentage)) {
       formattedPercentage = `<1%`;
     } 
 
@@ -25,7 +25,7 @@ const TopicUtils = {
     
     let formattedPercentage = `${percentage}%`;
     
-    if (percentage < 1) {
+    if (percentage < 1 || isNaN(percentage)) {
       formattedPercentage = `<1%`;
     } 
 
@@ -42,7 +42,7 @@ const TopicUtils = {
     
     let formattedPercentage = `${percentage}%`;
     
-    if (percentage < 1) {
+    if (percentage < 1 || isNaN(percentage)) {
       formattedPercentage = `<1%`;
     } 
 

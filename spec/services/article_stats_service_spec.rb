@@ -4,10 +4,12 @@ require 'rails_helper'
 require './spec/support/shared_contexts'
 
 describe ArticleStatsService do
+  let(:wiki) { Wiki.default_wiki }
+
   describe '#update_article_details' do
     it 'captures pageid given title', :vcr do
       article = create(:article, pageid: nil, title: 'Yankari Game Reserve')
-      article_stats_service = described_class.new
+      article_stats_service = described_class.new(wiki)
       article_stats_service.update_details_for_article(article:)
       article.reload
       expect(article.pageid).to eq(2364730)
@@ -15,7 +17,7 @@ describe ArticleStatsService do
 
     it 'captures title given pageid', :vcr do
       article = create(:article, pageid: 2364730, title: nil)
-      article_stats_service = described_class.new
+      article_stats_service = described_class.new(wiki)
       article_stats_service.update_details_for_article(article:)
       article.reload
       expect(article.title).to eq('Yankari Game Reserve')
@@ -23,7 +25,7 @@ describe ArticleStatsService do
 
     it 'captures first revision details', :vcr do
       article = create(:article, pageid: 2364730, first_revision_id: nil)
-      article_stats_service = described_class.new
+      article_stats_service = described_class.new(wiki)
       article_stats_service.update_details_for_article(article:)
       article.reload
       expect(article.first_revision_id).to eq(20142847)
@@ -35,7 +37,7 @@ describe ArticleStatsService do
 
   describe '#update_stats_for_article_timepoint' do
     context 'when the article exists at timestamp' do
-      let!(:article_stats_service) { described_class.new }
+      let!(:article_stats_service) { described_class.new(wiki) }
       let!(:article) { create(:article, pageid: 2364730, title: 'Yankari Game Reserve') }
       let!(:article_timepoint) do
         create(:article_timepoint, article:, timestamp: Date.new(2023, 1, 1))
@@ -60,13 +62,45 @@ describe ArticleStatsService do
       end
 
       it 'updates wp10_prediction', vcr: true do
-        expect(article_timepoint.wp10_prediction).to eq(57.03609606395922836)
+        expect(article_timepoint.wp10_prediction).to eq(58.17099374142291)
         expect(article_timepoint.wp10_prediction_category).to eq('C')
       end
     end
 
+    context 'when article exists at timestamp but LiftWing not available' do
+      let!(:wiki) { Wiki.create(language: 'de', project: 'wikipedia') }
+      let!(:article_stats_service) { described_class.new(wiki) }
+      let!(:article) { create(:article, pageid: 19129, title: 'Helen Otley', wiki:) }
+      let!(:article_timepoint) do
+        create(:article_timepoint, article:, timestamp: Date.new(2024, 6, 1))
+      end
+
+      before do
+        article_stats_service.update_first_revision_info(article:)
+        article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
+        article_timepoint.reload
+      end
+
+      it 'captures revision_id', vcr: true do
+        expect(article_timepoint.revision_id).to eq(243145509)
+      end
+
+      it 'captures article_length', vcr: true do
+        expect(article_timepoint.article_length).to eq(3531)
+      end
+
+      it 'updates revisions_count', vcr: true do
+        expect(article_timepoint.revisions_count).to eq(102)
+      end
+
+      it 'does not update wp10_prediction', vcr: true do
+        expect(article_timepoint.wp10_prediction).to be_nil
+        expect(article_timepoint.wp10_prediction_category).to be_nil
+      end
+    end
+
     context 'when the article does not exist at timestamp' do
-      let!(:article_stats_service) { described_class.new }
+      let!(:article_stats_service) { described_class.new(wiki) }
       let!(:article) { create(:article, pageid: 2364730, title: 'Yankari Game Reserve') }
       let!(:article_timepoint) do
         create(:article_timepoint, article:, timestamp: Date.new(2001, 1, 1))
@@ -82,10 +116,10 @@ describe ArticleStatsService do
   end
 
   describe '#weighted_revision_quality' do
-    let!(:article_stats_service) { described_class.new }
+    let!(:article_stats_service) { described_class.new(wiki) }
 
     it 'returns the weighted quality of revision', vcr: false do
-      lift_wing_api = LiftWingApi.new
+      lift_wing_api = LiftWingApi.new(wiki)
       lift_wing_response = lift_wing_api.get_revision_quality(1100917005)
       quality = article_stats_service.weighted_revision_quality(lift_wing_response:)
       expect(quality).to be_a(Numeric)
@@ -93,7 +127,7 @@ describe ArticleStatsService do
   end
 
   describe '#update_token_stats' do
-    let!(:article_stats_service) { described_class.new }
+    let!(:article_stats_service) { described_class.new(wiki) }
     let!(:article) { create(:article, pageid: 2364730, title: 'Yankari Game Reserve') }
     let!(:revision_id) { 1100917005 }
     let!(:timestamp) { Date.new(2023, 1, 1) }

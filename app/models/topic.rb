@@ -2,17 +2,20 @@
 
 class Topic < ApplicationRecord
   ## Mixins
+  include Rails.application.routes.url_helpers
   has_one_attached :users_csv
   has_one_attached :articles_csv
 
   ## Associations
   belongs_to :wiki
-  has_many :article_bags, -> { order(created_at: :desc) }
+  has_many :article_bags, -> { order(created_at: :desc) }, dependent: :delete_all
   has_many :articles, through: :article_bags
-  has_many :topic_users
+  has_many :topic_users, dependent: :delete_all
   has_many :users, through: :topic_users
-  has_many :topic_timepoints
-  has_many :topic_summaries
+  has_many :topic_timepoints, dependent: :delete_all
+  has_many :topic_summaries, dependent: :delete_all
+  has_many :topic_editor_topics, dependent: :delete_all
+  has_many :topic_editors, through: :topic_editor_topics
 
   ## Instance methods
   def timestamps
@@ -77,8 +80,32 @@ class Topic < ApplicationRecord
     users.find_by(wiki_user_id:)
   end
 
+  def timepoints_count
+    topic_timepoints.count || 0
+  end
+
   def user_count
-    users.count
+    users.count || 0
+  end
+
+  def users_csv_filename
+    return nil unless users_csv.attached?
+    users_csv&.filename&.to_s
+  end
+
+  def articles_csv_filename
+    return nil unless articles_csv.attached?
+    articles_csv&.filename&.to_s
+  end
+
+  def users_csv_url
+    return nil unless users_csv.attached?
+    rails_blob_path(users_csv, disposition: 'attachment', only_path: true)
+  end
+
+  def articles_csv_url
+    return nil unless articles_csv.attached?
+    rails_blob_path(articles_csv, disposition: 'attachment', only_path: true)
   end
 
   def active_article_bag
@@ -86,7 +113,7 @@ class Topic < ApplicationRecord
   end
 
   def articles_count
-    active_article_bag&.articles&.count
+    active_article_bag&.articles&.count || 0
   end
 
   def most_recent_summary
@@ -108,14 +135,45 @@ class Topic < ApplicationRecord
     update timepoint_generate_job_id: job_id
   end
 
-  # For ActiveAdmin
-  def self.ransackable_associations(auth_object = nil)
-    ['article_bags', 'articles', 'topic_summaries', 'topic_timepoints', 'topic_users', 'users', 'wiki']
+  def users_import_status
+    return :idle unless users_import_job_id
+    Sidekiq::Status::status(users_import_job_id)
+  end
+
+  def articles_import_status
+    return :idle unless article_import_job_id
+    Sidekiq::Status::status(article_import_job_id)
+  end
+
+  def timepoint_generate_status
+    return :idle unless timepoint_generate_job_id
+    Sidekiq::Status::status(timepoint_generate_job_id)
+  end
+
+  def users_import_percent_complete
+    return nil unless users_import_job_id
+    Sidekiq::Status::pct_complete(users_import_job_id)
+  end
+
+  def articles_import_percent_complete
+    return nil unless article_import_job_id
+    Sidekiq::Status::pct_complete(article_import_job_id)
+  end
+
+  def timepoint_generate_percent_complete
+    return nil unless timepoint_generate_job_id
+    Sidekiq::Status::pct_complete(timepoint_generate_job_id)
   end
 
   # For ActiveAdmin
-  def self.ransackable_attributes(auth_object = nil)
-    ["chart_time_unit", "created_at", "description", "display", "editor_label", "end_date", "id", "name", "slug", "start_date", "timepoint_day_interval", "updated_at", "wiki_id"]
+  def self.ransackable_associations(_auth_object = nil)
+    %w[article_bags articles topic_summaries topic_timepoints topic_users users wiki]
+  end
+
+  # For ActiveAdmin
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[chart_time_unit created_at description display editor_label end_date id name
+       slug start_date timepoint_day_interval updated_at wiki_id]
   end
 end
 

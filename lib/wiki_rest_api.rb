@@ -5,8 +5,7 @@ class WikiRestApi
 
   AVAILABLE_WIKIPEDIAS = %w[en eu fa fr gl nl pt ru sv tr uk].freeze
 
-  def initialize(wiki = nil)
-    wiki ||= Wiki.default_wiki
+  def initialize(wiki)
     @api_url = wiki.rest_api_url
     @client = wiki_rest_server
     raise InvalidProjectError unless WikiRestApi.valid_wiki?(wiki)

@@ -16,8 +16,7 @@ class LiftWingApi
     wiki.project == 'wikipedia' && AVAILABLE_WIKIPEDIAS.include?(wiki.language)
   end
 
-  def initialize(wiki = nil)
-    wiki ||= Wiki.default_wiki
+  def initialize(wiki)
     raise InvalidProjectError unless LiftWingApi.valid_wiki?(wiki)
     @client = lift_wing_client
     @project_code = wiki.project == 'wikidata' ? 'wikidata' + 'wiki' : wiki.language + 'wiki'

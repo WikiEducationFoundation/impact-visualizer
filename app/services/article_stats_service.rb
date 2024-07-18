@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 class ArticleStatsService
-  def initialize(wiki = nil)
-    wiki ||= Wiki.default_wiki
+  def initialize(wiki)
     @wiki = wiki
     @wiki_action_api = WikiActionApi.new(wiki)
     @visualizer_tools_api = VisualizerToolsApi.new(wiki)
-    @lift_wing_api = LiftWingApi.new(wiki)
+    @lift_wing_api = LiftWingApi.new(wiki) if LiftWingApi.valid_wiki?(wiki)
   end
 
   def update_title_for_article(article:)
@@ -75,14 +74,18 @@ class ArticleStatsService
     )
 
     # Get the wp10 quality prediction
-    begin
-      lift_wing_response = @lift_wing_api.get_revision_quality(revision['revid'])
-    rescue StandardError => e
-      puts "LiftWing Failure for revision: #{revision['revid']}, article: #{article.id}, article_timepoint: #{article_timepoint}"
-    end
+    weighted_quality = nil
+    predicted_category = nil
+    if @lift_wing_api
+      begin
+        lift_wing_response = @lift_wing_api.get_revision_quality(revision['revid'])
+      rescue StandardError => e
+        puts "LiftWing Failure for revision: #{revision['revid']}, article: #{article.id}, article_timepoint: #{article_timepoint}"
+      end
 
-    weighted_quality = weighted_revision_quality(lift_wing_response:)
-    predicted_category = lift_wing_response['prediction']
+      weighted_quality = weighted_revision_quality(lift_wing_response:)
+      predicted_category = lift_wing_response['prediction']
+    end
 
     # Update the ArticleTimepoint
     article_timepoint.update(

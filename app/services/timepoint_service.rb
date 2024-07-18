@@ -6,7 +6,7 @@ class TimepointService
 
   def initialize(topic:, force_updates: false, logging_enabled: false, total: nil, at: nil)
     @topic = topic
-    @article_stats_service = ArticleStatsService.new
+    @article_stats_service = ArticleStatsService.new(@topic.wiki)
     @topic_timepoint_stats_service = TopicTimepointStatsService.new
     @topic_article_timepoint_stats_service = nil
     @force_updates = force_updates

@@ -1,0 +1,113 @@
+.TopicDetail {
+}
+
+.TopicDetail-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.TopicDetailIntro {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-bottom: 1px solid $borderGrey;
+  padding-bottom: 2rem;
+}
+
+.TopicDetail-noStats {
+  background: white;
+  text-align: center;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  font-size: 1.25rem;
+  color: $mediumLightGrey;
+}
+
+.TopicActions {
+  min-width: 300px;
+  max-width: 400px;
+  background: white;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-left: 3rem;
+  
+  h4 {
+    margin-bottom: 0;
+  }
+}
+
+.TopicAction {
+  border-bottom: 1px solid $lightGrey;
+  padding: 1rem 0;
+  
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  h4 {
+    color: $mediumLightGrey;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.TopicActionStatus {
+  display: inline-block;
+  color: $mediumLightGrey;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 600;
+  background: $blue;
+  color: white;
+  padding: 0.2rem 0.4rem;
+}
+
+.TopicActionStatus--queued {
+  background: $orange;
+}
+
+.TopicActionStatus--failed,
+.TopicActionStatus--interrupted {
+  background: $red;
+}
+
+.TopicActionStatus--working,
+.TopicActionStatus--retrying,
+.TopicActionStatus--complete {
+  background: $green;
+}
+
+.TopicAction-statusAndProgress {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.TopicAction-progress {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.TopicActions-finePrint {
+  font-size: 0.75rem;
+  color: $mediumLightGrey;
+}
+
+.TopicAction-currentCount {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: $mediumGrey;
+}

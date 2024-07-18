@@ -25,6 +25,27 @@
   padding: 0.5rem 0.75rem;
   text-decoration: none;
   transition: all 0.15s ease-out, color 0.15s ease-out;
+  
+  &:hover {
+    color: white;
+  }
+}
+
+.Button--outlined {
+  background: none;
+  color: $blue;
+  border: 1px solid rgba($blue, 0.25);
+  
+  &:hover {
+    background: $blue;
+    color: white;
+  }
+}
+
+.Button:disabled {
+  background-color: #ccc;
+  border-color: #ccc;
+  cursor: default;
 }
 
 .AddButton {
@@ -51,4 +72,29 @@
 .Button--block {
   display: block;
   width: 100%;
+}
+
+.TextButton {
+  @extend .ResetButton; 
+  color: $blue;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color $hover-speed, border $hover-speed;
+
+  &:disabled {
+    color: #ccc;
+    cursor: default;   
+  }
+
+  &:hover:not(:disabled) {
+    color: $blue;
+  }
+}
+
+.TextButton--red {
+  color: $red;
+  
+  &:hover:not(:disabled) {
+    color: $red;
+  }
 }
