@@ -146,6 +146,52 @@ describe TopicsController do
       expect(response.status).to eq(200)
     end
 
+    it 'creates a new Topic belonging to Topic editor with CSV' do
+      sign_in topic_editor
+      start_date = Time.zone.now - 1.year
+      end_date = Time.zone.now
+
+      articles_csv = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+      users_csv = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+
+      expect_any_instance_of(Topic).to receive(:queue_users_import)
+
+      params = {
+        topic: {
+          name: 'My Topic',
+          slug: 'my_topic',
+          description: 'My topic description.',
+          wiki_id: wiki.id,
+          chart_time_unit: 'month',
+          editor_label: 'editor',
+          start_date:,
+          end_date:,
+          timepoint_day_interval: 30,
+          users_csv:,
+          articles_csv:
+        }
+      }
+      post('/api/topics', params:)
+      body = response.parsed_body.with_indifferent_access
+      expect(body).to include(
+        name: 'My Topic',
+        slug: 'my_topic',
+        description: 'My topic description.',
+        wiki_id: wiki.id,
+        chart_time_unit: 'month',
+        editor_label: 'editor',
+        timepoint_day_interval: 30
+      )
+      topic = Topic.find(body[:id])
+      expect(topic.start_date.iso8601).to eq(start_date.iso8601)
+      expect(topic.end_date.iso8601).to eq(end_date.iso8601)
+      expect(topic.topic_editors.first).to eq(topic_editor)
+      expect(topic.users_csv.attached?).to eq(true)
+      expect(topic.articles_csv.attached?).to eq(true)
+
+      expect(response.status).to eq(200)
+    end
+
     it 'returns unauthorized without current_topic_editor' do
       params = {
         name: 'My Topic',
@@ -158,11 +204,18 @@ describe TopicsController do
 
   describe '#update' do
     it 'updates a Topic belonging to Topic editor' do
+      articles_csv = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+      users_csv = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+
+      expect_any_instance_of(Topic).to receive(:queue_users_import)
+
       sign_in topic_editor
       topic = topic_editor.topics.first
       params = {
         topic: {
-          name: 'My New Topic Name'
+          name: 'My New Topic Name',
+          articles_csv:,
+          users_csv:
         }
       }
       put("/api/topics/#{topic.id}", params:)
