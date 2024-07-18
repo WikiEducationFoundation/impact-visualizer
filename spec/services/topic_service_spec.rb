@@ -40,9 +40,14 @@ describe TopicService do
   end
 
   describe '#create_topic' do
-    it 'creates topic and topic_editor_topic' do
+    it 'creates topic and topic_editor_topic, does not queue import' do
       topic_params = build(:topic).attributes
+      topic_params[:articles_csv] = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+      topic_params[:users_csv] = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
       topic_service = described_class.new(topic_editor:)
+
+      expect_any_instance_of(Topic).not_to receive(:queue_users_import)
+
       topic = topic_service.create_topic(topic_params:)
       expect(topic).to be_a Topic
       expect(topic).to have_attributes(
@@ -51,6 +56,31 @@ describe TopicService do
         slug: topic_params['slug'],
         wiki: Wiki.find(topic_params['wiki_id'])
       )
+      expect(topic.users_csv.attached?).to eq(true)
+      expect(topic.articles_csv.attached?).to eq(true)
+      expect(topic.topic_editors).to include(topic_editor)
+      expect(topic_editor.topics).to include(topic)
+    end
+
+    it 'creates topic and topic_editor_topic, queues import' do
+      topic_params = build(:topic).attributes
+      topic_service = described_class.new(topic_editor:, auto_import: true)
+      topic_params[:articles_csv] = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+      topic_params[:users_csv] = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+
+      expect_any_instance_of(Topic).to receive(:queue_users_import)
+
+      topic = topic_service.create_topic(topic_params:)
+      expect(topic).to be_a Topic
+      expect(topic).to have_attributes(
+        name: topic_params['name'],
+        description: topic_params['description'],
+        slug: topic_params['slug'],
+        wiki: Wiki.find(topic_params['wiki_id'])
+      )
+
+      expect(topic.users_csv.attached?).to eq(true)
+      expect(topic.articles_csv.attached?).to eq(true)
       expect(topic.topic_editors).to include(topic_editor)
       expect(topic_editor.topics).to include(topic)
     end
@@ -64,16 +94,38 @@ describe TopicService do
       end.to raise_error(ImpactVisualizerErrors::TopicMissing)
     end
 
-    it 'updates topic' do
+    it 'updates topic, does not queue import' do
+      expect_any_instance_of(Topic).not_to receive(:queue_users_import)
       topic_service = described_class.new(topic:, topic_editor:)
       topic = topic_service.update_topic(topic_params: {
         name: 'New Topic Name',
-        description: 'New Topic Description'
+        description: 'New Topic Description',
+        articles_csv: fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv'),
+        users_csv: fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
       })
       expect(topic).to have_attributes(
         name: 'New Topic Name',
         description: 'New Topic Description'
       )
+      expect(topic.users_csv.attached?).to eq(true)
+      expect(topic.articles_csv.attached?).to eq(true)
+    end
+
+    it 'updates topic, queues import' do
+      expect_any_instance_of(Topic).to receive(:queue_users_import)
+      topic_service = described_class.new(topic:, topic_editor:, auto_import: true)
+      topic = topic_service.update_topic(topic_params: {
+        name: 'New Topic Name',
+        description: 'New Topic Description',
+        articles_csv: fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv'),
+        users_csv: fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+      })
+      expect(topic).to have_attributes(
+        name: 'New Topic Name',
+        description: 'New Topic Description'
+      )
+      expect(topic.users_csv.attached?).to eq(true)
+      expect(topic.articles_csv.attached?).to eq(true)
     end
   end
 

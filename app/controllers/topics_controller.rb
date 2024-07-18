@@ -19,14 +19,14 @@ class TopicsController < ApiController
   end
 
   def create
-    topic_service = TopicService.new(topic_editor: current_topic_editor)
+    topic_service = TopicService.new(topic_editor: current_topic_editor, auto_import: true)
     @topic = topic_service.create_topic(topic_params:)
     render :show
   end
 
   def update
     topic = current_topic_editor.topics.find(params[:id])
-    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:, auto_import: true)
     @topic = topic_service.update_topic(topic_params:)
     render :show
   end

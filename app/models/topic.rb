@@ -84,6 +84,10 @@ class Topic < ApplicationRecord
     topic_timepoints.count || 0
   end
 
+  def summaries_count
+    topic_summaries.count || 0
+  end
+
   def user_count
     users.count || 0
   end
