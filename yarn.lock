@@ -2944,7 +2944,7 @@ __metadata:
     react-router-dom: "npm:^6.15.0"
     react-select: "npm:^5.8.0"
     rucksack-css: "npm:^1.0.2"
-    uuid: ^10.0.0
+    uuid: "npm:^10.0.0"
     vega: "npm:^5.25.0"
     vega-embed: "npm:^6.22.2"
     vega-lite: "npm:^5.15.0"
@@ -5756,7 +5756,7 @@ __metadata:
   resolution: "uuid@npm:10.0.0"
   bin:
     uuid: dist/bin/uuid
-  checksum: 4b81611ade2885d2313ddd8dc865d93d8dccc13ddf901745edca8f86d99bc46d7a330d678e7532e7ebf93ce616679fb19b2e3568873ac0c14c999032acb25869
+  checksum: 10/4b81611ade2885d2313ddd8dc865d93d8dccc13ddf901745edca8f86d99bc46d7a330d678e7532e7ebf93ce616679fb19b2e3568873ac0c14c999032acb25869
   languageName: node
   linkType: hard
 
