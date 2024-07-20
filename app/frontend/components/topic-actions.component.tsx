@@ -1,7 +1,8 @@
 // NPM
 import _ from 'lodash';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
+import cn from 'classnames';
 
 // Types
 
@@ -10,46 +11,29 @@ import TopicAction from './topic-action.component';
 
 // Utils
 
-function renderActions(topic) {
+function renderActions({ topic, setCanEditTopic }) {
   const output:React.JSX.Element[] = [];
   const actions:String[] = [];
   let proceed = true;
 
-  if (proceed && !topic.users_csv_filename) {
-    actions.push('users');
-    proceed = false;
-  }
-
-  if (proceed && !topic.articles_csv_filename) {
-    actions.push('articles');
-    proceed = false;
-  }
-
-  if (proceed && topic.user_count === 0) {
-    actions.push('users');
-    proceed = false;
-  }
-
-  if (proceed && topic.articles_count === 0) {
-    actions.push('articles');
-    proceed = false;
-  }
-
-  if (topic.user_count > 0 && topic.articles_count > 0 && 
-      topic.summaries_count === 0) {
+  if (topic.user_count > 0 && topic.articles_count > 0 &&
+      (!topic.users_import_status || topic.users_import_status === 'idle' || topic.users_import_status === 'complete') &&
+      (!topic.articles_import_status || topic.articles_import_status === 'idle' || topic.articles_import_status === 'complete')) {
     actions.push('timepoints');
-    proceed = false;
+    proceed = true;
   }
+
+  actions.push('users');
+  if (!topic.users_csv_filename) proceed = false;
 
   if (proceed) {
-    actions.push('timepoints');
-    actions.push('users');
     actions.push('articles');
   }
-
+  
   actions.forEach((action) => {
     output.push(
       <TopicAction
+        setCanEditTopic={setCanEditTopic}
         topic={topic}
         key={action as React.Key}
         actionKey={action}
@@ -61,12 +45,14 @@ function renderActions(topic) {
 }
 
 function TopicActions({ topic }) {
+  const [canEditTopic, setCanEditTopic] = useState<boolean>(true);
+
   return (
     <div className="TopicActions">
       <h4>Management Actions</h4>
       
       <div className="TopicActions-actions">
-        {renderActions(topic)}
+        {renderActions({ topic, setCanEditTopic })}
       </div>
 
       <div className="TopicActions-finePrint">
@@ -76,7 +62,10 @@ function TopicActions({ topic }) {
       
       <Link
         to={`/my-topics/edit/${topic.id}`}
-        className="Button"
+        className={cn({
+          "Button": true,
+          "Button--disabled": !canEditTopic
+        })}
       >
         Edit Topic
       </Link>

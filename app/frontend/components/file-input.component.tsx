@@ -3,10 +3,10 @@ import React from 'react';
 import { UseControllerProps, useController, FieldValues } from 'react-hook-form';
 
 type Props = {
-  label: String,
-  hint?: String,
-  currentFilename?: String,
-  currentFilePath?: String
+  label?: string,
+  hint?: string | Function,
+  currentFilename?: string,
+  currentFilePath?: string
 } & UseControllerProps<FieldValues>
 
 export default function FileInput(props: Props) {
@@ -15,12 +15,14 @@ export default function FileInput(props: Props) {
 
   return (
     <div className="Input Input--file">
-      <label>
-        {label}
-        {rules?.required &&
-          <span>*</span>
-        }
-      </label>
+      {label &&
+        <label>
+          {label}
+          {rules?.required &&
+            <span>*</span>
+          }
+        </label>
+      }
 
       <div
         className="FileInput-fieldWrapper"
@@ -54,9 +56,8 @@ export default function FileInput(props: Props) {
         />
       </div>
 
-
       {hint &&
-        <div className="Input-hint">{hint}</div>
+        <div className="Input-hint">{typeof hint === 'function' ? hint() : hint}</div>
       }
 
       {fieldState.invalid &&

@@ -1,10 +1,14 @@
 // NPM
 import React from 'react';
+import cn from 'classnames';
 
-function Spinner() {
+function Spinner({ size = 'large' }) {
   return (
     <div
-      className="Spinner"
+      className={cn({
+        'Spinner': true,
+        [`Spinner--${size}`]: true
+      })}
     />
   );
 }
