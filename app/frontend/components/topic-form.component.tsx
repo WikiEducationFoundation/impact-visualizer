@@ -39,7 +39,7 @@ function TopicForm({ onSubmit, defaultValues, saving }) {
 
   const wikiOptions = _.map(wikis, (wiki) => {
     return {
-      label: `${wiki.project} / ${wiki.language}`,
+      label: `${wiki.language}.${wiki.project}`,
       value: wiki.id
     }
   })
@@ -86,7 +86,7 @@ function TopicForm({ onSubmit, defaultValues, saving }) {
         <SelectInput
           name="wiki_id"
           options={wikiOptions}
-          label="Related Wiki Project"
+          label="Wiki"
           rules={{ required: 'A Wiki Project is required' }}
           control={control}
         />

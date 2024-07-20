@@ -2,7 +2,6 @@
 import _ from 'lodash';
 import React from 'react';
 import cn from 'classnames';
-import { Link } from 'react-router-dom';
 import { UseMutateFunction, useMutation, 
          useQueryClient } from '@tanstack/react-query';
 import pluralize from 'pluralize';
@@ -12,6 +11,9 @@ import Topic from '../types/topic.type';
 
 // Misc
 import TopicService from '../services/topic.service';
+
+// Components
+import FileUploadForm from './file-upload-form.component';
 
 const actions = {
   articles: {
@@ -30,6 +32,7 @@ const actions = {
       return topic.articles_import_percent_complete;
     },
     renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+      return null;
       const actionLabel = topic.articles_count > 0 ? 'Reimport' : 'Import';
       return (
         <button
@@ -40,18 +43,34 @@ const actions = {
         </button>
       )
     },
-    renderNotReady: (topic: Topic) => {
+    renderNotReady: (topic: Topic, setCanEditTopic: Function) => {
       return (
-        <span>
-          You must
-          {' '}
-          <Link
-            className="u-bottomBorder"
-            to={`/my-topics/edit/${topic.id}`}>attach a CSV file
-          </Link>
-          {' '}
-          containing Articles data before importing.
-        </span>
+        <div>
+          <div className="u-mb05">
+            You must attach a CSV file containing Article data before importing.
+          </div>
+
+          <FileUploadForm
+            defaultValues={topic}
+            label={null}
+            name="articles_csv"
+            onSubmitHook={() => {
+              setCanEditTopic(false)
+            }}
+            onCompleteHook={() => {
+              setCanEditTopic(true)
+            }}
+            hint={() => {
+              return (
+                <a href="/csv/topic-articles-example.csv" target="_blank">
+                  See example of Articles CSV file
+                </a>
+              )
+            }}
+            currentFilename={topic.articles_csv_filename}
+            currentFilePath={topic.articles_csv_url}
+          />
+        </div>
       );
     },
     renderCurrentCount: (topic: Topic) => {
@@ -79,6 +98,8 @@ const actions = {
       return topic.users_import_percent_complete;
     },
     renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+      return null;
+
       const actionLabel = topic.user_count > 0 ? 'Reimport' : 'Import';
       return (
         <button
@@ -89,11 +110,34 @@ const actions = {
         </button>
       )
     },
-    renderNotReady: (topic: Topic) => { 
+    renderNotReady: (topic: Topic, setCanEditTopic: Function) => { 
       return (
-        <span>
-          You must <Link className="u-bottomBorder" to={`/my-topics/edit/${topic.id}`}>attach a CSV file</Link> containing Users data before importing.
-        </span>
+        <div>
+          <div className="u-mb05">
+            You must attach a CSV file containing User data before importing.
+          </div>
+
+          <FileUploadForm
+            defaultValues={topic}
+            label={null}
+            name="users_csv"
+            onSubmitHook={() => {
+              setCanEditTopic(false)
+            }}
+            onCompleteHook={() => {
+              setCanEditTopic(true)
+            }}
+            hint={() => {
+              return (
+                <a href="/csv/topic-users-example.csv" target="_blank">
+                  See example of Users CSV file
+                </a>
+              )
+            }}
+            currentFilename={topic.users_csv_filename}
+            currentFilePath={topic.users_csv_url}
+          />
+        </div>
       );
     },
     renderCurrentCount: (topic: Topic) => {
@@ -160,7 +204,7 @@ const actions = {
   }
 }
 
-function TopicAction({ topic, actionKey }) {
+function TopicAction({ topic, actionKey, setCanEditTopic }) {
   const queryClient = useQueryClient()
   const action = actions[actionKey];
 
@@ -203,7 +247,7 @@ function TopicAction({ topic, actionKey }) {
 
       {isReady && action.renderCurrentCount(topic)}
 
-      {!isReady && action.renderNotReady(topic)}
+      {!isReady && action.renderNotReady(topic, setCanEditTopic)}
     </div>
   );
 }
