@@ -57,4 +57,22 @@ type CategoryNode = {
   parent?: string | number;
 };
 
-export type { SPARQLResponse, MediaWikiResponse, CategoryNode };
+type QueryProperty = {
+  key: string;
+  property: string;
+  qValue: { id: string; label: string };
+};
+
+type Suggestion = {
+  label: string;
+  description: string;
+  id: string;
+};
+
+export type {
+  SPARQLResponse,
+  MediaWikiResponse,
+  CategoryNode,
+  QueryProperty,
+  Suggestion,
+};

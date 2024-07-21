@@ -1,19 +1,20 @@
 import React from "react";
 import { BiSolidTrashAlt } from "react-icons/bi";
+import AutocompleteInput from "./autocomplete-input.component";
+import { QueryProperty, Suggestion } from "../types/search-tool.type";
 
 export default function QueryItem({
-  handleChange,
-  handleTextFieldChange,
-  property,
-  qValue,
-  properties,
+  handlePropertyChange,
+  handleQValueChange,
+  queryItemsData,
   handleRemoveQueryItem,
   index,
 }: QueryItemProps) {
+  const property = queryItemsData[index].property;
   return (
     <div className="Box QueryItem u-mt1">
       <select
-        onChange={(e) => handleChange(index, e.target.value)}
+        onChange={(e) => handlePropertyChange(index, e.target.value)}
         value={property}
         required
       >
@@ -22,14 +23,13 @@ export default function QueryItem({
         <option value="ethnicity">Ethnicity</option>
         <option value="occupation">Occupation</option>
       </select>
-      <input
-        type="text"
-        value={qValue}
-        onChange={(e) => handleTextFieldChange(index, e.target.value)}
-        placeholder="Enter a Value"
-        required
+      <AutocompleteInput
+        index={index}
+        property={property}
+        handleQValueChange={handleQValueChange}
       />
-      {properties.length > 1 && (
+
+      {queryItemsData.length > 1 && (
         <div
           className="RemoveIcon"
           onClick={() => handleRemoveQueryItem(index)}
@@ -42,16 +42,9 @@ export default function QueryItem({
 }
 
 type QueryItemProps = {
-  handleChange: (index: number, value: string) => void;
-  handleTextFieldChange: (index: number, value: string) => void;
-  property: string;
-  qValue: string;
-  properties: QueryProperty[];
+  handlePropertyChange: (index: number, value: string) => void;
+  handleQValueChange: (index: number, value: Suggestion) => void;
+  queryItemsData: QueryProperty[];
   handleRemoveQueryItem: (index: number) => void;
   index: number;
-};
-
-type QueryProperty = {
-  property: string;
-  qValue: string;
 };
