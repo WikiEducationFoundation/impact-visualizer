@@ -11,24 +11,25 @@ import { CheckBoxIcon } from "./tree-icons.component";
 
 export default function WikipediaCategoryPage() {
   const [categoryURL, setCategoryURL] = useState<string>("");
+  const [languageCode, setLanguageCode] = useState<string>("");
+
   const [SubcatsData, setSubcatsData] = useState<CategoryNode>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setCategoryURL(event.target.value);
-  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      let categoryName = categoryURL;
+      let categoryName = decodeURI(categoryURL);
       if (categoryURL.startsWith("https://")) {
-        categoryName = categoryURL.split("/").slice(-1)[0];
+        categoryName = decodeURI(categoryURL.split("/").slice(-1)[0]);
       } else if (!categoryURL.toUpperCase().startsWith("CATEGORY:")) {
         categoryName = "Category:" + categoryURL;
       }
-      const fetchedSubcatsAndPages = await fetchSubcatsAndPages(categoryName);
+      const fetchedSubcatsAndPages = await fetchSubcatsAndPages(
+        categoryName,
+        languageCode
+      );
       if (!fetchedSubcatsAndPages) {
         throw new Error("Invalid Response (possibly null)");
       }
@@ -83,13 +84,22 @@ export default function WikipediaCategoryPage() {
         </div>
         <br />
         <h3>Enter a category URL, select and browse subcategories</h3>
-        <input
-          type="text"
-          value={categoryURL}
-          onChange={handleChange}
-          placeholder="Enter a Category URL"
-          required
-        />
+        <div>
+          <input
+            type="text"
+            value={categoryURL}
+            onChange={(event) => setCategoryURL(event.target.value)}
+            placeholder="Enter a Category URL"
+            required
+          />
+          <input
+            type="text"
+            value={languageCode}
+            onChange={(event) => setLanguageCode(event.target.value)}
+            placeholder="Language Code"
+            required
+          />
+        </div>
         <button type="submit" className="Button u-mt1" disabled={isLoading}>
           Run Query
         </button>
@@ -99,7 +109,7 @@ export default function WikipediaCategoryPage() {
           <LoadingOval visible={isLoading} height="100" width="100" />
         </div>
       ) : SubcatsData ? (
-        <CategoryTree treeData={SubcatsData} />
+        <CategoryTree treeData={SubcatsData} languageCode={languageCode} />
       ) : (
         ""
       )}

@@ -6,6 +6,12 @@ import {
 } from "../types/search-tool.type";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 
+const removeCategoryPrefix = (categoryString: string): string => {
+  return categoryString.substring(
+    categoryString.indexOf(":") + 1
+  ); /* slice out category prefix */
+};
+
 function buildWikidataQuery(
   occupationIDs: string[],
   genderID: string,
@@ -90,7 +96,7 @@ const convertInitialResponseToTree = (
   const pages = response.query.pages;
 
   const parentNode: CategoryNode = {
-    name: parentName.slice(9).replaceAll("_", " "),
+    name: removeCategoryPrefix(parentName).replaceAll("_", " "),
     isBranch: true,
     id: elementId + 1,
     metadata: {},
@@ -118,9 +124,9 @@ const convertInitialResponseToTree = (
       if (isDuplicateNode) {
         continue;
       }
-      const categoryName: string = `${
-        value.title.slice(9) /* slice out "category:" prefix */
-      } (${value.categoryinfo.subcats} C, ${value.categoryinfo.pages} P)`;
+      const categoryName: string = `${removeCategoryPrefix(value.title)} (${
+        value.categoryinfo.subcats
+      } C, ${value.categoryinfo.pages} P)`;
 
       parentNode.children?.push({
         name: categoryName,
@@ -153,9 +159,9 @@ const convertResponseToTree = (
   const subcats: INode<IFlatMetadata>[] = [];
   for (const [, value] of Object.entries(pages)) {
     if (value.categoryinfo) {
-      const categoryName: string = `${
-        value.title.slice(9) /* slice out "category:" prefix */
-      } (${value.categoryinfo.subcats} C, ${value.categoryinfo.pages} P)`;
+      const categoryName: string = `${removeCategoryPrefix(value.title)} (${
+        value.categoryinfo.subcats
+      } C, ${value.categoryinfo.pages} P)`;
 
       subcats.push({
         name: categoryName,

@@ -2,10 +2,12 @@ import { MediaWikiResponse } from "../types/search-tool.type";
 
 async function fetchSubcatsAndPages(
   categoryIdentifier: string | number,
+  languageCode: string,
   usePageID: boolean = false
 ): Promise<MediaWikiResponse | null> {
   let queriedSubcatsJSON: MediaWikiResponse | null = null;
   try {
+    let baseURL = `https://${languageCode}.wikipedia.org/w/api.php`;
     let identifier: string = "";
     if (usePageID) {
       identifier = `gcmpageid=${categoryIdentifier}`;
@@ -13,9 +15,7 @@ async function fetchSubcatsAndPages(
       identifier = `gcmtitle=${categoryIdentifier}`;
     }
     const urlParams: string = `action=query&generator=categorymembers&gcmlimit=500&prop=categoryinfo&${identifier}&format=json&origin=*`;
-    const response = await fetch(
-      `https://en.wikipedia.org/w/api.php?${urlParams}`
-    );
+    const response = await fetch(`${baseURL}?${urlParams}`);
 
     if (!response.ok) {
       throw new Error("Network response was not ok.");
@@ -25,7 +25,7 @@ async function fetchSubcatsAndPages(
 
     while (queriedSubcatsJSON?.continue?.continue) {
       const continueResponse = await fetch(
-        `https://en.wikipedia.org/w/api.php?gcmcontinue=${queriedSubcatsJSON?.continue?.gcmcontinue}&${urlParams}`
+        `${baseURL}?gcmcontinue=${queriedSubcatsJSON?.continue?.gcmcontinue}&${urlParams}`
       );
       const continueSubcatsJSON: MediaWikiResponse =
         await continueResponse.json();
