@@ -47,6 +47,7 @@ dump.rdb
 /config/master.key
 /config/credentials.yml.enc
 /config/credentials/production.key
+/config/credentials/wmcloud.key
 /config/credentials/development.key
 
 # Vite Ruby
@@ -63,3 +64,4 @@ node_modules
 
 # JS-specific files
 package-lock.json
+/config/credentials/wmcloud.key
