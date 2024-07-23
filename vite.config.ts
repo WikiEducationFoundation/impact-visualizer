@@ -4,6 +4,9 @@ import react from '@vitejs/plugin-react'
 import Environment from 'vite-plugin-environment';
 
 export default defineConfig({
+  build: {
+    sourcemap: false
+  },
   plugins: [
     ViteRails(),
     react(),
