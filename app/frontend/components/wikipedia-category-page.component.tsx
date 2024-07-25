@@ -1,8 +1,11 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import { CategoryNode } from "../types/search-tool.type";
 import CategoryTree from "./category-tree.component";
 import LoadingOval from "./loading-oval.component";
-import { convertInitialResponseToTree } from "../utils/search-utils";
+import {
+  convertInitialResponseToTree,
+  removeCategoryPrefix,
+} from "../utils/search-utils";
 import { fetchSubcatsAndPages } from "../services/articles.service";
 import React from "react";
 import toast from "react-hot-toast";
@@ -10,7 +13,7 @@ import { BsExclamationCircleFill } from "react-icons/bs";
 import { CheckBoxIcon } from "./tree-icons.component";
 
 export default function WikipediaCategoryPage() {
-  const [categoryURL, setCategoryURL] = useState<string>("");
+  const [categoryText, setCategoryText] = useState<string>("");
   const [languageCode, setLanguageCode] = useState<string>("");
 
   const [SubcatsData, setSubcatsData] = useState<CategoryNode>();
@@ -20,11 +23,13 @@ export default function WikipediaCategoryPage() {
     event.preventDefault();
     setIsLoading(true);
     try {
-      let categoryName = decodeURI(categoryURL);
-      if (categoryURL.startsWith("https://")) {
-        categoryName = decodeURI(categoryURL.split("/").slice(-1)[0]);
-      } else if (!categoryURL.toUpperCase().startsWith("CATEGORY:")) {
-        categoryName = "Category:" + categoryURL;
+      let categoryName = decodeURI(categoryText);
+      if (categoryText.startsWith("https://")) {
+        categoryName = decodeURI(categoryText.split("/").slice(-1)[0]);
+      } else if (categoryText.includes(":")) {
+        categoryName = `category:${removeCategoryPrefix(categoryName)}`;
+      } else {
+        categoryName = `category:${categoryName}`;
       }
       const fetchedSubcatsAndPages = await fetchSubcatsAndPages(
         categoryName,
@@ -46,7 +51,9 @@ export default function WikipediaCategoryPage() {
       );
     } catch (error: unknown) {
       if (error instanceof Error) {
-        toast.error("Failed to fetch subcategories");
+        toast.error(
+          "Failed to fetch subcategories, Make sure your chosen language code is correct!"
+        );
         console.error(error.message);
       } else {
         toast.error("Something went wrong!");
@@ -83,20 +90,20 @@ export default function WikipediaCategoryPage() {
           the given category is not selected
         </div>
         <br />
-        <h3>Enter a category URL, select and browse subcategories</h3>
-        <div>
-          <input
-            type="text"
-            value={categoryURL}
-            onChange={(event) => setCategoryURL(event.target.value)}
-            placeholder="Enter a Category URL"
-            required
-          />
+        <h3>Enter a category URL or Title, select and browse subcategories</h3>
+        <div className="CategorySearch">
           <input
             type="text"
             value={languageCode}
             onChange={(event) => setLanguageCode(event.target.value)}
             placeholder="Language Code"
+            required
+          />
+          <input
+            type="text"
+            value={categoryText}
+            onChange={(event) => setCategoryText(event.target.value)}
+            placeholder="Category URL or Title"
             required
           />
         </div>

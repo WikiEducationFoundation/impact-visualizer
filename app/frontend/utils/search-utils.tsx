@@ -6,10 +6,9 @@ import {
 } from "../types/search-tool.type";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 
+/* slice out category prefix */
 const removeCategoryPrefix = (categoryString: string): string => {
-  return categoryString.substring(
-    categoryString.indexOf(":") + 1
-  ); /* slice out category prefix */
+  return categoryString.substring(categoryString.indexOf(":") + 1);
 };
 
 function buildWikidataQuery(
@@ -64,15 +63,10 @@ function convertSPARQLArticlesToCSV(
   return csvContent;
 }
 
-function convertCategoryArticlesToCSV(
-  categories: IterableIterator<INode<IFlatMetadata>>
-): string {
+function convertCategoryArticlesToCSV(articles: string[]): string {
   let csvContent = "data:text/csv;charset=utf-8,";
-  for (const category of categories) {
-    const metadata = category.metadata || {};
-    for (const article of Object.values(metadata)) {
-      csvContent += `"${article}"\n`;
-    }
+  for (const article of articles) {
+    csvContent += `"${article}"\n`;
   }
 
   return csvContent;
@@ -179,6 +173,23 @@ const convertResponseToTree = (
   return subcats;
 };
 
+const removeDuplicateArticles = (
+  selectedArticles: {
+    articleId: string;
+    articleTitle: string;
+  }[]
+) => {
+  const uniqueIds = new Set();
+  return selectedArticles.filter((article) => {
+    if (uniqueIds.has(article.articleId)) {
+      return false;
+    } else {
+      uniqueIds.add(article.articleId);
+      return true;
+    }
+  });
+};
+
 export {
   buildWikidataQuery,
   convertSPARQLArticlesToCSV,
@@ -186,4 +197,6 @@ export {
   downloadAsCSV,
   convertInitialResponseToTree,
   convertResponseToTree,
+  removeCategoryPrefix,
+  removeDuplicateArticles,
 };
