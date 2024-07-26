@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import TreeView, {
   INode,
   ITreeViewOnExpandProps,
@@ -7,8 +7,6 @@ import TreeView, {
   NodeId,
   flattenTree,
 } from "react-accessible-treeview";
-import { FaSquare, FaCheckSquare, FaMinusSquare } from "react-icons/fa";
-import { IoMdArrowDropright } from "react-icons/io";
 import { AiOutlineLoading } from "react-icons/ai";
 import { CategoryNode } from "../types/search-tool.type";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
@@ -19,7 +17,13 @@ import toast from "react-hot-toast";
 import { BsExclamationCircleFill } from "react-icons/bs";
 import { ArrowIcon, CheckBoxIcon } from "./tree-icons.component";
 
-export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
+export default function CategoryTree({
+  treeData,
+  languageCode,
+}: {
+  treeData: CategoryNode;
+  languageCode: string;
+}) {
   const [categoryTree, setCategoryTree] = useState<INode<IFlatMetadata>[]>(
     flattenTree(treeData)
   );
@@ -62,7 +66,11 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
     if (depth > DEPTH_LIMIT && node.isBranch) {
       return [];
     }
-    const fetchedSubcatsAndPages = await fetchSubcatsAndPages(node.id, true);
+    const fetchedSubcatsAndPages = await fetchSubcatsAndPages(
+      node.id,
+      languageCode,
+      true
+    );
     if (!fetchedSubcatsAndPages) {
       toast.error("Failed to fetch subcategories");
       return [];
@@ -114,6 +122,7 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
     ) {
       const fetchedSubcatsAndPages = await fetchSubcatsAndPages(
         selectProps.element.id,
+        languageCode,
         true
       );
       if (!fetchedSubcatsAndPages) {
@@ -158,7 +167,6 @@ export default function CategoryTree({ treeData }: { treeData: CategoryNode }) {
   // This function checks for any unselected children that may belong to a parent node
   // This is used as a flag to display to the user whether or not there are unfetched/unselected child nodes further down the tree
   const hasUnselectedChildNodes = (element: INode<IFlatMetadata>) => {
-    console.log(element);
     return element.children.some((childNodeId) => {
       const childNode = manuallySelectedNodes.get(childNodeId);
       return childNode?.isBranch && childNode.children.length === 0;

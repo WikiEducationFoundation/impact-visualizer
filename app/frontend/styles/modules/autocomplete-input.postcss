@@ -1,0 +1,52 @@
+.Autocomplete {
+  position: relative;
+  width: 300px;
+  flex-grow: 1;
+  .AutocompleteInput {
+    padding: 1rem 0.75rem;
+  }
+  .SuggestionsList {
+    position: absolute;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1;
+  }
+
+  .SuggestionItem {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+
+    &:hover,
+    &:focus {
+      background-color: #f0f0f0;
+    }
+    &.active {
+      background-color: #f0f0f0;
+    }
+
+    .SuggestionLabel {
+      font-weight: bold;
+    }
+
+    .SuggestionDescription {
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .NoSuggestionsItem {
+      padding: 8px;
+      text-align: center;
+      color: #888;
+    }
+  }
+}

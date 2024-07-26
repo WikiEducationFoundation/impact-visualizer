@@ -1,15 +1,20 @@
 import { FormEvent, useState } from "react";
-import { SPARQLResponse } from "../types/search-tool.type";
+import {
+  QueryProperty,
+  SPARQLResponse,
+  Suggestion,
+} from "../types/search-tool.type";
 import QueryItem from "./query-item.component";
 import { buildWikidataQuery } from "../utils/search-utils";
 import ArticlesTable from "./articles-table.component";
 import LoadingOval from "./loading-oval.component";
 import React from "react";
 import toast from "react-hot-toast";
+import { v4 as uuidv4 } from "uuid";
 
 export default function QueryBuilder() {
   const [queryItemsData, setQueryItemsData] = useState<QueryProperty[]>([
-    { property: "", qValue: "" },
+    { key: uuidv4(), property: "", qValue: { id: "", label: "" } },
   ]);
   const [articles, setArticles] = useState<
     {
@@ -28,26 +33,32 @@ export default function QueryBuilder() {
 
   const handleAddQueryItem = () => {
     if (queryItemsData.length < 5) {
-      setQueryItemsData([...queryItemsData, { property: "", qValue: "" }]);
+      setQueryItemsData([
+        ...queryItemsData,
+        { key: uuidv4(), property: "", qValue: { id: "", label: "" } },
+      ]);
     }
   };
 
-  const handleRemoveQueryItem = (index: number) => {
+  const handleRemoveQueryItem = (indexToRemove: number) => {
     if (queryItemsData.length > 1) {
       const updatedProperties = queryItemsData.filter(
-        (_, idx) => idx !== index
+        (_, idx) => idx !== indexToRemove
       );
       setQueryItemsData(updatedProperties);
     }
   };
 
-  const handleChange = (
-    index: number,
-    field: "property" | "qValue",
-    value: string
-  ) => {
+  const handlePropertyChange = (index: number, value: string) => {
     const updatedProperties = [...queryItemsData];
-    updatedProperties[index][field] = value;
+    updatedProperties[index]["property"] = value;
+    setQueryItemsData(updatedProperties);
+  };
+
+  const handleQValueChange = (index: number, value: Suggestion) => {
+    const updatedProperties = [...queryItemsData];
+    updatedProperties[index]["qValue"].id = value.id;
+    updatedProperties[index]["qValue"].label = value.label;
     setQueryItemsData(updatedProperties);
   };
 
@@ -70,9 +81,9 @@ export default function QueryBuilder() {
     );
 
     const query: string = buildWikidataQuery(
-      occupations.map((occupation) => occupation.qValue),
-      gender.length > 0 ? gender[0].qValue : "",
-      ethnicity.length > 0 ? ethnicity[0].qValue : ""
+      occupations.map((occupation) => occupation.qValue.id),
+      gender.length > 0 ? gender[0].qValue.id : "",
+      ethnicity.length > 0 ? ethnicity[0].qValue.id : ""
     );
     try {
       const response = await fetch(
@@ -108,20 +119,14 @@ export default function QueryBuilder() {
 
       <form onSubmit={(e) => handleSubmit(e)}>
         <h3>Select Properties</h3>
-        {queryItemsData.map((property, index) => (
+        {queryItemsData.map((item, index) => (
           <QueryItem
-            handleChange={(index, value) =>
-              handleChange(index, "property", value)
-            }
-            handleTextFieldChange={(index, value) =>
-              handleChange(index, "qValue", value)
-            }
+            handlePropertyChange={handlePropertyChange}
+            handleQValueChange={handleQValueChange}
             handleRemoveQueryItem={handleRemoveQueryItem}
             index={index}
-            key={index}
-            properties={queryItemsData}
-            property={property.property}
-            qValue={property.qValue}
+            key={item.key}
+            queryItemsData={queryItemsData}
           />
         ))}
         {queryItemsData.length < 5 && (
@@ -142,7 +147,7 @@ export default function QueryBuilder() {
 
       {isLoading ? (
         <div className="OvalContainer">
-          <LoadingOval visible={isLoading} />
+          <LoadingOval visible={isLoading} height="120" width="120" />
         </div>
       ) : articles.length > 0 ? (
         <ArticlesTable articles={articles} />
@@ -152,8 +157,3 @@ export default function QueryBuilder() {
     </div>
   );
 }
-
-type QueryProperty = {
-  property: string;
-  qValue: string;
-};
