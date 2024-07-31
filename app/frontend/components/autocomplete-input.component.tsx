@@ -13,6 +13,7 @@ import { debounce } from "lodash";
 import SuggestionsList, {
   SuggestionsListHandle,
 } from "./suggestions-list.component";
+import toast from "react-hot-toast";
 
 const AutocompleteInput = ({
   index,
@@ -63,6 +64,9 @@ const AutocompleteInput = ({
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
+      if (data?.errors) {
+        toast.error(data.errors[0].text);
+      }
       const suggestions = data.search.map((item) => ({
         label: item.display.label.value,
         description: item.display.description

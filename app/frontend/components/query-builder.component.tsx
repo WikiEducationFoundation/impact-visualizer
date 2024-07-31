@@ -65,6 +65,10 @@ export default function QueryBuilder() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (languageCode.trim() === "") {
+      toast.error("Language code cannot be empty!");
+      return;
+    }
     const fetchedArticles = await fetchArticlesByQuery();
     setArticles(fetchedArticles.results.bindings);
   };
@@ -84,7 +88,8 @@ export default function QueryBuilder() {
     const query: string = buildWikidataQuery(
       occupations.map((occupation) => occupation.qValue.id),
       gender.length > 0 ? gender[0].qValue.id : "",
-      ethnicity.length > 0 ? ethnicity[0].qValue.id : ""
+      ethnicity.length > 0 ? ethnicity[0].qValue.id : "",
+      languageCode
     );
     try {
       const response = await fetch(
