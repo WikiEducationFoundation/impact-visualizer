@@ -9,6 +9,7 @@ export default function QueryItem({
   queryItemsData,
   handleRemoveQueryItem,
   index,
+  languageCode,
 }: QueryItemProps) {
   const property = queryItemsData[index].property;
   return (
@@ -27,6 +28,7 @@ export default function QueryItem({
         index={index}
         property={property}
         handleQValueChange={handleQValueChange}
+        languageCode={languageCode}
       />
 
       {queryItemsData.length > 1 && (
@@ -47,4 +49,5 @@ type QueryItemProps = {
   queryItemsData: QueryProperty[];
   handleRemoveQueryItem: (index: number) => void;
   index: number;
+  languageCode: string;
 };

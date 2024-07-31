@@ -29,6 +29,7 @@ export default function QueryBuilder() {
       };
     }[]
   >([]);
+  const [languageCode, setLanguageCode] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleAddQueryItem = () => {
@@ -115,10 +116,20 @@ export default function QueryBuilder() {
   }
   return (
     <div className="Container Container--padded">
-      <h1>Impact Search</h1>
+      <div className="BuilderHeader">
+        <h1>Impact Search</h1>
+        <input
+          type="text"
+          value={languageCode}
+          onChange={(event) => setLanguageCode(event.target.value)}
+          placeholder="Language Code"
+          required
+        />
+      </div>
 
       <form onSubmit={(e) => handleSubmit(e)}>
         <h3>Select Properties</h3>
+
         {queryItemsData.map((item, index) => (
           <QueryItem
             handlePropertyChange={handlePropertyChange}
@@ -127,6 +138,7 @@ export default function QueryBuilder() {
             index={index}
             key={item.key}
             queryItemsData={queryItemsData}
+            languageCode={languageCode}
           />
         ))}
         {queryItemsData.length < 5 && (
