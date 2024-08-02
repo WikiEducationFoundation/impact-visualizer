@@ -29,6 +29,7 @@ export default function QueryBuilder() {
       };
     }[]
   >([]);
+  const [languageCode, setLanguageCode] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleAddQueryItem = () => {
@@ -64,6 +65,10 @@ export default function QueryBuilder() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (languageCode.trim() === "") {
+      toast.error("Language code cannot be empty!");
+      return;
+    }
     const fetchedArticles = await fetchArticlesByQuery();
     setArticles(fetchedArticles.results.bindings);
   };
@@ -83,7 +88,8 @@ export default function QueryBuilder() {
     const query: string = buildWikidataQuery(
       occupations.map((occupation) => occupation.qValue.id),
       gender.length > 0 ? gender[0].qValue.id : "",
-      ethnicity.length > 0 ? ethnicity[0].qValue.id : ""
+      ethnicity.length > 0 ? ethnicity[0].qValue.id : "",
+      languageCode
     );
     try {
       const response = await fetch(
@@ -118,7 +124,17 @@ export default function QueryBuilder() {
       <h1>Impact Search</h1>
 
       <form onSubmit={(e) => handleSubmit(e)}>
+        <h3>Enter Language Code</h3>
+        <input
+          className="LanguageCodeInput"
+          type="text"
+          value={languageCode}
+          onChange={(event) => setLanguageCode(event.target.value)}
+          placeholder="Language Code"
+          required
+        />
         <h3>Select Properties</h3>
+
         {queryItemsData.map((item, index) => (
           <QueryItem
             handlePropertyChange={handlePropertyChange}
@@ -127,6 +143,7 @@ export default function QueryBuilder() {
             index={index}
             key={item.key}
             queryItemsData={queryItemsData}
+            languageCode={languageCode}
           />
         ))}
         {queryItemsData.length < 5 && (
