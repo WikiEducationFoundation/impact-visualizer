@@ -121,18 +121,18 @@ export default function QueryBuilder() {
   }
   return (
     <div className="Container Container--padded">
-      <div className="BuilderHeader">
-        <h1>Impact Search</h1>
+      <h1>Impact Search</h1>
+
+      <form onSubmit={(e) => handleSubmit(e)}>
+        <h3>Enter Language Code</h3>
         <input
+          className="LanguageCodeInput"
           type="text"
           value={languageCode}
           onChange={(event) => setLanguageCode(event.target.value)}
           placeholder="Language Code"
           required
         />
-      </div>
-
-      <form onSubmit={(e) => handleSubmit(e)}>
         <h3>Select Properties</h3>
 
         {queryItemsData.map((item, index) => (
