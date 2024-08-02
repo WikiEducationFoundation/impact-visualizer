@@ -14,7 +14,8 @@ const removeCategoryPrefix = (categoryString: string): string => {
 function buildWikidataQuery(
   occupationIDs: string[],
   genderID: string,
-  ethnicityID: string
+  ethnicityID: string,
+  languageCode: string
 ): string {
   const properties = {
     instanceOf: "P31",
@@ -44,8 +45,8 @@ function buildWikidataQuery(
 
   query += `
     ?article schema:about ?person .
-    ?article schema:isPartOf <https://en.wikipedia.org/>.
-    SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+    ?article schema:isPartOf <https://${languageCode}.wikipedia.org/>.
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode}" }
 }`;
 
   return encodeURIComponent(query);

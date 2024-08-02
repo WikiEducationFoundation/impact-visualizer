@@ -13,15 +13,18 @@ import { debounce } from "lodash";
 import SuggestionsList, {
   SuggestionsListHandle,
 } from "./suggestions-list.component";
+import toast from "react-hot-toast";
 
 const AutocompleteInput = ({
   index,
   property,
   handleQValueChange,
+  languageCode,
 }: {
   index: number;
   property: string;
   handleQValueChange: (index: number, value: Suggestion) => void;
+  languageCode: string;
 }) => {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [query, setQuery] = useState<string>("");
@@ -55,12 +58,15 @@ const AutocompleteInput = ({
     setIsLoading(true);
     try {
       const response = await fetch(
-        `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${query}&language=en&uselang=en&type=item&format=json&formatversion=2&errorformat=plaintext&origin=*&limit=12`
+        `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${query}&language=${languageCode}&uselang=${languageCode}&type=item&format=json&formatversion=2&errorformat=plaintext&origin=*&limit=12`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
+      if (data?.errors) {
+        toast.error(data.errors[0].text);
+      }
       const suggestions = data.search.map((item) => ({
         label: item.display.label.value,
         description: item.display.description
