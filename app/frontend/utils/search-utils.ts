@@ -191,6 +191,14 @@ const removeDuplicateArticles = (
   });
 };
 
+const parseDashboardURL = (url: string) => {
+  let newURL;
+  if (url.startsWith("https://dashboard.wikiedu.org/courses")) {
+    newURL = url.replace("https://dashboard.wikiedu.org/courses", "/api");
+  }
+  return newURL;
+};
+
 export {
   buildWikidataQuery,
   convertSPARQLArticlesToCSV,
@@ -200,4 +208,5 @@ export {
   convertResponseToTree,
   removeCategoryPrefix,
   removeDuplicateArticles,
+  parseDashboardURL,
 };

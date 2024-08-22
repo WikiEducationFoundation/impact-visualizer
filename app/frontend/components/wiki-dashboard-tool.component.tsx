@@ -5,20 +5,34 @@ import LoadingOval from "./loading-oval.component";
 export default function WikiDashboardTool() {
   const [courseURL, setCourseURL] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [usersData, setUsersData] = useState("");
+  const [articlesData, setArticlesData] = useState("");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
     event.preventDefault();
     try {
-      const response = await fetch(`${courseURL}/users.json`, {
-        headers: {
-          Accept: "application/sparql-results+json",
-        },
-      });
+      let [usersResponse, articlesResponse] = await Promise.allSettled([
+        fetch(`${courseURL}/users.json`),
+        fetch(`${courseURL}/articles.json`),
+      ]);
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok.");
+      if (usersResponse.status === "rejected" || !usersResponse.value.ok) {
+        toast("Failed to fetch users data.");
+        throw new Error("Failed to fetch users data.");
       }
+
+      if (
+        articlesResponse.status === "rejected" ||
+        !articlesResponse.value.ok
+      ) {
+        toast("Failed to fetch articles data.");
+        throw new Error("Failed to fetch articles data.");
+      }
+
+      const usersData = await usersResponse.value.json();
+      const articlesData = await articlesResponse.value.json();
+      console.log(usersData, articlesData);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(`Error fetching data`);
