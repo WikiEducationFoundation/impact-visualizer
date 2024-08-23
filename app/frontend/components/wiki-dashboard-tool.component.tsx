@@ -1,12 +1,17 @@
 import React, { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import LoadingOval from "./loading-oval.component";
+import {
+  CourseArticlesResponse,
+  CourseUsersResponse,
+} from "../types/search-tool.type";
+import CSVButton from "./CSV-button.component";
 
 export default function WikiDashboardTool() {
   const [courseURL, setCourseURL] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [usersData, setUsersData] = useState("");
-  const [articlesData, setArticlesData] = useState("");
+  const [usernames, setUsernames] = useState<string[]>();
+  const [articleTitles, setArticleTitles] = useState<string[]>();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
@@ -30,9 +35,22 @@ export default function WikiDashboardTool() {
         throw new Error("Failed to fetch articles data.");
       }
 
-      const usersData = await usersResponse.value.json();
-      const articlesData = await articlesResponse.value.json();
-      console.log(usersData, articlesData);
+      const usersResponseData: CourseUsersResponse =
+        await usersResponse.value.json();
+
+      const articlesResponseData: CourseArticlesResponse =
+        await articlesResponse.value.json();
+
+      const usernames = usersResponseData.course.users.map(
+        (user) => user.username
+      );
+
+      const articleTitles = articlesResponseData.course.articles.map(
+        (article) => article.title
+      );
+
+      setUsernames(usernames);
+      setArticleTitles(articleTitles);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(`Error fetching data`);
@@ -72,7 +90,28 @@ export default function WikiDashboardTool() {
           <LoadingOval visible={isLoading} height="120" width="120" />
         </div>
       ) : (
-        ""
+        <table className="articles-table">
+          <thead>
+            <tr>
+              <th>
+                Article
+                <CSVButton
+                  articles={articleTitles}
+                  csvConvert={convertSPARQLArticlesToCSV}
+                />
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {articleTitles?.map((article, index) => (
+              <tr key={index}>
+                <td>
+                  <div>{article}</div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

@@ -69,10 +69,66 @@ type Suggestion = {
   id: string;
 };
 
+type CourseUsersResponse = {
+  course: {
+    users: User[];
+  };
+};
+
+type CourseArticlesResponse = {
+  course: {
+    articles: Article[];
+  };
+};
+
+type User = {
+  character_sum_ms: number;
+  character_sum_us: number;
+  character_sum_draft: number;
+  references_count: number;
+  role: number;
+  role_description: string | null;
+  recent_revisions: number;
+  content_expert: boolean;
+  program_manager: boolean;
+  contribution_url: string;
+  sandbox_url: string;
+  total_uploads: number | null;
+  id: number;
+  username: string;
+  enrolled_at: string;
+  admin: boolean;
+  course_training_progress_description: string;
+  course_training_progress_assigned_count: number;
+  course_training_progress_completed_count: number;
+  real_name?: string;
+};
+
+type Article = {
+  character_sum: number;
+  references_count: number;
+  view_count: number;
+  new_article: boolean;
+  tracked: boolean;
+  id: number;
+  namespace: number;
+  rating: number | null;
+  deleted: boolean;
+  title: string;
+  language: string;
+  project: string;
+  url: string;
+  rating_num: number;
+  pretty_rating: string | null;
+  user_ids: number[];
+};
+
 export type {
   SPARQLResponse,
   MediaWikiResponse,
   CategoryNode,
   QueryProperty,
   Suggestion,
+  CourseUsersResponse,
+  CourseArticlesResponse,
 };
