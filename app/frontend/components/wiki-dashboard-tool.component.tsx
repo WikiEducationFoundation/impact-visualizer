@@ -6,6 +6,7 @@ import {
   CourseUsersResponse,
 } from "../types/search-tool.type";
 import CSVButton from "./CSV-button.component";
+import { convertDashboardDataToCSV } from "../utils/search-utils";
 
 export default function WikiDashboardTool() {
   const [courseURL, setCourseURL] = useState("");
@@ -23,7 +24,6 @@ export default function WikiDashboardTool() {
       ]);
 
       if (usersResponse.status === "rejected" || !usersResponse.value.ok) {
-        toast("Failed to fetch users data.");
         throw new Error("Failed to fetch users data.");
       }
 
@@ -31,7 +31,6 @@ export default function WikiDashboardTool() {
         articlesResponse.status === "rejected" ||
         !articlesResponse.value.ok
       ) {
-        toast("Failed to fetch articles data.");
         throw new Error("Failed to fetch articles data.");
       }
 
@@ -53,7 +52,7 @@ export default function WikiDashboardTool() {
       setArticleTitles(articleTitles);
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(`Error fetching data`);
+        toast.error(error.message);
         console.error(error.message);
       } else {
         toast.error(`Something went wrong!`);
@@ -90,28 +89,59 @@ export default function WikiDashboardTool() {
           <LoadingOval visible={isLoading} height="120" width="120" />
         </div>
       ) : (
-        <table className="articles-table">
-          <thead>
-            <tr>
-              <th>
-                Article
-                <CSVButton
-                  articles={articleTitles}
-                  csvConvert={convertSPARQLArticlesToCSV}
-                />
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {articleTitles?.map((article, index) => (
-              <tr key={index}>
-                <td>
-                  <div>{article}</div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div
+          className="TablesContainer"
+          style={{ display: "flex", gap: "20px" }}
+        >
+          {articleTitles && (
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    Article
+                    <CSVButton
+                      articles={articleTitles}
+                      csvConvert={convertDashboardDataToCSV}
+                    />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {articleTitles?.map((article, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div>{article}</div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+          {usernames && (
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    User
+                    <CSVButton
+                      articles={usernames}
+                      csvConvert={convertDashboardDataToCSV}
+                    />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {usernames?.map((username, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div>{username}</div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       )}
     </div>
   );

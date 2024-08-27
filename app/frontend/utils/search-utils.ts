@@ -73,7 +73,17 @@ function convertCategoryArticlesToCSV(articles: string[]): string {
   return csvContent;
 }
 
-function downloadAsCSV(csvContent: string, fileName = "articles.csv"): void {
+function convertDashboardDataToCSV(data: string[] | undefined): string {
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+  data?.forEach((item) => {
+    csvContent += `"${item}"\n`;
+  });
+
+  return csvContent;
+}
+
+function downloadAsCSV(csvContent: string, fileName = "data.csv"): void {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
@@ -203,6 +213,7 @@ export {
   buildWikidataQuery,
   convertSPARQLArticlesToCSV,
   convertCategoryArticlesToCSV,
+  convertDashboardDataToCSV,
   downloadAsCSV,
   convertInitialResponseToTree,
   convertResponseToTree,
