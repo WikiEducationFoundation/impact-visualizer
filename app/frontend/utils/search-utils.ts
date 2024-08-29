@@ -201,13 +201,26 @@ const removeDuplicateArticles = (
   });
 };
 
-const parseDashboardURL = (url: string) => {
-  let newURL;
-  if (url.startsWith("https://dashboard.wikiedu.org/courses")) {
-    newURL = url.replace("https://dashboard.wikiedu.org/courses", "/api");
+function extractDashboardURL(url: string): string {
+  const protocolIndex = url.indexOf("://");
+
+  if (protocolIndex === -1) {
+    throw new Error("Invalid URL: protocol not found");
   }
-  return newURL;
-};
+
+  const urlAfterProtocol = url.slice(protocolIndex + 3);
+
+  // Remove trailing slashes and then split
+  const parts = urlAfterProtocol.replace(/\/+$/, "").split("/");
+
+  if (parts.length < 4) {
+    throw new Error(
+      "Invalid URL: does not contain enough parts after the domain"
+    );
+  }
+
+  return url.slice(0, protocolIndex + 3) + parts.slice(0, 4).join("/");
+}
 
 export {
   buildWikidataQuery,
@@ -219,5 +232,5 @@ export {
   convertResponseToTree,
   removeCategoryPrefix,
   removeDuplicateArticles,
-  parseDashboardURL,
+  extractDashboardURL,
 };

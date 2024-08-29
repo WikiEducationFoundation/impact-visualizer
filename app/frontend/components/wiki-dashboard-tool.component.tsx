@@ -6,7 +6,10 @@ import {
   CourseUsersResponse,
 } from "../types/search-tool.type";
 import CSVButton from "./CSV-button.component";
-import { convertDashboardDataToCSV } from "../utils/search-utils";
+import {
+  convertDashboardDataToCSV,
+  extractDashboardURL,
+} from "../utils/search-utils";
 
 export default function WikiDashboardTool() {
   const [courseURL, setCourseURL] = useState("");
@@ -18,9 +21,11 @@ export default function WikiDashboardTool() {
     setIsLoading(true);
     event.preventDefault();
     try {
+      let dashboardURL = extractDashboardURL(courseURL);
+
       let [usersResponse, articlesResponse] = await Promise.allSettled([
-        fetch(`${courseURL}/users.json`),
-        fetch(`${courseURL}/articles.json`),
+        fetch(`${dashboardURL}/users.json`),
+        fetch(`${dashboardURL}/articles.json`),
       ]);
 
       if (usersResponse.status === "rejected" || !usersResponse.value.ok) {
@@ -47,6 +52,13 @@ export default function WikiDashboardTool() {
       const articleTitles = articlesResponseData.course.articles.map(
         (article) => article.title
       );
+
+      if (articleTitles.length === 0) {
+        toast("No articles found");
+      }
+      if (usernames.length === 0) {
+        toast("No users found");
+      }
 
       setUsernames(usernames);
       setArticleTitles(articleTitles);
@@ -93,7 +105,7 @@ export default function WikiDashboardTool() {
           className="TablesContainer"
           style={{ display: "flex", gap: "20px" }}
         >
-          {articleTitles && (
+          {articleTitles && articleTitles.length > 0 && (
             <table>
               <thead>
                 <tr>
@@ -117,7 +129,7 @@ export default function WikiDashboardTool() {
               </tbody>
             </table>
           )}
-          {usernames && (
+          {usernames && usernames.length > 0 && (
             <table>
               <thead>
                 <tr>
