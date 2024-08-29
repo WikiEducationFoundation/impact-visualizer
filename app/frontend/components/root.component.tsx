@@ -12,13 +12,17 @@ function Root() {
         <div className="Header-container">
           <div className="Header-left">
             <Link to={"/"}>
-              <img className="Header-logo" src="/images/logo.png" alt="WikiEdu" />
+              <img
+                className="Header-logo"
+                src="/images/logo.png"
+                alt="WikiEdu"
+              />
             </Link>
 
             <Link to={"/"}>
               <h1 className="u-h2 u-mr3 Header-title">Visualizing Impact</h1>
             </Link>
-            
+
             <div className="Header-nav">
               <div className="dropdown">
                 <div className="dropbtn u-color-blue">
@@ -28,6 +32,9 @@ function Root() {
                   <Link to="/search/wikidata-tool">Wikidata Tool</Link>
                   <Link to="/search/wikipedia-category-tool">
                     Wikipedia Category Tool
+                  </Link>
+                  <Link to="/search/wiki-dashboard-tool">
+                    Education Dashboard Tool
                   </Link>
                 </div>
               </div>

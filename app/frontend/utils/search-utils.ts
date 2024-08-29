@@ -73,7 +73,17 @@ function convertCategoryArticlesToCSV(articles: string[]): string {
   return csvContent;
 }
 
-function downloadAsCSV(csvContent: string, fileName = "articles.csv"): void {
+function convertDashboardDataToCSV(data: string[] | undefined): string {
+  let csvContent = "data:text/csv;charset=utf-8,";
+
+  data?.forEach((item) => {
+    csvContent += `"${item}"\n`;
+  });
+
+  return csvContent;
+}
+
+function downloadAsCSV(csvContent: string, fileName = "data.csv"): void {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
@@ -191,13 +201,36 @@ const removeDuplicateArticles = (
   });
 };
 
+function extractDashboardURL(url: string): string {
+  const protocolIndex = url.indexOf("://");
+
+  if (protocolIndex === -1) {
+    throw new Error("Invalid URL: protocol not found");
+  }
+
+  const urlAfterProtocol = url.slice(protocolIndex + 3);
+
+  // Remove trailing slashes and then split
+  const parts = urlAfterProtocol.replace(/\/+$/, "").split("/");
+
+  if (parts.length < 4) {
+    throw new Error(
+      "Invalid URL: does not contain enough parts after the domain"
+    );
+  }
+
+  return url.slice(0, protocolIndex + 3) + parts.slice(0, 4).join("/");
+}
+
 export {
   buildWikidataQuery,
   convertSPARQLArticlesToCSV,
   convertCategoryArticlesToCSV,
+  convertDashboardDataToCSV,
   downloadAsCSV,
   convertInitialResponseToTree,
   convertResponseToTree,
   removeCategoryPrefix,
   removeDuplicateArticles,
+  extractDashboardURL,
 };
