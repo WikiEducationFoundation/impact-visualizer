@@ -71,17 +71,17 @@ type Suggestion = {
 
 type CourseUsersResponse = {
   course: {
-    users: User[];
+    users: CourseUser[];
   };
 };
 
 type CourseArticlesResponse = {
   course: {
-    articles: Article[];
+    articles: CourseArticle[];
   };
 };
 
-type User = {
+type CourseUser = {
   character_sum_ms: number;
   character_sum_us: number;
   character_sum_draft: number;
@@ -104,7 +104,7 @@ type User = {
   real_name?: string;
 };
 
-type Article = {
+type CourseArticle = {
   character_sum: number;
   references_count: number;
   view_count: number;
@@ -123,6 +123,27 @@ type Article = {
   user_ids: number[];
 };
 
+type CampaignUsersResponse = {
+  campaign: string;
+  users: CampaignUser[];
+};
+
+type CampaignArticlesResponse = {
+  campaign: string;
+  articles: CampaignArticle[];
+};
+
+type CampaignUser = {
+  course: string;
+  role: string;
+  username: string;
+};
+
+type CampaignArticle = {
+  title: string;
+  wiki: { id: number; language: string; project: string };
+};
+
 export type {
   SPARQLResponse,
   MediaWikiResponse,
@@ -131,4 +152,6 @@ export type {
   Suggestion,
   CourseUsersResponse,
   CourseArticlesResponse,
+  CampaignUsersResponse,
+  CampaignArticlesResponse,
 };
