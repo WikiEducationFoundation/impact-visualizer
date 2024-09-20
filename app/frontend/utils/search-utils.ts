@@ -201,9 +201,11 @@ const removeDuplicateArticles = (
   });
 };
 
-function extractDashboardURL(url: string): string {
+function extractDashboardURLInfo(url: string): {
+  dashboardURL: string;
+  type: string;
+} {
   const protocolIndex = url.indexOf("://");
-
   if (protocolIndex === -1) {
     throw new Error("Invalid URL: protocol not found");
   }
@@ -213,13 +215,31 @@ function extractDashboardURL(url: string): string {
   // Remove trailing slashes and then split
   const parts = urlAfterProtocol.replace(/\/+$/, "").split("/");
 
-  if (parts.length < 4) {
+  let maxPartsLength: number;
+  let type: string;
+
+  if (parts[1] === "campaigns") {
+    maxPartsLength = 3;
+    type = "campaign";
+  } else if (parts[1] === "courses") {
+    maxPartsLength = 4;
+    type = "course";
+  } else {
+    throw new Error("Invalid URL: unrecognized path");
+  }
+
+  if (parts.length < maxPartsLength) {
     throw new Error(
       "Invalid URL: does not contain enough parts after the domain"
     );
   }
 
-  return url.slice(0, protocolIndex + 3) + parts.slice(0, 4).join("/");
+  const extractedUrl =
+    url.slice(0, protocolIndex + 3) + parts.slice(0, maxPartsLength).join("/");
+  return {
+    dashboardURL: extractedUrl,
+    type: type,
+  };
 }
 
 export {
@@ -232,5 +252,5 @@ export {
   convertResponseToTree,
   removeCategoryPrefix,
   removeDuplicateArticles,
-  extractDashboardURL,
+  extractDashboardURLInfo,
 };

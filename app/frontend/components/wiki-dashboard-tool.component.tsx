@@ -2,13 +2,15 @@ import React, { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import LoadingOval from "./loading-oval.component";
 import {
+  CampaignArticlesResponse,
+  CampaignUsersResponse,
   CourseArticlesResponse,
   CourseUsersResponse,
 } from "../types/search-tool.type";
 import CSVButton from "./CSV-button.component";
 import {
   convertDashboardDataToCSV,
-  extractDashboardURL,
+  extractDashboardURLInfo,
 } from "../utils/search-utils";
 
 export default function WikiDashboardTool() {
@@ -21,7 +23,7 @@ export default function WikiDashboardTool() {
     setIsLoading(true);
     event.preventDefault();
     try {
-      let dashboardURL = extractDashboardURL(courseURL);
+      let { dashboardURL, type } = extractDashboardURLInfo(courseURL);
 
       let [usersResponse, articlesResponse] = await Promise.allSettled([
         fetch(`${dashboardURL}/users.json`),
@@ -39,19 +41,34 @@ export default function WikiDashboardTool() {
         throw new Error("Failed to fetch articles data.");
       }
 
-      const usersResponseData: CourseUsersResponse =
-        await usersResponse.value.json();
+      let usernames;
+      let articleTitles;
 
-      const articlesResponseData: CourseArticlesResponse =
-        await articlesResponse.value.json();
+      if (type === "course") {
+        const usersResponseData: CourseUsersResponse =
+          await usersResponse.value.json();
 
-      const usernames = usersResponseData.course.users.map(
-        (user) => user.username
-      );
+        const articlesResponseData: CourseArticlesResponse =
+          await articlesResponse.value.json();
 
-      const articleTitles = articlesResponseData.course.articles.map(
-        (article) => article.title
-      );
+        usernames = usersResponseData.course.users.map((user) => user.username);
+
+        articleTitles = articlesResponseData.course.articles.map(
+          (article) => article.title
+        );
+      } else {
+        const usersResponseData: CampaignUsersResponse =
+          await usersResponse.value.json();
+
+        const articlesResponseData: CampaignArticlesResponse =
+          await articlesResponse.value.json();
+
+        usernames = usersResponseData.users.map((user) => user.username);
+
+        articleTitles = articlesResponseData.articles.map(
+          (article) => article.title
+        );
+      }
 
       if (articleTitles.length === 0) {
         toast("No articles found");
