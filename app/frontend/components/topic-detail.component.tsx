@@ -83,6 +83,10 @@ function renderStatBlocks({ activeStat, handleStatSelect, topic, editorLabel }) 
           {
             label: `Articles Created by ${editorLabel}`,
             value: TopicUtils.formatAttributedArticles(topic)
+          },
+          {
+            label: 'Missing Articles',
+            value: topic.missing_articles_count
           }
         ]}
       />
@@ -132,6 +136,7 @@ function renderStatBlocks({ activeStat, handleStatSelect, topic, editorLabel }) 
           active={activeStat === 'wp10'}
           onSelect={() => handleStatSelect('wp10')}
           stats={topic.wp10_prediction_categories}
+          topic={topic}
         />
       }
     </div>

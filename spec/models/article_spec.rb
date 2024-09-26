@@ -32,12 +32,10 @@ RSpec.describe Article do
       expect(article.exists_at_timestamp?(timestamp)).to eq(false)
     end
 
-    it 'raises if Article is missing first revision info' do
+    it 'returns false if Article is missing first revision info' do
       timestamp = Date.new(2023, 1, 1)
       article.update first_revision_at: nil
-      expect do
-        article.exists_at_timestamp?(timestamp)
-      end.to raise_error(ImpactVisualizerErrors::ArticleMissingFirstRevisionInfo)
+      expect(article.exists_at_timestamp?(timestamp)).to eq(false)
     end
   end
 end
@@ -49,6 +47,7 @@ end
 #  id                     :bigint           not null, primary key
 #  first_revision_at      :datetime
 #  first_revision_by_name :string
+#  missing                :boolean          default(FALSE)
 #  pageid                 :integer
 #  title                  :string
 #  created_at             :datetime         not null

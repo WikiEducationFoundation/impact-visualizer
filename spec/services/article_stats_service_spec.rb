@@ -12,6 +12,7 @@ describe ArticleStatsService do
       article_stats_service = described_class.new(wiki)
       article_stats_service.update_details_for_article(article:)
       article.reload
+      expect(article.missing).to eq(false)
       expect(article.pageid).to eq(2364730)
     end
 
@@ -20,6 +21,7 @@ describe ArticleStatsService do
       article_stats_service = described_class.new(wiki)
       article_stats_service.update_details_for_article(article:)
       article.reload
+      expect(article.missing).to eq(false)
       expect(article.title).to eq('Yankari Game Reserve')
     end
 
@@ -32,6 +34,24 @@ describe ArticleStatsService do
       expect(article.first_revision_at).to eq('2005-08-02 21:43:23')
       expect(article.first_revision_by_name).to eq('Jamie7687')
       expect(article.first_revision_by_id).to eq(311307)
+    end
+
+    it 'marks article as missing if no pageid' do
+      article = create(:article, pageid: nil, title: 'Yankaaaari Game Reserve')
+      article_stats_service = described_class.new(wiki)
+      article_stats_service.update_details_for_article(article:)
+      article.reload
+      expect(article.missing).to eq(true)
+      expect(article.pageid).to eq(nil)
+    end
+
+    it 'marks previously missing article as not missing' do
+      article = create(:article, pageid: nil, title: 'Yankari Game Reserve', missing: true)
+      article_stats_service = described_class.new(wiki)
+      article_stats_service.update_details_for_article(article:)
+      article.reload
+      expect(article.missing).to eq(false)
+      expect(article.pageid).to eq(2364730)
     end
   end
 

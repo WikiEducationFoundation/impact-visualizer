@@ -233,6 +233,25 @@ RSpec.describe Topic do
       expect(found_user).to eq(nil)
     end
   end
+
+  describe '#articles_count' do
+    include_context 'topic with two timepoints'
+
+    it 'returns count of articles' do
+      expect(topic.articles_count).to eq(2)
+    end
+  end
+
+  describe '#missing_articles_count' do
+    include_context 'topic with two timepoints'
+    let!(:article_3) { create(:article, pageid: nil, title: 'Nope', missing: true) }
+    let!(:article_bag_article_3) { create(:article_bag_article, article: article_3, article_bag:) }
+
+    it 'returns count of articles' do
+      expect(topic.articles_count).to eq(3)
+      expect(topic.missing_articles_count).to eq(1)
+    end
+  end
 end
 
 # == Schema Information

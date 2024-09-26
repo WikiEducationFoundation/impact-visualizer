@@ -120,6 +120,10 @@ class Topic < ApplicationRecord
     active_article_bag&.articles&.count || 0
   end
 
+  def missing_articles_count
+    active_article_bag&.articles&.missing&.count || 0
+  end
+
   def most_recent_summary
     topic_summaries.last
   end

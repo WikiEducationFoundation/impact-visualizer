@@ -17,7 +17,9 @@ describe LiftWingApi do
       allow_any_instance_of(Faraday::Connection).to receive(:send)
         .and_raise(Faraday::TimeoutError)
       expect_any_instance_of(described_class).to receive(:log_error).once
-      expect(subject).to eq(nil)
+      expect do
+        expect(subject).to eq(nil)
+      end.to raise_error(LiftWingApi::RevisionQualityError)
     end
   end
 

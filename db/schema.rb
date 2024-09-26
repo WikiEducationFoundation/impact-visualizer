@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_07_02_225510) do
+ActiveRecord::Schema[7.0].define(version: 2024_09_23_202626) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -109,6 +109,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_02_225510) do
     t.integer "first_revision_by_id"
     t.datetime "first_revision_at"
     t.bigint "wiki_id", null: false
+    t.boolean "missing", default: false
     t.index ["wiki_id"], name: "index_articles_on_wiki_id"
   end
 
@@ -167,6 +168,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_02_225510) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "wp10_prediction_categories"
+    t.integer "missing_articles_count"
     t.index ["topic_id"], name: "index_topic_summaries_on_topic_id"
   end
 

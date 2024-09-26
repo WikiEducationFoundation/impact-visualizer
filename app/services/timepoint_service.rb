@@ -155,7 +155,7 @@ class TimepointService
 
     latest_revision_id = lastest_topic_article_timepoint&.article_timepoint&.revision_id
 
-    # Bail if not revision_id
+    # Bail if no revision_id
     return unless latest_revision_id
 
     # Fetch all tokens for the most recent revision of article

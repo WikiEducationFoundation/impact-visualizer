@@ -26,17 +26,19 @@ class LiftWingApi
   def get_revision_quality(rev_id)
     body = { rev_id: }.to_json
     response = make_request('post', quality_query_url, body)
-
     if response&.status == 200
       parsed_response = Oj.load(response.body)
       return parsed_response.dig(@project_code, 'scores', rev_id.to_s,
                                  @project_quality_model, 'score').to_hashugar
     end
 
-    ap "LiftWingApi Error: #{response}"
+    raise RevisionQualityError
   end
 
   class InvalidProjectError < StandardError
+  end
+
+  class RevisionQualityError < StandardError
   end
 
   private

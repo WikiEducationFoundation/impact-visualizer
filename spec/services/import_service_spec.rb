@@ -26,18 +26,19 @@ describe ImportService do
       expect(topic.article_bags.count).to eq(1)
       expect(topic.active_article_bag.name).to eq("#{topic.slug.titleize} Articles")
       expect(topic.articles.count).to eq(3)
+      expect(topic.articles.pluck(:missing)).to eq([false, false, false])
     end
 
-    it 'skips non-existent articles', vcr: false do
+    it 'marks non-existent articles as missing', vcr: false do
       topic.articles_csv.attach(
         io: File.open('spec/fixtures/csv/topic-articles-missing-test.csv'),
         filename: 'topic-articles-missing-test.csv'
       )
-
       import_service.import_articles
       expect(topic.article_bags.count).to eq(1)
       expect(topic.active_article_bag.name).to eq("#{topic.slug.titleize} Articles")
-      expect(topic.articles.count).to eq(0)
+      expect(topic.articles.count).to eq(3)
+      expect(topic.articles.pluck(:missing)).to eq([true, true, true])
     end
 
     it 'calls status counter methods', :vcr do

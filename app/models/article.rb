@@ -7,9 +7,14 @@ class Article < ApplicationRecord
   has_many :article_bags, through: :article_bag_articles
   has_many :article_timepoints
 
+  ## Scopes
+  scope :missing, lambda {
+    where(missing: true)
+  }
+
   ## Instance Methods
   def exists_at_timestamp?(timestamp)
-    raise ImpactVisualizerErrors::ArticleMissingFirstRevisionInfo.new(id) unless first_revision_info?
+    return false unless first_revision_info?
     first_revision_at < timestamp
   end
 
@@ -53,6 +58,7 @@ end
 #  id                     :bigint           not null, primary key
 #  first_revision_at      :datetime
 #  first_revision_by_name :string
+#  missing                :boolean          default(FALSE)
 #  pageid                 :integer
 #  title                  :string
 #  created_at             :datetime         not null

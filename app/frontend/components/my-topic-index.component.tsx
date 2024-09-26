@@ -41,7 +41,7 @@ function MyTopicIndex() {
           {filteredTopics.map(topic => (
             <TopicPreview key={topic.id} topic={topic} />
           ))}
-          {filteredTopics.length === 0 &&
+          {filteredTopics.length === 0 && status !== 'pending' &&
             <div className="TopicIndex-noResults">
               You have no topics yet.
               {' '}

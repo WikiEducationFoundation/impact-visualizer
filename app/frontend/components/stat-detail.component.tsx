@@ -36,7 +36,8 @@ function StatDetail({ topicTimepoints, fields, stat, type, topic }: Props) {
     yLabel = 'Predicted Quality';
     title = `Predicted quality of articles over time`;
     values = ChartUtils.prepQualityValues({
-      timepoints: topicTimepoints
+      timepoints: topicTimepoints,
+      topic
     });
   } else {
     if (type === 'cumulative') {

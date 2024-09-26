@@ -17,6 +17,7 @@ end
 #  id                     :bigint           not null, primary key
 #  first_revision_at      :datetime
 #  first_revision_by_name :string
+#  missing                :boolean          default(FALSE)
 #  pageid                 :integer
 #  title                  :string
 #  created_at             :datetime         not null

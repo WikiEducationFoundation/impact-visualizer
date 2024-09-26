@@ -1,17 +1,19 @@
 import React, { MouseEventHandler } from 'react';
 import _ from 'lodash';
 import cn from 'classnames';
+import pluralize from 'pluralize';
 
 interface Props {
   stats: object,
+  topic: object,
   center?: boolean,
   active?: boolean,
   onSelect?: MouseEventHandler
 };
 
-const categoryOrder = ['FA', 'FL', 'A', 'GA', 'B', 'C', 'Start', 'Stub', 'List'];
+const categoryOrder = ['FA', 'FL', 'A', 'GA', 'B', 'C', 'Start', 'Stub', 'List', 'Missing'];
 
-function QualityStatBlock({ stats, center, active, onSelect }: Props) {
+function QualityStatBlock({ stats, center, active, onSelect, topic }: Props) {
 
   function renderStats() {
     const output: Array<React.JSX.Element> = [];
@@ -21,7 +23,13 @@ function QualityStatBlock({ stats, center, active, onSelect }: Props) {
       return index;
     });
 
+    sortedKeys.push('Missing');
+
     _.each(sortedKeys, (key) => {
+      let count = stats[key];
+      if (key === 'Missing') {
+        count = topic.missing_articles_count;
+      };
       output.push(
         <div
           key={key}
@@ -31,7 +39,7 @@ function QualityStatBlock({ stats, center, active, onSelect }: Props) {
           })}
         >
           <div className="StatBlock-qualityValue">
-            <span>{key}</span> {stats[key]} Articles
+            <span>{key}</span> {count} {pluralize('Article', count)}
           </div>
         </div>
       )

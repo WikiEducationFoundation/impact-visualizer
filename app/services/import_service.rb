@@ -48,8 +48,6 @@ class ImportService
     page_info = @wiki_action_api.get_page_info(title: CGI.unescape(article_title[0]))
     return unless page_info
     title = page_info['title']
-    pageid = page_info['pageid']
-    return unless pageid
     article = Article.find_or_create_by(title:, wiki: @wiki)
     article.update_details
     ArticleBagArticle.find_or_create_by(article:, article_bag:)

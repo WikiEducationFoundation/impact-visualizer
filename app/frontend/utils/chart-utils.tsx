@@ -4,7 +4,7 @@ import ChartTimepoint from '../types/chart-timepoint.type';
 import StatFields from '../types/stat-fields.type';
 
 const ChartUtils = {
-  categoryOrder: ['FA', 'FL', 'A', 'GA', 'B', 'C', 'Start', 'Stub', 'List'],
+  categoryOrder: ['FA', 'FL', 'A', 'GA', 'B', 'C', 'Start', 'Stub', 'List', 'Missing'],
 
   minForCumulativeChart(timepoints, totalField): number {
     return _.reduce(timepoints, (accum, timepoint) => {
@@ -79,11 +79,13 @@ const ChartUtils = {
   },
 
   prepQualityValues(options): ChartTimepoint[] {
-    const { timepoints } = options;
+    const { timepoints, topic } = options;
 
     const values: Array<ChartTimepoint> = [];
     let categories: Array<string> = [];
     
+    categories.push('Missing');
+
     timepoints.forEach((timepoint) => {
       categories.push(..._.keys(timepoint.wp10_prediction_categories));
     })
@@ -96,6 +98,17 @@ const ChartUtils = {
     
     timepoints.forEach((timepoint) => {
       categories.forEach((category) => {
+        if (category === 'Missing') {
+          const missingCount = topic.articles_count - timepoint.articles_count;
+          values.push({
+            date: timepoint.timestamp,
+            count: missingCount,
+            category: category,
+            categoryIndex: _.indexOf(this.categoryOrder, category)
+          });
+          return;
+        };
+
         values.push({
           date: timepoint.timestamp,
           count: timepoint.wp10_prediction_categories[category] || 0,

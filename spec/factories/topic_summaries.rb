@@ -18,6 +18,7 @@ end
 #  average_wp10_prediction           :float
 #  length                            :integer
 #  length_delta                      :integer
+#  missing_articles_count            :integer
 #  revisions_count                   :integer
 #  revisions_count_delta             :integer
 #  timepoint_count                   :integer

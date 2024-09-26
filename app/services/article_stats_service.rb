@@ -26,6 +26,10 @@ class ArticleStatsService
       article.update(pageid: page_info['pageid'])
     end
 
+    # Mark as missing, if necessary
+    missing = article.pageid.nil?
+    article.update(missing:) if missing != article.missing
+
     # Grab details about first revision, if necessary
     update_first_revision_info(article:) unless article.first_revision_info?
 
@@ -33,6 +37,7 @@ class ArticleStatsService
   end
 
   def update_first_revision_info(article:)
+    return unless article.pageid
     first_revision = @wiki_action_api.get_first_revision(pageid: article.pageid)
     return unless first_revision
     article.update(
@@ -76,15 +81,15 @@ class ArticleStatsService
     # Get the wp10 quality prediction
     weighted_quality = nil
     predicted_category = nil
+
     if @lift_wing_api
       begin
         lift_wing_response = @lift_wing_api.get_revision_quality(revision['revid'])
+        weighted_quality = weighted_revision_quality(lift_wing_response:)
+        predicted_category = lift_wing_response['prediction']
       rescue StandardError => e
         puts "LiftWing Failure for revision: #{revision['revid']}, article: #{article.id}, article_timepoint: #{article_timepoint}"
       end
-
-      weighted_quality = weighted_revision_quality(lift_wing_response:)
-      predicted_category = lift_wing_response['prediction']
     end
 
     # Update the ArticleTimepoint
@@ -112,6 +117,7 @@ class ArticleStatsService
   end
 
   def weighted_revision_quality(lift_wing_response:)
+    return nil unless lift_wing_response
     probabilities = lift_wing_response['probability']
     return nil unless probabilities
     language = @wiki.language
