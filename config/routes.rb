@@ -33,6 +33,7 @@ Rails.application.routes.draw do
   get '/my-topics/edit/:slug', to: 'pages#index'
   get '/search/wikidata-tool', to: 'pages#index'
   get '/search/wikipedia-category-tool', to: 'pages#index'
+  get '/search/wiki-dashboard-tool', to: 'pages#index'
 
   root "pages#index"
 end
