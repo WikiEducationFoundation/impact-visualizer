@@ -31,14 +31,17 @@ function StatDetail({ topicTimepoints, fields, stat, type, topic }: Props) {
   let min: number = 0;
   let max: number = 0;
   let title: string = '';
+  let categories: string[] = [];
 
   if (stat === 'wp10') {
     yLabel = 'Predicted Quality';
     title = `Predicted quality of articles over time`;
-    values = ChartUtils.prepQualityValues({
+    const { values: vals, categories: cats } = ChartUtils.prepQualityValues({
       timepoints: topicTimepoints,
       topic
     });
+    values = vals;
+    categories = cats;
   } else {
     if (type === 'cumulative') {
       yLabel = _.startCase(totalField);
@@ -88,6 +91,8 @@ function StatDetail({ topicTimepoints, fields, stat, type, topic }: Props) {
       }
       <Chart
         spec={spec}
+        categories={categories}
+        stat={stat}
       />
     </div>
   );

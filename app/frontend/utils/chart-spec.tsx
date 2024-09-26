@@ -176,7 +176,7 @@ const ChartSpec = {
         {
           name: "color",
           type: "ordinal",
-          range: { scheme: "wiki" },
+          range: { scheme: "wp10" },
           domain: {data: 'data', field: 'category'}
         }
       ]

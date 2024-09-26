@@ -78,7 +78,7 @@ const ChartUtils = {
     return values;
   },
 
-  prepQualityValues(options): ChartTimepoint[] {
+  prepQualityValues(options): { values: ChartTimepoint[], categories: string[] } {
     const { timepoints, topic } = options;
 
     const values: Array<ChartTimepoint> = [];
@@ -91,11 +91,12 @@ const ChartUtils = {
     })
 
     categories = _.uniq(categories);
+    categories = _.without(categories, '');
     categories = _.sortBy(categories, (category) => {
       const index = _.indexOf(this.categoryOrder, category);
       return index;
     });
-    
+
     timepoints.forEach((timepoint) => {
       categories.forEach((category) => {
         if (category === 'Missing') {
@@ -118,7 +119,7 @@ const ChartUtils = {
       })
     })
 
-    return values;
+    return { categories, values };
   },
 
   fieldsForStat(stat: String): StatFields {

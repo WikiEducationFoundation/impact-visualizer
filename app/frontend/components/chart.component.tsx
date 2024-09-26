@@ -22,13 +22,27 @@ function colorInterpolate(percent) {
   const b = Math.round(b1 + (b2 - b1) * percent);
 
   // Convert the interpolated RGB values back to a hex color
-  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  const color = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  return color;
 }
 
-function Chart({ spec }) {
+function Chart({ spec, categories, stat }) {
   const container = useRef<HTMLDivElement>(null);
 
   vega.scheme("wiki", colorInterpolate);
+
+  if (stat === 'wp10') {
+    const colors:string[] = [];
+    _.each(categories, (category: string, index: number) => {
+      if (category === 'Missing') {
+        colors.push('#E4E4E4');
+      };
+      const percent = index / categories.length;
+      const color = colorInterpolate(percent);
+      colors.push(color);
+    });
+    vega.scheme("wp10", colors);
+  };
 
   useEffect(() => {
     if (container) {
