@@ -6,6 +6,8 @@ RSpec.describe Article do
   it { is_expected.to have_many(:article_bag_articles) }
   it { is_expected.to have_many(:article_bags).through(:article_bag_articles) }
   it { is_expected.to have_many(:article_timepoints) }
+  it { is_expected.to have_many(:article_classifications) }
+  it { is_expected.to have_many(:classifications).through(:article_classifications) }
 
   describe '#exists_at_timestamp?' do
     let!(:article) do

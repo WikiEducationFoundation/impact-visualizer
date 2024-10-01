@@ -6,6 +6,8 @@ class Article < ApplicationRecord
   has_many :article_bag_articles
   has_many :article_bags, through: :article_bag_articles
   has_many :article_timepoints
+  has_many :article_classifications
+  has_many :classifications, through: :article_classifications
 
   ## Scopes
   scope :missing, lambda {
