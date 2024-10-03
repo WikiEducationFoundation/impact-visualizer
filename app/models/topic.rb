@@ -16,6 +16,8 @@ class Topic < ApplicationRecord
   has_many :topic_summaries, dependent: :delete_all
   has_many :topic_editor_topics, dependent: :delete_all
   has_many :topic_editors, through: :topic_editor_topics
+  has_many :topic_classifications
+  has_many :classifications, through: :topic_classifications
 
   ## Instance methods
   def timestamps

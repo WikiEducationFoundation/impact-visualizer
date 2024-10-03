@@ -8,6 +8,8 @@ class WikiActionApi
   def initialize(wiki)
     @api_url = wiki.action_api_url
     @client = api_client
+    @wiki = wiki
+    @wikidata_client = wikidata_api_client
   end
 
   def query(query_parameters:)
@@ -171,16 +173,38 @@ class WikiActionApi
     response.data.dig('pages', 0, 'revisions', 0).to_hashugar if response&.status == 200
   end
 
+  def get_wikidata_claims(title)
+    query_parameters = {
+      sites: @wiki.wikidata_site || 'enwiki',
+      titles: [title]
+    }
+
+    # Fetch wikidata
+    response = mediawiki(:action, query_parameters, true)
+
+    # Return just the claims of first (& only) entity
+    entity_id = response.data.dig('entities').keys[0]
+    response.data.dig('entities', entity_id, 'claims') if response&.status == 200
+  end
+
   private
 
   def api_client
     MediawikiApi::Client.new @api_url
   end
 
-  def mediawiki(action, query)
+  def wikidata_api_client
+    MediawikiApi::Client.new 'https://www.wikidata.org/w/api.php'
+  end
+
+  def mediawiki(action, query, wikidata = false)
     total_tries = 3
     tries ||= 0
-    @client.send(action, query)
+    if wikidata
+      @wikidata_client.action :wbgetentities, query
+    else
+      @client.send(action, query)
+    end
   rescue StandardError => e
     tries += 1
     unless Rails.env.test?

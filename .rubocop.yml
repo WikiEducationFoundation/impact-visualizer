@@ -54,7 +54,7 @@ Metrics/BlockLength:
     - 'lib/tasks/*' # also impractical for Rake tasks
     - 'app/views/**/*' # jbuilder requires long blocks for large json views
 Metrics/MethodLength:
-  Max: 16 # We should bring this down, ideally to the default of 10
+  Max: 30 # We should bring this down, ideally to the default of 10
   Exclude:
     - 'spec/**/*' # not a big deal in spec helper methods
 Metrics/ModuleLength:

@@ -5,6 +5,10 @@ FactoryBot.define do
     slug { Faker::Internet.slug }
     wiki { Wiki.default_wiki }
     display { true }
+
+    after(:create) do |topic, _evaluator|
+      ArticleBag.create(topic:, name: "#{topic.slug.titleize} Articles")
+    end
   end
 end
 

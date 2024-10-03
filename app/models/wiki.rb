@@ -46,7 +46,9 @@ class Wiki < ApplicationRecord
 
   ## Class methods
   def self.default_wiki
-    find_or_create_by language: 'en', project: 'wikipedia'
+    wiki = find_or_create_by language: 'en', project: 'wikipedia'
+    wiki.update wikidata_site: 'enwiki' if wiki.wikidata_site.nil?
+    wiki
   end
 
   ## Instance methods
@@ -85,11 +87,12 @@ end
 #
 # Table name: wikis
 #
-#  id         :bigint           not null, primary key
-#  language   :string(16)
-#  project    :string(16)
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id            :bigint           not null, primary key
+#  language      :string(16)
+#  project       :string(16)
+#  wikidata_site :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #
 # Indexes
 #

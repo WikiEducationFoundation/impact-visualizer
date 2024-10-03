@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_01_223242) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_02_201727) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -262,6 +262,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_01_223242) do
     t.string "project", limit: 16
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "wikidata_site"
     t.index ["language", "project"], name: "index_wikis_on_language_and_project", unique: true
   end
 
