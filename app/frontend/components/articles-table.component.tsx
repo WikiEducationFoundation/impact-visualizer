@@ -26,7 +26,11 @@ export default function ArticlesTable({
           {articles.map((item, index) => (
             <tr key={index}>
               <td>
-                <a href={item.article.value}>{item.personLabel.value}</a>
+                {item.article ? (
+                  <a href={item.article.value}>{item.personLabel.value}</a>
+                ) : (
+                  <a href={item.person.value}>{item.personLabel.value}</a>
+                )}{" "}
               </td>
             </tr>
           ))}
