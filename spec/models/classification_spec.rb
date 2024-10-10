@@ -14,7 +14,7 @@ RSpec.describe Classification do
       classification = build(:classification, prerequisites: nil)
       expect(classification.valid?).to eq(false)
       expect(classification.errors.full_messages.first)
-        .to eq('Prerequisites does not comply to JSON Schema')
+        .to include('Prerequisites does not comply to JSON Schema')
 
       classification.prerequisites = [{
         name: 'Gender'
@@ -49,7 +49,7 @@ RSpec.describe Classification do
       classification = build(:classification, properties: nil)
       expect(classification.valid?).to eq(false)
       expect(classification.errors.full_messages.first)
-        .to eq('Properties does not comply to JSON Schema')
+        .to include('Properties does not comply to JSON Schema')
 
       classification.properties = [{
         name: 'Gender'
@@ -64,7 +64,45 @@ RSpec.describe Classification do
         property_id: 'P21'
       }]
 
-      # Valid, complete properties
+      # Valid, complete properties, no segments
+      expect(classification.valid?).to eq(true)
+
+      classification.properties = [{
+        name: 'Gender',
+        slug: 'gender',
+        property_id: 'P21',
+        segments: true
+      }]
+
+      # Valid, complete properties, with filter = true
+      expect(classification.valid?).to eq(true)
+
+      classification.properties = [{
+        name: 'Gender',
+        slug: 'gender',
+        property_id: 'P21',
+        segments: [
+          {
+            label: 'Male',
+            key: 'male',
+            value_ids: %w[Q6581097]
+          },
+          {
+            label: 'Female',
+            key: 'female',
+            value_ids: %w[Q6581072]
+          },
+          {
+            label: 'Other',
+            key: 'other',
+            default: true
+          }
+        ]
+      }]
+
+      classification.valid?
+
+      # Valid, complete properties, with filter sets
       expect(classification.valid?).to eq(true)
 
       classification.properties = [{

@@ -2,13 +2,13 @@
 
 FactoryBot.define do
   factory :classification do
-    name { 'Classification Name' }
+    name { 'Biography' }
     prerequisites do
       [{
-        name: 'Gender',
-        property_id: 'P21',
-        value_ids: %w[Q6581072 Q1234567],
-        required: false
+        name: 'Instance of human',
+        property_id: 'P31',
+        value_ids: ['Q5'],
+        required: true
       }]
     end
     properties do

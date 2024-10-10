@@ -111,7 +111,7 @@ describe ClassificationService do
     end
   end
 
-  describe '#claims_meet_prerequisites', vcr: true do
+  describe '#claims_meet_prerequisites?', vcr: true do
     let(:subject) { described_class.new(topic:) }
     let(:claims) do
       wiki_action_api = WikiActionApi.new(Wiki.default_wiki)
@@ -124,7 +124,7 @@ describe ClassificationService do
         property_id: 'X21',
         required: false
       }]
-      matched = subject.claims_meet_prerequisites(claims:, prerequisites:)
+      matched = subject.claims_meet_prerequisites?(claims:, prerequisites:)
       expect(matched).to eq(false)
     end
 
@@ -141,7 +141,7 @@ describe ClassificationService do
           required: false
         }
       ]
-      matched = subject.claims_meet_prerequisites(claims:, prerequisites:)
+      matched = subject.claims_meet_prerequisites?(claims:, prerequisites:)
       expect(matched).to eq(true)
     end
 
@@ -158,7 +158,7 @@ describe ClassificationService do
           required: false
         }
       ]
-      matched = subject.claims_meet_prerequisites(claims:, prerequisites:)
+      matched = subject.claims_meet_prerequisites?(claims:, prerequisites:)
       expect(matched).to eq(true)
     end
 
@@ -175,7 +175,7 @@ describe ClassificationService do
           required: false
         }
       ]
-      matched = subject.claims_meet_prerequisites(claims:, prerequisites:)
+      matched = subject.claims_meet_prerequisites?(claims:, prerequisites:)
       expect(matched).to eq(false)
     end
 
@@ -192,7 +192,7 @@ describe ClassificationService do
           required: true
         }
       ]
-      matched = subject.claims_meet_prerequisites(claims:, prerequisites:)
+      matched = subject.claims_meet_prerequisites?(claims:, prerequisites:)
       expect(matched).to eq(true)
     end
 
@@ -203,7 +203,7 @@ describe ClassificationService do
         value_ids: %w[Q6581072 Q1234567],
         required: false
       }]
-      matched = subject.claims_meet_prerequisites(claims:, prerequisites:)
+      matched = subject.claims_meet_prerequisites?(claims:, prerequisites:)
       expect(matched).to eq(true)
     end
 
@@ -214,7 +214,7 @@ describe ClassificationService do
         value_ids: %w[QXXXXXX],
         required: false
       }]
-      matched = subject.claims_meet_prerequisites(claims:, prerequisites:)
+      matched = subject.claims_meet_prerequisites?(claims:, prerequisites:)
       expect(matched).to eq(false)
     end
   end
@@ -272,5 +272,9 @@ describe ClassificationService do
       extracted_value_ids = subject.extract_claim_value_ids(claim)
       expect(extracted_value_ids).to eq(%w[Q213714 Q43343 Q131272 Q844245])
     end
+  end
+
+  describe '#summarize_topic_timepoint' do
+    it 'summarizes topic timepoint'
   end
 end

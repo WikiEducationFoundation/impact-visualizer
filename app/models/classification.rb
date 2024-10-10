@@ -34,7 +34,20 @@ class Classification < ApplicationRecord
       properties: {
         name: { type: 'string' },
         slug: { type: 'string' },
-        property_id: { type: 'string' }
+        property_id: { type: 'string' },
+        segments: {
+          type: %w[boolean array],
+          items: {
+            type: 'object',
+            properties: {
+              label: { type: 'string' },
+              key: { type: 'string' },
+              default: { type: 'boolean' },
+              value_ids: { type: 'array', items: { type: 'string' } }
+            },
+            required: %w[label key]
+          }
+        }
       },
       required: %w[name slug property_id],
       additionalProperties: false

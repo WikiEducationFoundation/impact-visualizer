@@ -10,19 +10,23 @@ class ClassificationService
   end
 
   def classify_all_articles
-    @topic.articles.each do |article|
+    article_bag_articles = @topic.active_article_bag.article_bag_articles
+    article_bag_articles.each do |article_bag_article|
+      article = article_bag_article.article
       classify_article(article:)
     end
   end
 
   def classify_article(article:)
     claims = @wiki_action_api.get_wikidata_claims(article.title)
+    return unless claims.present?
+
     @topic.classifications.each do |classification|
       prerequisites = classification.prerequisites.to_hashugar
       properties = classification.properties.to_hashugar
 
       # See if article meets prerequisites for classification
-      matched = claims_meet_prerequisites(claims:, prerequisites:)
+      matched = claims_meet_prerequisites?(claims:, prerequisites:)
 
       # Grab existing classification for Article
       existing = ArticleClassification.find_by(classification:, article:)
@@ -44,7 +48,7 @@ class ClassificationService
     end
   end
 
-  def claims_meet_prerequisites(claims:, prerequisites:)
+  def claims_meet_prerequisites?(claims:, prerequisites:)
     all_matched = false
 
     prerequisites.each do |prerequisite|
@@ -53,7 +57,12 @@ class ClassificationService
       value_ids = prerequisite[:value_ids]
 
       # Get the matched property object
-      matched_property = claims[property_id]
+      begin
+        matched_property = claims[property_id]
+      rescue StandardError => e
+        ap claims
+        raise e
+      end
 
       # Check match on value_ids, if needed
       if matched_property && value_ids.present?

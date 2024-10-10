@@ -12,7 +12,7 @@ RSpec.describe ArticleClassification do
       article_classification = build(:article_classification, properties: nil)
       expect(article_classification.valid?).to eq(false)
       expect(article_classification.errors.full_messages.first)
-        .to eq('Properties does not comply to JSON Schema')
+        .to include('Properties does not comply to JSON Schema')
 
       article_classification.properties = [{
         name: 'Gender'

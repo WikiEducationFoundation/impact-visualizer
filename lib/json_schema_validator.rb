@@ -15,8 +15,13 @@ class JsonSchemaValidator < ActiveModel::EachValidator
         $!.backtrace
       )
     end
-    unless JSON::Validator.validate(schema, value, strict: true, validate_schema: true)
-      record.errors.add(attribute, 'does not comply to JSON Schema')
+    unless JSON::Validator.validate(schema, value, strict: false, validate_schema: true)
+
+      errors = JSON::Validator.fully_validate(schema, value, strict: false,
+                                              validate_schema: true, errors_as_objects: true)
+      error_messages = errors.pluck(:message)
+
+      record.errors.add(attribute, "does not comply to JSON Schema: #{error_messages.join(', ')}")
     end
   end
 end
