@@ -15,7 +15,8 @@ function buildWikidataQuery(
   occupationIDs: string[],
   genderID: string,
   ethnicityID: string,
-  languageCode: string
+  languageCode: string,
+  options?: { requireWikipediaArticle?: boolean }
 ): string {
   const properties = {
     instanceOf: "P31",
@@ -24,7 +25,13 @@ function buildWikidataQuery(
     occupation: "P106",
   };
   const qValues = { human: "Q5" };
-  let query = `SELECT DISTINCT ?article ?personLabel WHERE {
+  let query = `SELECT DISTINCT ?person ?personLabel`;
+
+  if (options?.requireWikipediaArticle !== false) {
+    query += ` ?article`;
+  }
+
+  query += ` WHERE {
     ?person wdt:${properties.instanceOf} wd:${qValues.human} .`;
 
   if (genderID) {
@@ -36,18 +43,25 @@ function buildWikidataQuery(
   }
 
   if (occupationIDs.length > 0) {
-    query += `\n    ?person wdt:${
-      properties.occupation
-    } ?occ .\n    VALUES ?occ { ${occupationIDs
+    query += `\n    ?person wdt:${properties.occupation} ?occ .`;
+    query += `\n    VALUES ?occ { ${occupationIDs
       .map((occ) => `wd:${occ}`)
       .join(" ")} }`;
   }
 
+  const articleClauses = `
+        ?article schema:about ?person .
+        ?article schema:isPartOf <https://${languageCode}.wikipedia.org/> .`;
+
+  if (options?.requireWikipediaArticle) {
+    query += articleClauses;
+  } else {
+    query += `\n    OPTIONAL {${articleClauses}\n    }`;
+  }
+
   query += `
-    ?article schema:about ?person .
-    ?article schema:isPartOf <https://${languageCode}.wikipedia.org/>.
     SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode}" }
-}`;
+  }`;
 
   return encodeURIComponent(query);
 }

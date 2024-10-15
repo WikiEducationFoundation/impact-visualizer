@@ -15,6 +15,10 @@ type SPARQLResponse = {
         type: string;
         value: string;
       };
+      person: {
+        type: string;
+        value: string;
+      };
     }>;
   };
 };
