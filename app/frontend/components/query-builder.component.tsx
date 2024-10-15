@@ -27,6 +27,10 @@ export default function QueryBuilder() {
         type: string;
         value: string;
       };
+      person: {
+        type: string;
+        value: string;
+      };
     }[]
   >([]);
   const [languageCode, setLanguageCode] = useState<string>("");
@@ -160,15 +164,17 @@ export default function QueryBuilder() {
           </button>
         )}
         <div className="u-mt1">
-          <label>
+          <label className="CheckboxContainer">
             <input
               type="checkbox"
               checked={requireWikiArticle}
               onChange={(e) => setRequireWikiArticle(e.target.checked)}
+              className="CheckboxInput"
             />
-            Require Wiki Article
+            <span>Require Wiki Article</span>
           </label>
         </div>
+
         <div>
           <button type="submit" className="Button u-mt2">
             Run Query
