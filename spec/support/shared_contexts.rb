@@ -8,8 +8,8 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:topic) { create(:topic, start_date:, end_date:, timepoint_day_interval:) }
   let!(:user) { create(:user) }
   let!(:topic_user) { create(:topic_user, user:, topic:) }
-  let!(:article_1) { create(:article, pageid: 2364730) }
-  let!(:article_2) { create(:article, pageid: 2364730) }
+  let!(:article_1) { create(:article, pageid: 2364730, title: 'Yankari Game Reserve') }
+  let!(:article_2) { create(:article, pageid: 68650134, title: 'Sierra Ferrell') }
   let!(:article_bag) { create(:article_bag, topic:) }
   let!(:article_bag_article_1) { create(:article_bag_article, article: article_1, article_bag:) }
   let!(:article_bag_article_2) { create(:article_bag_article, article: article_2, article_bag:) }

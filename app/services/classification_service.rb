@@ -110,4 +110,61 @@ class ClassificationService
     end
     value_ids
   end
+
+  def summarize_topic_timepoint(topic_timepoint:)
+    raise ImpactVisualizerErrors::InvalidTimepointForTopic unless topic_timepoint.topic == @topic
+
+    classifications = @topic.classifications
+
+    summary = []
+
+    classifications.each do |classification|
+      count = Queries.topic_timepoint_classification_count(
+        topic_timepoint_id: topic_timepoint.id,
+        classification_id: classification.id
+      )
+
+      properties = []
+
+      classification.properties.each do |property|
+        property_summary = {
+          name: property['name'],
+          slug: property['slug'],
+          property_id: property['property_id'],
+          values: {}
+        }
+        value_rows = Queries.topic_timepoint_classification_values_for_property(
+          topic_timepoint_id: topic_timepoint.id,
+          classification_id: classification.id,
+          property_id: property['property_id']
+        )
+        value_rows.each do |value_row|
+          value_ids = JSON.parse(value_row[0])
+          value_count = value_row[1]
+          next unless value_ids.count.positive? && value_count.positive?
+          value_ids.each do |value_id|
+            if property_summary[:values][value_id]
+              property_summary[:values][value_id] = property_summary[:values][value_id] + value_count
+            else
+              property_summary[:values][value_id] = value_count
+            end
+          end
+        end
+        properties << property_summary
+      end
+
+      summary << {
+        id: classification.id,
+        name: classification.name,
+        count:,
+        properties:
+      }
+    end
+
+    # topic_timepoint.topic_article_timepoints.each do |topic_article_timepoint|
+    #   article = topic_article_timepoint.article
+    # end
+
+    summary
+  end
 end

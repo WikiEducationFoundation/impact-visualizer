@@ -19,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 03 Oct 2024 22:56:55 GMT
+      - Fri, 11 Oct 2024 17:02:49 GMT
       Server:
-      - mw-api-ext.codfw.main-778f78ccfc-gppx8
+      - mw-api-ext.codfw.main-585d959fc-52jnd
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -53,9 +53,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
       - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
-      - WMF-Last-Access-Global=03-Oct-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
-        04 Nov 2024 12:00:00 GMT
-      - WMF-Last-Access=03-Oct-2024;Path=/;HttpOnly;secure;Expires=Mon, 04 Nov 2024
+      - WMF-Last-Access-Global=11-Oct-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Tue,
+        12 Nov 2024 12:00:00 GMT
+      - WMF-Last-Access=11-Oct-2024;Path=/;HttpOnly;secure;Expires=Tue, 12 Nov 2024
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -66,8 +66,8 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"batchcomplete":true,"query":{"pages":[{"pageid":68650134,"ns":0,"title":"Sierra
-        Ferrell","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-09-28T18:45:38Z","lastrevid":1248297239,"length":18865}]}}'
-  recorded_at: Thu, 03 Oct 2024 22:56:55 GMT
+        Ferrell","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-10-05T14:42:26Z","lastrevid":1248297239,"length":18865}]}}'
+  recorded_at: Fri, 11 Oct 2024 17:02:49 GMT
 - request:
     method: get
     uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=info&redirects=true&titles=Sierra%20Ferrell
@@ -87,9 +87,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 03 Oct 2024 22:56:55 GMT
+      - Fri, 11 Oct 2024 17:02:50 GMT
       Server:
-      - mw-api-ext.codfw.main-778f78ccfc-kg4hw
+      - mw-api-ext.codfw.main-585d959fc-647cg
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -121,9 +121,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
       - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
-      - WMF-Last-Access-Global=03-Oct-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
-        04 Nov 2024 12:00:00 GMT
-      - WMF-Last-Access=03-Oct-2024;Path=/;HttpOnly;secure;Expires=Mon, 04 Nov 2024
+      - WMF-Last-Access-Global=11-Oct-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Tue,
+        12 Nov 2024 12:00:00 GMT
+      - WMF-Last-Access=11-Oct-2024;Path=/;HttpOnly;secure;Expires=Tue, 12 Nov 2024
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -134,8 +134,8 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"batchcomplete":true,"query":{"pages":[{"pageid":68650134,"ns":0,"title":"Sierra
-        Ferrell","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-09-28T18:45:38Z","lastrevid":1248297239,"length":18865}]}}'
-  recorded_at: Thu, 03 Oct 2024 22:56:55 GMT
+        Ferrell","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2024-10-05T14:42:26Z","lastrevid":1248297239,"length":18865}]}}'
+  recorded_at: Fri, 11 Oct 2024 17:02:50 GMT
 - request:
     method: get
     uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=68650134&prop=revisions&redirects=true&rvdir=newer&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids
@@ -146,8 +146,8 @@ http_interactions:
       User-Agent:
       - Faraday v0.17.6
       Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=03-Oct-2024;
-        WMF-Last-Access-Global=03-Oct-2024
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=11-Oct-2024;
+        WMF-Last-Access-Global=11-Oct-2024
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -158,9 +158,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 03 Oct 2024 22:56:55 GMT
+      - Fri, 11 Oct 2024 17:02:50 GMT
       Server:
-      - mw-api-ext.codfw.main-778f78ccfc-qwfcl
+      - mw-api-ext.codfw.main-585d959fc-hg2vs
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -199,7 +199,7 @@ http_interactions:
       encoding: ASCII-8BIT
       string: '{"continue":{"rvcontinue":"20210905104848|1042512948","continue":"||"},"query":{"pages":[{"pageid":68650134,"ns":0,"title":"Sierra
         Ferrell","revisions":[{"revid":1042510084,"parentid":0,"user":"Boris12345end","userid":41798115,"timestamp":"2021-09-05T10:24:39Z","size":2767}]}]}}'
-  recorded_at: Thu, 03 Oct 2024 22:56:55 GMT
+  recorded_at: Fri, 11 Oct 2024 17:02:50 GMT
 - request:
     method: get
     uri: https://www.wikidata.org/w/api.php?action=query&format=json&meta=tokens&type=csrf
@@ -219,9 +219,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 03 Oct 2024 22:56:55 GMT
+      - Fri, 11 Oct 2024 17:02:50 GMT
       Server:
-      - mw-api-ext.codfw.main-778f78ccfc-8lctd
+      - mw-api-ext.codfw.main-585d959fc-zrc65
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -253,9 +253,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikidata.org
       - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
-      - WMF-Last-Access-Global=03-Oct-2024;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Mon,
-        04 Nov 2024 12:00:00 GMT
-      - WMF-Last-Access=03-Oct-2024;Path=/;HttpOnly;secure;Expires=Mon, 04 Nov 2024
+      - WMF-Last-Access-Global=11-Oct-2024;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Tue,
+        12 Nov 2024 12:00:00 GMT
+      - WMF-Last-Access=11-Oct-2024;Path=/;HttpOnly;secure;Expires=Tue, 12 Nov 2024
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -266,7 +266,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"batchcomplete":"","query":{"tokens":{"csrftoken":"+\\"}}}'
-  recorded_at: Thu, 03 Oct 2024 22:56:55 GMT
+  recorded_at: Fri, 11 Oct 2024 17:02:50 GMT
 - request:
     method: post
     uri: https://www.wikidata.org/w/api.php
@@ -279,8 +279,8 @@ http_interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=03-Oct-2024;
-        WMF-Last-Access-Global=03-Oct-2024
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=11-Oct-2024;
+        WMF-Last-Access-Global=11-Oct-2024
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -291,9 +291,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 03 Oct 2024 22:56:56 GMT
+      - Fri, 11 Oct 2024 17:02:50 GMT
       Server:
-      - mw-api-ext.codfw.main-778f78ccfc-x2ppm
+      - mw-api-ext.codfw.main-585d959fc-sbgqb
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -354,5 +354,5 @@ http_interactions:
         Ferrell","type":"string"},"datatype":"string"},"type":"statement","id":"Q110877092$a35e7ba7-d211-44af-bd0f-72d8889892f0","rank":"normal"}]},"sitelinks":{"commonswiki":{"site":"commonswiki","title":"Category:Sierra
         Ferrell","badges":[]},"cswiki":{"site":"cswiki","title":"Sierra Ferrell","badges":[]},"enwiki":{"site":"enwiki","title":"Sierra
         Ferrell","badges":[]}}}},"success":1}'
-  recorded_at: Thu, 03 Oct 2024 22:56:56 GMT
+  recorded_at: Fri, 11 Oct 2024 17:02:50 GMT
 recorded_with: VCR 6.1.0

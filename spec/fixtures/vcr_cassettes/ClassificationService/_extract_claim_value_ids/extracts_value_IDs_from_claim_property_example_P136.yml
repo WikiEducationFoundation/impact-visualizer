@@ -19,9 +19,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 03 Oct 2024 20:15:26 GMT
+      - Fri, 11 Oct 2024 17:13:24 GMT
       Server:
-      - mw-api-ext.codfw.main-576bb79749-dsv9j
+      - mw-api-ext.codfw.main-585d959fc-62bfg
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -53,9 +53,9 @@ http_interactions:
       Set-Cookie:
       - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikidata.org
       - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
-      - WMF-Last-Access-Global=03-Oct-2024;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Mon,
-        04 Nov 2024 12:00:00 GMT
-      - WMF-Last-Access=03-Oct-2024;Path=/;HttpOnly;secure;Expires=Mon, 04 Nov 2024
+      - WMF-Last-Access-Global=11-Oct-2024;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Tue,
+        12 Nov 2024 12:00:00 GMT
+      - WMF-Last-Access=11-Oct-2024;Path=/;HttpOnly;secure;Expires=Tue, 12 Nov 2024
         12:00:00 GMT
       X-Client-Ip:
       - 67.170.51.150
@@ -66,7 +66,7 @@ http_interactions:
     body:
       encoding: ASCII-8BIT
       string: '{"batchcomplete":"","query":{"tokens":{"csrftoken":"+\\"}}}'
-  recorded_at: Thu, 03 Oct 2024 20:15:26 GMT
+  recorded_at: Fri, 11 Oct 2024 17:13:24 GMT
 - request:
     method: post
     uri: https://www.wikidata.org/w/api.php
@@ -79,8 +79,8 @@ http_interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=03-Oct-2024;
-        WMF-Last-Access-Global=03-Oct-2024
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=11-Oct-2024;
+        WMF-Last-Access-Global=11-Oct-2024
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -91,9 +91,9 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Thu, 03 Oct 2024 20:15:27 GMT
+      - Fri, 11 Oct 2024 17:13:24 GMT
       Server:
-      - mw-api-ext.codfw.main-576bb79749-9gmtk
+      - mw-api-ext.codfw.main-585d959fc-kcfns
       X-Content-Type-Options:
       - nosniff
       X-Frame-Options:
@@ -154,5 +154,5 @@ http_interactions:
         Ferrell","type":"string"},"datatype":"string"},"type":"statement","id":"Q110877092$a35e7ba7-d211-44af-bd0f-72d8889892f0","rank":"normal"}]},"sitelinks":{"commonswiki":{"site":"commonswiki","title":"Category:Sierra
         Ferrell","badges":[]},"cswiki":{"site":"cswiki","title":"Sierra Ferrell","badges":[]},"enwiki":{"site":"enwiki","title":"Sierra
         Ferrell","badges":[]}}}},"success":1}'
-  recorded_at: Thu, 03 Oct 2024 20:15:27 GMT
+  recorded_at: Fri, 11 Oct 2024 17:13:24 GMT
 recorded_with: VCR 6.1.0

@@ -249,32 +249,70 @@ describe ClassificationService do
       wiki_action_api.get_wikidata_claims('Sierra Ferrell')
     end
 
-    it 'extracts value IDs from claim proprery, example: P106' do
+    it 'extracts value IDs from claim property, example: P106' do
       claim = claims['P106']
       extracted_value_ids = subject.extract_claim_value_ids(claim)
       expect(extracted_value_ids).to eq(%w[Q177220 Q66763670])
     end
 
-    it 'extracts value IDs from claim proprery, example: P31' do
+    it 'extracts value IDs from claim property, example: P31' do
       claim = claims['P31']
       extracted_value_ids = subject.extract_claim_value_ids(claim)
       expect(extracted_value_ids).to eq(%w[Q5])
     end
 
-    it 'extracts value IDs from claim proprery, example: P21' do
+    it 'extracts value IDs from claim property, example: P21' do
       claim = claims['P21']
       extracted_value_ids = subject.extract_claim_value_ids(claim)
       expect(extracted_value_ids).to eq(%w[Q6581072])
     end
 
-    it 'extracts value IDs from claim proprery, example: P136' do
+    it 'extracts value IDs from claim property, example: P136' do
       claim = claims['P136']
       extracted_value_ids = subject.extract_claim_value_ids(claim)
       expect(extracted_value_ids).to eq(%w[Q213714 Q43343 Q131272 Q844245])
     end
   end
 
-  describe '#summarize_topic_timepoint' do
-    it 'summarizes topic timepoint'
+  describe '#summarize_topic_timepoint', vcr: true do
+    include_context 'topic with two timepoints'
+    let(:subject) { described_class.new(topic:) }
+    let(:classification) { create(:classification) }
+
+    before do
+      topic.classifications << classification
+      subject.classify_all_articles
+    end
+
+    it 'summarizes topic timepoint' do
+      topic_timepoint = topic.topic_timepoints.first
+
+      expect(Queries).to receive(:topic_timepoint_classification_values_for_property).and_return(
+        [
+          ['[]', 1],
+          ['["Q48270"]', 1],
+          ['["Q6581072"]', 1368],
+          ['["Q6581072", "Q6581097"]', 2],
+          ['["Q6581097", "Q6581072"]', 1]
+        ]
+      )
+
+      summary = subject.summarize_topic_timepoint(topic_timepoint:)
+      expect(summary).to eq([{
+        count: 1,
+        id: classification.id,
+        name: 'Biography',
+        properties: [{
+          name: 'Gender',
+          property_id: 'P21',
+          slug: 'gender',
+          values: {
+            'Q48270' => 1,
+            'Q6581072' => 1371,
+            'Q6581097' => 3
+          }
+        }]
+      }])
+    end
   end
 end
