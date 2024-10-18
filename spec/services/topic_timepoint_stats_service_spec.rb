@@ -25,6 +25,28 @@ describe TopicTimepointStatsService do
         attributed_token_count: nil
       )
 
+      classification_summary = [{
+        count: 1,
+        id: 123,
+        name: 'Biography',
+        properties: [{
+          name: 'Gender',
+          property_id: 'P21',
+          slug: 'gender',
+          values: {
+            'Q48270' => 1,
+            'Q6581072' => 1371,
+            'Q6581097' => 3
+          }
+        }]
+      }]
+
+      expect_any_instance_of(ClassificationService).to(
+        receive(:summarize_topic_timepoint)
+          .with(topic_timepoint: start_topic_timepoint)
+          .and_return(classification_summary)
+      )
+
       # Update stats based on pre-existing
       topic_timepoint_stats_service.update_stats_for_topic_timepoint(
         topic_timepoint: start_topic_timepoint
@@ -42,7 +64,8 @@ describe TopicTimepointStatsService do
         average_wp10_prediction: 50.0,
         token_count: 30,
         token_count_delta: 0,
-        attributed_token_count: 0
+        attributed_token_count: 0,
+        classifications: classification_summary.map(&:deep_stringify_keys)
       )
 
       expect(start_topic_timepoint.wp10_prediction_categories).to eq({ 'A' => 1 })
@@ -82,7 +105,8 @@ describe TopicTimepointStatsService do
         average_wp10_prediction: 55.0,
         token_count: 70,
         token_count_delta: 60,
-        attributed_token_count: 40
+        attributed_token_count: 40,
+        classifications: []
       )
     end
   end

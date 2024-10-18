@@ -11,7 +11,7 @@ RSpec.describe Classification do
 
   describe 'validations' do
     it 'validates prerequisites json' do
-      classification = build(:classification, prerequisites: nil)
+      classification = build(:biography, prerequisites: nil)
       expect(classification.valid?).to eq(false)
       expect(classification.errors.full_messages.first)
         .to include('Prerequisites does not comply to JSON Schema')
@@ -46,7 +46,7 @@ RSpec.describe Classification do
     end
 
     it 'validates properties json' do
-      classification = build(:classification, properties: nil)
+      classification = build(:biography, properties: nil)
       expect(classification.valid?).to eq(false)
       expect(classification.errors.full_messages.first)
         .to include('Properties does not comply to JSON Schema')
@@ -61,7 +61,8 @@ RSpec.describe Classification do
       classification.properties = [{
         name: 'Gender',
         slug: 'gender',
-        property_id: 'P21'
+        property_id: 'P21',
+        segments: false
       }]
 
       # Valid, complete properties, no segments
@@ -85,12 +86,14 @@ RSpec.describe Classification do
           {
             label: 'Male',
             key: 'male',
-            value_ids: %w[Q6581097]
+            value_ids: %w[Q6581097],
+            default: false
           },
           {
             label: 'Female',
             key: 'female',
-            value_ids: %w[Q6581072]
+            value_ids: %w[Q6581072],
+            default: false
           },
           {
             label: 'Other',
@@ -109,6 +112,7 @@ RSpec.describe Classification do
         name: 'Gender',
         slug: 'gender',
         property_id: 'P21',
+        segments: false,
         extra: '!!!'
       }]
 

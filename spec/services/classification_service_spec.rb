@@ -47,7 +47,8 @@ describe ClassificationService do
         properties: [{
           name: 'Gender',
           slug: 'gender',
-          property_id: 'P21'
+          property_id: 'P21',
+          segments: false
         }]
       )
       topic.classifications << classification
@@ -277,15 +278,18 @@ describe ClassificationService do
   describe '#summarize_topic_timepoint', vcr: true do
     include_context 'topic with two timepoints'
     let(:subject) { described_class.new(topic:) }
-    let(:classification) { create(:classification) }
+    let(:classification) { create(:biography) }
 
     before do
       topic.classifications << classification
       subject.classify_all_articles
     end
 
-    it 'summarizes topic timepoint' do
+    it 'counts classifications, and counts all values as segments' do
       topic_timepoint = topic.topic_timepoints.first
+
+      classification.properties[0][:segments] = true
+      classification.save
 
       expect(Queries).to receive(:topic_timepoint_classification_values_for_property).and_return(
         [
@@ -306,10 +310,74 @@ describe ClassificationService do
           name: 'Gender',
           property_id: 'P21',
           slug: 'gender',
-          values: {
+          translate_segment_keys: true,
+          segments: {
             'Q48270' => 1,
             'Q6581072' => 1371,
             'Q6581097' => 3
+          }
+        }]
+      }])
+    end
+
+    it 'counts classifications, but no segments when segments=false' do
+      topic_timepoint = topic.topic_timepoints.first
+
+      classification.properties[0][:segments] = false
+      classification.save
+
+      summary = subject.summarize_topic_timepoint(topic_timepoint:)
+      expect(summary).to eq([{
+        count: 1,
+        id: classification.id,
+        name: 'Biography',
+        properties: [{
+          name: 'Gender',
+          property_id: 'P21',
+          slug: 'gender',
+          translate_segment_keys: false,
+          segments: false
+        }]
+      }])
+    end
+
+    it 'counts classifications, and buckets values into segments' do
+      topic_timepoint = topic.topic_timepoints.first
+
+      classification.properties[0][:segments] = [
+        { label: 'Female', key: 'female', value_ids: %w[Q6581072], default: false },
+        { label: 'Male', key: 'male', value_ids: %w[Q6581097 Q48272], default: false },
+        { label: 'Other', key: 'other', default: true }
+      ]
+
+      classification.save!
+
+      expect(Queries).to receive(:topic_timepoint_classification_values_for_property).and_return(
+        [
+          ['[]', 1],
+          ['["Q48270"]', 1],
+          ['["Q48271"]', 1],
+          ['["Q48272"]', 1],
+          ['["Q6581072"]', 1368],
+          ['["Q6581072", "Q6581097"]', 2],
+          ['["Q6581097", "Q6581072"]', 1]
+        ]
+      )
+
+      summary = subject.summarize_topic_timepoint(topic_timepoint:)
+      expect(summary).to eq([{
+        count: 1,
+        id: classification.id,
+        name: 'Biography',
+        properties: [{
+          name: 'Gender',
+          property_id: 'P21',
+          slug: 'gender',
+          translate_segment_keys: false,
+          segments: {
+            'Female' => 1371,
+            'Other' => 2,
+            'Male' => 4
           }
         }]
       }])

@@ -34,7 +34,8 @@ describe TopicTimepointsController do
         revisions_count: topic_timepoint.revisions_count,
         revisions_count_delta: topic_timepoint.revisions_count_delta,
         token_count: topic_timepoint.token_count,
-        token_count_delta: topic_timepoint.token_count_delta
+        token_count_delta: topic_timepoint.token_count_delta,
+        classifications: topic_timepoint.classifications
       )
 
       expect(Date.parse(first_response_topic_timepoint['timestamp']))

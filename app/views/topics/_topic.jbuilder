@@ -15,6 +15,11 @@ if topic.wiki
   end
 end
 
+json.classifications topic.topic_classifications do |topic_classification|
+  classification = topic_classification.classification
+  json.extract! classification, :id, :name, :properties
+end
+
 json.has_stats topic.most_recent_summary.present?
 json.owned owned
 

@@ -38,5 +38,6 @@ export default interface Topic {
   users_import_percent_complete: number,
   articles_import_status: string, 
   timepoint_generate_status: string,
-  users_import_status: string
+  users_import_status: string,
+  classifications: Array<object>
 }

@@ -45,11 +45,11 @@ class Classification < ApplicationRecord
               default: { type: 'boolean' },
               value_ids: { type: 'array', items: { type: 'string' } }
             },
-            required: %w[label key]
+            required: %w[label key default]
           }
         }
       },
-      required: %w[name slug property_id],
+      required: %w[name slug property_id segments],
       additionalProperties: false
     }
   }.freeze

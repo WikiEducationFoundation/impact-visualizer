@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_02_201727) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_17_211306) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -218,6 +218,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_02_201727) do
     t.integer "token_count_delta"
     t.integer "attributed_token_count"
     t.jsonb "wp10_prediction_categories"
+    t.jsonb "classifications", default: []
     t.index ["topic_id"], name: "index_topic_timepoints_on_topic_id"
   end
 

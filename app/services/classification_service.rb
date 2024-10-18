@@ -103,6 +103,7 @@ class ClassificationService
   end
 
   def extract_claim_value_ids(claim)
+    return [] unless claim.is_a?(Array)
     value_ids = []
     claim.each do |prop|
       id = prop.dig('mainsnak', 'datavalue', 'value', 'id')
@@ -115,56 +116,134 @@ class ClassificationService
     raise ImpactVisualizerErrors::InvalidTimepointForTopic unless topic_timepoint.topic == @topic
 
     classifications = @topic.classifications
-
     summary = []
 
+    # Process each classification associated with Topic
     classifications.each do |classification|
-      count = Queries.topic_timepoint_classification_count(
-        topic_timepoint_id: topic_timepoint.id,
-        classification_id: classification.id
+      summary << classification_summary_for_topic_timepoint(
+        classification:,
+        topic_timepoint:
       )
-
-      properties = []
-
-      classification.properties.each do |property|
-        property_summary = {
-          name: property['name'],
-          slug: property['slug'],
-          property_id: property['property_id'],
-          values: {}
-        }
-        value_rows = Queries.topic_timepoint_classification_values_for_property(
-          topic_timepoint_id: topic_timepoint.id,
-          classification_id: classification.id,
-          property_id: property['property_id']
-        )
-        value_rows.each do |value_row|
-          value_ids = JSON.parse(value_row[0])
-          value_count = value_row[1]
-          next unless value_ids.count.positive? && value_count.positive?
-          value_ids.each do |value_id|
-            if property_summary[:values][value_id]
-              property_summary[:values][value_id] = property_summary[:values][value_id] + value_count
-            else
-              property_summary[:values][value_id] = value_count
-            end
-          end
-        end
-        properties << property_summary
-      end
-
-      summary << {
-        id: classification.id,
-        name: classification.name,
-        count:,
-        properties:
-      }
     end
 
-    # topic_timepoint.topic_article_timepoints.each do |topic_article_timepoint|
-    #   article = topic_article_timepoint.article
-    # end
-
     summary
+  end
+
+  def classification_summary_for_topic_timepoint(classification:, topic_timepoint:)
+    # Grab count of articles with classification at topic_timepoint
+    count = Queries.topic_timepoint_classification_count(
+      topic_timepoint_id: topic_timepoint.id,
+      classification_id: classification.id
+    )
+
+    properties = []
+
+    # Summarize classification properties
+    classification.properties.each do |property|
+      segments = segment_summary_for_property(
+        property:, classification:, topic_timepoint:
+      )
+
+      property_summary = {
+        name: property['name'],
+        slug: property['slug'],
+        property_id: property['property_id'],
+        translate_segment_keys: get_translate_segment_keys(property:),
+        segments:
+      }
+
+      properties << property_summary
+    end
+
+    {
+      id: classification.id,
+      name: classification.name,
+      count:,
+      properties:
+    }
+  end
+
+  def get_translate_segment_keys(property:)
+    return false unless property['segments']
+    return true if property['segments'] == true
+    false
+  end
+
+  def segment_summary_for_property(property:, classification:, topic_timepoint:)
+    return false unless property['segments']
+
+    # Get property values for all classified articles at timepoint
+    value_rows = Queries.topic_timepoint_classification_values_for_property(
+      topic_timepoint_id: topic_timepoint.id,
+      classification_id: classification.id,
+      property_id: property['property_id']
+    )
+
+    return segment_by_value(value_rows:) if property['segments'] == true
+    segment_by_group(value_rows:, property:)
+  end
+
+  def segment_by_value(value_rows:)
+    segments = {}
+
+    # Count up total of each value_id
+    value_rows.each do |value_row|
+      value_ids = JSON.parse(value_row[0])
+      value_count = value_row[1]
+      next unless value_ids.count.positive? && value_count.positive?
+      value_ids.each do |value_id|
+        if segments[value_id]
+          segments[value_id] = segments[value_id] + value_count
+          next
+        end
+        segments[value_id] = value_count
+      end
+    end
+
+    segments
+  end
+
+  def segment_by_group(value_rows:, property:)
+    property_segments = property['segments']
+    return false unless property_segments.is_a?(Array)
+
+    default_segment_key = nil
+    segments = {}
+
+    # Prep the segment key/counts
+    property_segments.each do |property_segment|
+      segments[property_segment['label']] = 0
+      default_segment_key = property_segment['label'] if property_segment['default']
+    end
+
+    # Bail if no "default"
+    return false unless default_segment_key
+
+    # Handle each set of value_ids
+    value_rows.each do |value_row|
+      value_ids = JSON.parse(value_row[0])
+      value_count = value_row[1]
+      next unless value_ids.count.positive? && value_count.positive?
+
+      # Handle each value_id in set
+      value_ids.each do |value_id|
+        matched_segment_key = nil
+
+        # Find the matching segment
+        property_segments.each do |property_segment|
+          next unless property_segment['value_ids']&.include?(value_id)
+          matched_segment_key = property_segment['label']
+          break
+        end
+
+        # If no match found, use default
+        matched_segment_key ||= default_segment_key
+
+        # Increment the count
+        segments[matched_segment_key] = segments[matched_segment_key] + value_count
+      end
+    end
+
+    segments
   end
 end

@@ -2932,7 +2932,7 @@ __metadata:
     postcss-scss: "npm:^1.0.5"
     precss: "npm:^3.1.2"
     prop-types: "npm:^15.8.1"
-    query-string: "npm:^9.0.0"
+    query-string: "npm:^9.1.1"
     react: "npm:^18.2.0"
     react-accessible-treeview: "npm:^2.8.3"
     react-datepicker: "npm:^7.1.0"
@@ -4717,14 +4717,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"query-string@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "query-string@npm:9.0.0"
+"query-string@npm:^9.1.1":
+  version: 9.1.1
+  resolution: "query-string@npm:9.1.1"
   dependencies:
     decode-uri-component: "npm:^0.4.1"
     filter-obj: "npm:^5.1.0"
     split-on-first: "npm:^3.0.0"
-  checksum: 10/ea71a81a192743b633ab6acc27a917d9d868c16ef50d3985bddebf5e9b525012e450220b2bad6c208f29c013d34bd2c1e925362979d19f716c74a5fe3ebf4b21
+  checksum: 10/fa6b40be91463123cf6da43e067539d5b7b7f2e69fc7f7113d70a943149a1f0dcfa163534310cae2827175df0616dbbe4a9dcb9821b62794d5bfe1ca6f309195
   languageName: node
   linkType: hard
 

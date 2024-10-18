@@ -58,13 +58,17 @@ class TopicTimepointStatsService
       wp10_predictions
     )
 
+    # Get categorization summary
+    classification_service = ClassificationService.new(topic:)
+    classifications = classification_service.summarize_topic_timepoint(topic_timepoint:)
+
     # Capture stats
     topic_timepoint.update(length:, length_delta:, articles_count:, articles_count_delta:,
                            revisions_count:, revisions_count_delta:,
                            attributed_revisions_count_delta:,
                            attributed_length_delta:, attributed_articles_created_delta:,
                            average_wp10_prediction:, wp10_prediction_categories:,
-                           token_count:, token_count_delta:,
+                           token_count:, token_count_delta:, classifications:,
                            attributed_token_count:)
   end
 end

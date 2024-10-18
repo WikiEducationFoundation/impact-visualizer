@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :article_classification do
-    classification { Classification.first || create(:classification) }
+    classification { Classification.first || create(:biography) }
     article { Article.first || create(:article) }
     properties do
       [{

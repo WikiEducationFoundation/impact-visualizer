@@ -14,6 +14,7 @@ FactoryBot.define do
     timestamp { Faker::Date.backward(days: 365) }
     token_count { Faker::Number.number(digits: 5) }
     token_count_delta { Faker::Number.number(digits: 5) }
+    topic { Topic.first || create(:topic) }
   end
 end
 
@@ -29,6 +30,7 @@ end
 #  attributed_revisions_count_delta  :integer
 #  attributed_token_count            :integer
 #  average_wp10_prediction           :float
+#  classifications                   :jsonb
 #  length                            :integer
 #  length_delta                      :integer
 #  revisions_count                   :integer
