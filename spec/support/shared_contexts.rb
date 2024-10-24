@@ -10,9 +10,11 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:topic_user) { create(:topic_user, user:, topic:) }
   let!(:article_1) { create(:article, pageid: 2364730, title: 'Yankari Game Reserve') }
   let!(:article_2) { create(:article, pageid: 68650134, title: 'Sierra Ferrell') }
+  let!(:article_3) { create(:article, pageid: 20408, title: 'Marie Curie') }
   let!(:article_bag) { create(:article_bag, topic:) }
   let!(:article_bag_article_1) { create(:article_bag_article, article: article_1, article_bag:) }
   let!(:article_bag_article_2) { create(:article_bag_article, article: article_2, article_bag:) }
+  let!(:article_bag_article_3) { create(:article_bag_article, article: article_3, article_bag:) }
 
   # Start timepoints
   let!(:start_topic_timepoint) { create(:topic_timepoint, topic:, timestamp: start_date) }
@@ -70,6 +72,20 @@ RSpec.shared_context 'topic with two timepoints' do
   let!(:end_topic_article_timepoint_2) do
     create(:topic_article_timepoint, topic_timepoint: end_topic_timepoint,
            article_timepoint: end_article_timepoint_2, length_delta: 100,
+           revisions_count_delta: 2, attributed_length_delta: 50,
+           attributed_token_count: 20,
+           token_count_delta: 30,
+           attributed_revisions_count_delta: 1)
+  end
+  let!(:end_article_timepoint_3) do
+    create(:article_timepoint, article: article_3, timestamp: end_date,
+           article_length: 200, revisions_count: 4, wp10_prediction: 30,
+           wp10_prediction_category: 'B',
+           token_count: 40, revision_id: 1084581512)
+  end
+  let!(:end_topic_article_timepoint_3) do
+    create(:topic_article_timepoint, topic_timepoint: end_topic_timepoint,
+           article_timepoint: end_article_timepoint_3, length_delta: 100,
            revisions_count_delta: 2, attributed_length_delta: 50,
            attributed_token_count: 20,
            token_count_delta: 30,

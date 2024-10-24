@@ -4,8 +4,8 @@ import vegaEmbed from 'vega-embed';
 import * as vega from "vega";
 
 function colorInterpolate(percent) {
-  const color1 = "#3F479A";
-  const color2 = "#FFFFFF";
+  const color1 = "#FFFFFF";
+  const color2 = "#3F479A";
   
   // Convert the hex colors to RGB values
   const r1 = parseInt(color1.substring(1, 3), 16);

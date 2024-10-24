@@ -187,6 +187,23 @@ class WikiActionApi
     response.data.dig('entities', entity_id, 'claims') if response&.status == 200
   end
 
+  def get_wikidata_labels(ids)
+    ids_param = ids.uniq.take(50).join('|')
+
+    query_parameters = {
+      languages: @wiki.language,
+      sites: @wiki.wikidata_site || 'enwiki',
+      ids: ids_param,
+      props: 'labels',
+      token_type: false
+    }
+
+    # Fetch wikidata
+    response = mediawiki(:action, query_parameters, true)
+
+    response.data.dig('entities') if response&.status == 200
+  end
+
   private
 
   def api_client

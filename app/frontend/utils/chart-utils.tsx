@@ -2,9 +2,111 @@ import _ from 'lodash';
 
 import ChartTimepoint from '../types/chart-timepoint.type';
 import StatFields from '../types/stat-fields.type';
+import WikidataTranslator from '../utils/wikidata-translator';
 
 const ChartUtils = {
   categoryOrder: ['FA', 'FL', 'A', 'GA', 'B', 'C', 'Start', 'Stub', 'List', 'Missing'],
+
+  parseClassificationViewKey(classificationView) {
+    let classificationId: null | number = null;
+    let propertySlug = '';
+    
+    if (classificationView !== 'default') {
+      const classificationKeySegments = classificationView.split('::');
+      classificationId = parseInt(classificationKeySegments[0].replace('classification-', ''));
+      if (classificationKeySegments[1]) {
+        propertySlug = classificationKeySegments[1].replace('property-', '');
+      };
+    };
+
+    return { classificationId, propertySlug };
+  },
+
+  async prepChartSpecs({ topicTimepoints, stat, totalField, topic, classificationView,
+                   deltaField, attributedDeltaField, type }) {
+    
+    let values: ChartTimepoint[] = [];
+    let yLabel: string = '';
+    let min: number = 0;
+    let max: number = 0;
+    let title: string = '';
+    let categories: string[] = [];
+
+    const {classificationId, propertySlug} =
+      this.parseClassificationViewKey(classificationView);
+
+    if (stat === 'wp10') {
+      yLabel = 'Predicted Quality';
+      title = `Predicted quality of articles over time`;
+      const { values: vals, categories: cats } = ChartUtils.prepQualityValues({
+        timepoints: topicTimepoints,
+        topic
+      });
+      values = vals;
+      categories = cats;
+    } else {
+      if (type === 'cumulative') {
+        yLabel = _.startCase(totalField);
+        title = `Cumulative change to ${_.lowerCase(totalField)}`;
+        min = ChartUtils.minForCumulativeChart(topicTimepoints, totalField);
+        max = ChartUtils.maxForCumulativeChart(topicTimepoints, totalField);
+        if (classificationView === 'default') {
+          values = ChartUtils.prepCumulativeValues({
+            timepoints: topicTimepoints,
+            deltaField,
+            totalField,
+            attributedDeltaField
+          });
+        } else {
+          values = ChartUtils.prepClassificationTotalCumulativeValues({
+            timepoints: topicTimepoints,
+            deltaField,
+            totalField,
+            classificationId,
+            propertySlug
+          });
+        }
+      }
+      if (type === 'delta') {
+        yLabel = _.startCase(`${stat} Created`);
+        title = `${_.startCase(stat)} created at each timepoint`;
+        min = 0;
+        max = ChartUtils.maxForDeltaChart(topicTimepoints, deltaField);
+        if (classificationView === 'default') {
+          values = ChartUtils.prepDeltaValues({
+            timepoints: topicTimepoints,
+            deltaField,
+            totalField,
+            attributedDeltaField
+          });
+        } else {
+          if (propertySlug === '') {
+            values = ChartUtils.prepClassificationTotalDeltaValues({
+              timepoints: topicTimepoints,
+              topic,
+              deltaField,
+              totalField,
+              classificationId,
+              propertySlug
+            });
+          } else {
+            const { values: vals, categories: cats } = await ChartUtils.prepClassificationPropertySegmentValues({
+              timepoints: topicTimepoints,
+              topic,
+              deltaField,
+              totalField,
+              classificationId,
+              propertySlug
+            });
+            values = vals;
+            categories = cats;
+          }
+        }
+      }
+    }
+
+    return { values, yLabel, min, max, title, categories };
+  },
 
   minForCumulativeChart(timepoints, totalField): number {
     return _.reduce(timepoints, (accum, timepoint) => {
@@ -55,7 +157,7 @@ const ChartUtils = {
 
   prepDeltaValues(options): ChartTimepoint[] {
     const { timepoints, attributedDeltaField, deltaField } = options;
-    
+
     const values: ChartTimepoint[] = [];
 
     timepoints.forEach((timepoint) => {
@@ -76,6 +178,111 @@ const ChartUtils = {
     })
 
     return values;
+  },
+
+  prepClassificationTotalCumulativeValues(options): ChartTimepoint[] {
+    const { timepoints, classificationId, deltaField } = options;
+    
+    const values: ChartTimepoint[] = [];
+
+    let classifiedCounter = 0;
+    let unclassifiedCounter = 0;
+
+    timepoints.forEach((timepoint) => {
+      const classification = _.find(timepoint.classifications, { id: classificationId });
+      classifiedCounter += Math.max(0, classification.count_delta);
+      unclassifiedCounter += Math.max(0, timepoint[deltaField] - classification.count_delta);
+
+      values.push({
+        date: timepoint.timestamp,
+        value: classifiedCounter,
+        type: classification.name
+      });
+
+      values.push({
+        date: timepoint.timestamp,
+        value: unclassifiedCounter,
+        type: 'Other'
+      });
+
+    })
+
+    return values;
+  },
+
+  prepClassificationTotalDeltaValues(options): ChartTimepoint[] {
+    const { timepoints, deltaField, classificationId } = options;
+    
+    const values: ChartTimepoint[] = [];
+
+    timepoints.forEach((timepoint) => {
+      const classification = _.find(timepoint.classifications, { id: classificationId });
+      const classified = Math.max(0, classification.count_delta);
+      const unclassified = Math.max(0, timepoint[deltaField] - classification.count_delta);
+
+      values.push({
+        date: timepoint.timestamp,
+        value: classified,
+        type: classification.name
+      });
+      
+      values.push({
+        date: timepoint.timestamp,
+        value: unclassified,
+        type: 'Other'
+      });
+    })
+
+    return values;
+  },
+
+  async prepClassificationPropertySegmentValues(options): Promise<{values: ChartTimepoint[], categories: string[]}> {
+    const { timepoints, classificationId, propertySlug } = options;
+
+    const values: Array<ChartTimepoint> = [];
+    let segments: Array<{key: string, countDelta: number, label: string}> = [];
+
+    timepoints.forEach((timepoint) => {
+      const classification = _.find(timepoint.classifications, { id: classificationId });
+      const property = _.find(classification.properties, { slug: propertySlug });
+      _.each(property.segments, (values, key) => {
+        const existingSegment = _.find(segments, { key });
+        if (existingSegment) {
+          existingSegment.countDelta += values.count_delta;
+        } else {
+          segments.push({
+            key: key,
+            countDelta: values.count_delta,
+            label: values.label
+          });
+        }
+      })
+    });
+
+    segments = _.sortBy(segments, (segment) => {
+      return -segment.countDelta;
+    })
+
+    timepoints.forEach((timepoint) => {
+      _.each(segments, (segment) => {
+        let value = 0;
+        const classification = _.find(timepoint.classifications, { id: classificationId });
+        const property = _.find(classification.properties, { slug: propertySlug });
+        const segmentValues = property.segments[segment.key];
+        const type = segmentValues.label;
+        if (segmentValues && segmentValues.count_delta) {
+          value = segmentValues.count_delta;
+        };
+        values.push({
+          date: timepoint.timestamp,
+          value,
+          type
+        });
+      });
+    });
+
+    const categories: Array<string> = _.map(segments, 'label');
+    return { categories, values };
   },
 
   prepQualityValues(options): { values: ChartTimepoint[], categories: string[] } {

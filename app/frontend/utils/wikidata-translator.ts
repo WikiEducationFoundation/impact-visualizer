@@ -21,12 +21,11 @@ class WikidataTranslator {
   translate(id: string) {
     const match = _.find(this.labels, { id });
     if (match) return match.label;
-    return `No translation for ${id}`;
+    return id;
   }
 
   async preload({ qNumbers }: { qNumbers: string[] }) {
     const labelResponse = await this.fetchLabels({ qNumbers });
-
     if (labelResponse.status !== 200) {
       // Handle error
       console.log(labelResponse);
@@ -45,7 +44,7 @@ class WikidataTranslator {
   }
 
   fetchLabels({ qNumbers }: { qNumbers: string[] }) {
-    const uniqueQNumbers = _.uniq(qNumbers)
+    const uniqueQNumbers = _.take(_.uniq(qNumbers), 50);
     const idsParam = _.join(uniqueQNumbers, '|');
     const query = {
       ids: idsParam,

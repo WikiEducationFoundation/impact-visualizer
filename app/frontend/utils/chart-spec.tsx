@@ -1,12 +1,16 @@
 import _ from 'lodash';
+import ChartUtils from './chart-utils';
 
 const ChartSpec = {
-  prepare({ min, max, yLabel, values, stat, type, timeUnit }) {
+  prepare({ min, max, yLabel, values, stat, type,
+            timeUnit, classificationView, categories }) {
+    
+    const { propertySlug } = ChartUtils.parseClassificationViewKey(classificationView);
 
-    const axes = this.axes({ type, stat, yLabel });
-    const marks = this.marks({ type, stat, yLabel });
-    const data = this.data({ min, values, type, stat, timeUnit });
-    const scales = this.scales({ min, max, type, stat});
+    const axes = this.axes({ type, yLabel });
+    const marks = this.marks({ type, stat, yLabel, propertySlug });
+    const data = this.data({ min, values, type, stat, timeUnit, propertySlug });
+    const scales = this.scales({ min, max, type, stat, categories, propertySlug});
 
     const spec = {
       "$schema": "https://vega.github.io/schema/vega/v5.json",
@@ -67,7 +71,7 @@ const ChartSpec = {
     return spec;
   },
 
-  data({ min, values, type, stat, timeUnit }): object {
+  data({ min, values, type, stat, timeUnit, propertySlug }): object {
     if (stat === 'wp10') {
       return [
         {
@@ -84,6 +88,41 @@ const ChartSpec = {
           ]
         }
       ];
+    }
+
+    if (type === 'delta' && propertySlug !== '') {
+      return [
+        {
+          name: 'data',
+          values: values,
+          transform: [
+            { type: 'formula', expr: 'toDate(datum["date"])', as: 'date' },
+            {
+              type: 'timeunit',
+              field: 'date',
+              units: ['year', timeUnit],
+              signal: 'tbin'
+            },
+            {
+              type: 'aggregate',
+              groupby: ['unit0', 'unit1', 'type'],
+              ops: ['sum'],
+              fields: ['value'],
+              as: ['agg']
+            },
+            {
+              type: 'stack',
+              offset: 'zero',
+              groupby: ['unit0'],
+              field: 'agg',
+              sort: {
+                field: 'agg',
+                order: 'descending'
+              }
+            }
+          ]
+        }
+      ]  
     }
 
     if (type === 'delta') {
@@ -138,7 +177,7 @@ const ChartSpec = {
     ]
   },
 
-  axes({ yLabel, type, stat }): object {
+  axes({ yLabel, type }): object {
     if (type === 'delta') {
       return [
         { 
@@ -157,7 +196,7 @@ const ChartSpec = {
     ]
   },
 
-  scales({ min, max, type, stat }): Array<object> {
+  scales({ min, max, type, stat, propertySlug, categories }): Array<object> {
     if (stat === 'wp10') {
       return [
         {
@@ -182,29 +221,57 @@ const ChartSpec = {
       ]
     }
 
+    if (type === 'delta' && propertySlug !== '') {
+      return [
+        {
+          name: 'x',
+          type: 'band',
+          padding: 0.07,
+          range: [0, { signal: 'width' }],
+          domain: { signal: 'timeSequence(tbin.unit, tbin.start, tbin.stop)'}
+        },
+        {
+          name: 'y',
+          type: 'linear',
+          domain: { data: 'data', field: 'y1' },
+          range: [{signal: 'height'}, 0],
+          zero: true
+        },
+        {
+          name: 'color',
+          type: 'ordinal',
+          range: { scheme: categories.length > 10 ? 'tableau20' : 'wiki' },
+          domain: {
+            data: 'data',
+            field: 'type'
+          },
+        }
+      ]  
+    }
+
     if (type === 'delta') {
       return [
-      {
-        name: 'x',
-        type: 'band',
-        padding: 0.07,
-        range: [0, { signal: 'width' }],
-        domain: { signal: 'timeSequence(tbin.unit, tbin.start, tbin.stop)'}
-      },
-      {
-        name: 'y',
-        type: 'linear',
-        domain: { data: 'data', field: 'y1' },
-        range: [{signal: 'height'}, 0],
-        zero: true
-      },
-      {
-        name: 'color',
-        type: 'ordinal',
-        range: ['#676eb4', '#BFC4EE'],
-        domain: { data: 'data', field: 'type' },
-      }
-    ]  
+        {
+          name: 'x',
+          type: 'band',
+          padding: 0.07,
+          range: [0, { signal: 'width' }],
+          domain: { signal: 'timeSequence(tbin.unit, tbin.start, tbin.stop)'}
+        },
+        {
+          name: 'y',
+          type: 'linear',
+          domain: { data: 'data', field: 'y1' },
+          range: [{signal: 'height'}, 0],
+          zero: true
+        },
+        {
+          name: 'color',
+          type: 'ordinal',
+          range: ['#676eb4', '#BFC4EE'],
+          domain: { data: 'data', field: 'type' },
+        }
+      ]  
     }
 
     return [
@@ -230,7 +297,7 @@ const ChartSpec = {
     ]
   },
 
-  marks({ type, stat, yLabel }): Array<object> {
+  marks({ type, stat, yLabel, propertySlug }): Array<object> {
     if (stat == 'wp10') {
       return [
         {
@@ -262,6 +329,33 @@ const ChartSpec = {
               }        
             },
           ]
+        }
+      ]
+    }
+
+    if (type === 'delta' && propertySlug !== '') {
+      const time = "timeFormat(datum.unit0) + ' - ' + timeFormat(datum.unit1)";
+      const title = `datum.type`;
+      const tooltip = `{title: ${title}, Dates: ${time}, Count: format(datum.agg, ',')}`;
+      return [
+        {
+          type: 'rect',
+          from: { data: 'data'},    
+          encode: {
+            enter: {
+              x: { scale: 'x', field: 'unit0' },
+              width: { scale: 'x', band: 1 },
+              y: { scale: 'y', field: 'y0' },
+              y2: { scale: 'y', field: 'y1' },
+              fill: {
+                scale: 'color',
+                field: 'type'
+              },
+              tooltip: {
+                signal: tooltip
+              }
+            }
+          }
         }
       ]
     }

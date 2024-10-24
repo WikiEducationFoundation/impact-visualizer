@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import _ from 'lodash';
 import cn from 'classnames';
 
 import Topic from '../types/topic.type';
 import StatFields from '../types/stat-fields.type';
 import TopicTimepoint from '../types/topic-timepoint.type';
-import ChartTimepoint from '../types/chart-timepoint.type';
 
+import Spinner from './spinner.component';
 import Chart from './chart.component';
 import ClassificationSelect from './classification-select.component';
 import ChartUtils from '../utils/chart-utils';
 import ChartSpec from '../utils/chart-spec';
-import WikidataTranslator from '../utils/wikidata-translator';
 
 interface Props {
   stat: string,
@@ -23,71 +22,41 @@ interface Props {
 
 function StatDetail({ topicTimepoints, fields, stat, type, topic }: Props) {
   const { totalField, deltaField, attributedDeltaField } = fields;
+  const [loading, setLoading] = useState(true);
+  const [classificationView, setClassificationView] = useState('default');
+  const [title, setTitle] = useState('');
+  const [categories, setCategories] = useState<string[]>([]);
+  const [spec, setSpec] = useState({});
 
   if (topicTimepoints.length === 0) {
     return null;
   }
 
-  // const wikidataTranslator = new WikidataTranslator()
-
-  // wikidataTranslator.preload({
-  //   qNumbers: ['Q5', 'Q6581072', 'Q1234567']
-  // }).then((x) => {
-  //   // console.log(x);
-  //   // console.log(wikidataTranslator);
-  //   console.log(wikidataTranslator.translate('Q5'));
-  //   console.log(wikidataTranslator.translate('Q6581072'));
-  //   console.log(wikidataTranslator.translate('Q1234567'));
-  //   console.log(wikidataTranslator.translate('???'));
-  // })
-
-  let values: ChartTimepoint[] = [];
-  let yLabel: string = '';
-  let min: number = 0;
-  let max: number = 0;
-  let title: string = '';
-  let categories: string[] = [];
-
-  if (stat === 'wp10') {
-    yLabel = 'Predicted Quality';
-    title = `Predicted quality of articles over time`;
-    const { values: vals, categories: cats } = ChartUtils.prepQualityValues({
-      timepoints: topicTimepoints,
-      topic
+  const updateSpec = useCallback(async () => {
+    setLoading(true);
+    const { values, yLabel, min, max, categories, title } = 
+      await ChartUtils.prepChartSpecs({ topicTimepoints, stat, totalField, topic,
+                                  classificationView, deltaField,
+                                  attributedDeltaField, type })
+    
+    const spec = ChartSpec.prepare({
+      values, yLabel, min, max, stat, classificationView,
+      categories, type, timeUnit: topic.chart_time_unit 
     });
-    values = vals;
-    categories = cats;
-  } else {
-    if (type === 'cumulative') {
-      yLabel = _.startCase(totalField);
-      title = `Cumulative change to ${_.lowerCase(totalField)}`;
-      min = ChartUtils.minForCumulativeChart(topicTimepoints, totalField);
-      max = ChartUtils.maxForCumulativeChart(topicTimepoints, totalField);
-      values = ChartUtils.prepCumulativeValues({
-        timepoints: topicTimepoints,
-        deltaField,
-        totalField,
-        attributedDeltaField
-      });
-    }
-    if (type === 'delta') {
-      yLabel = _.startCase(`${stat} Created`);
-      title = `${_.startCase(stat)} created at each timepoint`;
-      min = 0;
-      max = ChartUtils.maxForDeltaChart(topicTimepoints, deltaField);
-      values = ChartUtils.prepDeltaValues({
-        timepoints: topicTimepoints,
-        deltaField,
-        totalField,
-        attributedDeltaField
-      });
-    }
-  }
-  
-  const spec = ChartSpec.prepare({
-    values, yLabel, min, max, stat,
-    type, timeUnit: topic.chart_time_unit 
-  })
+
+    setTitle(title);
+    setCategories(categories);
+    setSpec(spec);
+    setLoading(false);
+  }, [classificationView, stat, topic, type])
+
+  useEffect(() => {
+    updateSpec();
+  }, [classificationView, stat, topic, type]);
+
+  useEffect(() => {
+    setClassificationView('default');
+  }, [stat, topic, type]);
 
   return (
     <div
@@ -116,16 +85,32 @@ function StatDetail({ topicTimepoints, fields, stat, type, topic }: Props) {
           topic={topic}
           type={type}
           stat={stat}
-          onChange={(x) => {
-            console.log(x);
+          onChange={(classificationView) => {
+            setClassificationView(classificationView.value);
           }}
         />
       </div>
-      <Chart
-        spec={spec}
-        categories={categories}
-        stat={stat}
-      />
+      {loading &&
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 30
+          }}
+        >
+          <Spinner />
+        </div>
+      }
+      {!loading &&
+        <Chart
+          spec={spec}
+          categories={categories}
+          classificationView={classificationView}
+          stat={stat}
+        />
+      }
     </div>
   );
 }

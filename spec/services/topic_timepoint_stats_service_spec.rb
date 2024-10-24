@@ -27,6 +27,7 @@ describe TopicTimepointStatsService do
 
       classification_summary = [{
         count: 1,
+        count_delta: 0,
         id: 123,
         name: 'Biography',
         properties: [{
@@ -43,7 +44,7 @@ describe TopicTimepointStatsService do
 
       expect_any_instance_of(ClassificationService).to(
         receive(:summarize_topic_timepoint)
-          .with(topic_timepoint: start_topic_timepoint)
+          .with(topic_timepoint: start_topic_timepoint, previous_topic_timepoint: nil)
           .and_return(classification_summary)
       )
 
@@ -94,18 +95,18 @@ describe TopicTimepointStatsService do
 
       end_topic_timepoint.reload
       expect(end_topic_timepoint).to have_attributes(
-        articles_count: 2,
-        articles_count_delta: 0,
-        length_delta: 200,
-        length: 400,
-        revisions_count: 7,
-        revisions_count_delta: 4,
-        attributed_revisions_count_delta: 2,
-        attributed_length_delta: 100,
-        average_wp10_prediction: 55.0,
-        token_count: 70,
-        token_count_delta: 60,
-        attributed_token_count: 40,
+        articles_count: 3,
+        articles_count_delta: 1,
+        length_delta: 300,
+        length: 600,
+        revisions_count: 11,
+        revisions_count_delta: 6,
+        attributed_revisions_count_delta: 3,
+        attributed_length_delta: 150,
+        average_wp10_prediction: 46.666666666666664,
+        token_count: 110,
+        token_count_delta: 90,
+        attributed_token_count: 60,
         classifications: []
       )
     end

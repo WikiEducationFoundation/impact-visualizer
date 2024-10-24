@@ -41,6 +41,7 @@ describe TopicsController do
         expect(response.status).to eq(200)
         expect(body['topics'].count).to eq(10)
         first_response_topic = body['topics'][0].with_indifferent_access
+        topic = Topic.find(first_response_topic['id'])
         expect(first_response_topic).to include(
           id: topic.id,
           name: topic.name,

@@ -45,4 +45,26 @@ class Queries
 
     ActiveRecord::Base.connection.exec_query(sql).rows
   end
+
+  def self.article_bag_classification_values_for_property(classification_id:,
+                                                          article_bag_id:,
+                                                          property_id:)
+    sql = %{
+      SELECT
+        jsonb_path_query_array(
+          article_classifications.properties,
+          '$[*] ? (@.property_id == "#{property_id}")."value_ids"[*]'
+        ) as values,
+        count(articles.id)
+      FROM article_classifications
+      JOIN classifications ON article_classifications.classification_id = classifications.id
+      JOIN articles ON article_classifications.article_id = articles.id
+      JOIN article_bags ON article_classifications.article_id = articles.id
+      WHERE article_bags.id = #{article_bag_id}
+        AND classifications.id = #{classification_id}
+      GROUP BY values
+    }
+
+    ActiveRecord::Base.connection.exec_query(sql).rows
+  end
 end

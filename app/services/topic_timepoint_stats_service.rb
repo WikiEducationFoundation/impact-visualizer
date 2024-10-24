@@ -27,6 +27,13 @@ class TopicTimepointStatsService
     wp10_predictions = []
     wp10_prediction_categories = []
 
+    # Get/prep categorization summary
+    classification_service = ClassificationService.new(topic:)
+    classifications = classification_service.summarize_topic_timepoint(
+      topic_timepoint:,
+      previous_topic_timepoint:
+    )
+
     # Iterate and sum up stats
     topic_article_timepoints.each do |topic_article_timepoint|
       article_timepoint = topic_article_timepoint.article_timepoint
@@ -43,6 +50,9 @@ class TopicTimepointStatsService
       token_count_delta += topic_article_timepoint.token_count_delta || 0
       attributed_token_count += topic_article_timepoint.attributed_token_count || 0
       articles_count += 1
+
+      # Update classification properties hash for article
+      # For each classification, increment counts
     end
 
     if previous_topic_timepoint
@@ -58,17 +68,13 @@ class TopicTimepointStatsService
       wp10_predictions
     )
 
-    # Get categorization summary
-    classification_service = ClassificationService.new(topic:)
-    classifications = classification_service.summarize_topic_timepoint(topic_timepoint:)
-
     # Capture stats
-    topic_timepoint.update(length:, length_delta:, articles_count:, articles_count_delta:,
-                           revisions_count:, revisions_count_delta:,
-                           attributed_revisions_count_delta:,
-                           attributed_length_delta:, attributed_articles_created_delta:,
-                           average_wp10_prediction:, wp10_prediction_categories:,
-                           token_count:, token_count_delta:, classifications:,
-                           attributed_token_count:)
+    topic_timepoint.update!(length:, length_delta:, articles_count:, articles_count_delta:,
+                            revisions_count:, revisions_count_delta:,
+                            attributed_revisions_count_delta:,
+                            attributed_length_delta:, attributed_articles_created_delta:,
+                            average_wp10_prediction:, wp10_prediction_categories:,
+                            token_count:, token_count_delta:, classifications:,
+                            attributed_token_count:)
   end
 end

@@ -23,6 +23,7 @@ class TopicTimepoint < ApplicationRecord
         id: { type: 'integer' },
         name: { type: 'string' },
         count: { type: 'number' },
+        count_delta: { type: 'number' },
         properties: {
           type: %w[array],
           items: { type: 'object' },
@@ -37,7 +38,7 @@ class TopicTimepoint < ApplicationRecord
           additionalProperties: false
         }
       },
-      required: %w[count id name properties],
+      required: %w[count count_delta id name properties],
       additionalProperties: false
     }
   }.freeze

@@ -252,7 +252,9 @@ describe TimepointService do
 
       topic_timepoints_count = topic.timestamps.count
       article_count = article_bag.articles.count
-      article_timepoint_count = topic_timepoints_count * article_count
+
+      # subtract 1 because article_3 not around for first timepoint
+      article_timepoint_count = (topic_timepoints_count * article_count) - 1
 
       article_call_count = 0
       allow_any_instance_of(ArticleStatsService).to receive(:update_token_stats)

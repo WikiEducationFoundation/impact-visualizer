@@ -1,3 +1,5 @@
+import Classification from './classification.type';
+
 export default interface Topic {
   id: number,
   name: string,
@@ -39,5 +41,5 @@ export default interface Topic {
   articles_import_status: string, 
   timepoint_generate_status: string,
   users_import_status: string,
-  classifications: Array<object>
+  classifications: Array<Classification>
 }

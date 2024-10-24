@@ -238,7 +238,7 @@ RSpec.describe Topic do
     include_context 'topic with two timepoints'
 
     it 'returns count of articles' do
-      expect(topic.articles_count).to eq(2)
+      expect(topic.articles_count).to eq(3)
     end
   end
 

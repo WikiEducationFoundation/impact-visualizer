@@ -22,6 +22,7 @@ RSpec.describe TopicTimepoint do
 
       topic_timepoint.classifications = [{
         count: 1,
+        count_delta: 0,
         id: 123,
         name: 'Biography',
         properties: [{
@@ -37,6 +38,7 @@ RSpec.describe TopicTimepoint do
 
       topic_timepoint.classifications = [{
         count: 1,
+        count_delta: 0,
         id: 123,
         name: 'Biography',
         properties: [{
@@ -56,6 +58,7 @@ RSpec.describe TopicTimepoint do
 
       topic_timepoint.classifications = [{
         count: 1,
+        count_delta: 0,
         id: 123,
         name: 'Biography',
         properties: [{

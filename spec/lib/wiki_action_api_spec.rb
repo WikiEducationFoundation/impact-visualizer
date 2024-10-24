@@ -192,11 +192,20 @@ describe WikiActionApi do
     end
   end
 
-  describe '#get_wikidata' do
+  describe '#get_wikidata_claims' do
     it 'gets wikidata claims for given article title', vcr: true do
       wiki_api = described_class.new(wiki)
       response = wiki_api.get_wikidata_claims('Sierra Ferrell')
       expect(response.keys.first).to eq('P31')
+    end
+  end
+
+  describe '#get_wikidata_labels' do
+    it 'gets wikidata labels for given IDs', vcr: true do
+      wiki_api = described_class.new(wiki)
+      ids = %w[Q6581097 Q6581072]
+      response = wiki_api.get_wikidata_labels(ids)
+      expect(response['Q6581097']['labels']['en']['value']).to eq('male')
     end
   end
 end

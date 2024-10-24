@@ -1,0 +1,72 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://www.wikidata.org/w/api.php
+    body:
+      encoding: UTF-8
+      string: action=wbgetentities&format=json&ids=Q6581097%7CQ6581072&languages=en&props=labels&sites=enwiki
+    headers:
+      User-Agent:
+      - Faraday v0.17.6
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 24 Oct 2024 20:11:33 GMT
+      Server:
+      - mw-api-ext.codfw.main-5df6db8cfb-wg8sr
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Vary:
+      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikidata.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
+      - WMF-Last-Access-Global=24-Oct-2024;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Mon,
+        25 Nov 2024 12:00:00 GMT
+      - WMF-Last-Access=24-Oct-2024;Path=/;HttpOnly;secure;Expires=Mon, 25 Nov 2024
+        12:00:00 GMT
+      X-Client-Ip:
+      - 73.35.177.235
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '212'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"entities":{"Q6581097":{"type":"item","id":"Q6581097","labels":{"en":{"language":"en","value":"male"}}},"Q6581072":{"type":"item","id":"Q6581072","labels":{"en":{"language":"en","value":"female"}}}},"success":1}'
+  recorded_at: Thu, 24 Oct 2024 20:11:33 GMT
+recorded_with: VCR 6.1.0

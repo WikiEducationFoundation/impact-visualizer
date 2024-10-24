@@ -1,10 +1,11 @@
+// NPM
 import React, { useState } from "react";
-import _, { property } from 'lodash';
-import cn from 'classnames';
+import _ from 'lodash';
 import Select from 'react-select';
 
+// Types
 import Topic from '../types/topic.type';
-import ChartUtils from '../utils/chart-utils';
+import Classification from '../types/classification.type';
 
 interface Props {
   stat: string,
@@ -19,36 +20,35 @@ type Option = {
 }
 
 function ClassificationSelect({ stat, type, onChange, topic }: Props) {
-  if (stat !== 'articles' || type !== 'delta') return null;
+  if (stat !== 'articles') return null;
   
   const options: Option[] = [
-    { value: 'total', label: 'Total' }
+    { value: 'default', label: 'Overview' }
   ];
   
   const [selectedOption, setSelectedOption] = useState<Option>(options[0]);
 
-  _.each(topic.classifications, (classification) => {
+  _.each(topic.classifications, (classification: Classification) => {
     options.push({
       value: `classification-${classification.id}`,
-      label: `Total vs. ${classification.name}`
+      label: `${classification.name} vs. Other`
     });
 
     _.each(classification.properties, (property) => {
       if (property.segments === false) return;
       options.push({
-        value: `property-${property.slug}`,
+        value: `classification-${classification.id}::property-${property.slug}`,
         label: `${classification.name} by ${property.name}`
       });
     });
   })
 
-  const defaultOption = options[0];
-
   return (
     <Select
       className='Select'
       styles={{
-        container: () => ({ width: 200, position: 'relative' })
+        container: () => ({ width: 200, position: 'relative' }),
+        menuList: () => ({ fontSize: 14 })
       }}
       classNames={{
         control: () => 'Select-control'
@@ -56,8 +56,10 @@ function ClassificationSelect({ stat, type, onChange, topic }: Props) {
       value={selectedOption}
       options={options}
       onChange={(selected) => {
-        setSelectedOption(selected);
-        onChange(selected);
+        if (selected) {
+          setSelectedOption(selected);
+          onChange(selected);
+        }
       }}
     />
   );
