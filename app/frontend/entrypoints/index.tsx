@@ -20,6 +20,7 @@ import WikipediaCategoryPage from "../components/wikipedia-category-page.compone
 import QueryBuilder from "../components/query-builder.component";
 import { Toaster } from "react-hot-toast";
 import WikiDashboardTool from "../components/wiki-dashboard-tool.component";
+import PetScanTool from "../components/petscan-tool";
 
 // Misc
 const queryClient = new QueryClient();
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
       {
         path: "/search/wiki-dashboard-tool",
         element: <WikiDashboardTool />,
+      },
+      {
+        path: "/search/petscan-tool",
+        element: <PetScanTool />,
       },
     ],
   },
