@@ -23,6 +23,11 @@ RSpec.describe TopicTimepoint do
       topic_timepoint.classifications = [{
         count: 1,
         count_delta: 0,
+        revisions_count: 0,
+        revisions_count_delta: 0,
+        token_count: 0,
+        token_count_delta: 0,
+        wp10_prediction_categories: {},
         id: 123,
         name: 'Biography',
         properties: [{
@@ -39,6 +44,11 @@ RSpec.describe TopicTimepoint do
       topic_timepoint.classifications = [{
         count: 1,
         count_delta: 0,
+        revisions_count: 0,
+        revisions_count_delta: 0,
+        token_count: 0,
+        token_count_delta: 0,
+        wp10_prediction_categories: {},
         id: 123,
         name: 'Biography',
         properties: [{
@@ -59,6 +69,11 @@ RSpec.describe TopicTimepoint do
       topic_timepoint.classifications = [{
         count: 1,
         count_delta: 0,
+        revisions_count: 0,
+        revisions_count_delta: 0,
+        token_count: 0,
+        token_count_delta: 0,
+        wp10_prediction_categories: {},
         id: 123,
         name: 'Biography',
         properties: [{

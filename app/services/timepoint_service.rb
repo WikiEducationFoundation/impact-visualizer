@@ -24,6 +24,11 @@ class TimepointService
   def build_timepoints
     start_time = Time.zone.now
 
+    # Classify all articles
+    ClassificationService.new(topic: @topic).classify_all_articles do
+      increment_progress_count
+    end
+
     # Loop through Topic's timestamps
     timestamps = @topic.timestamps
     timestamp_count = 0
@@ -201,6 +206,9 @@ class TimepointService
 
     # Setup total count with timestamp count, for build_timepoints_for_timestamp loop
     total_progress_steps = timestamp_count
+
+    # Add Article count for classify_all_articles loop
+    total_progress_steps += article_count
 
     # Add Article count for update_token_stats loop
     total_progress_steps += article_count

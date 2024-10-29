@@ -28,6 +28,10 @@ describe TopicTimepointStatsService do
       classification_summary = [{
         count: 1,
         count_delta: 0,
+        revisions_count: 0,
+        revisions_count_delta: 0,
+        token_count: 0,
+        token_count_delta: 0,
         id: 123,
         name: 'Biography',
         properties: [{

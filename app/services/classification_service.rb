@@ -11,9 +11,10 @@ class ClassificationService
     @wikidata_translator = WikidataTranslator.new(wiki: @wiki)
   end
 
-  def classify_all_articles
+  def classify_all_articles(&block)
     article_bag_articles = @topic.active_article_bag.article_bag_articles
     article_bag_articles.each do |article_bag_article|
+      yield if block
       article = article_bag_article.article
       classify_article(article:)
     end
@@ -114,6 +115,30 @@ class ClassificationService
     value_ids
   end
 
+  def summarize_topic
+    classifications = @topic.classifications
+    summary = []
+
+    # Process each classification associated with Topic
+    classifications.each do |classification|
+      summary << classification_summary_for_topic(classification:)
+    end
+
+    summary
+  end
+
+  def classification_summary_for_topic(classification:)
+    count = Queries.article_bag_classification_count(classification_id: classification.id,
+                                                     article_bag_id: @topic.active_article_bag.id)
+    summary = {
+      id: classification.id,
+      name: classification.name,
+      count:,
+      properties: classification.properties
+    }
+    summary
+  end
+
   def summarize_topic_timepoint(topic_timepoint:, previous_topic_timepoint: nil)
     raise ImpactVisualizerErrors::InvalidTimepointForTopic unless topic_timepoint.topic == @topic
 
@@ -132,37 +157,8 @@ class ClassificationService
     summary
   end
 
-  def property_value_summary(classification:, property_id:, count: nil)
-    # Grab all values for classification/property_id across all timepoints
-    value_rows = Queries.article_bag_classification_values_for_property(
-      article_bag_id: @topic.active_article_bag.id,
-      classification_id: classification.id,
-      property_id:
-    )
-
-    # Count each value
-    counted_values = count_values(value_rows:)
-
-    # Sort the values by count
-    sorted_values = counted_values.sort_by do |_k, value|
-      value[:count]
-    end.reverse
-
-    # Narrow down the list to most counted
-    top_values = sorted_values.take(count || @top_value_count)
-
-    # Return just the value ids
-    top_values.pluck(0)
-  end
-
   def classification_summary_for_topic_timepoint(classification:, topic_timepoint:,
                                                  previous_topic_timepoint: nil)
-    # Grab count of articles with classification at topic_timepoint
-    count = Queries.topic_timepoint_classification_count(
-      topic_timepoint_id: topic_timepoint.id,
-      classification_id: classification.id
-    )
-
     properties = []
 
     # Summarize classification properties
@@ -175,28 +171,44 @@ class ClassificationService
         name: property['name'],
         slug: property['slug'],
         property_id: property['property_id'],
-        translate_segment_keys: get_translate_segment_keys(property:),
         segments:
       }
 
       properties << property_summary
     end
 
-    deltas = calculate_classification_deltas(classification:, count:, previous_topic_timepoint:)
-    properties = calculate_property_deltas(classification:, properties:, previous_topic_timepoint:)
+    counts = calculate_classification_counts(classification:, topic_timepoint:,
+                                             previous_topic_timepoint:)
 
-    {
+    properties = calculate_property_deltas(classification:, properties:,
+                                           previous_topic_timepoint:)
+
+    summary = {
       id: classification.id,
       name: classification.name,
-      count:,
-      count_delta: deltas[:count_delta] || 0,
       properties:
     }
+
+    summary.merge(counts)
   end
 
-  def calculate_classification_deltas(classification:, count:, previous_topic_timepoint: nil)
-    # Calculate delta of total count
+  def calculate_classification_counts(classification:, topic_timepoint:,
+                                      previous_topic_timepoint: nil)
+    # Grab counts of articles with classification at topic_timepoint
+    counts = Queries.topic_timepoint_classification_count(
+      topic_timepoint_id: topic_timepoint.id,
+      classification_id: classification.id
+    )
+
+    # Extract counts
+    count = counts[:count]
+    revisions_count = counts[:revisions_count]
+    token_count = counts[:token_count]
+
+    # Calculate deltas
     count_delta = 0
+    revisions_count_delta = 0
+    token_count_delta = 0
 
     if previous_topic_timepoint
       previous_classification = previous_topic_timepoint.classifications.find do |c|
@@ -204,9 +216,44 @@ class ClassificationService
       end
       previous_count = previous_classification['count'] || 0
       count_delta = count - previous_count
+
+      previous_revisions_count = previous_classification['revisions_count'] || 0
+      revisions_count_delta = revisions_count - previous_revisions_count
+
+      previous_token_count = previous_classification['token_count'] || 0
+      token_count_delta = token_count - previous_token_count
     end
 
-    { count_delta: }
+    # Get WP10 counts
+    wp10_prediction_categories = wp10_for_classification_timepoint(classification:,
+                                                                   topic_timepoint:)
+
+    {
+      count:,
+      count_delta:,
+      revisions_count:,
+      revisions_count_delta:,
+      token_count:,
+      token_count_delta:,
+      wp10_prediction_categories:
+    }
+  end
+
+  def wp10_for_classification_timepoint(classification:, topic_timepoint:)
+    categories = Queries.wp10_categories_for_classification_timepoint(
+      classification_id: classification.id,
+      topic_timepoint_id: topic_timepoint.id
+    )
+
+    output = {}
+
+    categories.each do |category|
+      next unless category['category']
+      next unless category['count'].positive?
+      output[category['category']] = category['count']
+    end
+
+    output
   end
 
   def calculate_property_deltas(classification:, properties:, previous_topic_timepoint: nil)
@@ -243,6 +290,12 @@ class ClassificationService
         next unless previous_segment
         previous_count = previous_segment['count'] || 0
         segment_value[:count_delta] = segment_value[:count] - previous_count
+
+        previous_revisions_count = previous_segment['revisions_count'] || 0
+        segment_value[:revisions_count_delta] = segment_value[:revisions_count] - previous_revisions_count
+
+        previous_token_count = previous_segment['token_count'] || 0
+        segment_value[:token_count_delta] = segment_value[:token_count] - previous_token_count
       end
     end
 
@@ -250,27 +303,24 @@ class ClassificationService
     properties
   end
 
-  def get_translate_segment_keys(property:)
-    return false unless property['segments']
-    return true if property['segments'] == true
-    false
-  end
-
   def segment_summary_for_property(property:, classification:, topic_timepoint:)
     return false unless property['segments']
 
     # Get property values for all classified articles at timepoint
-    value_rows = Queries.topic_timepoint_classification_values_for_property(
+    property_counts = Queries.topic_timepoint_classification_values_for_property(
       topic_timepoint_id: topic_timepoint.id,
       classification_id: classification.id,
       property_id: property['property_id']
     )
 
-    return segment_by_value(value_rows:, property:, classification:) if property['segments'] == true
-    segment_by_group(value_rows:, property:)
+    if property['segments'] == true
+      return segment_by_value(property_counts:, property:, classification:)
+    end
+
+    segment_by_group(property_counts:, property:)
   end
 
-  def segment_by_value(value_rows:, property:, classification:)
+  def segment_by_value(property_counts:, property:, classification:)
     # Get top values across all timepoints
     top_values = property_value_summary(
       classification:,
@@ -279,25 +329,32 @@ class ClassificationService
     )
 
     # Count values for timepoint
-    counted_values = count_values(value_rows:)
+    counted_values = count_values(property_counts:)
 
     # Setup segments hash with "other"
     segments = {
-      'other' => { count: 0, count_delta: 0 }
+      'other' => {
+        count: 0, count_delta: 0,
+        revisions_count: 0, revisions_count_delta: 0,
+        token_count: 0, token_count_delta: 0
+      }
     }
 
     # Push each of the top values into segments
     top_values.each do |top_value|
-      segments[top_value] = { count: 0, count_delta: 0 }
+      segments[top_value] = {
+        count: 0, count_delta: 0,
+        revisions_count: 0, revisions_count_delta: 0,
+        token_count: 0, token_count_delta: 0
+      }
     end
 
     # Increment counts
     counted_values.each do |key, value|
-      if segments[key]
-        segments[key][:count] += value[:count]
-        next
-      end
-      segments['other'][:count] += value[:count]
+      segment = segments[key] ? segments[key] : segments['other']
+      segment[:count] += value[:count]
+      segment[:revisions_count] += value[:revisions_count]
+      segment[:token_count] += value[:token_count]
     end
 
     # Add labels
@@ -310,7 +367,7 @@ class ClassificationService
     segments
   end
 
-  def segment_by_group(value_rows:, property:)
+  def segment_by_group(property_counts:, property:)
     property_segments = property['segments']
     return false unless property_segments.is_a?(Array)
 
@@ -322,6 +379,10 @@ class ClassificationService
       segments[property_segment['key']] = {
         count: 0,
         count_delta: 0,
+        revisions_count: 0,
+        revisions_count_delta: 0,
+        token_count: 0,
+        token_count_delta: 0,
         label: property_segment['label']
       }
       default_segment_key = property_segment['key'] if property_segment['default']
@@ -331,9 +392,11 @@ class ClassificationService
     return false unless default_segment_key
 
     # Handle each set of value_ids
-    value_rows.each do |value_row|
-      value_ids = JSON.parse(value_row[0])
-      value_count = value_row[1]
+    property_counts.each do |property_count_row|
+      value_ids = JSON.parse(property_count_row['values'])
+      value_count = property_count_row['count']
+      revisions_count = property_count_row['revisions_count'] || 0
+      token_count = property_count_row['token_count'] || 0
       next unless value_ids.count.positive? && value_count.positive?
 
       # Handle each value_id in set
@@ -352,26 +415,63 @@ class ClassificationService
 
         # Increment the count
         segments[matched_segment_key][:count] = segments[matched_segment_key][:count] + value_count
+        segments[matched_segment_key][:revisions_count] =
+          segments[matched_segment_key][:revisions_count] + revisions_count
+        segments[matched_segment_key][:token_count] =
+          segments[matched_segment_key][:token_count] + token_count
       end
     end
 
     segments
   end
 
-  def count_values(value_rows:)
+  def property_value_summary(classification:, property_id:, count: nil)
+    # Grab all values for classification/property_id across all timepoints
+    # ... for the sake of picking top X and putting others in "other"
+    property_counts = Queries.article_bag_classification_values_for_property(
+      article_bag_id: @topic.active_article_bag.id,
+      classification_id: classification.id,
+      property_id:
+    )
+
+    # Count each value
+    counted_values = count_values(property_counts:)
+
+    # Sort the values by count
+    sorted_values = counted_values.sort_by do |_k, value|
+      value[:count]
+    end.reverse
+
+    # Narrow down the list to most counted
+    top_values = sorted_values.take(count || @top_value_count)
+
+    # Return just the value ids
+    top_values.pluck(0)
+  end
+
+  def count_values(property_counts:)
     segments = {}
 
     # Count up total of each value_id
-    value_rows.each do |value_row|
-      value_ids = JSON.parse(value_row[0])
-      value_count = value_row[1]
+    property_counts.each do |property_count_row|
+      value_ids = JSON.parse(property_count_row['values'])
+      value_count = property_count_row['count']
+      revisions_count = property_count_row['revisions_count'] || 0
+      token_count = property_count_row['token_count'] || 0
       next unless value_ids.count.positive? && value_count.positive?
       value_ids.each do |value_id|
         if segments[value_id]
           segments[value_id][:count] = segments[value_id][:count] + value_count
+          segments[value_id][:revisions_count] =
+            segments[value_id][:revisions_count] + revisions_count
+          segments[value_id][:token_count] = segments[value_id][:token_count] + token_count
           next
         end
-        segments[value_id] = { count: value_count, count_delta: 0 }
+        segments[value_id] = {
+          count: value_count, count_delta: 0,
+          revisions_count:, revisions_count_delta: 0,
+          token_count:, token_count_delta: 0
+        }
       end
     end
 

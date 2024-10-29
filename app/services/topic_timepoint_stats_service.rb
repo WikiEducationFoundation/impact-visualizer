@@ -50,9 +50,6 @@ class TopicTimepointStatsService
       token_count_delta += topic_article_timepoint.token_count_delta || 0
       attributed_token_count += topic_article_timepoint.attributed_token_count || 0
       articles_count += 1
-
-      # Update classification properties hash for article
-      # For each classification, increment counts
     end
 
     if previous_topic_timepoint

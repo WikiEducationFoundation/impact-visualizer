@@ -16,11 +16,12 @@ end
 #
 # Table name: wikis
 #
-#  id         :bigint           not null, primary key
-#  language   :string(16)
-#  project    :string(16)
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id            :bigint           not null, primary key
+#  language      :string(16)
+#  project       :string(16)
+#  wikidata_site :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #
 # Indexes
 #

@@ -1,5 +1,5 @@
 // NPM
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import _ from 'lodash';
 import Select from 'react-select';
 
@@ -19,21 +19,35 @@ type Option = {
   label: String
 }
 
+const stats = ['articles', 'revisions', 'tokens', 'wp10']
+
 function ClassificationSelect({ stat, type, onChange, topic }: Props) {
-  if (stat !== 'articles') return null;
-  
+  if (!_.includes(stats, stat)) return null;
+  if (!topic.classifications) return null;
+  if (topic.classifications.length === 0) return null;
+
   const options: Option[] = [
     { value: 'default', label: 'Overview' }
   ];
-  
+
   const [selectedOption, setSelectedOption] = useState<Option>(options[0]);
 
+  useEffect(() => {
+    setSelectedOption(options[0]);
+  }, [stat, topic, type]);
+
   _.each(topic.classifications, (classification: Classification) => {
+    let label = `${classification.name} vs. Other`;
+    if (stat === 'wp10') {
+      label = classification.name;
+    };
     options.push({
       value: `classification-${classification.id}`,
-      label: `${classification.name} vs. Other`
+      label
     });
 
+    if (stat === 'wp10') return;
+    
     _.each(classification.properties, (property) => {
       if (property.segments === false) return;
       options.push({

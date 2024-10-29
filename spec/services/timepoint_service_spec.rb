@@ -57,7 +57,7 @@ describe TimepointService do
       article_timepoint_count = topic_timepoints_count * article_count
 
       counter = instance_double('counter')
-      total_progress_steps = (topic_timepoints_count * 2) + article_count
+      total_progress_steps = (topic_timepoints_count * 2) + article_count + article_count
       expect(counter).to receive(:total).once.with(total_progress_steps)
       expect(counter).to receive(:at).exactly(total_progress_steps).times
 

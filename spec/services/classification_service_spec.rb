@@ -275,6 +275,30 @@ describe ClassificationService do
     end
   end
 
+  describe '#summarize_topic', vcr: true do
+    include_context 'topic with two timepoints'
+    let(:subject) { described_class.new(topic:) }
+    let(:classification) { create(:biography) }
+    let(:topic_timepoint) { topic.topic_timepoints.last }
+    let(:previous_topic_timepoint) { topic.topic_timepoints.first }
+
+    before do
+      topic.classifications << classification
+      subject.classify_all_articles
+    end
+
+    it 'counts classifications' do
+      summary = subject.summarize_topic
+
+      expect(summary).to eq([{
+        count: 2,
+        id: classification.id,
+        name: 'Biography',
+        properties: classification.properties
+      }])
+    end
+  end
+
   describe '#summarize_topic_timepoint', vcr: true do
     include_context 'topic with two timepoints'
     let(:subject) { described_class.new(topic:) }
@@ -290,17 +314,20 @@ describe ClassificationService do
       previous_topic_timepoint.classifications = [{
         count: 1,
         count_delta: 0,
+        revisions_count: 2,
+        revisions_count_delta: 0,
+        token_count: 20,
+        token_count_delta: 0,
         id: classification.id,
         name: 'Biography',
         properties: [{
           name: 'Gender',
           property_id: 'P21',
           slug: 'gender',
-          translate_segment_keys: true,
           segments: {
-            'other' => { count: 0, count_delta: 0, label: 'other' },
-            'Q6581072' => { count: 1368, count_delta: 0, label: 'female' },
-            'Q6581097' => { count: 0, count_delta: 0, label: 'male' }
+            'other' => { count: 0, count_delta: 0, revisions_count: 4, token_count: 100, label: 'other' },
+            'Q6581072' => { count: 1368, count_delta: 0, revisions_count: 5000, token_count: 10000, label: 'female' },
+            'Q6581097' => { count: 0, count_delta: 0, revisions_count: 50, token_count: 2000, label: 'male' }
           }
         }]
       }]
@@ -314,21 +341,21 @@ describe ClassificationService do
 
       expect(Queries).to receive(:article_bag_classification_values_for_property).and_return(
         [
-          ['[]', 1],
-          ['["Q48270"]', 1],
-          ['["Q6581072"]', 1368],
-          ['["Q6581072", "Q6581097"]', 2],
-          ['["Q6581097", "Q6581072"]', 1]
+          { 'values' => '[]', 'count' => 1 },
+          { 'values' => '["Q48270"]', 'count' => 1 },
+          { 'values' => '["Q6581072"]', 'count' => 1368 },
+          { 'values' => '["Q6581072", "Q6581097"]', 'count' => 2 },
+          { 'values' => '["Q6581097", "Q6581072"]', 'count' => 1 }
         ]
       )
 
       expect(Queries).to receive(:topic_timepoint_classification_values_for_property).and_return(
         [
-          ['[]', 1],
-          ['["Q48270"]', 1],
-          ['["Q6581072"]', 1368],
-          ['["Q6581072", "Q6581097"]', 2],
-          ['["Q6581097", "Q6581072"]', 1]
+          { 'values' => '[]', 'count' => 1, 'revisions_count' => 0, 'token_count' => 0 },
+          { 'values' => '["Q48270"]', 'count' => 1, 'revisions_count' => 10, 'token_count' => 200 },
+          { 'values' => '["Q6581072"]', 'count' => 1368, 'revisions_count' => 10000, 'token_count' => 15000 },
+          { 'values' => '["Q6581072", "Q6581097"]', 'count' => 2, 'revisions_count' => 100, 'token_count' => 1200 },
+          { 'values' => '["Q6581097", "Q6581072"]', 'count' => 1, 'revisions_count' => 101, 'token_count' => 1500 }
         ]
       )
 
@@ -337,17 +364,36 @@ describe ClassificationService do
       expect(summary).to eq([{
         count: 2,
         count_delta: 1,
+        revisions_count: 8,
+        revisions_count_delta: 6,
+        token_count: 80,
+        token_count_delta: 60,
+        wp10_prediction_categories: { 'B' => 2 },
         id: classification.id,
         name: 'Biography',
         properties: [{
           name: 'Gender',
           property_id: 'P21',
           slug: 'gender',
-          translate_segment_keys: true,
           segments: {
-            'other' => { count: 1, count_delta: 1, label: 'Other' },
-            'Q6581072' => { count: 1371, count_delta: 3, label: 'Female' },
-            'Q6581097' => { count: 3, count_delta: 3, label: 'Male' }
+            'other' => {
+              count: 1, count_delta: 1,
+              revisions_count: 10, revisions_count_delta: 6,
+              token_count: 200, token_count_delta: 100,
+              label: 'Other'
+            },
+            'Q6581072' => {
+              count: 1371, count_delta: 3,
+              revisions_count: 10201, revisions_count_delta: 5201,
+              token_count: 17700, token_count_delta: 7700,
+              label: 'Female'
+            },
+            'Q6581097' => {
+              count: 3, count_delta: 3,
+              revisions_count: 201, revisions_count_delta: 151,
+              token_count: 2700, token_count_delta: 700,
+              label: 'Male'
+            }
           }
         }]
       }])
@@ -361,13 +407,17 @@ describe ClassificationService do
       expect(summary).to eq([{
         count: 2,
         count_delta: 1,
+        revisions_count: 8,
+        revisions_count_delta: 6,
+        token_count: 80,
+        token_count_delta: 60,
+        wp10_prediction_categories: { 'B' => 2 },
         id: classification.id,
         name: 'Biography',
         properties: [{
           name: 'Gender',
           property_id: 'P21',
           slug: 'gender',
-          translate_segment_keys: false,
           segments: false
         }]
       }])
@@ -375,9 +425,9 @@ describe ClassificationService do
 
     it 'counts classifications, and buckets values into segments' do
       previous_topic_timepoint.classifications[0]['properties'][0]['segments'] = {
-        'female' => { count: 1368, count_delta: 0 },
-        'other' => { count: 0, count_delta: 0 },
-        'male' => { count: 0, count_delta: 0 }
+        'female' => { count: 1368, count_delta: 0, revisions_count: 5000, token_count: 100 },
+        'other' => { count: 0, count_delta: 0, revisions_count: 3, token_count: 0 },
+        'male' => { count: 0, count_delta: 0, revisions_count: 50, token_count: 800 }
       }
 
       previous_topic_timepoint.save!
@@ -392,13 +442,22 @@ describe ClassificationService do
 
       expect(Queries).to receive(:topic_timepoint_classification_values_for_property).and_return(
         [
-          ['[]', 1],
-          ['["Q48270"]', 1],
-          ['["Q48271"]', 1],
-          ['["Q48272"]', 1],
-          ['["Q6581072"]', 1368],
-          ['["Q6581072", "Q6581097"]', 2],
-          ['["Q6581097", "Q6581072"]', 1]
+          { 'values' => '[]', 'count' => 1, 'revisions_count' => 0, 'token_count' => 0 },
+          { 'values' => '["Q48270"]', 'count' => 1, 'revisions_count' => 3, 'token_count' => 20 },
+          { 'values' => '["Q48271"]', 'count' => 1, 'revisions_count' => 4, 'token_count' => 20 },
+          { 'values' => '["Q48272"]', 'count' => 1, 'revisions_count' => 5, 'token_count' => 30 },
+          {
+            'values' => '["Q6581072"]', 'count' => 1368,
+            'revisions_count' => 10000, 'token_count' => 5000
+          },
+          {
+            'values' => '["Q6581072", "Q6581097"]', 'count' => 2, 'revisions_count' => 100,
+            'token_count' => 800
+          },
+          {
+            'values' => '["Q6581097", "Q6581072"]', 'count' => 1,
+            'revisions_count' => 1000, 'token_count' => 60
+          }
         ]
       )
 
@@ -406,17 +465,36 @@ describe ClassificationService do
       expect(summary).to eq([{
         count: 2,
         count_delta: 1,
+        revisions_count: 8,
+        revisions_count_delta: 6,
+        token_count: 80,
+        token_count_delta: 60,
+        wp10_prediction_categories: { 'B' => 2 },
         id: classification.id,
         name: 'Biography',
         properties: [{
           name: 'Gender',
           property_id: 'P21',
           slug: 'gender',
-          translate_segment_keys: false,
           segments: {
-            'female' => { count: 1371, count_delta: 3, label: 'Female' },
-            'other' => { count: 2, count_delta: 2, label: 'Other' },
-            'male' => { count: 4, count_delta: 4, label: 'Male' }
+            'female' => {
+              count: 1371, count_delta: 3,
+              revisions_count: 11100, revisions_count_delta: 6100,
+              token_count: 5860, token_count_delta: 5760,
+              label: 'Female'
+            },
+            'other' => {
+              count: 2, count_delta: 2,
+              revisions_count: 7, revisions_count_delta: 4,
+              token_count: 40, token_count_delta: 40,
+              label: 'Other'
+            },
+            'male' => {
+              count: 4, count_delta: 4,
+              revisions_count: 1105, revisions_count_delta: 1055,
+              token_count: 890, token_count_delta: 90,
+              label: 'Male'
+            }
           }
         }]
       }])
@@ -434,13 +512,13 @@ describe ClassificationService do
 
       expect(Queries).to receive(:article_bag_classification_values_for_property).and_return(
         [
-          ['[]', 1],
-          ['["Q48270"]', 1],
-          ['["Q48271"]', 1],
-          ['["Q48272"]', 1],
-          ['["Q6581072"]', 1368],
-          ['["Q6581072", "Q6581097"]', 2],
-          ['["Q6581097", "Q6581072"]', 1]
+          { 'values' => '[]', 'count' => 1 },
+          { 'values' => '["Q48270"]', 'count' => 1 },
+          { 'values' => '["Q48271"]', 'count' => 1 },
+          { 'values' => '["Q48272"]', 'count' => 1 },
+          { 'values' => '["Q6581072"]', 'count' => 1368 },
+          { 'values' => '["Q6581072", "Q6581097"]', 'count' => 2 },
+          { 'values' => '["Q6581097", "Q6581072"]', 'count' => 1 }
         ]
       )
 

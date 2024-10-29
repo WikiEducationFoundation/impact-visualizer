@@ -1,6 +1,8 @@
 FactoryBot.define do
   factory :topic_summary do
-    
+    topic {
+      Topic.first || create(:topic)
+    }    
   end
 end
 
@@ -16,6 +18,7 @@ end
 #  attributed_revisions_count_delta  :integer
 #  attributed_token_count            :integer
 #  average_wp10_prediction           :float
+#  classifications                   :jsonb
 #  length                            :integer
 #  length_delta                      :integer
 #  missing_articles_count            :integer

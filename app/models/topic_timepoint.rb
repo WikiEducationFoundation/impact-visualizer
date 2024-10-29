@@ -24,6 +24,11 @@ class TopicTimepoint < ApplicationRecord
         name: { type: 'string' },
         count: { type: 'number' },
         count_delta: { type: 'number' },
+        revisions_count: { type: 'number' },
+        revisions_count_delta: { type: 'number' },
+        token_count: { type: 'number' },
+        token_count_delta: { type: 'number' },
+        wp10_prediction_categories: { type: 'object' },
         properties: {
           type: %w[array],
           items: { type: 'object' },
@@ -31,14 +36,14 @@ class TopicTimepoint < ApplicationRecord
             name: { type: 'string' },
             property_id: { type: 'string' },
             slug: { type: 'string' },
-            translate_segment_keys: { type: 'boolean' },
             segments: { type: %w[boolean object] }
           },
           required: %w[name slug property_id values],
           additionalProperties: false
         }
       },
-      required: %w[count count_delta id name properties],
+      required: %w[count count_delta revisions_count revisions_count_delta
+                   token_count token_count_delta id name properties],
       additionalProperties: false
     }
   }.freeze

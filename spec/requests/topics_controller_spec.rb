@@ -30,7 +30,8 @@ describe TopicsController do
         revisions_count: 220,
         revisions_count_delta: 20,
         token_count: 300,
-        token_count_delta: 200
+        token_count_delta: 200,
+        classifications: []
       )
     end
 
@@ -87,7 +88,8 @@ describe TopicsController do
         revisions_count: 220,
         revisions_count_delta: 20,
         token_count: 300,
-        token_count_delta: 200
+        token_count_delta: 200,
+        classifications: []
       )
     end
 

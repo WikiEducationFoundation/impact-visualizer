@@ -5,10 +5,10 @@ const ChartSpec = {
   prepare({ min, max, yLabel, values, stat, type,
             timeUnit, classificationView, categories }) {
     
-    const { propertySlug } = ChartUtils.parseClassificationViewKey(classificationView);
+    const { classificationId, propertySlug } = ChartUtils.parseClassificationViewKey(classificationView);
 
     const axes = this.axes({ type, yLabel });
-    const marks = this.marks({ type, stat, yLabel, propertySlug });
+    const marks = this.marks({ type, stat, yLabel, propertySlug, classificationId });
     const data = this.data({ min, values, type, stat, timeUnit, propertySlug });
     const scales = this.scales({ min, max, type, stat, categories, propertySlug});
 
@@ -274,6 +274,30 @@ const ChartSpec = {
       ]  
     }
 
+    if (type === 'cumulative' && propertySlug !== '') {
+      return [
+        {
+          name: 'x',
+          type: 'time',
+          domain: {data: 'data', field: 'date'},
+          range: [0, { signal: 'width' }]
+        },
+        {
+          name: 'y',
+          type: 'linear',
+          domain: [min, max],
+          range: [{signal: 'height'}, 0],
+          zero: false
+        },
+        {
+          name: 'color',
+          type: 'ordinal',
+          range: { scheme: categories.length > 10 ? 'tableau20' : 'wiki' },
+          domain: { data: 'data', field: 'type' },
+        }
+      ]
+    };
+
     return [
       {
         name: 'x',
@@ -297,7 +321,7 @@ const ChartSpec = {
     ]
   },
 
-  marks({ type, stat, yLabel, propertySlug }): Array<object> {
+  marks({ type, stat, yLabel, propertySlug, classificationId }): Array<object> {
     if (stat == 'wp10') {
       return [
         {
@@ -333,36 +357,15 @@ const ChartSpec = {
       ]
     }
 
-    if (type === 'delta' && propertySlug !== '') {
-      const time = "timeFormat(datum.unit0) + ' - ' + timeFormat(datum.unit1)";
-      const title = `datum.type`;
-      const tooltip = `{title: ${title}, Dates: ${time}, Count: format(datum.agg, ',')}`;
-      return [
-        {
-          type: 'rect',
-          from: { data: 'data'},    
-          encode: {
-            enter: {
-              x: { scale: 'x', field: 'unit0' },
-              width: { scale: 'x', band: 1 },
-              y: { scale: 'y', field: 'y0' },
-              y2: { scale: 'y', field: 'y1' },
-              fill: {
-                scale: 'color',
-                field: 'type'
-              },
-              tooltip: {
-                signal: tooltip
-              }
-            }
-          }
-        }
-      ]
-    }
-
     if (type === 'delta') {
       const time = "timeFormat(datum.unit0) + ' - ' + timeFormat(datum.unit1)";
-      const title = `'${_.upperFirst(_.lowerCase(yLabel))}' + ' by ' + lower(datum.type)`;
+      let title = `'${_.upperFirst(_.lowerCase(yLabel))}' + ' by ' + lower(datum.type)`;
+      if (classificationId && propertySlug === '') {
+        title = `slice(upper(datum.type), 0, 1) + slice(lower(datum.type), 1) + ' ' + '${_.lowerCase(stat)}'`;
+      };
+      if (classificationId && propertySlug !== '') {
+        title = `slice(upper(datum.type), 0, 1) + slice(lower(datum.type), 1)`;
+      };
       const tooltip = `{title: ${title}, Dates: ${time}, Count: format(datum.agg, ',')}`;
       return [
         {

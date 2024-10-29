@@ -23,6 +23,12 @@ describe TopicSummaryService do
     end
 
     it 'summarizes all topic activity' do
+      expect_any_instance_of(ClassificationService).to receive(:summarize_topic).once.and_return([{
+        name: 'Biography',
+        id: 1,
+        count: 10
+      }])
+
       topic_summary_service = described_class.new(topic:)
       summary = topic_summary_service.create_summary
       expect(topic.topic_timepoints.count).to eq(3)
@@ -42,6 +48,11 @@ describe TopicSummaryService do
         token_count_delta: 200
       )
       expect(summary.wp10_prediction_categories).to eq({ 'A' => 2, 'B' => 2, 'C' => 2 })
+      expect(summary.classifications).to eq([{
+        'name' => 'Biography',
+        'id' => 1,
+        'count' => 10
+      }])
     end
   end
 end

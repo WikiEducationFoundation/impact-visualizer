@@ -3,8 +3,35 @@ class TopicSummary < ApplicationRecord
 
   # For ActiveAdmin
   def self.ransackable_attributes(auth_object = nil)
-    ["articles_count", "articles_count_delta", "attributed_articles_created_delta", "attributed_length_delta", "attributed_revisions_count_delta", "attributed_token_count", "average_wp10_prediction", "created_at", "id", "length", "length_delta", "revisions_count", "revisions_count_delta", "timepoint_count", "token_count", "token_count_delta", "topic_id", "updated_at", "wp10_prediction_categories"]
+    %w[
+      articles_count articles_count_delta
+      attributed_articles_created_delta attributed_length_delta
+      attributed_revisions_count_delta attributed_token_count
+      average_wp10_prediction created_at id length
+      length_delta revisions_count revisions_count_delta
+      timepoint_count token_count token_count_delta topic_id
+      updated_at wp10_prediction_categories
+    ]
   end
+
+  ## Validations
+  validates :classifications, json_schema: true
+
+  ## JSON Schemas
+  CLASSIFICATIONS_SCHEMA = {
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: {
+        id: { type: 'integer' },
+        name: { type: 'string' },
+        count: { type: 'number' },
+        properties: { type: 'array' }
+      },
+      required: %w[count id name],
+      additionalProperties: false
+    }
+  }.freeze
 end
 
 # == Schema Information
@@ -19,6 +46,7 @@ end
 #  attributed_revisions_count_delta  :integer
 #  attributed_token_count            :integer
 #  average_wp10_prediction           :float
+#  classifications                   :jsonb
 #  length                            :integer
 #  length_delta                      :integer
 #  missing_articles_count            :integer

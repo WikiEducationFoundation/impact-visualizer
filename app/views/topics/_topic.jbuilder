@@ -15,10 +15,10 @@ if topic.wiki
   end
 end
 
-json.classifications topic.topic_classifications do |topic_classification|
-  classification = topic_classification.classification
-  json.extract! classification, :id, :name, :properties
-end
+# json.classifications topic.topic_classifications do |topic_classification|
+#   classification = topic_classification.classification
+#   json.extract! classification, :id, :name, :properties
+# end
 
 json.has_stats topic.most_recent_summary.present?
 json.owned owned
@@ -35,7 +35,7 @@ if topic.most_recent_summary
                 :attributed_articles_created_delta, :attributed_length_delta,
                 :attributed_revisions_count_delta, :attributed_token_count,
                 :average_wp10_prediction, :wp10_prediction_categories,
-                :length, :length_delta,
+                :length, :length_delta, :classifications,
                 :revisions_count, :revisions_count_delta,
                 :token_count, :token_count_delta
 end
