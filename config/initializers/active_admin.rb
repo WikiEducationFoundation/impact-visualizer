@@ -1,4 +1,7 @@
 ActiveAdmin.setup do |config|
+  config.register_stylesheet 'active_admin/json_editor.css'
+  config.register_javascript 'active_admin/json_editor.js'
+
   # == Site Title
   #
   # Set the title that is displayed on the main layout

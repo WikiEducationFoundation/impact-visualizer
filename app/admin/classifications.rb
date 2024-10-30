@@ -2,6 +2,9 @@
 
 ActiveAdmin.register Classification do
   filter :topics
+  json_editor
+
+  permit_params :name, :prerequisites, :properties
 
   index do
     column :id
@@ -9,6 +12,18 @@ ActiveAdmin.register Classification do
     column :created_at
     column :updated_at
     actions
+  end
+
+  form do |f|
+    f.semantic_errors
+
+    inputs do
+      input :name
+      input :prerequisites, as: :jsonb
+      input :properties, as: :jsonb
+    end
+
+    f.actions
   end
 end
 

@@ -4,6 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.2.2'
 
 gem 'activeadmin'
+gem 'activeadmin_json_editor', '~> 0.0.7'
 gem 'annotate'
 gem 'awesome_print'
 gem 'base64', '0.1.1' # Server Passenger error https://www.reddit.com/r/rails/comments/18105z2/ruby_on_rails_phusion_passenger_error/
