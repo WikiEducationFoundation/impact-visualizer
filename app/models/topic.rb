@@ -177,7 +177,8 @@ class Topic < ApplicationRecord
 
   # For ActiveAdmin
   def self.ransackable_associations(_auth_object = nil)
-    %w[article_bags articles topic_summaries topic_timepoints topic_users users wiki]
+    %w[article_bags articles topic_summaries topic_timepoints
+       topic_classifications classifications topic_users users wiki]
   end
 
   # For ActiveAdmin

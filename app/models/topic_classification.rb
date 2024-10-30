@@ -4,6 +4,11 @@ class TopicClassification < ApplicationRecord
   ## Associations
   belongs_to :classification
   belongs_to :topic
+
+  ## For ActiveAdmin
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[classification_id created_at id topic_id updated_at]
+  end
 end
 
 # == Schema Information

@@ -51,7 +51,7 @@ function Chart({ spec, categories, stat }) {
         spec,
         { 
           renderer: 'svg',
-          actions: false
+          actions: true
         }
       )
         .then(() => {

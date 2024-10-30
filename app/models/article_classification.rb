@@ -23,6 +23,11 @@ class ArticleClassification < ApplicationRecord
       additionalProperties: false
     }
   }.freeze
+
+  ## For ActiveAdmin
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[article_id classification_id created_at id properties updated_at]
+  end
 end
 
 # == Schema Information

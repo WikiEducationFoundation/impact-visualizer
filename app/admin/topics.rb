@@ -7,7 +7,7 @@ ActiveAdmin.register Topic do
 
   permit_params :name, :description, :slug, :timepoint_day_interval, :start_date,
                 :end_date, :wiki_id, :editor_label, :display, :chart_time_unit,
-                :users_csv, :articles_csv
+                :users_csv, :articles_csv, classification_ids: []
 
   index do
     selectable_column
@@ -15,6 +15,11 @@ ActiveAdmin.register Topic do
     column :name
     column :slug
     column :wiki
+    column :classifications do |record|
+      record.classifications.map do |classification|
+        link_to(classification.name, admin_classification_path(classification))
+      end
+    end
     column :articles do |record|
       record.articles.count
     end
@@ -127,6 +132,11 @@ ActiveAdmin.register Topic do
       row :timepoints do |record|
         record.topic_timepoints.count
       end
+      row :classifications do |record|
+        record.classifications.map do |classification|
+          link_to(classification.name, admin_classification_path(classification))
+        end
+      end
     end
 
     attributes_table do
@@ -179,6 +189,7 @@ ActiveAdmin.register Topic do
             as: :file,
             label: 'Articles CSV',
             hint: topic.articles_csv.attached? ? "Currently attached: #{topic.articles_csv.filename.to_s}" : nil
+      f.input :classifications, as: :check_boxes, collection: Classification.all.map { |c| [c.name, c.id] }
     end
 
     f.actions
