@@ -131,6 +131,7 @@ export default function WikiDashboardTool() {
                     <CSVButton
                       articles={articleTitles}
                       csvConvert={convertDashboardDataToCSV}
+                      filename="wikiarticles.csv"
                     />
                   </th>
                 </tr>
@@ -155,6 +156,7 @@ export default function WikiDashboardTool() {
                     <CSVButton
                       articles={usernames}
                       csvConvert={convertDashboardDataToCSV}
+                      filename="wikiusernames.csv"
                     />
                   </th>
                 </tr>

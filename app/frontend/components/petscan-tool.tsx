@@ -1,29 +1,42 @@
 import React, { useState } from "react";
+import { PetscanResponse } from "../types/search-tool.type";
+import toast from "react-hot-toast";
+import LoadingOval from "./loading-oval.component";
+import CSVButton from "./CSV-button.component";
+import { convertCategoryArticlesToCSV } from "../utils/search-utils";
 
 export default function PetScanTool() {
   const [petscanID, setPetscanID] = useState<string>("");
-  const [queryResult, setQueryResult] = useState(null);
+  const [queryResult, setQueryResult] = useState<PetscanResponse>();
+  const [articleTitles, setArticleTitles] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
+    setIsLoading(true);
     event.preventDefault();
 
     if (!petscanID) {
-      alert("Please enter a PetScan ID.");
+      toast("Please enter a PetScan ID.");
       return;
     }
 
     try {
       const response = await fetch(
-        `https://petscan.wmflabs.org/?psid=${petscanID}&format=json&origin=*`
+        `https://petscan.wmcloud.org/?psid=${petscanID}&format=json`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      const data = await response.json();
+      const data: PetscanResponse = await response.json();
       setQueryResult(data);
+
+      const titles = data["*"][0].a["*"].map((page) => page.title);
+      setArticleTitles(titles);
     } catch (error) {
       console.error("Fetch error:", error);
-      alert("There was an issue fetching the data.");
+      toast("There was an issue fetching the data.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -49,10 +62,40 @@ export default function PetScanTool() {
         </div>
       </form>
 
-      {queryResult && (
-        <div className="QueryResult">
-          <h3>Query Result</h3>
-          <pre>{JSON.stringify(queryResult, null, 2)}</pre>
+      {isLoading ? (
+        <div className="OvalContainer">
+          <LoadingOval visible={isLoading} height="120" width="120" />
+        </div>
+      ) : (
+        <div
+          className="TablesContainer"
+          style={{ display: "flex", gap: "20px" }}
+        >
+          {queryResult && (
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    Article
+                    <CSVButton
+                      articles={articleTitles}
+                      csvConvert={convertCategoryArticlesToCSV}
+                      filename="petscan-articles.csv"
+                    />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {articleTitles?.map((article, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div>{article}</div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
     </div>

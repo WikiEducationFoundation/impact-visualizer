@@ -18,6 +18,7 @@ export default function ArticlesTable({
               <CSVButton
                 articles={articles}
                 csvConvert={convertSPARQLArticlesToCSV}
+                filename="wikidata-articles.csv"
               />
             </th>
           </tr>

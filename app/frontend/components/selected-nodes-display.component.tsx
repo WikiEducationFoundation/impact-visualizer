@@ -39,6 +39,7 @@ export default function SelectedNodesDisplay({
       <CSVButton
         articles={selectedArticles.map((article) => article.articleTitle)}
         csvConvert={convertCategoryArticlesToCSV}
+        filename="wikicategory-articles.csv"
       />
       <h3 className="u-mt1">Selected Articles</h3>
       {selectedArticles.length} articles from {categoriesCount} categories
