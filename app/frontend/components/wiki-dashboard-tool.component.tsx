@@ -15,6 +15,7 @@ import {
 
 export default function WikiDashboardTool() {
   const [courseURL, setCourseURL] = useState("");
+  const [courseSlug, setCourseSlug] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [usernames, setUsernames] = useState<string[]>();
   const [articleTitles, setArticleTitles] = useState<string[]>();
@@ -23,7 +24,7 @@ export default function WikiDashboardTool() {
     setIsLoading(true);
     event.preventDefault();
     try {
-      let { dashboardURL, type } = extractDashboardURLInfo(courseURL);
+      let { dashboardURL, type, slug } = extractDashboardURLInfo(courseURL);
 
       let [usersResponse, articlesResponse] = await Promise.allSettled([
         fetch(`${dashboardURL}/users.json`),
@@ -79,6 +80,7 @@ export default function WikiDashboardTool() {
 
       setUsernames(usernames);
       setArticleTitles(articleTitles);
+      setCourseSlug(slug);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -131,7 +133,7 @@ export default function WikiDashboardTool() {
                     <CSVButton
                       articles={articleTitles}
                       csvConvert={convertDashboardDataToCSV}
-                      filename="wikiarticles.csv"
+                      filename={`${courseSlug}-wikiarticles.csv`}
                     />
                   </th>
                 </tr>
@@ -156,7 +158,7 @@ export default function WikiDashboardTool() {
                     <CSVButton
                       articles={usernames}
                       csvConvert={convertDashboardDataToCSV}
-                      filename="wikiusernames.csv"
+                      filename={`${courseSlug}-wikiusernames.csv`}
                     />
                   </th>
                 </tr>

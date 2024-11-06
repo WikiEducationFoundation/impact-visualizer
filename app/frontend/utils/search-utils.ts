@@ -218,6 +218,7 @@ const removeDuplicateArticles = (
 function extractDashboardURLInfo(url: string): {
   dashboardURL: string;
   type: string;
+  slug: string;
 } {
   const protocolIndex = url.indexOf("://");
   if (protocolIndex === -1) {
@@ -229,14 +230,16 @@ function extractDashboardURLInfo(url: string): {
   // Remove trailing slashes and then split
   const parts = urlAfterProtocol.replace(/\/+$/, "").split("/");
 
+  let course_slug = "";
   let maxPartsLength: number;
   let type: string;
-
   if (parts[1] === "campaigns") {
     maxPartsLength = 3;
+    course_slug = parts[2];
     type = "campaign";
   } else if (parts[1] === "courses") {
     maxPartsLength = 4;
+    course_slug = `${parts[2]}-${parts[3]}`;
     type = "course";
   } else {
     throw new Error("Invalid URL: unrecognized path");
@@ -250,9 +253,11 @@ function extractDashboardURLInfo(url: string): {
 
   const extractedUrl =
     url.slice(0, protocolIndex + 3) + parts.slice(0, maxPartsLength).join("/");
+
   return {
     dashboardURL: extractedUrl,
     type: type,
+    slug: course_slug,
   };
 }
 

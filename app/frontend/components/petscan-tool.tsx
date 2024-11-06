@@ -80,7 +80,7 @@ export default function PetScanTool() {
                     <CSVButton
                       articles={articleTitles}
                       csvConvert={convertCategoryArticlesToCSV}
-                      filename="petscan-articles.csv"
+                      filename={`${petscanID}-petscan-articles.csv`}
                     />
                   </th>
                 </tr>
