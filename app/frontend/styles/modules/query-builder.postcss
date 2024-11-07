@@ -14,6 +14,25 @@
   transform: scale(1.2);
 }
 
+.CheckboxContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 5px;
+  transition: background-color 0.2s ease, transform 0.2s ease; /* Smooth transition */
+  &:hover {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+  }
+}
+
+.CheckboxInput {
+  width: 20px;
+  height: 20px;
+  accent-color: $blue;
+}
+
 input.LanguageCodeInput {
   width: 185px;
   margin-bottom: 20px;
@@ -27,7 +46,7 @@ table {
     justify-content: space-between;
     align-items: center;
     .Button {
-      background-color: #34375b;
+      background-color: #676eb4;
     }
   }
 }

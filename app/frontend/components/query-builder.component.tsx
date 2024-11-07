@@ -27,10 +27,16 @@ export default function QueryBuilder() {
         type: string;
         value: string;
       };
+      person: {
+        type: string;
+        value: string;
+      };
     }[]
   >([]);
   const [languageCode, setLanguageCode] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const [requireWikiArticle, setRequireWikiArticle] = useState<boolean>(false);
 
   const handleAddQueryItem = () => {
     if (queryItemsData.length < 5) {
@@ -89,7 +95,8 @@ export default function QueryBuilder() {
       occupations.map((occupation) => occupation.qValue.id),
       gender.length > 0 ? gender[0].qValue.id : "",
       ethnicity.length > 0 ? ethnicity[0].qValue.id : "",
-      languageCode
+      languageCode,
+      { requireWikipediaArticle: requireWikiArticle }
     );
     try {
       const response = await fetch(
@@ -119,6 +126,7 @@ export default function QueryBuilder() {
 
     return queriedArticlesJSON;
   }
+
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
@@ -155,6 +163,18 @@ export default function QueryBuilder() {
             +
           </button>
         )}
+        <div className="u-mt1">
+          <label className="CheckboxContainer">
+            <input
+              type="checkbox"
+              checked={requireWikiArticle}
+              onChange={(e) => setRequireWikiArticle(e.target.checked)}
+              className="CheckboxInput"
+            />
+            <span>Require Wiki Article</span>
+          </label>
+        </div>
+
         <div>
           <button type="submit" className="Button u-mt2">
             Run Query
