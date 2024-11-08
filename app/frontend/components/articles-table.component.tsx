@@ -5,8 +5,10 @@ import CSVButton from "./CSV-button.component";
 
 export default function ArticlesTable({
   articles,
+  qValueLabels,
 }: {
   articles: SPARQLResponse["results"]["bindings"];
+  qValueLabels: string[];
 }) {
   return (
     <>
@@ -18,7 +20,7 @@ export default function ArticlesTable({
               <CSVButton
                 articles={articles}
                 csvConvert={convertSPARQLArticlesToCSV}
-                filename="wikidata-articles.csv"
+                filename={`${qValueLabels.join("-")}-wikidata-articles.csv`}
               />
             </th>
           </tr>
