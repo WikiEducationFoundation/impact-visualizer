@@ -14,6 +14,7 @@ import { CheckBoxIcon } from "./tree-icons.component";
 
 export default function WikipediaCategoryPage() {
   const [categoryText, setCategoryText] = useState<string>("");
+  const [categoryName, setCategoryName] = useState<string>("");
   const [languageCode, setLanguageCode] = useState<string>("");
 
   const [SubcatsData, setSubcatsData] = useState<CategoryNode>();
@@ -41,6 +42,8 @@ export default function WikipediaCategoryPage() {
       if (fetchedSubcatsAndPages.error) {
         throw new Error(fetchedSubcatsAndPages.error.info);
       }
+      setCategoryName(categoryName);
+
       setSubcatsData(
         convertInitialResponseToTree(
           fetchedSubcatsAndPages,
@@ -116,7 +119,11 @@ export default function WikipediaCategoryPage() {
           <LoadingOval visible={isLoading} height="100" width="100" />
         </div>
       ) : SubcatsData ? (
-        <CategoryTree treeData={SubcatsData} languageCode={languageCode} />
+        <CategoryTree
+          categoryName={categoryName}
+          treeData={SubcatsData}
+          languageCode={languageCode}
+        />
       ) : (
         ""
       )}

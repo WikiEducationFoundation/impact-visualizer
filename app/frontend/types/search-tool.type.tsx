@@ -148,6 +148,37 @@ type CampaignArticle = {
   wiki: { id: number; language: string; project: string };
 };
 
+type PetscanResponse = {
+  "*": [
+    {
+      a: {
+        "*": PetscanPage[];
+        type: "union";
+      };
+      n: string;
+    }
+  ];
+  a: {
+    query: string;
+    querytime_sec: number;
+  };
+  n: string;
+};
+
+type PetscanPage = {
+  id: number;
+  len: number;
+  metadata?: {
+    wikidata?: string;
+  };
+  n: string;
+  namespace: number;
+  nstext: string;
+  q: string;
+  title: string;
+  touched: string;
+};
+
 export type {
   SPARQLResponse,
   MediaWikiResponse,
@@ -158,4 +189,5 @@ export type {
   CourseArticlesResponse,
   CampaignUsersResponse,
   CampaignArticlesResponse,
+  PetscanResponse,
 };

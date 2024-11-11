@@ -20,9 +20,11 @@ import { ArrowIcon, CheckBoxIcon } from "./tree-icons.component";
 export default function CategoryTree({
   treeData,
   languageCode,
+  categoryName,
 }: {
   treeData: CategoryNode;
   languageCode: string;
+  categoryName: string;
 }) {
   const [categoryTree, setCategoryTree] = useState<INode<IFlatMetadata>[]>(
     flattenTree(treeData)
@@ -262,7 +264,10 @@ export default function CategoryTree({
           }}
         />
       </div>
-      <SelectedNodesDisplay selectedNodes={manuallySelectedNodes} />
+      <SelectedNodesDisplay
+        categoryName={categoryName}
+        selectedNodes={manuallySelectedNodes}
+      />
     </div>
   );
 }
