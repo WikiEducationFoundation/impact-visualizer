@@ -7,6 +7,7 @@ ActiveAdmin.register Topic do
 
   permit_params :name, :description, :slug, :timepoint_day_interval, :start_date,
                 :end_date, :wiki_id, :editor_label, :display, :chart_time_unit,
+                :convert_tokens_to_words, :tokens_per_word,
                 :users_csv, :articles_csv, classification_ids: []
 
   index do
@@ -151,6 +152,8 @@ ActiveAdmin.register Topic do
       row :end_date
       row :timepoint_day_interval
       row :chart_time_unit
+      row :convert_tokens_to_words
+      row :tokens_per_word
       row :users_csv do
         if topic.users_csv.attached?
           link_to topic.users_csv.filename.to_s, url_for(topic.users_csv)
@@ -182,7 +185,7 @@ ActiveAdmin.register Topic do
       input :start_date, as: :date_select
       input :end_date, as: :date_select
       input :convert_tokens_to_words
-      input :words_per_token
+      input :tokens_per_word
       input :users_csv,
             as: :file,
             label: 'Users CSV',
@@ -219,6 +222,7 @@ end
 #
 #  id                        :bigint           not null, primary key
 #  chart_time_unit           :string           default("year")
+#  convert_tokens_to_words   :boolean          default(FALSE)
 #  description               :string
 #  display                   :boolean          default(FALSE)
 #  editor_label              :string           default("participant")
@@ -227,6 +231,7 @@ end
 #  slug                      :string
 #  start_date                :datetime
 #  timepoint_day_interval    :integer          default(7)
+#  tokens_per_word           :float            default(3.25)
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  article_import_job_id     :string
