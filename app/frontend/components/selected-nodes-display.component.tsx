@@ -8,8 +8,10 @@ import {
 import React from "react";
 
 export default function SelectedNodesDisplay({
+  categoryName,
   selectedNodes,
 }: {
+  categoryName: string;
   selectedNodes: Map<NodeId, INode<IFlatMetadata>>;
 }) {
   let categoriesCount = 0;
@@ -39,6 +41,7 @@ export default function SelectedNodesDisplay({
       <CSVButton
         articles={selectedArticles.map((article) => article.articleTitle)}
         csvConvert={convertCategoryArticlesToCSV}
+        filename={`${categoryName}-wikicategory-articles.csv`}
       />
       <h3 className="u-mt1">Selected Articles</h3>
       {selectedArticles.length} articles from {categoriesCount} categories

@@ -36,6 +36,7 @@ function Root() {
                   <Link to="/search/wiki-dashboard-tool">
                     Education Dashboard Tool
                   </Link>
+                  <Link to="/search/petscan-tool">Petscan Tool</Link>
                 </div>
               </div>
             </div>

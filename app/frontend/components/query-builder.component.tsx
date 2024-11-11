@@ -187,7 +187,10 @@ export default function QueryBuilder() {
           <LoadingOval visible={isLoading} height="120" width="120" />
         </div>
       ) : articles.length > 0 ? (
-        <ArticlesTable articles={articles} />
+        <ArticlesTable
+          articles={articles}
+          qValueLabels={queryItemsData.map((item) => item.qValue.label)}
+        />
       ) : (
         ""
       )}
