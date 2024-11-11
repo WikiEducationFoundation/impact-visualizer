@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_29_200503) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_07_232348) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -248,6 +248,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_29_200503) do
     t.string "users_import_job_id"
     t.string "article_import_job_id"
     t.string "timepoint_generate_job_id"
+    t.boolean "convert_tokens_to_words", default: false
+    t.float "tokens_per_word", default: 3.25
   end
 
   create_table "users", force: :cascade do |t|

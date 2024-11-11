@@ -1,5 +1,8 @@
 import _ from 'lodash';
+import TopicUtils from './topic-utils';
+
 import ChartTimepoint from '../types/chart-timepoint.type';
+import TopicTimepoint from '../types/topic-timepoint.type';
 import StatFields from '../types/stat-fields.type';
 
 const ChartUtils = {
@@ -33,6 +36,14 @@ const ChartUtils = {
     const {classificationId, propertySlug} =
       this.parseClassificationViewKey(classificationView);
 
+    let fieldLabel = totalField;
+    let statLabel = stat;
+
+    if (stat === 'tokens' && topic.convert_tokens_to_words) {
+      statLabel = 'words';
+      fieldLabel = 'words';
+    };
+
     if (stat === 'wp10') {
       yLabel = 'Predicted Quality';
       title = `Predicted quality of articles over time`;
@@ -54,38 +65,45 @@ const ChartUtils = {
       }
     } else {
       if (type === 'cumulative') {
-        yLabel = _.startCase(totalField);
-        title = `Cumulative change to ${_.lowerCase(totalField)}`;
+        yLabel = _.startCase(fieldLabel);
+        title = `Cumulative change to ${_.lowerCase(fieldLabel)}`;
         if (classificationView === 'default') {
-          min = ChartUtils.minForCumulativeChart(topicTimepoints, totalField);
-          max = ChartUtils.maxForCumulativeChart(topicTimepoints, totalField);
+          min = ChartUtils.minForCumulativeChart(topicTimepoints, totalField, stat, topic);
+          max = ChartUtils.maxForCumulativeChart(topicTimepoints, totalField, stat, topic);
           values = ChartUtils.prepCumulativeValues({
             timepoints: topicTimepoints,
             deltaField,
             totalField,
-            attributedDeltaField
+            attributedDeltaField,
+            stat,
+            topic
           });
         } else {
           if (propertySlug === '') {
-            min = ChartUtils.minForCumulativeChart(topicTimepoints, totalField);
-            max = ChartUtils.maxForCumulativeChart(topicTimepoints, totalField);
+            min = ChartUtils.minForCumulativeChart(topicTimepoints, totalField, stat, topic);
+            max = ChartUtils.maxForCumulativeChart(topicTimepoints, totalField, stat, topic);
             values = ChartUtils.prepClassificationTotalCumulativeValues({
               timepoints: topicTimepoints,
               deltaField,
               totalField,
               classificationId,
-              propertySlug
+              propertySlug,
+              stat,
+              topic
             });
           } else {
-            min = ChartUtils.minForCumulativeChart(topicTimepoints, totalField);
+            min = ChartUtils.minForCumulativeChart(topicTimepoints, totalField, stat, topic);
             max = ChartUtils.maxForCumulativeSegmentChart(min, topicTimepoints, 
-                                                          classificationId, propertySlug, deltaField);
+                                                          classificationId, propertySlug,
+                                                          deltaField, stat, topic);
             const { values: vals, categories: cats } = ChartUtils.prepClassificationSegmentCumulativeValues({
               timepoints: topicTimepoints,
               deltaField,
               totalField,
               classificationId,
-              propertySlug
+              propertySlug,
+              stat,
+              topic
             });
             values = vals;
             categories = cats;
@@ -93,16 +111,18 @@ const ChartUtils = {
         }
       }
       if (type === 'delta') {
-        yLabel = _.startCase(`${stat} Created`);
-        title = `${_.startCase(stat)} created at each timepoint`;
+        yLabel = _.startCase(`${statLabel} Created`);
+        title = `${_.startCase(statLabel)} created at each timepoint`;
         min = 0;
-        max = ChartUtils.maxForDeltaChart(topicTimepoints, deltaField);
+        max = ChartUtils.maxForDeltaChart(topicTimepoints, deltaField, stat, topic);
         if (classificationView === 'default') {
           values = ChartUtils.prepDeltaValues({
             timepoints: topicTimepoints,
             deltaField,
             totalField,
-            attributedDeltaField
+            attributedDeltaField,
+            topic,
+            stat
           });
         } else {
           if (propertySlug === '') {
@@ -112,7 +132,8 @@ const ChartUtils = {
               deltaField,
               totalField,
               classificationId,
-              propertySlug
+              propertySlug,
+              stat
             });
           } else {
             const { values: vals, categories: cats } = ChartUtils.prepClassificationSegmentDeltaValues({
@@ -121,7 +142,8 @@ const ChartUtils = {
               deltaField,
               totalField,
               classificationId,
-              propertySlug
+              propertySlug,
+              stat
             });
             values = vals;
             categories = cats;
@@ -133,19 +155,31 @@ const ChartUtils = {
     return { values, yLabel, min, max, title, categories };
   },
 
-  minForCumulativeChart(timepoints, totalField): number {
-    return _.reduce(timepoints, (accum, timepoint) => {
+  minForCumulativeChart(timepoints, totalField, stat, topic): number {
+    let min = _.reduce(timepoints, (accum, timepoint) => {
       return Math.min(accum as number, timepoint[totalField] as number);
     }, timepoints[0][totalField] as number);
+
+    if (stat === 'tokens') {
+      min = TopicUtils.tokenOrWordCount(topic, min);
+    };
+
+    return min;
   },
 
-  maxForCumulativeChart(timepoints, totalField): number {
-    return _.reduce(timepoints, (accum, timepoint) => {
+  maxForCumulativeChart(timepoints, totalField, stat, topic): number {
+    let max = _.reduce(timepoints, (accum, timepoint) => {
       return Math.max(accum as number, timepoint[totalField] as number);
     }, timepoints[0][totalField] as number);
+
+    if (stat === 'tokens') {
+      max = TopicUtils.tokenOrWordCount(topic, max);
+    };
+
+    return max;
   },
 
-  maxForCumulativeSegmentChart(min, timepoints, classificationId, propertySlug, deltaField): number {
+  maxForCumulativeSegmentChart(min, timepoints, classificationId, propertySlug, deltaField, stat, topic): number {
     let total = min;
 
     let classificationDeltaField = deltaField;
@@ -157,22 +191,32 @@ const ChartUtils = {
       const classification = _.find(timepoint.classifications, { id: classificationId });
       const property = _.find(classification.properties, { slug: propertySlug });
       _.each(property.segments, (values) => {
-        total += values[classificationDeltaField];
+        let value = values[classificationDeltaField];
+        if (stat === 'tokens') {
+          value = TopicUtils.tokenOrWordCount(topic, value);
+        };
+        total += value;
       })
     });
 
     return total;
   },
 
-  maxForDeltaChart(timepoints, deltaField): number {
-    const max = _.maxBy(timepoints, (timepoint) => {
+  maxForDeltaChart(timepoints, deltaField, stat, topic): number {
+    const max:TopicTimepoint|undefined = _.maxBy(timepoints, (timepoint) => {
       return timepoint[deltaField] as number;
     });
-    return max[deltaField]
+
+    if (stat === 'tokens') {
+      const count = TopicUtils.tokenOrWordCount(topic, max?.[deltaField]);
+      return count;
+    };
+
+    return max?.[deltaField];
   },
 
   prepCumulativeValues(options): ChartTimepoint[] {
-    const { timepoints, attributedDeltaField, deltaField } = options;
+    const { timepoints, attributedDeltaField, deltaField, topic, stat } = options;
     
     const values: ChartTimepoint[] = [];
 
@@ -180,8 +224,16 @@ const ChartUtils = {
     let unattributedCounter = 0;
 
     timepoints.forEach((timepoint) => {
-      attributedCounter += Math.max(0, timepoint[attributedDeltaField]);
-      unattributedCounter += Math.max(0, timepoint[deltaField] - timepoint[attributedDeltaField]);
+      let attributed = timepoint[attributedDeltaField];
+      let unattributed = timepoint[deltaField] - timepoint[attributedDeltaField];
+
+      if (stat === 'tokens') {
+        attributed = TopicUtils.tokenOrWordCount(topic, attributed);
+        unattributed = TopicUtils.tokenOrWordCount(topic, unattributed);
+      };
+
+      attributedCounter += Math.max(0, attributed);
+      unattributedCounter += Math.max(0, unattributed);
 
       values.push({
         date: timepoint.timestamp,
@@ -200,13 +252,18 @@ const ChartUtils = {
   },
 
   prepDeltaValues(options): ChartTimepoint[] {
-    const { timepoints, attributedDeltaField, deltaField } = options;
+    const { timepoints, attributedDeltaField, deltaField, topic, stat } = options;
 
     const values: ChartTimepoint[] = [];
 
     timepoints.forEach((timepoint) => {
-      const attributed = Math.max(0, timepoint[attributedDeltaField]);
-      const unattributed = Math.max(0, timepoint[deltaField] - timepoint[attributedDeltaField]);
+      let attributed = Math.max(0, timepoint[attributedDeltaField]);
+      let unattributed = Math.max(0, timepoint[deltaField] - timepoint[attributedDeltaField]);
+
+      if (stat === 'tokens') {
+        attributed = TopicUtils.tokenOrWordCount(topic, attributed);
+        unattributed = TopicUtils.tokenOrWordCount(topic, unattributed);
+      };
 
       values.push({
         date: timepoint.timestamp,
@@ -225,7 +282,7 @@ const ChartUtils = {
   },
 
   prepClassificationTotalCumulativeValues(options): ChartTimepoint[] {
-    const { timepoints, classificationId, deltaField } = options;
+    const { timepoints, classificationId, deltaField, stat, topic } = options;
     
     const values: ChartTimepoint[] = [];
 
@@ -234,8 +291,17 @@ const ChartUtils = {
 
     timepoints.forEach((timepoint) => {
       const classification = _.find(timepoint.classifications, { id: classificationId });
-      classifiedCounter += Math.max(0, classification.count_delta);
-      unclassifiedCounter += Math.max(0, timepoint[deltaField] - classification.count_delta);
+      
+      let classified = classification.count_delta;
+      let unclassified = timepoint[deltaField] - classification.count_delta;
+
+      if (stat === 'tokens') {
+        classified = TopicUtils.tokenOrWordCount(topic, classified);
+        unclassified = TopicUtils.tokenOrWordCount(topic, unclassified);
+      };
+
+      classifiedCounter += Math.max(0, classified);
+      unclassifiedCounter += Math.max(0, unclassified);
 
       values.push({
         date: timepoint.timestamp,
@@ -255,7 +321,7 @@ const ChartUtils = {
   },
 
   prepClassificationTotalDeltaValues(options): ChartTimepoint[] {
-    const { timepoints, deltaField, classificationId } = options;
+    const { timepoints, deltaField, classificationId, stat, topic } = options;
     
     const values: ChartTimepoint[] = [];
     let classificationDeltaField = deltaField;
@@ -265,8 +331,13 @@ const ChartUtils = {
 
     timepoints.forEach((timepoint) => {
       const classification = _.find(timepoint.classifications, { id: classificationId });
-      const classified = Math.max(0, classification[classificationDeltaField]);
-      const unclassified = Math.max(0, timepoint[deltaField] - classification[classificationDeltaField]);
+      let classified = Math.max(0, classification[classificationDeltaField]);
+      let unclassified = Math.max(0, timepoint[deltaField] - classification[classificationDeltaField]);
+
+      if (stat === 'tokens') {
+        classified = TopicUtils.tokenOrWordCount(topic, classified);
+        unclassified = TopicUtils.tokenOrWordCount(topic, unclassified);
+      };
 
       values.push({
         date: timepoint.timestamp,
@@ -285,7 +356,8 @@ const ChartUtils = {
   },
 
   prepClassificationSegmentDeltaValues(options): {values: ChartTimepoint[], categories: string[]} {
-    const { timepoints, classificationId, propertySlug, deltaField } = options;
+    const { timepoints, classificationId, propertySlug,
+            deltaField, stat, topic } = options;
 
     const values: Array<ChartTimepoint> = [];
     let segments: Array<{key: string, countDelta: number, label: string}> = [];
@@ -326,6 +398,9 @@ const ChartUtils = {
         if (segmentValues && segmentValues[classificationDeltaField]) {
           value = segmentValues[classificationDeltaField];
         };
+        if (stat === 'tokens') {
+          value = TopicUtils.tokenOrWordCount(topic, value);
+        };
         values.push({
           date: timepoint.timestamp,
           value,
@@ -339,7 +414,7 @@ const ChartUtils = {
   },
 
   prepClassificationSegmentCumulativeValues(options): { values: ChartTimepoint[], categories: string[] } {
-    const { timepoints, classificationId, propertySlug, deltaField } = options;
+    const { timepoints, classificationId, propertySlug, deltaField, topic, stat } = options;
 
     const values: Array<ChartTimepoint> = [];
     let segments: Array<{key: string, countDelta: number, counter: number, label: string}> = [];
@@ -379,7 +454,13 @@ const ChartUtils = {
         const segmentValues = property.segments[segment.key];
         const type = segmentValues.label;
 
-        segment.counter += Math.max(0, segmentValues[classificationDeltaField]);
+        let segmentValue = segmentValues[classificationDeltaField];
+
+        if (stat === 'tokens') {
+          segmentValue = TopicUtils.tokenOrWordCount(topic, segmentValue);
+        };
+
+        segment.counter += Math.max(0, segmentValue);
         value = segment.counter;
 
         values.push({

@@ -116,17 +116,17 @@ function renderStatBlocks({ activeStat, handleStatSelect, topic, editorLabel }) 
         onSelect={() => handleStatSelect('tokens')}
         stats={[
           {
-            label: 'Total Tokens',
-            value: topic.token_count,
+            label: `Total ${TopicUtils.pluralizeTokenOrWord(topic)}`,
+            value: TopicUtils.tokenOrWordCount(topic, topic.token_count),
             primary: true
           },
           {
-            label: `${pluralize('Token', topic.token_count_delta)} Created`,
-            value: topic.token_count_delta
+            label: `${TopicUtils.pluralizeTokenOrWord(topic)} Created`,
+            value: TopicUtils.tokenOrWordCount(topic, topic.token_count_delta)
           },
           {
-            label: `Tokens Created by ${editorLabel}`,
-            value: TopicUtils.formatAttributedTokens(topic)
+            label: `${TopicUtils.pluralizeTokenOrWord(topic)} Created by ${editorLabel}`,
+            value: TopicUtils.formatAttributedTokensOrWords(topic)
           }
         ]}
       />

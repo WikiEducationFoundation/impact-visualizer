@@ -41,5 +41,7 @@ export default interface Topic {
   articles_import_status: string, 
   timepoint_generate_status: string,
   users_import_status: string,
-  classifications: Array<Classification>
+  classifications: Array<Classification>,
+  convert_tokens_to_words: boolean,
+  tokens_per_word: number
 }

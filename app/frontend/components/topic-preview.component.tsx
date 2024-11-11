@@ -88,15 +88,15 @@ function TopicPreview({topic}: {topic: Topic}) {
             <li className="TopicPreview-stat">
               <div className="TopicPreview-innerStat">
                 <div className="TopicPreview-statValue">
-                  {topic.token_count_delta.toLocaleString('en-US')}
+                  {TopicUtils.tokenOrWordCount(topic, topic.token_count_delta).toLocaleString('en-US')}
                 </div>
                 <div className="TopicPreview-statLabel">
-                  {pluralize('Token', topic.token_count_delta)} Created
+                  {TopicUtils.pluralizeTokenOrWord(topic)} Created
                 </div>
               </div>
               <div className="TopicPreview-innerStat">
                 <div className="TopicPreview-statValue">
-                  {TopicUtils.formatAttributedTokens(topic, { percentageOnly: true })}
+                  {TopicUtils.formatAttributedTokensOrWords(topic, { percentageOnly: true })}
                 </div>
                 <div className="TopicPreview-statLabel">
                   Created by {editorLabel}

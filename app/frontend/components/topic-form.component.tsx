@@ -35,7 +35,9 @@ function TopicForm({ onSubmit, defaultValues, saving }) {
     },
   })
 
-  const { handleSubmit, control } = useForm<FieldValues>({ defaultValues })
+  const { handleSubmit, control, watch } = useForm<FieldValues>({ defaultValues })
+
+  const watchConvertTokens = watch('convert_tokens_to_words');
 
   const wikiOptions = _.map(wikis, (wiki) => {
     return {
@@ -140,6 +142,33 @@ function TopicForm({ onSubmit, defaultValues, saving }) {
           control={control}
           hint="The default segmentation of time on resulting charts. The most appropriate setting will depend on your Topic's timeframe. Changing will not require reanalysis."
         />
+      </div>
+
+      <div className="FormRow FormRow--halves">
+        <GenericInput
+          name="convert_tokens_to_words"
+          label="Convert Tokens to Words"
+          type='checkbox'
+          hint='Instead of displaying article token counts, convert to a count of words.'
+          control={control}
+        />
+
+        {watchConvertTokens &&
+          <GenericInput
+            name="tokens_per_word"
+            label="Tokens per Word"
+            type='text'
+            rules={{
+              required: 'A value is required',
+              pattern: {
+                message: 'Value must be numeric',
+                value: /^\d*\.?\d+$/,
+              }
+            }}
+            hint='The number of tokens will be divided by this value when displaying tokens as words.'
+            control={control}
+          />
+        }
       </div>
 
       <div className="FormRow">

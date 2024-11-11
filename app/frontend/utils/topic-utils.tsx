@@ -1,10 +1,28 @@
 import _ from 'lodash';
 import Topic from '../types/topic.type';
+import pluralize from 'pluralize';
 
 const TopicUtils = {
+  pluralizeTokenOrWord(topic: Topic, count?: number) {
+    let label = 'Token';
+    if (topic.convert_tokens_to_words) {
+      label = 'Word';
+    };
+    return pluralize(label, (count || topic.token_count_delta))
+  },
+
+  tokenOrWordCount(topic: Topic, count: number)   {
+    if (topic.convert_tokens_to_words && topic.tokens_per_word > 0) {
+      return Math.round(count / topic.tokens_per_word);
+    };
+    return count;
+  },
+
   formatAttributedArticles(topic: Topic, options?: Object) {
-    const percentage = Math.round((topic.attributed_articles_created_delta /
-                                   topic.articles_count_delta) * 100);
+    const attributedDelta = topic.attributed_articles_created_delta;
+    const totalDelta = topic.articles_count_delta;
+
+    const percentage = Math.round((attributedDelta / totalDelta) * 100);
     
     let formattedPercentage = `${percentage}%`;
     
@@ -16,7 +34,7 @@ const TopicUtils = {
       return formattedPercentage;
     }
 
-    return `${topic.attributed_articles_created_delta.toLocaleString('en-US')} (${formattedPercentage})`;
+    return `${attributedDelta.toLocaleString('en-US')} (${formattedPercentage})`;
   },
 
   formatAttributedRevisions(topic: Topic, options?: Object) {
@@ -36,9 +54,11 @@ const TopicUtils = {
     return `${topic.attributed_revisions_count_delta.toLocaleString('en-US')} (${formattedPercentage})`;
   },
 
-  formatAttributedTokens(topic: Topic, options?: Object) {
-    const percentage = Math.round((topic.attributed_token_count /
-                                   topic.token_count_delta) * 100);
+  formatAttributedTokensOrWords(topic: Topic, options?: Object) {
+    const attributedDelta = this.tokenOrWordCount(topic, topic.attributed_token_count)
+    const totalDelta = this.tokenOrWordCount(topic, topic.token_count_delta);
+
+    const percentage = Math.round((attributedDelta / totalDelta) * 100);
     
     let formattedPercentage = `${percentage}%`;
     
@@ -50,7 +70,7 @@ const TopicUtils = {
       return formattedPercentage;
     }
 
-    return `${topic.attributed_token_count.toLocaleString('en-US')} (${formattedPercentage})`;
+    return `${attributedDelta.toLocaleString('en-US')} (${formattedPercentage})`;
   },
 
   fieldsForStat(stat: String) {

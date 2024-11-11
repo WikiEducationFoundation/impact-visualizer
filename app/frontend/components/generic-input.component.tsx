@@ -6,16 +6,21 @@ type Props = {
   label: String,
   hint?: String,
   type?: HTMLInputTypeAttribute,
-  min?: number
+  min?: number,
+  max?: number
 } & UseControllerProps<FieldValues>
 
 export default function GenericInput(props: Props) {
-  const { label, hint, type, rules, min } = props;
+  const { name, label, hint, type, rules, min, max } = props;
   const { field, fieldState } = useController(props);
 
   return (
-    <div className="Input Input--input">
-      <label>
+    <div
+      className={`Input Input--input Input--${type}`}
+    >
+      <label
+        htmlFor={name}
+      >
         {label}
         {rules?.required &&
           <span>*</span>
@@ -24,8 +29,11 @@ export default function GenericInput(props: Props) {
 
       <input
         {...field}
+        id={name}
         type={type}
         min={min}
+        max={max}
+        checked={type === 'checkbox' && field.value}
       />
 
       {hint &&

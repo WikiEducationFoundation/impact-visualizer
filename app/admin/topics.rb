@@ -181,6 +181,8 @@ ActiveAdmin.register Topic do
       input :timepoint_day_interval, hint: 'How many days between timepoints? WARNING: this number has a significant impact on the processing time required to generate timepoints. Set as high as possible for the time frame.'
       input :start_date, as: :date_select
       input :end_date, as: :date_select
+      input :convert_tokens_to_words
+      input :words_per_token
       input :users_csv,
             as: :file,
             label: 'Users CSV',

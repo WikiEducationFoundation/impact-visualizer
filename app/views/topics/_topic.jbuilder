@@ -7,7 +7,7 @@ json.extract! topic, :id, :name, :description, :end_date, :slug,
               :chart_time_unit, :wiki_id, :articles_count, :missing_articles_count, :users_csv_url,
               :users_csv_filename, :articles_csv_url, :articles_csv_filename,
               :timepoint_generate_job_id, :users_import_job_id, :article_import_job_id,
-              :timepoints_count, :summaries_count
+              :timepoints_count, :summaries_count, :tokens_per_word, :convert_tokens_to_words
 
 if topic.wiki
   json.wiki do

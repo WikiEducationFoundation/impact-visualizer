@@ -2,13 +2,13 @@ import _ from 'lodash';
 import ChartUtils from './chart-utils';
 
 const ChartSpec = {
-  prepare({ min, max, yLabel, values, stat, type,
+  prepare({ min, max, yLabel, values, stat, type, topic,
             timeUnit, classificationView, categories }) {
     
     const { classificationId, propertySlug } = ChartUtils.parseClassificationViewKey(classificationView);
 
     const axes = this.axes({ type, yLabel });
-    const marks = this.marks({ type, stat, yLabel, propertySlug, classificationId });
+    const marks = this.marks({ type, stat, yLabel, propertySlug, classificationId, topic });
     const data = this.data({ min, values, type, stat, timeUnit, propertySlug });
     const scales = this.scales({ min, max, type, stat, categories, propertySlug});
 
@@ -321,7 +321,7 @@ const ChartSpec = {
     ]
   },
 
-  marks({ type, stat, yLabel, propertySlug, classificationId }): Array<object> {
+  marks({ type, stat, yLabel, propertySlug, classificationId, topic }): Array<object> {
     if (stat == 'wp10') {
       return [
         {
@@ -359,9 +359,13 @@ const ChartSpec = {
 
     if (type === 'delta') {
       const time = "timeFormat(datum.unit0) + ' - ' + timeFormat(datum.unit1)";
+      let statLabel = stat;
+      if (stat === 'tokens' && topic.convert_tokens_to_words) {
+        statLabel = 'words';
+      };
       let title = `'${_.upperFirst(_.lowerCase(yLabel))}' + ' by ' + lower(datum.type)`;
       if (classificationId && propertySlug === '') {
-        title = `slice(upper(datum.type), 0, 1) + slice(lower(datum.type), 1) + ' ' + '${_.lowerCase(stat)}'`;
+        title = `slice(upper(datum.type), 0, 1) + slice(lower(datum.type), 1) + ' ' + '${_.lowerCase(statLabel)}'`;
       };
       if (classificationId && propertySlug !== '') {
         title = `slice(upper(datum.type), 0, 1) + slice(lower(datum.type), 1)`;

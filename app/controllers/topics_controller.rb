@@ -68,6 +68,7 @@ class TopicsController < ApiController
   def topic_params
     params.require(:topic).permit(:name, :description, :wiki_id, :chart_time_unit,
                                   :editor_label, :start_date, :end_date, :users_csv,
-                                  :articles_csv, :slug, :timepoint_day_interval)
+                                  :articles_csv, :slug, :timepoint_day_interval,
+                                  :convert_tokens_to_words, :tokens_per_word)
   end
 end

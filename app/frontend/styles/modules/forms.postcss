@@ -21,6 +21,12 @@
   align-items: center;
 }
 
+.FormRow--halves {
+  .Input {
+    flex: 0 1 50%;
+  }
+}
+
 .Input--textArea {
   
   textarea {
@@ -43,6 +49,13 @@
 
   input {
     width: 100%;
+  }
+}
+
+.Input--checkbox {
+  input {
+    width: auto;
+    justify-self: flex-start;
   }
 }
 

@@ -184,7 +184,8 @@ class Topic < ApplicationRecord
   # For ActiveAdmin
   def self.ransackable_attributes(_auth_object = nil)
     %w[chart_time_unit created_at description display editor_label end_date id name
-       slug start_date timepoint_day_interval updated_at wiki_id]
+       slug start_date timepoint_day_interval updated_at words_per_token
+       convert_tokens_to_words wiki_id]
   end
 end
 
@@ -194,6 +195,7 @@ end
 #
 #  id                        :bigint           not null, primary key
 #  chart_time_unit           :string           default("year")
+#  convert_tokens_to_words   :boolean          default(FALSE)
 #  description               :string
 #  display                   :boolean          default(FALSE)
 #  editor_label              :string           default("participant")
@@ -202,6 +204,7 @@ end
 #  slug                      :string
 #  start_date                :datetime
 #  timepoint_day_interval    :integer          default(7)
+#  tokens_per_word           :float            default(3.25)
 #  created_at                :datetime         not null
 #  updated_at                :datetime         not null
 #  article_import_job_id     :string

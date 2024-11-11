@@ -41,7 +41,7 @@ function StatDetail({ topicTimepoints, fields, stat, type, topic }: Props) {
     
     const spec = ChartSpec.prepare({
       values, yLabel, min, max, stat, classificationView,
-      categories, type, timeUnit: topic.chart_time_unit 
+      categories, type, timeUnit: topic.chart_time_unit, topic
     });
 
     setTitle(title);
