@@ -385,8 +385,23 @@ const ChartUtils = {
     });
 
     segments = _.sortBy(segments, (segment) => {
+      if (segment.key === 'other') {
+        return 100000;
+      }
       return -segment.countDelta;
-    })
+    });
+
+
+    if (segments.length > 20) {
+      const otherSegment = _.find(segments, { key: 'other'});
+      if (otherSegment) {
+        segments = _.reject(segments, otherSegment);
+      }
+      segments = _.take(segments, 19);
+      if (otherSegment) {
+        segments.push(otherSegment);
+      };
+    };
 
     timepoints.forEach((timepoint) => {
       _.each(segments, (segment) => {
@@ -445,6 +460,17 @@ const ChartUtils = {
     segments = _.sortBy(segments, (segment) => {
       return -segment.countDelta;
     })
+
+    if (segments.length > 20) {
+      const otherSegment = _.find(segments, { key: 'other'});
+      if (otherSegment) {
+        segments = _.reject(segments, otherSegment);
+      }
+      segments = _.take(segments, 19);
+      if (otherSegment) {
+        segments.push(otherSegment);
+      };
+    };
 
     timepoints.forEach((timepoint) => {
       _.each(segments, (segment) => {

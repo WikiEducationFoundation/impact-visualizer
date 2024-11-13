@@ -30,6 +30,13 @@ function Chart({ spec, categories, stat }) {
   const container = useRef<HTMLDivElement>(null);
 
   vega.scheme("wiki", colorInterpolate);
+  vega.scheme("segments", ['#4379AB', '#96CCEB', '#FF8900',
+                           '#FFBC71', '#3DA443', '#76D472',
+                           '#BA9900', '#F7CD4B', '#249A95',
+                           '#77BEB6', '#F14A54', '#FF9797',
+                           '#7B706E', '#BCB0AB', '#E16A96',
+                           '#FFBCD3', '#B976A3', '#DCA3CA',
+                           '#A3745C', '#E4E4E4']);
 
   if (stat === 'wp10') {
     const colors:string[] = [];

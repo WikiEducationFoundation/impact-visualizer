@@ -115,10 +115,10 @@ const ChartSpec = {
               offset: 'zero',
               groupby: ['unit0'],
               field: 'agg',
-              sort: {
-                field: 'agg',
-                order: 'descending'
-              }
+              // sort: {
+              //   field: ['agg'],
+              //   order: ['descending']
+              // }
             }
           ]
         }
@@ -168,7 +168,6 @@ const ChartSpec = {
             offset: 'zero',
             groupby: ['date'],
             field: 'value',
-            sort: { field: 'type' }
           },
           { type: 'formula', expr: `datum['y0'] + ${min}`, as: 'ya' },
           { type: 'formula', expr: `datum['y1'] + ${min}`, as: 'yb' },
@@ -240,7 +239,7 @@ const ChartSpec = {
         {
           name: 'color',
           type: 'ordinal',
-          range: { scheme: categories.length > 10 ? 'tableau20' : 'wiki' },
+          range: { scheme: categories.length > 10 ? 'segments' : 'wiki' },
           domain: {
             data: 'data',
             field: 'type'
@@ -292,7 +291,7 @@ const ChartSpec = {
         {
           name: 'color',
           type: 'ordinal',
-          range: { scheme: categories.length > 10 ? 'tableau20' : 'wiki' },
+          range: { scheme: categories.length > 10 ? 'segments' : 'wiki' },
           domain: { data: 'data', field: 'type' },
         }
       ]

@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 class Article < ApplicationRecord
+  THREADS_COUNT = 12
+  BATCH_SIZE = 250
+
   ## Associations
   belongs_to :wiki
   has_many :article_bag_articles
@@ -40,8 +43,8 @@ class Article < ApplicationRecord
   def self.update_details_for_all_articles
     total_count = Article.count
     counter = 0
-    Article.all.in_batches(of: 500) do |batch|
-      Parallel.each(batch, in_threads: 25) do |article|
+    Article.all.in_batches(of: BATCH_SIZE) do |batch|
+      Parallel.each(batch, in_threads: THREADS_COUNT) do |article|
         ActiveRecord::Base.connection_pool.with_connection do
           counter += 1
           ap "Updating #{counter}/#{total_count}"

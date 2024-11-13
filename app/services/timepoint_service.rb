@@ -2,6 +2,9 @@
 require 'benchmark'
 
 class TimepointService
+  THREADS_COUNT = 12
+  BATCH_SIZE = 250
+
   attr_accessor :topic, :logging_enabled, :force_updates
 
   def initialize(topic:, force_updates: false, logging_enabled: false, total: nil, at: nil)
@@ -75,8 +78,8 @@ class TimepointService
     article_count = 0
 
     # Loop through all Articles
-    article_bag_articles.in_batches(of: 500) do |batch|
-      Parallel.each(batch, in_threads: 25) do |article_bag_article|
+    article_bag_articles.in_batches(of: BATCH_SIZE) do |batch|
+      Parallel.each(batch, in_threads: THREADS_COUNT) do |article_bag_article|
         ActiveRecord::Base.connection_pool.with_connection do
           article_count += 1
           log "  #build_timepoints_for_article article:#{article_count}/#{article_bag_articles.count}"
@@ -136,7 +139,7 @@ class TimepointService
     # Loop through all Articles
     # article_bag_articles.each do |article_bag_article|
 
-    Parallel.each(article_bag_articles, in_threads: 25) do |article_bag_article|
+    Parallel.each(article_bag_articles, in_threads: THREADS_COUNT) do |article_bag_article|
       ActiveRecord::Base.connection_pool.with_connection do
         article = article_bag_article.article
 

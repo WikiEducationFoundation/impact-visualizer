@@ -6,7 +6,7 @@ class ClassificationService
   def initialize(topic:)
     @topic = topic
     @wiki = topic.wiki
-    @top_value_count = 20
+    @top_value_count = 19
     @wiki_action_api = WikiActionApi.new(@wiki)
     @wikidata_translator = WikidataTranslator.new(wiki: @wiki)
   end
