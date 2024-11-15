@@ -4,7 +4,6 @@ lock "~> 3.17.3"
 set :application, "impact-visualizer"
 set :repo_url, "git@github.com:WikiEducationFoundation/impact-visualizer.git"
 
-# Default deploy_to directory is /var/www/my_app_name
 set :deploy_to, "/var/www/impact-visualizer"
 
 set :passenger_restart_with_touch, false
