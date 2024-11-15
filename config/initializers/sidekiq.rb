@@ -1,11 +1,12 @@
-host = Rails.application.credentials&.redis&[:host] || 'localhost'
-port = Rails.application.credentials&.redis&[:port] || 6379
+host = Rails.application.credentials.dig(:redis, :host) || 'localhost'
+port = Rails.application.credentials.dig(:redis, :port) || 6379
+expiration =  24.hours.to_i * 30
 
 Sidekiq.configure_client do |config|
   # config.redis = { url: 'redis://redis.example.com:7372/0' }
   config.redis = { url: "redis://#{host}:#{port}/0" }
   
-  Sidekiq::Status.configure_client_middleware config, expiration: 24.hours.to_i
+  Sidekiq::Status.configure_client_middleware config, expiration: expiration
 end
 
 Sidekiq.configure_server do |config|
@@ -13,9 +14,9 @@ Sidekiq.configure_server do |config|
   config.redis = { url: "redis://#{host}:#{port}/0" }
 
   # accepts :expiration (optional)
-  Sidekiq::Status.configure_server_middleware config, expiration: 24.hours.to_i
+  Sidekiq::Status.configure_server_middleware config, expiration: expiration
 
   # accepts :expiration (optional)
-  Sidekiq::Status.configure_client_middleware config, expiration: 24.hours.to_i
+  Sidekiq::Status.configure_client_middleware config, expiration: expiration
 end
 

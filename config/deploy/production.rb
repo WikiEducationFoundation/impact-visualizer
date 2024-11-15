@@ -1,5 +1,7 @@
 set :branch, "production"
-set :linked_files, %w{config/master.key config/credentials/production.key log/production.log}
+set :linked_files, %w{config/master.key config/credentials/production.key}
+append :linked_dirs, "log", "tmp/cache", "tmp/pids", "tmp/storage"
+
 set :default_env, { path: '$PATH:~/.nvm/versions/node/v18.17.1/bin' }
 set :stage, :production
 
