@@ -42,7 +42,9 @@ group :development do
   gem 'capistrano-passenger', '0.2.0', require: false
   gem 'capistrano-rails-console', require: false
   gem 'capistrano-rake', require: false
-  gem 'capistrano-sidekiq', require: false
+  # gem 'capistrano-sidekiq', require: false
+  gem 'capistrano-sidekiq', require: false, git: 'https://github.com/seuros/capistrano-sidekiq.git'
+
   gem 'spring'
 end
 
