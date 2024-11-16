@@ -1,5 +1,5 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.17.3"
+lock "~> 3.19.2"
 
 set :application, "impact-visualizer"
 set :repo_url, "git@github.com:WikiEducationFoundation/impact-visualizer.git"
