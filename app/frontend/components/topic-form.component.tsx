@@ -23,6 +23,11 @@ function TopicForm({ onSubmit, defaultValues, saving }) {
     queryFn: TopicService.getAllWikis
   });
 
+  const { data: classifications } = useQuery({
+    queryKey: ['classifications'],
+    queryFn: TopicService.getAllClassifications
+  });
+
   const deleteMutation = useMutation({
     mutationFn: (id: string) => {
       return TopicService.deleteTopic(id);
@@ -43,6 +48,13 @@ function TopicForm({ onSubmit, defaultValues, saving }) {
     return {
       label: `${wiki.language}.${wiki.project}`,
       value: wiki.id
+    }
+  })
+
+  const classificationOptions = _.map(classifications, (classification) => {
+    return {
+      label: classification.name,
+      value: classification.id
     }
   })
 
@@ -169,6 +181,17 @@ function TopicForm({ onSubmit, defaultValues, saving }) {
             control={control}
           />
         }
+      </div>
+
+      <div className="FormRow">
+        <SelectInput
+          name="classification_ids"
+          isMulti
+          options={classificationOptions}
+          label="Classifications"
+          control={control}
+          hint=""
+        />
       </div>
 
       <div className="FormRow">

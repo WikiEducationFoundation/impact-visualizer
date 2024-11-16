@@ -11,6 +11,7 @@ describe TopicsController do
     topic_editor
   end
   let!(:wiki) { Wiki.default_wiki }
+  let!(:classifications) { create_list(:biography, 2) }
 
   describe '#index' do
     let!(:topics) { create_list(:topic, 10, display: true) }
@@ -218,7 +219,8 @@ describe TopicsController do
         topic: {
           name: 'My New Topic Name',
           articles_csv:,
-          users_csv:
+          users_csv:,
+          classification_ids: classifications.pluck(:id)
         }
       }
       put("/api/topics/#{topic.id}", params:)
@@ -226,6 +228,35 @@ describe TopicsController do
       topic.reload
       expect(body[:name]).to eq('My New Topic Name')
       expect(topic.name).to eq('My New Topic Name')
+      expect(topic.classifications.count).to eq(2)
+      expect(response.status).to eq(200)
+    end
+
+    it 'updates a Topic belonging to Topic editor, hashed classification_ids' do
+      articles_csv = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+      users_csv = fixture_file_upload('spec/fixtures/csv/topic-articles-test.csv')
+
+      expect_any_instance_of(Topic).to receive(:queue_users_import)
+
+      sign_in topic_editor
+      topic = topic_editor.topics.first
+      params = {
+        topic: {
+          name: 'My New Topic Name',
+          articles_csv:,
+          users_csv:,
+          classification_ids: {
+            '0' => classifications.first.id,
+            '1' => classifications.second.id
+          }
+        }
+      }
+      put("/api/topics/#{topic.id}", params:)
+      body = response.parsed_body.with_indifferent_access
+      topic.reload
+      expect(body[:name]).to eq('My New Topic Name')
+      expect(topic.name).to eq('My New Topic Name')
+      expect(topic.classifications.count).to eq(2)
       expect(response.status).to eq(200)
     end
 

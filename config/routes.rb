@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       get :generate_timepoints, on: :member
       resources :topic_timepoints, only: [:index]
     end
+    resources :classifications, only: [:index]
   end
 
   get '/topics/:slug', to: 'pages#index'

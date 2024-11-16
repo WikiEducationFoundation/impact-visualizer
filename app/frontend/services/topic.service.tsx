@@ -2,14 +2,23 @@ import _ from 'lodash';
 import { AxiosResponse } from 'axios';
 import { FieldValues } from 'react-hook-form';
 import queryString from 'query-string';
+import Qs from 'qs';
 
 import http from './http-common';
 import Topic from '../types/topic.type';
+import Classification from '../types/classification.type';
 import Wiki from '../types/wiki.type';
 import TopicTimepoint from '../types/topic-timepoint.type';
 
 
 class TopicService {
+  getAllClassifications() {
+    return http.get<Array<Classification>>('/classifications')
+      .then((response: AxiosResponse) => {
+        return _.get(response, 'data.classifications');
+      })
+  }
+
   getAllTopics() {
     return http.get<Array<Topic>>('/topics')
       .then((response: AxiosResponse) => {
@@ -59,7 +68,9 @@ class TopicService {
     return http.put<Topic>(
       `/topics/${id}`,
       { topic: params },
-      { headers: { 'Content-Type': 'multipart/form-data'} })
+      { 
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded'}
+      })
       .then((response: AxiosResponse) => {
         return _.get(response, 'data');
       })

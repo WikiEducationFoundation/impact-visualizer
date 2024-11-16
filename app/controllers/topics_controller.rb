@@ -66,9 +66,19 @@ class TopicsController < ApiController
   protected
 
   def topic_params
-    params.require(:topic).permit(:name, :description, :wiki_id, :chart_time_unit,
-                                  :editor_label, :start_date, :end_date, :users_csv,
-                                  :articles_csv, :slug, :timepoint_day_interval,
-                                  :convert_tokens_to_words, :tokens_per_word)
+    the_params = params.require(:topic).permit(:name, :description, :wiki_id, :chart_time_unit,
+                                :editor_label, :start_date, :end_date, :users_csv,
+                                :articles_csv, :slug, :timepoint_day_interval,
+                                :convert_tokens_to_words, :tokens_per_word)
+
+    # Working around Axios bug on front-end that leads to a hash instead of array
+    unsafe = params[:topic].to_unsafe_h
+    if unsafe[:classification_ids].is_a?(Array)
+      the_params[:classification_ids] = unsafe[:classification_ids]
+    elsif unsafe[:classification_ids].is_a?(Hash)
+      the_params[:classification_ids] = unsafe[:classification_ids].values
+    end
+
+    the_params
   end
 end
