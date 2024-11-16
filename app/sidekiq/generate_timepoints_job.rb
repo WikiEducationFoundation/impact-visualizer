@@ -3,6 +3,7 @@
 class GenerateTimepointsJob
   include Sidekiq::Job
   include Sidekiq::Status::Worker
+  sidekiq_options queue: 'timepoints'
 
   def perform(topic_id, force_updates = false)
     topic = Topic.find_by(id: topic_id)

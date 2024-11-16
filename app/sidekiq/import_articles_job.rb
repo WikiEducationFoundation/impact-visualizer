@@ -3,6 +3,7 @@
 class ImportArticlesJob
   include Sidekiq::Job
   include Sidekiq::Status::Worker
+  sidekiq_options queue: 'import'
 
   def perform(topic_id)
     topic = Topic.find topic_id
