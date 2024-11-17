@@ -2,7 +2,7 @@ import { INode, NodeId } from "react-accessible-treeview";
 import { IFlatMetadata } from "react-accessible-treeview/dist/TreeView/utils";
 import CSVButton from "./CSV-button.component";
 import {
-  convertCategoryArticlesToCSV,
+  convertArticlesToCSV,
   removeDuplicateArticles,
 } from "../utils/search-utils";
 import React from "react";
@@ -40,7 +40,7 @@ export default function SelectedNodesDisplay({
     <div className="SelectedNodes Box">
       <CSVButton
         articles={selectedArticles.map((article) => article.articleTitle)}
-        csvConvert={convertCategoryArticlesToCSV}
+        csvConvert={convertArticlesToCSV}
         filename={`${categoryName}-wikicategory-articles.csv`}
       />
       <h3 className="u-mt1">Selected Articles</h3>

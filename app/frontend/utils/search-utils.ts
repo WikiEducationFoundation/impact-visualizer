@@ -82,7 +82,7 @@ function escapeCSVSpecialCharacters(item: string): string {
   return `"${item.replace(/"/g, '""')}"`;
 }
 
-function convertCategoryArticlesToCSV(articles: string[]): string {
+function convertArticlesToCSV(articles: string[]): string {
   let csvContent = "data:text/csv;charset=utf-8,";
   for (const article of articles) {
     csvContent += `${escapeCSVSpecialCharacters(article)}\n`;
@@ -268,7 +268,7 @@ function extractDashboardURLInfo(url: string): {
 export {
   buildWikidataQuery,
   convertSPARQLArticlesToCSV,
-  convertCategoryArticlesToCSV,
+  convertArticlesToCSV,
   convertDashboardDataToCSV,
   downloadAsCSV,
   convertInitialResponseToTree,
