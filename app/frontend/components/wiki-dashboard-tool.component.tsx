@@ -9,9 +9,10 @@ import {
 } from "../types/search-tool.type";
 import CSVButton from "./CSV-button.component";
 import {
-  convertDashboardDataToCSV,
+  convertArticlesToCSV,
   extractDashboardURLInfo,
 } from "../utils/search-utils";
+import ArticlesTable from "./articles-table";
 
 export default function WikiDashboardTool() {
   const [courseURL, setCourseURL] = useState("");
@@ -125,54 +126,16 @@ export default function WikiDashboardTool() {
           style={{ display: "flex", gap: "20px" }}
         >
           {articleTitles && articleTitles.length > 0 && (
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    Article
-                    <CSVButton
-                      articles={articleTitles}
-                      csvConvert={convertDashboardDataToCSV}
-                      filename={`${courseSlug}-wikiarticles.csv`}
-                    />
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {articleTitles?.map((article, index) => (
-                  <tr key={index}>
-                    <td>
-                      <div>{article}</div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <ArticlesTable
+              articles={articleTitles}
+              filename={`${courseSlug}-wikiarticles.csv`}
+            />
           )}
           {usernames && usernames.length > 0 && (
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    User
-                    <CSVButton
-                      articles={usernames}
-                      csvConvert={convertDashboardDataToCSV}
-                      filename={`${courseSlug}-wikiusernames.csv`}
-                    />
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {usernames?.map((username, index) => (
-                  <tr key={index}>
-                    <td>
-                      <div>{username}</div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <ArticlesTable
+              articles={usernames}
+              filename={`${courseSlug}-wikiusernames.csv`}
+            />
           )}
         </div>
       )}

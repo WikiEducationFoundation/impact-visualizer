@@ -91,16 +91,6 @@ function convertArticlesToCSV(articles: string[]): string {
   return csvContent;
 }
 
-function convertDashboardDataToCSV(data: string[] | undefined): string {
-  let csvContent = "data:text/csv;charset=utf-8,";
-
-  data?.forEach((item) => {
-    csvContent += `${escapeCSVSpecialCharacters(item)}\n`;
-  });
-
-  return csvContent;
-}
-
 function downloadAsCSV(csvContent: string, fileName = "data.csv"): void {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
@@ -269,7 +259,6 @@ export {
   buildWikidataQuery,
   convertSPARQLArticlesToCSV,
   convertArticlesToCSV,
-  convertDashboardDataToCSV,
   downloadAsCSV,
   convertInitialResponseToTree,
   convertResponseToTree,

@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import LoadingOval from "./loading-oval.component";
 import CSVButton from "./CSV-button.component";
 import { convertArticlesToCSV } from "../utils/search-utils";
+import ArticlesTable from "./articles-table";
 
 export default function PetScanTool() {
   const [petscanID, setPetscanID] = useState<string>("");
@@ -72,29 +73,10 @@ export default function PetScanTool() {
           style={{ display: "flex", gap: "20px" }}
         >
           {queryResult && (
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    Article
-                    <CSVButton
-                      articles={articleTitles}
-                      csvConvert={convertArticlesToCSV}
-                      filename={`${petscanID}-petscan-articles.csv`}
-                    />
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {articleTitles?.map((article, index) => (
-                  <tr key={index}>
-                    <td>
-                      <div>{article}</div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <ArticlesTable
+              articles={articleTitles}
+              filename={`${petscanID}-petscan-articles.csv`}
+            />
           )}
         </div>
       )}
