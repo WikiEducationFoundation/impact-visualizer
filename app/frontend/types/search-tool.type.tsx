@@ -165,6 +165,17 @@ type PetscanResponse = {
   n: string;
 };
 
+type PagePileResponse = {
+  pages: string[];
+  wiki: string;
+  id: number;
+  pages_returned: number;
+  pages_total: number;
+  sort_order: string;
+  language: string;
+  project: string;
+};
+
 type PetscanPage = {
   id: number;
   len: number;
@@ -190,4 +201,5 @@ export type {
   CampaignUsersResponse,
   CampaignArticlesResponse,
   PetscanResponse,
+  PagePileResponse,
 };

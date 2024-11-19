@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { PetscanResponse } from "../types/search-tool.type";
+import { PagePileResponse } from "../types/search-tool.type";
 import toast from "react-hot-toast";
 import LoadingOval from "./loading-oval.component";
 import CSVButton from "./CSV-button.component";
 import { convertArticlesToCSV } from "../utils/search-utils";
 import ArticlesTable from "./articles-table";
 
-export default function PetScanTool() {
-  const [petscanID, setPetscanID] = useState<string>("");
-  const [queryResult, setQueryResult] = useState<PetscanResponse>();
+export default function PagePileTool() {
+  const [pagePileID, setPagePileID] = useState<string>("");
+  const [queryResult, setQueryResult] = useState<PagePileResponse>();
   const [articleTitles, setArticleTitles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,22 +16,22 @@ export default function PetScanTool() {
     setIsLoading(true);
     event.preventDefault();
 
-    if (!petscanID) {
-      toast("Please enter a PetScan ID.");
+    if (!pagePileID) {
+      toast("Please enter a PagePile ID.");
       return;
     }
 
     try {
       const response = await fetch(
-        `https://petscan.wmcloud.org/?psid=${petscanID}&format=json`
+        `https://pagepile.toolforge.org/api.php?id=${pagePileID}&action=get_data&format=json`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
-      const data: PetscanResponse = await response.json();
+      const data: PagePileResponse = await response.json();
       setQueryResult(data);
 
-      const titles = data["*"][0].a["*"].map((page) => page.title);
+      const titles = data.pages;
       setArticleTitles(titles);
     } catch (error) {
       console.error("Fetch error:", error);
@@ -46,13 +46,13 @@ export default function PetScanTool() {
       <h1>Impact Search</h1>
 
       <form onSubmit={handleSubmit}>
-        <h3>Enter PetScan ID</h3>
+        <h3>Enter PagePile ID</h3>
         <input
           className="PetscanInput"
           type="text"
-          value={petscanID}
-          onChange={(event) => setPetscanID(event.target.value)}
-          placeholder="PetScan ID"
+          value={pagePileID}
+          onChange={(event) => setPagePileID(event.target.value)}
+          placeholder="PagePile ID"
           required
         />
 
@@ -75,7 +75,7 @@ export default function PetScanTool() {
           {queryResult && (
             <ArticlesTable
               articles={articleTitles}
-              filename={`${petscanID}-petscan-articles.csv`}
+              filename={`${pagePileID}-pagepile-articles.csv`}
             />
           )}
         </div>

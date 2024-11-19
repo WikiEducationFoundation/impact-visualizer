@@ -21,6 +21,7 @@ import QueryBuilder from "../components/query-builder.component";
 import { Toaster } from "react-hot-toast";
 import WikiDashboardTool from "../components/wiki-dashboard-tool.component";
 import PetScanTool from "../components/petscan-tool";
+import PagePileTool from "../components/pagepile-tool";
 
 // Misc
 const queryClient = new QueryClient();
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: "/search/petscan-tool",
         element: <PetScanTool />,
+      },
+      {
+        path: "/search/pagepile-tool",
+        element: <PagePileTool />,
       },
     ],
   },

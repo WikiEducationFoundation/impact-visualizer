@@ -37,6 +37,7 @@ function Root() {
                     Education Dashboard Tool
                   </Link>
                   <Link to="/search/petscan-tool">Petscan Tool</Link>
+                  <Link to="/search/pagepile-tool">Pagepile Tool</Link>
                 </div>
               </div>
             </div>

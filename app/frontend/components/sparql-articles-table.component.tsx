@@ -3,12 +3,12 @@ import { convertSPARQLArticlesToCSV } from "../utils/search-utils";
 import { SPARQLResponse } from "../types/search-tool.type";
 import CSVButton from "./CSV-button.component";
 
-export default function ArticlesTable({
+export default function SparqlArticlesTable({
   articles,
-  qValueLabels,
+  filename,
 }: {
   articles: SPARQLResponse["results"]["bindings"];
-  qValueLabels: string[];
+  filename: string;
 }) {
   return (
     <>
@@ -20,7 +20,7 @@ export default function ArticlesTable({
               <CSVButton
                 articles={articles}
                 csvConvert={convertSPARQLArticlesToCSV}
-                filename={`${qValueLabels.join("-")}-wikidata-articles.csv`}
+                filename={filename}
               />
             </th>
           </tr>
