@@ -56,8 +56,22 @@ describe TimepointService do
       topic_article_timepoint_count = topic_timepoints_count * article_count
       article_timepoint_count = topic_timepoints_count * article_count
 
+      # 4 articles
+      # 6 timestamps
+
+      # classify_all_articles = 4
+      # build_timepoints_for_timestamp = 4 * 6 = 24
+      # update_token_stats = 4
+      # build_topic_timepoints = 6
+      # Total = 4 + 24 + 4 + 6 = 38
+
+      total_progress_steps = article_count +
+                             (article_count * topic_timepoints_count) +
+                             article_count +
+                             topic_timepoints_count
+      expect(total_progress_steps).to eq(38)
+
       counter = instance_double('counter')
-      total_progress_steps = (topic_timepoints_count * 2) + article_count + article_count
       expect(counter).to receive(:total).once.with(total_progress_steps)
       expect(counter).to receive(:at).exactly(total_progress_steps).times
 

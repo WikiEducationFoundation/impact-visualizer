@@ -21,16 +21,21 @@ class WikiWhoApi
 
   def get_revision_tokens(revision_id)
     url_query = query_url(revision_id)
-    response = wiki_who_server.get(url_query)
-    response_body = response.body
-    wiki_who_data = Oj.load(response_body)
-    wiki_who_data.dig('revisions', 0, revision_id.to_s, 'tokens').to_hashugar
-  rescue StandardError => e
-    log_error(e)
-    return {}
+    # response = wiki_who_server.get(url_query)
+    response = make_request(url_query)
+    if response&.status == 200
+      response_body = response.body
+      wiki_who_data = Oj.load(response_body)
+      return wiki_who_data.dig('revisions', 0, revision_id.to_s, 'tokens').to_hashugar
+    end
+
+    raise RevisionTokenError
   end
 
   class InvalidLanguageError < StandardError
+  end
+
+  class RevisionTokenError < StandardError
   end
 
   private
@@ -40,7 +45,34 @@ class WikiWhoApi
   end
 
   def wiki_who_server
-    conn = Faraday.new(url: WIKI_WHO_SERVER_URL)
+    options = {
+      url: WIKI_WHO_SERVER_URL
+    }
+    conn = Faraday.new(options) do |faraday|
+      faraday.response :raise_error
+      faraday.adapter Faraday.default_adapter
+    end
     conn
+  end
+
+  def make_request(url_query)
+    total_tries = 3
+    tries ||= 0
+    response = wiki_who_server.get(url_query)
+  rescue StandardError => e
+    status = e.response && e.response[:status]
+
+    # Don't retry if missing revision
+    if status != 400
+      tries += 1
+      unless Rails.env.test?
+        sleep_time = 3**tries
+        puts "WikiWhoApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries}) "
+        sleep sleep_time
+      end
+      retry unless tries == total_tries
+    end
+
+    log_error(e, response, false)
   end
 end

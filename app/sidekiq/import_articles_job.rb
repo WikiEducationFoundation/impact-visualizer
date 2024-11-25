@@ -6,9 +6,15 @@ class ImportArticlesJob
   sidekiq_options queue: 'import'
 
   def perform(topic_id)
+    @expiration = 60 * 60 * 24 * 30
+    
     topic = Topic.find topic_id
     import_service = ImportService.new(topic:)
     import_service.import_articles(total: method(:total), at: method(:at))
     topic.reload.update(article_import_job_id: nil)
+  end
+
+  def expiration
+    @expiration = 60 * 60 * 24 * 30
   end
 end

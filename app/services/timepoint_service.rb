@@ -20,12 +20,16 @@ class TimepointService
     @at = at
     @total = total
 
+    log('TimepointService: initialize')
+
     # Setup total count for Sidekiq Status
     initialize_progress_count
   end
 
   def build_timepoints
     start_time = Time.zone.now
+
+    log('TimepointService: build_timepoints')
 
     # Classify all articles
     ClassificationService.new(topic: @topic).classify_all_articles do
@@ -39,7 +43,7 @@ class TimepointService
     # Build/update most everything for each timestamp
     timestamps.each do |timestamp|
       timestamp_count += 1
-      increment_progress_count
+      # increment_progress_count
       log "#build_timepoints_for_timestamp timestamp:#{timestamp_count}/#{timestamps.count}"
       build_timepoints_for_timestamp(timestamp:)
     end
@@ -82,7 +86,8 @@ class TimepointService
       Parallel.each(batch, in_threads: THREADS_COUNT) do |article_bag_article|
         ActiveRecord::Base.connection_pool.with_connection do
           article_count += 1
-          log "  #build_timepoints_for_article article:#{article_count}/#{article_bag_articles.count}"
+          increment_progress_count
+          log "  #build_timepoints_for_article timestamp:#{timestamp} article:#{article_count}/#{article_bag_articles.count}"
           build_timepoints_for_article(article_bag_article:, topic_timepoint:)
           ActiveRecord::Base.connection_pool.release_connection
         end
@@ -142,7 +147,6 @@ class TimepointService
     Parallel.each(article_bag_articles, in_threads: THREADS_COUNT) do |article_bag_article|
       ActiveRecord::Base.connection_pool.with_connection do
         article = article_bag_article.article
-
         article_count += 1
         increment_progress_count
         log "  #update_token_stats_for_article article:#{article_count}/#{article_bag_articles.count} article_id: #{article.id}"
@@ -207,11 +211,13 @@ class TimepointService
 
     return 0 unless timestamp_count && article_count
 
-    # Setup total count with timestamp count, for build_timepoints_for_timestamp loop
-    total_progress_steps = timestamp_count
+    total_progress_steps = 0
 
     # Add Article count for classify_all_articles loop
     total_progress_steps += article_count
+
+    # Add count with timestamp count, for build_timepoints_for_timestamp loop
+    total_progress_steps += (timestamp_count * article_count)
 
     # Add Article count for update_token_stats loop
     total_progress_steps += article_count
