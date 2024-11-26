@@ -30,6 +30,10 @@ class WikiWhoApi
       return wiki_who_data.dig('revisions', 0, revision_id.to_s, 'tokens').to_hashugar
     end
 
+    if response&.status == 400
+      return nil
+    end
+
     raise RevisionTokenError, "status: #{response&.status || "nil"} / revision_id: #{revision_id}"
   end
 
@@ -60,6 +64,7 @@ class WikiWhoApi
     total_tries = 3
     tries ||= 0
     response = wiki_who_server.get(url_query)
+    response
   rescue StandardError => e
     status = e.response && e.response[:status]
 
@@ -75,5 +80,7 @@ class WikiWhoApi
     end
 
     log_error(e, response, false)
+
+    e.response.to_hashugar
   end
 end
