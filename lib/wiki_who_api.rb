@@ -23,13 +23,14 @@ class WikiWhoApi
     url_query = query_url(revision_id)
     # response = wiki_who_server.get(url_query)
     response = make_request(url_query)
+
     if response&.status == 200
       response_body = response.body
       wiki_who_data = Oj.load(response_body)
       return wiki_who_data.dig('revisions', 0, revision_id.to_s, 'tokens').to_hashugar
     end
 
-    raise RevisionTokenError
+    raise RevisionTokenError, "status: #{response&.status || "nil"} / revision_id: #{revision_id}"
   end
 
   class InvalidLanguageError < StandardError

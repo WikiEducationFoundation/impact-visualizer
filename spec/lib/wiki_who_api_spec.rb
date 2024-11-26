@@ -20,7 +20,7 @@ describe WikiWhoApi do
       expect_any_instance_of(described_class).to receive(:log_error).once
       expect do
         subject.get_revision_tokens(revision_id)
-      end.to raise_error(WikiWhoApi::RevisionTokenError)
+      end.to raise_error(WikiWhoApi::RevisionTokenError, "status: nil / revision_id: #{revision_id}")
     end
   end
 
