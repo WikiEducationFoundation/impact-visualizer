@@ -30,7 +30,7 @@ class WikiWhoApi
       return wiki_who_data.dig('revisions', 0, revision_id.to_s, 'tokens').to_hashugar
     end
 
-    if response&.status == 400
+    if response&.status == 400 || response&.status == 408
       return nil
     end
 
@@ -69,7 +69,7 @@ class WikiWhoApi
     status = e.response && e.response[:status]
 
     # Don't retry if missing revision
-    if status != 400
+    if status != 400 && status != 408
       tries += 1
       unless Rails.env.test?
         sleep_time = 3**tries
