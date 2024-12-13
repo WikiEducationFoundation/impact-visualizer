@@ -9,7 +9,9 @@ class TopicSummaryService
 
   def create_summary
     # Grab all related topic_timepoints
-    topic_timepoints = @topic.topic_timepoints
+    topic_timepoints = @topic.timestamps.map do |timestamp|
+      @topic.topic_timepoints.find_by(timestamp:)
+    end
 
     # Setup counter variables
     length_delta = 0

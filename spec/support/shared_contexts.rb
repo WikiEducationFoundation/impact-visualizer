@@ -124,8 +124,8 @@ end
 
 RSpec.shared_context 'three topic_timepoints' do
   let!(:start_date) { Date.new(2023, 1, 1) }
-  let!(:end_date) { Date.new(2023, 1, 30) }
-  let!(:topic) { create(:topic, start_date:, end_date:, timepoint_day_interval: 7) }
+  let!(:end_date) { Date.new(2023, 1, 3) }
+  let!(:topic) { create(:topic, start_date:, end_date:, timepoint_day_interval: 1) }
 
   let!(:topic_timepoint_1) do
     create(
