@@ -6,7 +6,7 @@ import {
 } from "../types/search-tool.type";
 import QueryItem from "./query-item.component";
 import { buildWikidataQuery } from "../utils/search-utils";
-import ArticlesTable from "./articles-table.component";
+import SparqlArticlesTable from "./sparql-articles-table.component";
 import LoadingOval from "./loading-oval.component";
 import React from "react";
 import toast from "react-hot-toast";
@@ -127,6 +127,10 @@ export default function QueryBuilder() {
     return queriedArticlesJSON;
   }
 
+  const filename = `${queryItemsData
+    .map((item) => item.qValue.label)
+    .join("-")}-wikidata-articles.csv`;
+
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
@@ -187,10 +191,7 @@ export default function QueryBuilder() {
           <LoadingOval visible={isLoading} height="120" width="120" />
         </div>
       ) : articles.length > 0 ? (
-        <ArticlesTable
-          articles={articles}
-          qValueLabels={queryItemsData.map((item) => item.qValue.label)}
-        />
+        <SparqlArticlesTable articles={articles} filename={filename} />
       ) : (
         ""
       )}

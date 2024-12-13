@@ -72,27 +72,21 @@ function convertSPARQLArticlesToCSV(
   let csvContent = "data:text/csv;charset=utf-8,";
 
   articles.forEach((item) => {
-    csvContent += `"${item.personLabel.value}"\n`;
+    csvContent += `${escapeCSVSpecialCharacters(item.personLabel.value)}\n`;
   });
 
   return csvContent;
 }
 
-function convertCategoryArticlesToCSV(articles: string[]): string {
+function escapeCSVSpecialCharacters(item: string): string {
+  return `"${item.replace(/"/g, '""')}"`;
+}
+
+function convertArticlesToCSV(articles: string[]): string {
   let csvContent = "data:text/csv;charset=utf-8,";
   for (const article of articles) {
-    csvContent += `"${article}"\n`;
+    csvContent += `${escapeCSVSpecialCharacters(article)}\n`;
   }
-
-  return csvContent;
-}
-
-function convertDashboardDataToCSV(data: string[] | undefined): string {
-  let csvContent = "data:text/csv;charset=utf-8,";
-
-  data?.forEach((item) => {
-    csvContent += `"${item}"\n`;
-  });
 
   return csvContent;
 }
@@ -264,8 +258,7 @@ function extractDashboardURLInfo(url: string): {
 export {
   buildWikidataQuery,
   convertSPARQLArticlesToCSV,
-  convertCategoryArticlesToCSV,
-  convertDashboardDataToCSV,
+  convertArticlesToCSV,
   downloadAsCSV,
   convertInitialResponseToTree,
   convertResponseToTree,
