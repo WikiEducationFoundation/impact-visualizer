@@ -4,10 +4,18 @@ require 'rails_helper'
 
 describe TopicTimepointsController do
   describe '#index' do
-    let!(:topic) { create(:topic) }
+    let!(:topic) do
+      create(
+        :topic,
+        start_date: Date.new(2023, 1, 1),
+        end_date: Date.new(2023, 1, 10),
+        timepoint_day_interval: 1
+      )
+    end
     let!(:topic_timepoints) do
       create_list(:topic_timepoint, 10, topic:) do |topic_timepoint, i|
         topic_timepoint.timestamp = Date.new(2023, 1, i + 1)
+        topic_timepoint.save
       end
       topic.topic_timepoints
     end

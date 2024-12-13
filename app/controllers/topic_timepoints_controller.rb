@@ -3,6 +3,9 @@
 class TopicTimepointsController < ApiController
   def index
     @topic = Topic.find(params[:topic_id])
-    @topic_timepoints = @topic.topic_timepoints.order('timestamp ASC').all
+    @topic_timepoints = @topic.timestamps.map do |timestamp|
+      @topic.topic_timepoints.find_by(timestamp:)
+    end
+    @topic_timepoints
   end
 end
