@@ -22,6 +22,7 @@ import { Toaster } from "react-hot-toast";
 import WikiDashboardTool from "../components/wiki-dashboard-tool.component";
 import PetScanTool from "../components/petscan-tool";
 import PagePileTool from "../components/pagepile-tool";
+import UserSetTool from "../components/user-set-tool";
 
 // Misc
 const queryClient = new QueryClient();
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
       {
         path: "/search/pagepile-tool",
         element: <PagePileTool />,
+      },
+      {
+        path: "/search/user-set-tool",
+        element: <UserSetTool />,
       },
     ],
   },
