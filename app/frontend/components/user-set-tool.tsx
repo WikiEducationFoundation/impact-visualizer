@@ -43,7 +43,7 @@ export default function UserSetTool() {
     }
     try {
       const response = await fetch(
-        `http://localhost:3000/courses/${[
+        `https://dashboard.wikiedu.org/courses/${[
           selectedUserSet,
           selectedUserSetTypes,
         ].join("_")}.json`
