@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   get '/search/wiki-dashboard-tool', to: 'pages#index'
   get '/search/petscan-tool', to: 'pages#index'
   get '/search/pagepile-tool', to: 'pages#index'
+  get '/search/user-set-tool', to: 'pages#index'
 
   root "pages#index"
 end

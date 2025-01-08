@@ -38,6 +38,7 @@ function Root() {
                   </Link>
                   <Link to="/search/petscan-tool">Petscan Tool</Link>
                   <Link to="/search/pagepile-tool">Pagepile Tool</Link>
+                  <Link to="/search/user-set-tool">User Set Tool</Link>
                 </div>
               </div>
             </div>
