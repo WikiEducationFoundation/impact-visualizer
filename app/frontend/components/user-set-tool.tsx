@@ -54,19 +54,20 @@ export default function UserSetTool() {
       const data: UserSetResponse = await response.json();
       setQueriedData(data);
 
-      const usernames: string[] = [];
+      const usernames = new Set<string>();
 
       data.courses.forEach((course) => {
         course.students.forEach((student) => {
-          usernames.push(student.username);
+          usernames.add(student.username);
         });
         if (course.instructors) {
           course.instructors.forEach((instructor) => {
-            usernames.push(instructor.username);
+            usernames.add(instructor.username);
           });
         }
       });
-      setQueriedUsers(usernames);
+      const usernamesArray = Array.from(usernames);
+      setQueriedUsers(usernamesArray);
     } catch (error) {
       console.error("Fetch error:", error);
       toast("There was an issue fetching the data.");
