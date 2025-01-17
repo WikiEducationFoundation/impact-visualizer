@@ -193,24 +193,12 @@ type PetscanPage = {
 export type UserSetResponse = {
   courses: {
     title: string;
-    created_at: string;
-    updated_at: string;
-    start: string;
-    end: string;
-    school: string;
-    term: string;
     slug: string;
     students: {
       username: string;
-      created_at: string;
-      updated_at: string;
-      permissions: number;
     }[];
     instructors?: {
       username: string;
-      created_at: string;
-      updated_at: string;
-      permissions: number;
     }[];
   }[];
 };
