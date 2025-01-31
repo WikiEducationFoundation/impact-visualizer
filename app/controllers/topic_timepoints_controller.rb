@@ -6,6 +6,7 @@ class TopicTimepointsController < ApiController
     @topic_timepoints = @topic.timestamps.map do |timestamp|
       @topic.topic_timepoints.find_by(timestamp:)
     end
+    @topic_timepoints = @topic_timepoints.compact
     @topic_timepoints
   end
 end
