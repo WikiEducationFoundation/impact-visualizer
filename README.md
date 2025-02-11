@@ -149,7 +149,7 @@ In the project's root directory, create a `.env.production` file following the f
 
 1. Ensure server has your public SSH key 
 2. Server will pull from *production* branch, so: `git push production`
-3. `cap production deploy`
+3. `bundle exec cap production deploy`
 
 In addition to deploying the latest code, the above deploy command will run any pending Rails migrations and will also compile front-end resources. To learn more about other, more granular, Capistrano commands [see their documentation](https://capistranorb.com/documentation/overview/what-is-capistrano/).
 
