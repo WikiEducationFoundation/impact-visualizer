@@ -13,7 +13,7 @@ gem 'bootsnap', require: false
 gem 'connection_pool'
 gem 'dalli'
 gem 'devise'
-gem 'env'
+gem 'dotenv'
 gem 'hashugar'
 gem 'jbuilder'
 gem 'json-schema'

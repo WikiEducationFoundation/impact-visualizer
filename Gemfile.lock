@@ -151,8 +151,8 @@ GEM
     diff-lcs (1.5.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
+    dotenv (3.1.7)
     dry-cli (1.0.0)
-    env (0.3.0)
     erubi (1.12.0)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
@@ -498,7 +498,7 @@ DEPENDENCIES
   dalli
   debug
   devise
-  env
+  dotenv
   factory_bot_rails
   faker
   hashugar
