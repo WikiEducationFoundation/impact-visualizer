@@ -99,6 +99,20 @@ function downloadAsCSV(csvContent: string, fileName = "data.csv"): void {
   link.click();
 }
 
+function downloadAsTXT(txtContent: string, fileName: string): void {
+  const blob = new Blob([txtContent], { type: "text/plain" });
+  const link = document.createElement("a");
+
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+
+  document.body.appendChild(link);
+  link.click();
+
+  document.body.removeChild(link);
+  URL.revokeObjectURL(link.href);
+}
+
 const convertInitialResponseToTree = (
   response: MediaWikiResponse,
   existingIDs: INode<IFlatMetadata>[],
@@ -209,6 +223,14 @@ const removeDuplicateArticles = (
   });
 };
 
+const convertTitlesToWikicode = (titles: string[]): string => {
+  function escapeWikiTitle(title: string): string {
+    // Escapes the "|" special character
+    return title.replace(/\|/g, "&#124;");
+  }
+  return titles.map((title) => `* [[${escapeWikiTitle(title)}]]`).join("\n");
+};
+
 function extractDashboardURLInfo(url: string): {
   dashboardURL: string;
   type: string;
@@ -260,9 +282,11 @@ export {
   convertSPARQLArticlesToCSV,
   convertArticlesToCSV,
   downloadAsCSV,
+  downloadAsTXT,
   convertInitialResponseToTree,
   convertResponseToTree,
   removeCategoryPrefix,
   removeDuplicateArticles,
   extractDashboardURLInfo,
+  convertTitlesToWikicode,
 };
