@@ -126,7 +126,7 @@ export default function UserSetTool() {
               filename={`${selectedUserSet.replace(
                 "_",
                 "-"
-              )}_${selectedUserSetTypes.replace("_", "-")}.csv`}
+              )}_${selectedUserSetTypes.replace("_", "-")}`}
             />
           )}
         </div>

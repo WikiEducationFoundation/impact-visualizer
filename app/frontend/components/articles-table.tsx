@@ -2,6 +2,7 @@ import React from "react";
 import { convertArticlesToCSV } from "../utils/search-utils";
 import CSVButton from "./CSV-button.component";
 import usePagination from "../hooks/usePagination";
+import TXTButton from "./TXT-button.component";
 
 export default function ArticlesTable({
   articles,
@@ -50,6 +51,7 @@ export default function ArticlesTable({
                     csvConvert={convertArticlesToCSV}
                     filename={filename}
                   />
+                  <TXTButton articles={articles} filename={filename} />
                 </div>
               ) : null}
             </th>
