@@ -69,7 +69,7 @@ class TopicService {
       `/topics/${id}`,
       { topic: params },
       { 
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded'}
+        headers: { 'Content-Type': 'multipart/form-data'}
       })
       .then((response: AxiosResponse) => {
         return _.get(response, 'data');
