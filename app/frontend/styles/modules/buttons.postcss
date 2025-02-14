@@ -14,6 +14,29 @@
   }
 }
 
+.IconButton {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: opacity 0.2s;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  &:hover:not(:disabled) {
+    .icon {
+      transform: scale(1.4);
+    }
+  }
+
+  .icon {
+    transition: transform 0.2s ease-in-out;
+  }
+}
+
 .ResetButton {
   background: none;
   border: none;

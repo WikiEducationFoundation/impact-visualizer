@@ -3,6 +3,7 @@ import { convertArticlesToCSV } from "../utils/search-utils";
 import CSVButton from "./CSV-button.component";
 import usePagination from "../hooks/usePagination";
 import TXTButton from "./TXT-button.component";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 export default function ArticlesTable({
   articles,
@@ -34,8 +35,12 @@ export default function ArticlesTable({
               Article
               {hasArticles ? (
                 <div>
-                  <button onClick={prevPage} disabled={currentPage === 1}>
-                    Prev
+                  <button
+                    onClick={prevPage}
+                    disabled={currentPage === 1}
+                    className="IconButton"
+                  >
+                    <IoIosArrowBack className="icon" />
                   </button>
                   <span>
                     Page {currentPage} of {totalPages}
@@ -43,8 +48,9 @@ export default function ArticlesTable({
                   <button
                     onClick={nextPage}
                     disabled={currentPage === totalPages}
+                    className="IconButton"
                   >
-                    Next
+                    <IoIosArrowForward className="icon" />
                   </button>
                   <CSVButton
                     articles={articles}
