@@ -1,3 +1,19 @@
+.ExportButton {
+  display: inline-block;
+  margin-right: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #1976d2;
+  }
+}
+
 .ResetButton {
   background: none;
   border: none;
@@ -10,7 +26,6 @@
     background: none;
   }
 }
-
 .Button {
   background-color: $blue;
   border: 1px solid $blue;
@@ -25,7 +40,7 @@
   padding: 0.5rem 0.75rem;
   text-decoration: none;
   transition: all 0.15s ease-out, color 0.15s ease-out;
-  
+
   &:hover {
     color: white;
   }
@@ -35,14 +50,15 @@
   background: none;
   color: $blue;
   border: 1px solid rgba($blue, 0.25);
-  
+
   &:hover {
     background: $blue;
     color: white;
   }
 }
 
-.Button:disabled, .Button--disabled {
+.Button:disabled,
+.Button--disabled {
   background-color: #ccc;
   border-color: #ccc;
   cursor: default;
@@ -76,7 +92,7 @@
 }
 
 .TextButton {
-  @extend .ResetButton; 
+  @extend .ResetButton;
   color: $blue;
   text-decoration: none;
   cursor: pointer;
@@ -84,7 +100,7 @@
 
   &:disabled {
     color: #ccc;
-    cursor: default;   
+    cursor: default;
   }
 
   &:hover:not(:disabled) {
@@ -94,7 +110,7 @@
 
 .TextButton--red {
   color: $red;
-  
+
   &:hover:not(:disabled) {
     color: $red;
   }

@@ -10,7 +10,7 @@ export default function TXTButton({ articles, filename }: TXTButtonProps) {
     downloadAsTXT(convertTitlesToWikicode(articles), filename);
   };
   return (
-    <button onClick={handleExportTXT} className="Button">
+    <button onClick={handleExportTXT} className="ExportButton">
       Export to Wikicode
     </button>
   );
