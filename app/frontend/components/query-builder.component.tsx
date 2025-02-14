@@ -129,7 +129,7 @@ export default function QueryBuilder() {
 
   const filename = `${queryItemsData
     .map((item) => item.qValue.label)
-    .join("-")}-wikidata-articles.csv`;
+    .join("-")}-wikidata-articles`;
 
   return (
     <div className="Container Container--padded">

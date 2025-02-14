@@ -91,11 +91,19 @@ function convertArticlesToCSV(articles: string[]): string {
   return csvContent;
 }
 
-function downloadAsCSV(csvContent: string, fileName = "data.csv"): void {
+function downloadAsCSV(csvContent: string, fileName = "data"): void {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", fileName);
+  link.setAttribute("download", `${fileName}.csv`);
+  link.click();
+}
+
+function downloadAsTXT(txtContent: string, fileName = "data"): void {
+  const blob = new Blob([txtContent], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.setAttribute("href", URL.createObjectURL(blob));
+  link.setAttribute("download", `${fileName}.txt`);
   link.click();
 }
 
@@ -209,6 +217,14 @@ const removeDuplicateArticles = (
   });
 };
 
+const convertTitlesToWikicode = (titles: string[]): string => {
+  function escapeWikiTitle(title: string): string {
+    // Escapes the "|" special character
+    return title.replace(/\|/g, "&#124;");
+  }
+  return titles.map((title) => `* [[${escapeWikiTitle(title)}]]`).join("\n");
+};
+
 function extractDashboardURLInfo(url: string): {
   dashboardURL: string;
   type: string;
@@ -260,9 +276,11 @@ export {
   convertSPARQLArticlesToCSV,
   convertArticlesToCSV,
   downloadAsCSV,
+  downloadAsTXT,
   convertInitialResponseToTree,
   convertResponseToTree,
   removeCategoryPrefix,
   removeDuplicateArticles,
   extractDashboardURLInfo,
+  convertTitlesToWikicode,
 };

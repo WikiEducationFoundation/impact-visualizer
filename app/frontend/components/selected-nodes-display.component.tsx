@@ -6,6 +6,7 @@ import {
   removeDuplicateArticles,
 } from "../utils/search-utils";
 import React from "react";
+import TXTButton from "./TXT-button.component";
 
 export default function SelectedNodesDisplay({
   categoryName,
@@ -35,13 +36,19 @@ export default function SelectedNodesDisplay({
       return { articleId: id, articleTitle: article[id] };
     });
   selectedArticles = removeDuplicateArticles(selectedArticles);
-
+  const selectedArticleTitles = selectedArticles.map(
+    (article) => article.articleTitle
+  );
   return (
     <div className="SelectedNodes Box">
       <CSVButton
-        articles={selectedArticles.map((article) => article.articleTitle)}
+        articles={selectedArticleTitles}
         csvConvert={convertArticlesToCSV}
-        filename={`${categoryName}-wikicategory-articles.csv`}
+        filename={`${categoryName}-wikicategory-articles`}
+      />{" "}
+      <TXTButton
+        articles={selectedArticleTitles}
+        filename={`${categoryName}-wikicategory-articles`}
       />
       <h3 className="u-mt1">Selected Articles</h3>
       {selectedArticles.length} articles from {categoriesCount} categories
