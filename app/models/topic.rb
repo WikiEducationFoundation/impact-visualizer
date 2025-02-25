@@ -147,32 +147,32 @@ class Topic < ApplicationRecord
 
   def users_import_status
     return :idle unless users_import_job_id
-    Sidekiq::Status::status(users_import_job_id)
+    # Sidekiq::Status::status(users_import_job_id)
   end
 
   def articles_import_status
     return :idle unless article_import_job_id
-    Sidekiq::Status::status(article_import_job_id)
+    # Sidekiq::Status::status(article_import_job_id)
   end
 
   def timepoint_generate_status
     return :idle unless timepoint_generate_job_id
-    Sidekiq::Status::status(timepoint_generate_job_id)
+    # Sidekiq::Status::status(timepoint_generate_job_id)
   end
 
   def users_import_percent_complete
     return nil unless users_import_job_id
-    Sidekiq::Status::pct_complete(users_import_job_id)
+    # Sidekiq::Status::pct_complete(users_import_job_id)
   end
 
   def articles_import_percent_complete
     return nil unless article_import_job_id
-    Sidekiq::Status::pct_complete(article_import_job_id)
+    # Sidekiq::Status::pct_complete(article_import_job_id)
   end
 
   def timepoint_generate_percent_complete
     return nil unless timepoint_generate_job_id
-    Sidekiq::Status::pct_complete(timepoint_generate_job_id)
+    # Sidekiq::Status::pct_complete(timepoint_generate_job_id)
   end
 
   # For ActiveAdmin

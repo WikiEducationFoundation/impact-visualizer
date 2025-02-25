@@ -33,7 +33,7 @@ gem 'sentry-rails'
 gem 'sentry-sidekiq'
 gem 'sidekiq'
 gem 'sidekiq-history'
-gem 'sidekiq-status'
+# gem 'sidekiq-status'
 gem 'sprockets', '<4'
 gem 'sqlite3', '~> 1.4'
 gem 'tzinfo-data', platforms: %i[ mingw mswin x64_mingw jruby ]

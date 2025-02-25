@@ -10,8 +10,8 @@ RSpec.describe GenerateTimepointsJob, type: :job do
       topic:,
       force_updates: false,
       logging_enabled: true,
-      total: kind_of(Method),
-      at: kind_of(Method)
+      # total: kind_of(Method),
+      # at: kind_of(Method)
     ).and_call_original
     expect(TopicSummaryService).to receive(:new).with(topic:).and_call_original
     expect_any_instance_of(TimepointService).to receive(:build_timepoints)
