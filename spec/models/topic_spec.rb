@@ -19,43 +19,43 @@ RSpec.describe Topic do
     it 'returns user import status' do
       expect(topic.users_import_status).to eq(:idle)
       topic.update users_import_job_id: 'abc'
-      # expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
-      # expect(topic.users_import_status).to eq(:working)
+      expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
+      expect(topic.users_import_status).to eq(:working)
     end
 
     it 'returns user import percent complete' do
       expect(topic.users_import_percent_complete).to be_nil
       topic.update users_import_job_id: 'abc'
-      # expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
-      # expect(topic.users_import_percent_complete).to eq(30)
+      expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
+      expect(topic.users_import_percent_complete).to eq(30)
     end
 
     it 'returns articles import status' do
       expect(topic.articles_import_status).to eq(:idle)
       topic.update article_import_job_id: 'abc'
-      # expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
-      # expect(topic.articles_import_status).to eq(:working)
+      expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
+      expect(topic.articles_import_status).to eq(:working)
     end
 
     it 'returns articles import percent complete' do
       expect(topic.articles_import_percent_complete).to be_nil
       topic.update article_import_job_id: 'abc'
-      # expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
-      # expect(topic.articles_import_percent_complete).to eq(30)
+      expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
+      expect(topic.articles_import_percent_complete).to eq(30)
     end
 
     it 'returns timepoint generate status' do
       expect(topic.timepoint_generate_status).to eq(:idle)
       topic.update timepoint_generate_job_id: 'abc'
-      # expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
-      # expect(topic.timepoint_generate_status).to eq(:working)
+      expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
+      expect(topic.timepoint_generate_status).to eq(:working)
     end
 
     it 'returns timepoint generate percent complete' do
       expect(topic.timepoint_generate_percent_complete).to be_nil
       topic.update timepoint_generate_job_id: 'abc'
-      # expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
-      # expect(topic.timepoint_generate_percent_complete).to eq(30)
+      expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
+      expect(topic.timepoint_generate_percent_complete).to eq(30)
     end
   end
 

@@ -50,25 +50,25 @@ ActiveAdmin.register Topic do
                   'Generate Timepoints'
                 end
                 td do
-                  # if topic.timepoint_generate_job_id
-                  #   span do
-                  #     if Sidekiq::Status::status(topic.timepoint_generate_job_id) == :working
-                  #       percent = Sidekiq::Status::pct_complete(topic.timepoint_generate_job_id)
-                  #       status_tag("Working #{percent}%", class: 'green')
-                  #     else
-                  #       status_tag(Sidekiq::Status::status(topic.timepoint_generate_job_id), class: 'orange')
-                  #     end
-                  #   end
-                  #   span style: 'margin-left: 5px' do
-                  #     link_to('(More detail)', "/admin/sidekiq/statuses/#{topic.timepoint_generate_job_id}")
-                  #   end
-                  # else
-                  #   output = []
-                  #   output << link_to('Queue Timepoint Generation (Force Updates)', generate_timepoints_admin_topic_path(force_updates: true))
-                  #   output << '<br>'
-                  #   output << link_to('Queue Timepoint Generation (Changes Only)', generate_timepoints_admin_topic_path(force_updates: false))
-                  #   output.join.html_safe
-                  # end
+                  if topic.timepoint_generate_job_id
+                    span do
+                      if Sidekiq::Status::status(topic.timepoint_generate_job_id) == :working
+                        percent = Sidekiq::Status::pct_complete(topic.timepoint_generate_job_id)
+                        status_tag("Working #{percent}%", class: 'green')
+                      else
+                        status_tag(Sidekiq::Status::status(topic.timepoint_generate_job_id), class: 'orange')
+                      end
+                    end
+                    span style: 'margin-left: 5px' do
+                      link_to('(More detail)', "/admin/sidekiq/statuses/#{topic.timepoint_generate_job_id}")
+                    end
+                  else
+                    output = []
+                    output << link_to('Queue Timepoint Generation (Force Updates)', generate_timepoints_admin_topic_path(force_updates: true))
+                    output << '<br>'
+                    output << link_to('Queue Timepoint Generation (Changes Only)', generate_timepoints_admin_topic_path(force_updates: false))
+                    output.join.html_safe
+                  end
                 end
               end
               tr do
@@ -78,12 +78,12 @@ ActiveAdmin.register Topic do
                 td do
                   if topic.article_import_job_id
                     span do
-                      # if Sidekiq::Status::status(topic.article_import_job_id) == :working
-                      #   percent = Sidekiq::Status::pct_complete(topic.article_import_job_id)
-                      #   status_tag("Working #{percent}%", class: 'green')
-                      # else
-                      #   status_tag(Sidekiq::Status::status(topic.article_import_job_id), class: 'orange')
-                      # end
+                      if Sidekiq::Status::status(topic.article_import_job_id) == :working
+                        percent = Sidekiq::Status::pct_complete(topic.article_import_job_id)
+                        status_tag("Working #{percent}%", class: 'green')
+                      else
+                        status_tag(Sidekiq::Status::status(topic.article_import_job_id), class: 'orange')
+                      end
                     end
                     span style: 'margin-left: 5px' do
                       link_to('(More detail)', "/admin/sidekiq/statuses/#{topic.article_import_job_id}")
@@ -100,12 +100,12 @@ ActiveAdmin.register Topic do
                 td do
                   if topic.users_import_job_id
                     span do
-                      # if Sidekiq::Status::status(topic.users_import_job_id) == :working
-                      #   percent = Sidekiq::Status::pct_complete(topic.users_import_job_id)
-                      #   status_tag("Working #{percent}%", class: 'green')
-                      # else
-                      #   status_tag(Sidekiq::Status::status(topic.users_import_job_id), class: 'orange')
-                      # end
+                      if Sidekiq::Status::status(topic.users_import_job_id) == :working
+                        percent = Sidekiq::Status::pct_complete(topic.users_import_job_id)
+                        status_tag("Working #{percent}%", class: 'green')
+                      else
+                        status_tag(Sidekiq::Status::status(topic.users_import_job_id), class: 'orange')
+                      end
                     end
                     span style: 'margin-left: 5px' do
                       link_to('(More detail)', "/admin/sidekiq/statuses/#{topic.users_import_job_id}")

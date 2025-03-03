@@ -2,7 +2,7 @@
 
 class GenerateTimepointsJob
   include Sidekiq::Job
-  # include Sidekiq::Status::Worker
+  include Sidekiq::Status::Worker
   sidekiq_options queue: 'timepoints'
 
   def perform(topic_id, force_updates = false)
@@ -10,12 +10,9 @@ class GenerateTimepointsJob
 
     topic = Topic.find_by(id: topic_id)
     force_updates = ActiveModel::Type::Boolean.new.cast(force_updates)
-    # timepoint_service = TimepointService.new(
-    #   topic:, force_updates:, logging_enabled: true,
-    #   total: method(:total), at: method(:at)
-    # )
     timepoint_service = TimepointService.new(
-      topic:, force_updates:, logging_enabled: true
+      topic:, force_updates:, logging_enabled: true,
+      total: method(:total), at: method(:at)
     )
     timepoint_service.build_timepoints
     TopicSummaryService.new(topic:).create_summary
