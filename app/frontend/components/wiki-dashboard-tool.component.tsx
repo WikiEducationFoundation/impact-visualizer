@@ -8,7 +8,7 @@ import {
   CourseUsersResponse,
 } from "../types/search-tool.type";
 import { extractDashboardURLInfo } from "../utils/search-utils";
-import ArticlesTable from "./articles-table";
+import ArticlesTable from "./articles-table.component";
 
 export default function WikiDashboardTool() {
   const [courseURL, setCourseURL] = useState("");

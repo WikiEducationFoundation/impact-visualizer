@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PetscanResponse } from "../types/search-tool.type";
 import toast from "react-hot-toast";
 import LoadingOval from "./loading-oval.component";
-import ArticlesTable from "./articles-table";
+import ArticlesTable from "./articles-table.component";
 
 export default function PetScanTool() {
   const [petscanID, setPetscanID] = useState<string>("");
