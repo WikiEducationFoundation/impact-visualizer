@@ -19,10 +19,11 @@ import EditTopic from "../components/edit-topic.component";
 import WikipediaCategoryPage from "../components/wikipedia-category-page.component";
 import QueryBuilder from "../components/query-builder.component";
 import { Toaster } from "react-hot-toast";
-import WikiDashboardTool from "../components/wiki-dashboard-tool.component";
+import WikiDashboardCourseTool from "../components/wiki-dashboard-tool.component";
 import PetScanTool from "../components/petscan-tool";
 import PagePileTool from "../components/pagepile-tool";
 import UserSetTool from "../components/user-set-tool";
+import WikiDashboardUserTool from "../components/wiki-dashboard-user-tool.component";
 
 // Misc
 const queryClient = new QueryClient();
@@ -70,8 +71,12 @@ const router = createBrowserRouter([
         element: <WikipediaCategoryPage />,
       },
       {
-        path: "/search/wiki-dashboard-tool",
-        element: <WikiDashboardTool />,
+        path: "/search/wiki-dashboard-course-tool",
+        element: <WikiDashboardCourseTool />,
+      },
+      {
+        path: "/search/wiki-dashboard-user-tool",
+        element: <WikiDashboardUserTool />,
       },
       {
         path: "/search/petscan-tool",

@@ -227,7 +227,7 @@ const convertTitlesToWikicode = (titles: string[]): string => {
 
 function extractDashboardURLInfo(url: string): {
   dashboardURL: string;
-  type: string;
+  type: "campaign" | "course";
   slug: string;
 } {
   const protocolIndex = url.indexOf("://");
@@ -242,7 +242,7 @@ function extractDashboardURLInfo(url: string): {
 
   let course_slug = "";
   let maxPartsLength: number;
-  let type: string;
+  let type: "campaign" | "course";
   if (parts[1] === "campaigns") {
     maxPartsLength = 3;
     course_slug = parts[2];
@@ -271,6 +271,29 @@ function extractDashboardURLInfo(url: string): {
   };
 }
 
+function extractDashboardUsername(input: string): string {
+  let output = input.trim();
+
+  const possibleUrlPrefixes = [
+    "https://dashboard.wikiedu.org/users/",
+    "https://outreachdashboard.wmflabs.org/users/",
+  ];
+
+  for (const prefix of possibleUrlPrefixes) {
+    if (output.toLowerCase().startsWith(prefix.toLowerCase())) {
+      output = output.substring(prefix.length);
+      break;
+    }
+  }
+
+  const userPrefix = "User:";
+  if (output.toLowerCase().startsWith(userPrefix.toLowerCase())) {
+    output = output.substring(userPrefix.length).trim();
+  }
+
+  return output.trim();
+}
+
 export {
   buildWikidataQuery,
   convertSPARQLArticlesToCSV,
@@ -282,5 +305,6 @@ export {
   removeCategoryPrefix,
   removeDuplicateArticles,
   extractDashboardURLInfo,
+  extractDashboardUsername,
   convertTitlesToWikicode,
 };

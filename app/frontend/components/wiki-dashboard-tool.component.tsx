@@ -10,7 +10,7 @@ import {
 import { extractDashboardURLInfo } from "../utils/search-utils";
 import ArticlesTable from "./articles-table.component";
 
-export default function WikiDashboardTool() {
+export default function WikiDashboardCourseTool() {
   const [courseURL, setCourseURL] = useState("");
   const [courseSlug, setCourseSlug] = useState("");
   const [isLoading, setIsLoading] = useState(false);
