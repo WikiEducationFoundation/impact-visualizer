@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { PetscanResponse } from "../types/search-tool.type";
 import toast from "react-hot-toast";
 import LoadingOval from "./loading-oval.component";
-import CSVButton from "./CSV-button.component";
-import { convertArticlesToCSV } from "../utils/search-utils";
-import ArticlesTable from "./articles-table";
+import ArticlesTable from "./articles-table.component";
 
 export default function PetScanTool() {
   const [petscanID, setPetscanID] = useState<string>("");
@@ -75,7 +73,7 @@ export default function PetScanTool() {
           {queryResult && (
             <ArticlesTable
               articles={articleTitles}
-              filename={`${petscanID}-petscan-articles.csv`}
+              filename={`${petscanID}-petscan-articles`}
             />
           )}
         </div>

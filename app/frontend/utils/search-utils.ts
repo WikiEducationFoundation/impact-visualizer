@@ -91,11 +91,19 @@ function convertArticlesToCSV(articles: string[]): string {
   return csvContent;
 }
 
-function downloadAsCSV(csvContent: string, fileName = "data.csv"): void {
+function downloadAsCSV(csvContent: string, fileName = "data"): void {
   const encodedUri = encodeURI(csvContent);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", fileName);
+  link.setAttribute("download", `${fileName}.csv`);
+  link.click();
+}
+
+function downloadAsTXT(txtContent: string, fileName = "data"): void {
+  const blob = new Blob([txtContent], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.setAttribute("href", URL.createObjectURL(blob));
+  link.setAttribute("download", `${fileName}.txt`);
   link.click();
 }
 
@@ -209,9 +217,17 @@ const removeDuplicateArticles = (
   });
 };
 
+const convertTitlesToWikicode = (titles: string[]): string => {
+  function escapeWikiTitle(title: string): string {
+    // Escapes the "|" special character
+    return title.replace(/\|/g, "&#124;");
+  }
+  return titles.map((title) => `* [[${escapeWikiTitle(title)}]]`).join("\n");
+};
+
 function extractDashboardURLInfo(url: string): {
   dashboardURL: string;
-  type: string;
+  type: "campaign" | "course";
   slug: string;
 } {
   const protocolIndex = url.indexOf("://");
@@ -226,7 +242,7 @@ function extractDashboardURLInfo(url: string): {
 
   let course_slug = "";
   let maxPartsLength: number;
-  let type: string;
+  let type: "campaign" | "course";
   if (parts[1] === "campaigns") {
     maxPartsLength = 3;
     course_slug = parts[2];
@@ -255,14 +271,40 @@ function extractDashboardURLInfo(url: string): {
   };
 }
 
+function extractDashboardUsername(input: string): string {
+  let output = input.trim();
+
+  const possibleUrlPrefixes = [
+    "https://dashboard.wikiedu.org/users/",
+    "https://outreachdashboard.wmflabs.org/users/",
+  ];
+
+  for (const prefix of possibleUrlPrefixes) {
+    if (output.toLowerCase().startsWith(prefix.toLowerCase())) {
+      output = output.substring(prefix.length);
+      break;
+    }
+  }
+
+  const userPrefix = "User:";
+  if (output.toLowerCase().startsWith(userPrefix.toLowerCase())) {
+    output = output.substring(userPrefix.length).trim();
+  }
+
+  return output.trim();
+}
+
 export {
   buildWikidataQuery,
   convertSPARQLArticlesToCSV,
   convertArticlesToCSV,
   downloadAsCSV,
+  downloadAsTXT,
   convertInitialResponseToTree,
   convertResponseToTree,
   removeCategoryPrefix,
   removeDuplicateArticles,
   extractDashboardURLInfo,
+  extractDashboardUsername,
+  convertTitlesToWikicode,
 };

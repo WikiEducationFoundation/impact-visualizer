@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { PagePileResponse } from "../types/search-tool.type";
 import toast from "react-hot-toast";
 import LoadingOval from "./loading-oval.component";
-import CSVButton from "./CSV-button.component";
-import { convertArticlesToCSV } from "../utils/search-utils";
-import ArticlesTable from "./articles-table";
+import ArticlesTable from "./articles-table.component";
 
 export default function PagePileTool() {
   const [pagePileID, setPagePileID] = useState<string>("");
@@ -75,7 +73,7 @@ export default function PagePileTool() {
           {queryResult && (
             <ArticlesTable
               articles={articleTitles}
-              filename={`${pagePileID}-pagepile-articles.csv`}
+              filename={`${pagePileID}-pagepile-articles`}
             />
           )}
         </div>

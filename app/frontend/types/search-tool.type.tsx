@@ -190,7 +190,7 @@ type PetscanPage = {
   touched: string;
 };
 
-export type UserSetResponse = {
+type UserSetResponse = {
   courses: {
     title: string;
     slug: string;
@@ -198,6 +198,20 @@ export type UserSetResponse = {
       username: string;
     }[];
     instructors?: {
+      username: string;
+    }[];
+  }[];
+};
+
+type DashboardUserToolResponse = {
+  user_profiles: {
+    course_title: string;
+    course_slug: string;
+    articles: {
+      article_id: number;
+      article_title: string;
+    }[];
+    users: {
       username: string;
     }[];
   }[];
@@ -215,4 +229,6 @@ export type {
   CampaignArticlesResponse,
   PetscanResponse,
   PagePileResponse,
+  UserSetResponse,
+  DashboardUserToolResponse,
 };
