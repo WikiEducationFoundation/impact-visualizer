@@ -41,9 +41,10 @@ export default function WikiDashboardUserTool() {
     const user = extractDashboardUsername(userInputString);
     setSelectedUser(user);
 
+    const encodedUser = encodeURIComponent(user);
     try {
       const response = await fetch(
-        `https://${dashboardDomain}/users/${user}/taught_courses_articles.json`
+        `https://${dashboardDomain}/users/${encodedUser}/taught_courses_articles.json`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
