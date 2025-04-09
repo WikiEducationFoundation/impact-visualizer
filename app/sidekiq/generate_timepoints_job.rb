@@ -14,7 +14,7 @@ class GenerateTimepointsJob
       topic:, force_updates:, logging_enabled: true,
       total: method(:total), at: method(:at)
     )
-    timepoint_service.build_timepoints
+    timepoint_service.full_timepoint_build
     TopicSummaryService.new(topic:).create_summary
     topic.reload.update(timepoint_generate_job_id: nil)
   end

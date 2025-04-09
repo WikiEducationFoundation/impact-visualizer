@@ -51,6 +51,14 @@ class TopicService
     topic.queue_generate_timepoints(force_updates:)
   end
 
+  def incremental_topic_build(force_updates: false)
+    raise ImpactVisualizerErrors::TopicMissing unless topic
+    unless topic.user_count.positive? && topic.articles_count.positive?
+      raise ImpactVisualizerErrors::TopicNotReadyForTimepointGeneration
+    end
+    topic.queue_incremental_topic_build(force_updates:)
+  end
+
   def handle_auto_import(topic_params:)
     return unless auto_import
     import_users if topic.users_csv.attached? && topic_params[:users_csv].present?

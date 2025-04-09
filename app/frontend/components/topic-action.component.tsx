@@ -2,7 +2,7 @@
 import _ from 'lodash';
 import React from 'react';
 import cn from 'classnames';
-import { UseMutateFunction, useMutation, 
+import { UseMutateFunction, useMutation,
          useQueryClient } from '@tanstack/react-query';
 import pluralize from 'pluralize';
 
@@ -110,7 +110,7 @@ const actions = {
         </button>
       )
     },
-    renderNotReady: (topic: Topic, setCanEditTopic: Function) => { 
+    renderNotReady: (topic: Topic, setCanEditTopic: Function) => {
       return (
         <div>
           <div className="u-mb05">
@@ -201,6 +201,62 @@ const actions = {
       )
     },
     mutationFn: TopicService.generate_timepoints
+  },
+  incremental_topic_build: {
+    label: 'Timepoints',
+    buttonLabel: 'Generate Timepoints',
+    isReady: (topic: Topic) => {
+      return topic.user_count > 0 && topic.articles_count > 0;
+    },
+    isBusy: (topic: Topic) => {
+      return topic.incremental_topic_build_status !== 'idle';
+    },
+    status: (topic: Topic) => {
+      return topic.incremental_topic_build_status;
+    },
+    progress: (topic: Topic) => {
+      return topic.incremental_topic_build_percent_complete;
+    },
+    message: (topic: Topic) => {
+      return topic.incremental_topic_build_stage_message;
+    },
+    renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+      const actionLabel = topic.timepoints_count > 0 ? 'Generate new' : 'Generate';
+      return (
+        <>
+          <button
+            className="Button Button--outlined"
+            onClick={() => mutate()}
+          >
+            {actionLabel} Timepoints
+          </button>
+
+          {topic.timepoints_count > 0 &&
+            <div className='u-mt05'>
+              <button
+                className="Button Button--outlined"
+                onClick={() => mutate({ force_updates: true })}
+              >
+                Regenerate all Timepoints
+              </button>
+            </div>
+          }
+        </>
+      )
+    },
+    renderNotReady: () => {
+      return (
+        <span>You must import Users and Articles before generating timepoints</span>
+      );
+    },
+    renderCurrentCount: (topic: Topic) => {
+      return (
+        <div className='TopicAction-currentCount'>
+          Topic currently has <strong>{topic.timepoints_count}</strong> {`${pluralize('Timepoint', topic.timepoints_count)}`}
+        </div>
+      )
+    },
+    mutationFn: TopicService.incremental_topic_build
   }
 }
 
@@ -217,7 +273,7 @@ function TopicAction({ topic, actionKey, setCanEditTopic }) {
       console.log(error);
     }
   })
-  
+
   const isReady = action.isReady(topic);
   const isBusy = action.isBusy(topic);
   const status = action.status(topic);
@@ -226,7 +282,7 @@ function TopicAction({ topic, actionKey, setCanEditTopic }) {
   return (
     <div className="TopicAction">
       <h4>{action.label}</h4>
-      
+
       {(isReady && !isBusy) && action.renderButtons(topic, mutation.mutate)}
 
       {(isReady && isBusy) &&
@@ -240,6 +296,11 @@ function TopicAction({ topic, actionKey, setCanEditTopic }) {
             {status}
           </span>
           <span className="u-ml05 TopicAction-progress">
+            {(typeof action.message === 'function') &&
+              <span className="u-mr05 TopicAction-progress">
+                {action.message(topic)}
+              </span>
+            }
             {progress}%
           </span>
         </div>

@@ -57,6 +57,35 @@ RSpec.describe Topic do
       expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
       expect(topic.timepoint_generate_percent_complete).to eq(30)
     end
+
+    it 'returns incremental topic build status' do
+      expect(topic.incremental_topic_build_status).to eq(:idle)
+      topic.update incremental_topic_build_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:status).with('abc').and_return(:working)
+      expect(topic.incremental_topic_build_status).to eq(:working)
+    end
+
+    it 'returns incremental topic build percent complete' do
+      expect(topic.incremental_topic_build_percent_complete).to be_nil
+      topic.update incremental_topic_build_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:pct_complete).with('abc').and_return(30)
+      expect(topic.incremental_topic_build_percent_complete).to eq(30)
+    end
+
+    it 'returns incremental topic build stage' do
+      expect(topic.incremental_topic_build_stage).to be_nil
+      topic.update incremental_topic_build_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:get).with('abc', :stage).and_return('classify')
+      expect(topic.incremental_topic_build_stage).to eq('classify')
+    end
+
+    it 'returns incremental topic build stage message' do
+      expect(topic.incremental_topic_build_stage_message).to eq('')
+      topic.update incremental_topic_build_job_id: 'abc'
+      expect(Sidekiq::Status).to receive(:get).with('abc', :stage).and_return('classify')
+      expect(topic.incremental_topic_build_stage_message).to eq('Stage 1/4 (classify)')
+    end
+
   end
 
   describe 'CSV instance methods' do
@@ -100,6 +129,50 @@ RSpec.describe Topic do
       expect(GenerateTimepointsJob).to receive(:perform_async).and_return('abc123')
       topic.queue_generate_timepoints
       expect(topic.reload.timepoint_generate_job_id).to eq('abc123')
+    end
+  end
+
+  describe '#queue_incremental_topic_build' do
+    let(:topic) { create(:topic) }
+
+    it 'queues IncrementalTopicBuildJob for Topic, defaults' do
+      expect(IncrementalTopicBuildJob).to receive(:perform_async)
+        .with(topic.id, 'classify', true, false)
+        .and_return('abc123')
+      topic.queue_incremental_topic_build
+      expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
+    end
+
+    it 'queues IncrementalTopicBuildJob for Topic, with force_updates' do
+      expect(IncrementalTopicBuildJob).to receive(:perform_async)
+        .with(topic.id, 'classify', true, true)
+        .and_return('abc123')
+      topic.queue_incremental_topic_build(force_updates: true)
+      expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
+    end
+
+    it 'queues IncrementalTopicBuildJob for Topic, with stage' do
+      expect(IncrementalTopicBuildJob).to receive(:perform_async)
+        .with(topic.id, 'tokens', true, false)
+        .and_return('abc123')
+      topic.queue_incremental_topic_build(stage: 'tokens')
+      expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
+    end
+
+    it 'queues IncrementalTopicBuildJob for Topic, with stage and force_updates' do
+      expect(IncrementalTopicBuildJob).to receive(:perform_async)
+        .with(topic.id, 'tokens', true, true)
+        .and_return('abc123')
+      topic.queue_incremental_topic_build(stage: 'tokens', force_updates: true)
+      expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
+    end
+
+    it 'queues IncrementalTopicBuildJob for Topic, with stage and queue_next_stage' do
+      expect(IncrementalTopicBuildJob).to receive(:perform_async)
+        .with(topic.id, 'tokens', false, false)
+        .and_return('abc123')
+      topic.queue_incremental_topic_build(stage: 'tokens', queue_next_stage: false)
+      expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
     end
   end
 

@@ -47,7 +47,97 @@ ActiveAdmin.register Topic do
             tbody do
               tr do
                 th do
-                  'Generate Timepoints'
+                  'Incremental Topic Build'
+                end
+                td do
+                  if topic.incremental_topic_build_job_id
+                    status = Sidekiq::Status::status(topic.incremental_topic_build_job_id)
+                    message = topic.incremental_topic_build_stage_message
+                    span do
+                      if status == :working
+                        percent = Sidekiq::Status::pct_complete(
+                          topic.incremental_topic_build_job_id
+                        )
+                        status_tag(message + " Working #{percent}%", class: 'green')
+                      else
+                        status_tag(message + "#{status}", class: 'orange')
+                      end
+                    end
+                    span style: 'margin-left: 5px' do
+                      link_to(
+                        '(More detail)',
+                        "/admin/sidekiq/statuses/#{topic.incremental_topic_build_job_id}"
+                      )
+                    end
+                  else
+                    output = []
+                    output << link_to(
+                      'Queue Incremental Topic Build (All Stages, Changes Only)',
+                      incremental_topic_build_admin_topic_path(
+                        force_updates: false,
+                        queue_next_stage: true
+                      )
+                    )
+                    output << '<br>'
+                    output << link_to(
+                      'Queue Incremental Topic Build (All Stages, Force Updates)',
+                      incremental_topic_build_admin_topic_path(
+                        force_updates: true,
+                        queue_next_stage: true
+                      )
+                    )
+                    output << '<br>'
+                    output << link_to(
+                      'Queue Incremental Topic Build (Classify Only)',
+                      incremental_topic_build_admin_topic_path(
+                        stage: 'classify',
+                        force_updates: false,
+                        queue_next_stage: false
+                      )
+                    )
+                    output << '<br>'
+                    output << link_to(
+                      'Queue Incremental Topic Build (Article Timepoints Only, Changes Only)',
+                      incremental_topic_build_admin_topic_path(
+                        stage: 'article_timepoints',
+                        force_updates: false,
+                        queue_next_stage: false
+                      )
+                    )
+                    output << '<br>'
+                    output << link_to(
+                      'Queue Incremental Topic Build (Article Timepoints Only, Force Updates)',
+                      incremental_topic_build_admin_topic_path(
+                        stage: 'article_timepoints',
+                        force_updates: true,
+                        queue_next_stage: false
+                      )
+                    )
+                    output << '<br>'
+                    output << link_to(
+                      'Queue Incremental Topic Build (Tokens Only)',
+                      incremental_topic_build_admin_topic_path(
+                        stage: 'tokens',
+                        force_updates: false,
+                        queue_next_stage: false
+                      )
+                    )
+                    output << '<br>'
+                    output << link_to(
+                      'Queue Incremental Topic Build (Topic Timepoints Only)',
+                      incremental_topic_build_admin_topic_path(
+                        stage: 'topic_timepoints',
+                        force_updates: false,
+                        queue_next_stage: false
+                      )
+                    )
+                    output.join.html_safe
+                  end
+                end
+              end
+              tr do
+                th do
+                  'Full Topic Build'
                 end
                 td do
                   if topic.timepoint_generate_job_id
@@ -213,6 +303,11 @@ ActiveAdmin.register Topic do
   member_action :generate_timepoints, method: [:get] do
     resource.queue_generate_timepoints(force_updates: params[:force_updates])
     redirect_to resource_path(resource), notice: 'Timepoint generation queued'
+  end
+
+  member_action :incremental_topic_build, method: [:get] do
+    resource.queue_incremental_topic_build(stage: params[:stage] || TimepointService::STAGES.first, force_updates: params[:force_updates], queue_next_stage: params[:queue_next_stage])
+    redirect_to resource_path(resource), notice: 'Incremental topic build queued'
   end
 end
 

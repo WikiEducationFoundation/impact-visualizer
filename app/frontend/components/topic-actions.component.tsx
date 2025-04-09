@@ -19,7 +19,8 @@ function renderActions({ topic, setCanEditTopic }) {
   if (topic.user_count > 0 && topic.articles_count > 0 &&
       (!topic.users_import_status || topic.users_import_status === 'idle' || topic.users_import_status === 'complete') &&
       (!topic.articles_import_status || topic.articles_import_status === 'idle' || topic.articles_import_status === 'complete')) {
-    actions.push('timepoints');
+    // actions.push('timepoints');
+    actions.push('incremental_topic_build');
     proceed = true;
   }
 
@@ -29,7 +30,7 @@ function renderActions({ topic, setCanEditTopic }) {
   if (proceed) {
     actions.push('articles');
   }
-  
+
   actions.forEach((action) => {
     output.push(
       <TopicAction
@@ -50,7 +51,7 @@ function TopicActions({ topic }) {
   return (
     <div className="TopicActions">
       <h4>Management Actions</h4>
-      
+
       <div className="TopicActions-actions">
         {renderActions({ topic, setCanEditTopic })}
       </div>
@@ -59,7 +60,7 @@ function TopicActions({ topic }) {
         Actions execute the background, you <strong>may</strong> navigate
         away from the page after initiating.
       </div>
-      
+
       <Link
         to={`/my-topics/edit/${topic.id}`}
         className={cn({

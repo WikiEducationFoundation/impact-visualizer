@@ -12,17 +12,18 @@ Rails.application.routes.draw do
 
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-  
+
   authenticate :admin_user, lambda { |u| u.present? } do
     mount Sidekiq::Web => '/admin/sidekiq'
   end
-  
+
   scope '/api' do
     resources :wikis, only: [:index]
     resources :topics, only: [:index, :show, :create, :update, :destroy] do
       get :import_users, on: :member
       get :import_articles, on: :member
       get :generate_timepoints, on: :member
+      get :incremental_topic_build, on: :member
       resources :topic_timepoints, only: [:index]
     end
     resources :classifications, only: [:index]

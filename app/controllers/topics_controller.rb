@@ -2,7 +2,8 @@
 
 class TopicsController < ApiController
   before_action :authenticate_topic_editor!, only: [:create, :update, :destroy, :import_users,
-                                                    :import_articles, :generate_timepoints]
+                                                    :import_articles, :generate_timepoints,
+                                                    :incremental_topic_build]
 
   def index
     if current_topic_editor && params[:owned]
@@ -59,6 +60,15 @@ class TopicsController < ApiController
     topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
     force_updates = ActiveModel::Type::Boolean.new.cast(params[:force_updates]) || false
     topic_service.generate_timepoints(force_updates:)
+    @topic = topic.reload
+    render :show
+  end
+
+  def incremental_topic_build
+    topic = current_topic_editor.topics.find(params[:id])
+    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    force_updates = ActiveModel::Type::Boolean.new.cast(params[:force_updates]) || false
+    topic_service.incremental_topic_build(force_updates:)
     @topic = topic.reload
     render :show
   end

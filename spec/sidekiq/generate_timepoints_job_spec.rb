@@ -14,7 +14,7 @@ RSpec.describe GenerateTimepointsJob, type: :job do
       at: kind_of(Method)
     ).and_call_original
     expect(TopicSummaryService).to receive(:new).with(topic:).and_call_original
-    expect_any_instance_of(TimepointService).to receive(:build_timepoints)
+    expect_any_instance_of(TimepointService).to receive(:full_timepoint_build)
     expect_any_instance_of(TopicSummaryService).to receive(:create_summary)
     expect_any_instance_of(Topic).to receive(:update).with(timepoint_generate_job_id: nil)
     described_class.new.perform(topic.id)

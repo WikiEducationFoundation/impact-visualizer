@@ -18,6 +18,7 @@ require 'vcr'
 require 'webmock/rspec'
 require './spec/support/request_helpers'
 
+
 RSpec.configure do |config|
   config.include RequestHelpers
 

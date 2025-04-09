@@ -68,7 +68,7 @@ class TopicService {
     return http.put<Topic>(
       `/topics/${id}`,
       { topic: params },
-      { 
+      {
         headers: { 'Content-Type': 'multipart/form-data'}
       })
       .then((response: AxiosResponse) => {
@@ -99,6 +99,13 @@ class TopicService {
 
   generate_timepoints(id: number | string, params) {
     return http.get<Topic>(`/topics/${id}/generate_timepoints?${queryString.stringify(params)}`)
+      .then((response: AxiosResponse) => {
+        return _.get(response, 'data');
+      })
+  }
+
+  incremental_topic_build(id: number | string, params) {
+    return http.get<Topic>(`/topics/${id}/incremental_topic_build?${queryString.stringify(params)}`)
       .then((response: AxiosResponse) => {
         return _.get(response, 'data');
       })

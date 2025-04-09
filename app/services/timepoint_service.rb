@@ -2,8 +2,9 @@
 require 'benchmark'
 
 class TimepointService
-  THREADS_COUNT = 12
-  BATCH_SIZE = 250
+  THREADS_COUNT = 10
+  BATCH_SIZE = 200
+  STAGES = %i[classify article_timepoints tokens topic_timepoints]
 
   attr_accessor :topic, :logging_enabled, :force_updates
 
@@ -14,28 +15,84 @@ class TimepointService
     @topic_article_timepoint_stats_service = nil
     @force_updates = force_updates
     @logging_enabled = !Rails.env.test? && logging_enabled
-    @progress_count = 0
 
     # Capture Sidekiq Status methods
+    @progress_count = 0
     @at = at
     @total = total
 
     log('TimepointService: initialize')
-
-    # Setup total count for Sidekiq Status
-    initialize_progress_count
   end
 
-  def build_timepoints
-    start_time = Time.zone.now
+  def incremental_build(stage = STAGES.first, queue_next_stage: false)
+    raise ArgumentError, "Invalid stage: #{stage}" unless STAGES.include?(stage)
 
-    log('TimepointService: build_timepoints')
+    initialize_progress_count(stage:)
+
+    case stage
+    when :classify
+      classify_all_articles
+    when :article_timepoints
+      build_timepoints_for_all_timestamps
+    when :tokens
+      update_token_stats
+    when :topic_timepoints
+      build_topic_timepoints
+    end
+
+    next_stage = STAGES[STAGES.index(stage) + 1]
+    if queue_next_stage && next_stage
+      IncrementalTopicBuildJob.perform_async(
+        @topic.id,
+        next_stage.to_s,
+        true,
+        @force_updates
+      )
+    else
+      TopicSummaryService.new(topic:).create_summary
+    end
+  end
+
+  # Build everything related to Timepoints for Topic
+  # Is called by GenerateTimepointsJob
+  def full_timepoint_build
+    start_time = Time.zone.now
+    log "TimepointService: full_timepoint_build – Started at #{start_time}"
+
+    # Setup total count for Sidekiq Status
+    @progress_count = 0
+    initialize_progress_count
 
     # Classify all articles
+    log '#classify_all_articles'
+    classify_all_articles
+
+    # Loop through Topic's timestamps
+    # Build/update most everything for each timestamp
+    log '#build_timepoints_for_all_timestamps'
+    build_timepoints_for_all_timestamps
+
+    # Handle tokens separately, because...
+    # WikiWho API only needs 1 API call per article
+    #(as opposed to per timepoint AND article)
+    log '#update_token_stats'
+    update_token_stats
+
+    # Update TopicTimepoints with summarized stats
+    # This needs to happen AFTER token stats update
+    log '#build_topic_timepoints'
+    build_topic_timepoints
+
+    log "#build_timepoints – Started at #{start_time}. Finished at #{Time.zone.now}"
+  end
+
+  def classify_all_articles
     ClassificationService.new(topic: @topic).classify_all_articles do
       increment_progress_count
     end
+  end
 
+  def build_timepoints_for_all_timestamps
     # Loop through Topic's timestamps
     timestamps = @topic.timestamps
     timestamp_count = 0
@@ -47,17 +104,6 @@ class TimepointService
       log "#build_timepoints_for_timestamp timestamp:#{timestamp_count}/#{timestamps.count}"
       build_timepoints_for_timestamp(timestamp:)
     end
-
-    # Handle tokens separately, because...
-    # WikiWho API only needs 1 API call per article (as opposed to per timepoint AND article)
-    log '#update_token_stats'
-    update_token_stats
-
-    # Update TopicTimepoints with summarized stats
-    # This needs to happen AFTER token stats update
-    build_topic_timepoints
-
-    log "#build_timepoints – Started at #{start_time}. Finished at #{Time.zone.now}"
   end
 
   def build_topic_timepoints
@@ -205,7 +251,7 @@ class TimepointService
     @topic_article_timepoint_stats_service.update_token_stats(tokens:)
   end
 
-  def initialize_progress_count
+  def initialize_progress_count(stage: nil)
     timestamp_count = @topic.timestamps.count
     article_count = @topic.active_article_bag&.article_bag_articles&.count
 
@@ -213,17 +259,25 @@ class TimepointService
 
     total_progress_steps = 0
 
-    # Add Article count for classify_all_articles loop
-    total_progress_steps += article_count
+    if stage.nil? || stage == :classify
+      # Add Article count for classify_all_articles loop
+      total_progress_steps += article_count
+    end
 
-    # Add count with timestamp count, for build_timepoints_for_timestamp loop
-    total_progress_steps += (timestamp_count * article_count)
+    if stage.nil? || stage == :article_timepoints
+      # Add count with timestamp count, for build_timepoints_for_timestamp loop
+      total_progress_steps += (timestamp_count * article_count)
+    end
 
-    # Add Article count for update_token_stats loop
-    total_progress_steps += article_count
+    if stage.nil? || stage == :tokens
+      # Add Article count for update_token_stats loop
+      total_progress_steps += article_count
+    end
 
-    # Add timestamp count again, for build_topic_timepoints loop
-    total_progress_steps += timestamp_count
+    if stage.nil? || stage == :topic_timepoints
+      # Add timestamp count again, for build_topic_timepoints loop
+      total_progress_steps += timestamp_count
+    end
 
     # Lock in the total count
     @total&.call(total_progress_steps)

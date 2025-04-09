@@ -403,4 +403,48 @@ describe TopicsController do
       expect(response.status).to eq(401)
     end
   end
+
+  describe '#incremental_topic_build' do
+    it 'initiates incremental topic build (force_updates=false) for a Topic belonging to Topic editor' do
+      sign_in topic_editor
+      topic = topic_editor.topics.first
+      expect_any_instance_of(TopicService)
+        .to(receive(:incremental_topic_build)
+              .with(force_updates: false)
+              .and_return(true))
+      get("/api/topics/#{topic.id}/incremental_topic_build")
+      body = response.parsed_body.with_indifferent_access
+      topic.reload
+      expect(body[:name]).to eq(topic.name)
+      expect(response.status).to eq(200)
+    end
+
+    it 'initiates incremental topic build (force_updates=true) for a Topic belonging to Topic editor' do
+      sign_in topic_editor
+      topic = topic_editor.topics.first
+      expect_any_instance_of(TopicService)
+        .to(receive(:incremental_topic_build)
+              .with(force_updates: true)
+              .and_return(true))
+      get("/api/topics/#{topic.id}/incremental_topic_build?force_updates=true")
+      body = response.parsed_body.with_indifferent_access
+      topic.reload
+      expect(body[:name]).to eq(topic.name)
+      expect(response.status).to eq(200)
+    end
+
+    it 'returns 404 without associated current_topic_editor' do
+      sign_in(create(:topic_editor))
+      topic = topic_editor.topics.first
+      expect do
+        get("/api/topics/#{topic.id}/incremental_topic_build")
+      end.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'returns unauthorized without current_topic_editor' do
+      topic = topic_editor.topics.first
+      get("/api/topics/#{topic.id}/incremental_topic_build")
+      expect(response.status).to eq(401)
+    end
+  end
 end

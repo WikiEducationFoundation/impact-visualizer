@@ -145,6 +145,27 @@ class Topic < ApplicationRecord
     update timepoint_generate_job_id: job_id
   end
 
+  def queue_incremental_topic_build(
+    stage: TimepointService::STAGES.first,
+    queue_next_stage: true,
+    force_updates: false
+  )
+    job_id = IncrementalTopicBuildJob.perform_async(
+      id, stage.to_s, queue_next_stage, force_updates
+    )
+    update incremental_topic_build_job_id: job_id
+  end
+
+  def incremental_topic_build_stage_message
+    return '' unless incremental_topic_build_job_id
+    stage = Sidekiq::Status::get(incremental_topic_build_job_id, :stage)
+    return '' unless stage
+    stage_number = TimepointService::STAGES.index(stage.to_sym) + 1
+    total_stages = TimepointService::STAGES.count
+    stage_progress = "#{stage_number}/#{total_stages}"
+    "Stage #{stage_progress} (#{stage})"
+  end
+
   def users_import_status
     return :idle unless users_import_job_id
     Sidekiq::Status::status(users_import_job_id)
@@ -160,6 +181,11 @@ class Topic < ApplicationRecord
     Sidekiq::Status::status(timepoint_generate_job_id)
   end
 
+  def incremental_topic_build_status
+    return :idle unless incremental_topic_build_job_id
+    Sidekiq::Status::status(incremental_topic_build_job_id)
+  end
+
   def users_import_percent_complete
     return nil unless users_import_job_id
     Sidekiq::Status::pct_complete(users_import_job_id)
@@ -173,6 +199,16 @@ class Topic < ApplicationRecord
   def timepoint_generate_percent_complete
     return nil unless timepoint_generate_job_id
     Sidekiq::Status::pct_complete(timepoint_generate_job_id)
+  end
+
+  def incremental_topic_build_percent_complete
+    return nil unless incremental_topic_build_job_id
+    Sidekiq::Status::pct_complete(incremental_topic_build_job_id)
+  end
+
+  def incremental_topic_build_stage
+    return nil unless incremental_topic_build_job_id
+    Sidekiq::Status::get(incremental_topic_build_job_id, :stage)
   end
 
   # For ActiveAdmin
@@ -193,22 +229,23 @@ end
 #
 # Table name: topics
 #
-#  id                        :bigint           not null, primary key
-#  chart_time_unit           :string           default("year")
-#  convert_tokens_to_words   :boolean          default(FALSE)
-#  description               :string
-#  display                   :boolean          default(FALSE)
-#  editor_label              :string           default("participant")
-#  end_date                  :datetime
-#  name                      :string
-#  slug                      :string
-#  start_date                :datetime
-#  timepoint_day_interval    :integer          default(7)
-#  tokens_per_word           :float            default(3.25)
-#  created_at                :datetime         not null
-#  updated_at                :datetime         not null
-#  article_import_job_id     :string
-#  timepoint_generate_job_id :string
-#  users_import_job_id       :string
-#  wiki_id                   :integer
+#  id                             :bigint           not null, primary key
+#  chart_time_unit                :string           default("year")
+#  convert_tokens_to_words        :boolean          default(FALSE)
+#  description                    :string
+#  display                        :boolean          default(FALSE)
+#  editor_label                   :string           default("participant")
+#  end_date                       :datetime
+#  name                           :string
+#  slug                           :string
+#  start_date                     :datetime
+#  timepoint_day_interval         :integer          default(7)
+#  tokens_per_word                :float            default(3.25)
+#  created_at                     :datetime         not null
+#  updated_at                     :datetime         not null
+#  article_import_job_id          :string
+#  incremental_topic_build_job_id :string
+#  timepoint_generate_job_id      :string
+#  users_import_job_id            :string
+#  wiki_id                        :integer
 #
