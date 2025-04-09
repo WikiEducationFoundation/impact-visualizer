@@ -226,7 +226,11 @@ class WikiActionApi
     tries += 1
     unless Rails.env.test?
       sleep_time = 3**tries
-      puts "WikiActionApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries}) "
+      puts '---'
+      puts "WikiActionApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries})"
+      puts "WikiActionApi / Error – query: #{query}"
+      puts e
+      puts '---'
       sleep sleep_time
     end
     retry unless tries == total_tries

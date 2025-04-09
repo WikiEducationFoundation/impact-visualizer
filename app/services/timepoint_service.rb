@@ -133,7 +133,7 @@ class TimepointService
         ActiveRecord::Base.connection_pool.with_connection do
           article_count += 1
           increment_progress_count
-          log "  #build_timepoints_for_article timestamp:#{timestamp} article:#{article_count}/#{article_bag_articles.count}"
+          log "  #build_timepoints_for_article timestamp:#{timestamp} topic_timepoint_id:#{topic_timepoint.id} article_id:#{article_bag_article.article_id} article:#{article_count}/#{article_bag_articles.count}"
           build_timepoints_for_article(article_bag_article:, topic_timepoint:)
           ActiveRecord::Base.connection_pool.release_connection
         end
