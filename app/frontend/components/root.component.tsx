@@ -33,8 +33,11 @@ function Root() {
                   <Link to="/search/wikipedia-category-tool">
                     Wikipedia Category Tool
                   </Link>
-                  <Link to="/search/wiki-dashboard-tool">
-                    Education Dashboard Tool
+                  <Link to="/search/wiki-dashboard-course-tool">
+                    Education Dashboard Course Tool
+                  </Link>
+                  <Link to="/search/wiki-dashboard-user-tool">
+                    Education Dashboard User Tool
                   </Link>
                   <Link to="/search/petscan-tool">Petscan Tool</Link>
                   <Link to="/search/pagepile-tool">Pagepile Tool</Link>

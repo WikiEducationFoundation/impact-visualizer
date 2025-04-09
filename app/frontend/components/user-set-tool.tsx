@@ -3,7 +3,7 @@ import Select from "react-select";
 import toast from "react-hot-toast";
 import { UserSetResponse } from "../types/search-tool.type";
 import LoadingOval from "./loading-oval.component";
-import ArticlesTable from "./articles-table";
+import ArticlesTable from "./articles-table.component";
 
 const userSetOptions = [
   { value: "", label: "-- Choose an option --" },
@@ -126,7 +126,7 @@ export default function UserSetTool() {
               filename={`${selectedUserSet.replace(
                 "_",
                 "-"
-              )}_${selectedUserSetTypes.replace("_", "-")}.csv`}
+              )}_${selectedUserSetTypes.replace("_", "-")}`}
             />
           )}
         </div>

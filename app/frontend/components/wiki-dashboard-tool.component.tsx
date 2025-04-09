@@ -7,14 +7,10 @@ import {
   CourseArticlesResponse,
   CourseUsersResponse,
 } from "../types/search-tool.type";
-import CSVButton from "./CSV-button.component";
-import {
-  convertArticlesToCSV,
-  extractDashboardURLInfo,
-} from "../utils/search-utils";
-import ArticlesTable from "./articles-table";
+import { extractDashboardURLInfo } from "../utils/search-utils";
+import ArticlesTable from "./articles-table.component";
 
-export default function WikiDashboardTool() {
+export default function WikiDashboardCourseTool() {
   const [courseURL, setCourseURL] = useState("");
   const [courseSlug, setCourseSlug] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -128,13 +124,13 @@ export default function WikiDashboardTool() {
           {articleTitles && articleTitles.length > 0 && (
             <ArticlesTable
               articles={articleTitles}
-              filename={`${courseSlug}-wikiarticles.csv`}
+              filename={`${courseSlug}-wikiarticles`}
             />
           )}
           {usernames && usernames.length > 0 && (
             <ArticlesTable
               articles={usernames}
-              filename={`${courseSlug}-wikiusernames.csv`}
+              filename={`${courseSlug}-wikiusernames`}
             />
           )}
         </div>
