@@ -70,6 +70,10 @@ class ArticleStatsService
 
     # If no revision, article probably was deleted
     return unless revision
+    # FIXME: If the text is hidden (ie, the revison content was deleted), ideally we should find
+    # the first prior revision that isn't deleted. Until that is implemeted, we'll treat this
+    # the same way as a deleted article.
+    return if revision['texthidden']
 
     # Get count of Revisions at timestamp
     revisions_count = @visualizer_tools_api.get_page_edits_count(
