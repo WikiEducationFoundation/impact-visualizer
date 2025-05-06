@@ -118,7 +118,7 @@ class WikiActionApi
     # Setup basic query parameters
     query_parameters = {
       prop: 'revisions',
-      rvprop: %w[size user userid timestamp ids],
+      rvprop: %w[size user userid timestamp ids slotsha1],
       rvlimit: 1,
       rvstart: timestamp&.beginning_of_day&.iso8601,
       rvdir: 'older',
