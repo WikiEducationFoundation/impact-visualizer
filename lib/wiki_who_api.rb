@@ -30,7 +30,11 @@ class WikiWhoApi
       return wiki_who_data.dig('revisions', 0, revision_id.to_s, 'tokens').to_hashugar
     end
 
-    if response&.status == 400 || response&.status == 408
+    # Some revisions break the WikiWho API, possibly related to text-suppressed revisions
+    # where the content is not available but the existence revision itself remains in the history.
+    # Those will be a 500 error. For example: http://wikiwho-api.wmcloud.org/en/api/v1.0.0-beta/rev_content/rev_id/1284698874/?o_rev_id=true&editor=true&token_id=true&out=true&in=true
+    # Work around it by treating it the same way as a 400 or 408.
+    if response&.status == 400 || response&.status == 408 || response&.status == 500
       return nil
     end
 
