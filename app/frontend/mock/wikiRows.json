@@ -1,0 +1,123 @@
+[
+  {
+    "subject": "Biology",
+    "article": "DNA",
+    "avg_pv": 460,
+    "avg_pv_prev": 420,
+    "size": 79234,
+    "size_prev": 76010,
+    "lead_size": 8650,
+    "disc_size": 14300,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Biology",
+    "article": "Photosynthesis",
+    "avg_pv": 345,
+    "avg_pv_prev": 330,
+    "size": 54321,
+    "size_prev": 53100,
+    "lead_size": 7120,
+    "disc_size": 9300,
+    "improved": false,
+    "year": 2024
+  },
+  {
+    "subject": "Biology",
+    "article": "Mendelian_inheritance",
+    "avg_pv": 210,
+    "avg_pv_prev": 190,
+    "size": 40321,
+    "size_prev": 39990,
+    "lead_size": 5020,
+    "disc_size": 6000,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Biology",
+    "article": "CRISPR",
+    "avg_pv": 305,
+    "avg_pv_prev": 250,
+    "size": 67890,
+    "size_prev": 61200,
+    "lead_size": 7900,
+    "disc_size": 12000,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Biology",
+    "article": "Evolution",
+    "avg_pv": 270,
+    "avg_pv_prev": 260,
+    "size": 98765,
+    "size_prev": 98000,
+    "lead_size": 12050,
+    "disc_size": 15000,
+    "improved": false,
+    "year": 2024
+  },
+
+  {
+    "subject": "History",
+    "article": "World_War_II",
+    "avg_pv": 620,
+    "avg_pv_prev": 590,
+    "size": 115432,
+    "size_prev": 113000,
+    "lead_size": 15420,
+    "disc_size": 20340,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "History",
+    "article": "French_Revolution",
+    "avg_pv": 310,
+    "avg_pv_prev": 300,
+    "size": 75432,
+    "size_prev": 74800,
+    "lead_size": 9320,
+    "disc_size": 11110,
+    "improved": false,
+    "year": 2024
+  },
+  {
+    "subject": "History",
+    "article": "Roman_Empire",
+    "avg_pv": 285,
+    "avg_pv_prev": 250,
+    "size": 90210,
+    "size_prev": 87000,
+    "lead_size": 10040,
+    "disc_size": 14000,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "History",
+    "article": "Cold_War",
+    "avg_pv": 260,
+    "avg_pv_prev": 255,
+    "size": 64321,
+    "size_prev": 64000,
+    "lead_size": 8120,
+    "disc_size": 10400,
+    "improved": false,
+    "year": 2024
+  },
+  {
+    "subject": "History",
+    "article": "Industrial_Revolution",
+    "avg_pv": 200,
+    "avg_pv_prev": 185,
+    "size": 58210,
+    "size_prev": 56000,
+    "lead_size": 7025,
+    "disc_size": 9300,
+    "improved": true,
+    "year": 2024
+  }
+]
