@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import * as vega from "vega";
+
 interface WikiBubbleChartProps {
   data: {
     article: string;
@@ -16,7 +17,8 @@ interface WikiBubbleChartProps {
   actions?: boolean;
 }
 
-const WIDTH = 650;
+const STEP = 60;
+const MIN_WIDTH = 650;
 const HEIGHT = 650;
 
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
@@ -28,13 +30,18 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   useEffect(() => {
     if (!containerRef.current) return;
+
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-      width: WIDTH,
+      width: Math.max(MIN_WIDTH, data.length * STEP + 120),
       height: HEIGHT,
+      padding: { left: 25, top: 25, right: 60, bottom: 60 },
       background: "#ffffff",
-      padding: 5,
       data: { name: "table" },
+      config: {
+        legend: { disable: true },
+      },
+
       layer: [
         {
           mark: {
@@ -49,25 +56,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             y2: { field: "avg_pv", type: "quantitative" },
           },
         },
-        {
-          mark: { type: "circle", opacity: 0.15 },
-          encoding: {
-            x: { field: "article", type: "nominal" },
-            y: { field: "avg_pv_prev", type: "quantitative" },
-            size: {
-              field: "size_prev",
-              type: "quantitative",
-              scale: { type: "sqrt", range: [20, 2000] },
-            },
-            color: { value: "#6ec6ff" },
-          },
-        },
+
         {
           mark: {
             type: "circle",
             fill: null,
             strokeDash: [4, 4],
-            strokeWidth: 2,
+            strokeWidth: 1.5,
+            stroke: "#2196f3",
           },
           encoding: {
             x: { field: "article", type: "nominal" },
@@ -75,35 +71,37 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             size: {
               field: "disc_size",
               type: "quantitative",
-              scale: { type: "sqrt", range: [20, 2000] },
+              scale: { type: "sqrt", range: [50, 1500] },
             },
-            stroke: { value: "#2196f3" },
           },
         },
         {
-          mark: { type: "circle", opacity: 0.85 },
+          mark: { type: "circle", opacity: 0.8, fill: "#64b5f6" },
           encoding: {
             x: { field: "article", type: "nominal" },
             y: { field: "avg_pv", type: "quantitative" },
             size: {
               field: "lead_size",
               type: "quantitative",
-              scale: { type: "sqrt", range: [10, 1000] },
+              scale: { type: "sqrt", range: [30, 800] },
             },
-            color: { value: "#42a5f5" },
           },
         },
         {
-          mark: { type: "circle", stroke: "white", strokeWidth: 1 },
+          mark: {
+            type: "circle",
+            fill: "#1976d2",
+            stroke: "white",
+            strokeWidth: 1,
+          },
           encoding: {
             x: { field: "article", type: "nominal" },
             y: { field: "avg_pv", type: "quantitative" },
             size: {
               field: "size",
               type: "quantitative",
-              scale: { type: "sqrt", range: [20, 2000] },
+              scale: { type: "sqrt", range: [20, 600] },
             },
-            color: { value: "#2196f3" },
             tooltip: [
               { field: "article", title: "Article" },
               { field: "avg_pv", title: "Avg visits" },
@@ -115,24 +113,32 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           },
         },
         {
-          transform: [{ filter: "datum.improved" }],
+          transform: [
+            { filter: "datum.improved" },
+            {
+              calculate: "datum.avg_pv + sqrt(datum.size) * 0.2 + 5",
+              as: "triangle_y",
+            },
+          ],
           mark: {
             type: "point",
             shape: "triangle-up",
-            size: 80,
-            color: "#000000",
+            size: 5,
+            fill: "#000",
+            stroke: "#000",
           },
           encoding: {
             x: { field: "article", type: "nominal" },
-            y: { field: "avg_pv", type: "quantitative" },
+            y: { field: "triangle_y", type: "quantitative" },
           },
         },
       ],
+
       encoding: {
         x: {
           field: "article",
           type: "nominal",
-          axis: { labelAngle: 270, title: null, tickSize: 0 },
+          axis: { labelAngle: -40, title: null, tickSize: 0 },
         },
         y: {
           field: "avg_pv",
@@ -140,6 +146,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           axis: { title: "avg daily visits" },
         },
       },
+
       resolve: { scale: { size: "independent" } },
     };
 
@@ -170,7 +177,16 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     };
   }, [data, actions]);
 
-  return <div ref={containerRef} />;
+  return (
+    <div
+      style={{
+        overflowX: "auto",
+        overflowY: "hidden",
+        maxWidth: "100%",
+      }}
+      ref={containerRef}
+    />
+  );
 };
 
 export default WikiBubbleChart;

@@ -119,5 +119,239 @@
     "disc_size": 9300,
     "improved": true,
     "year": 2024
+  },
+
+  {
+    "subject": "Technology",
+    "article": "Artificial_Intelligence",
+    "avg_pv": 1150,
+    "avg_pv_prev": 950,
+    "size": 145670,
+    "size_prev": 98500,
+    "lead_size": 18200,
+    "disc_size": 45600,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Technology",
+    "article": "Machine_Learning",
+    "avg_pv": 890,
+    "avg_pv_prev": 620,
+    "size": 120340,
+    "size_prev": 85000,
+    "lead_size": 14500,
+    "disc_size": 32100,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Technology",
+    "article": "Blockchain",
+    "avg_pv": 450,
+    "avg_pv_prev": 1200,
+    "size": 78900,
+    "size_prev": 95000,
+    "lead_size": 9100,
+    "disc_size": 18700,
+    "improved": false,
+    "year": 2024
+  },
+  {
+    "subject": "Technology",
+    "article": "Quantum_Computing",
+    "avg_pv": 380,
+    "avg_pv_prev": 290,
+    "size": 92400,
+    "size_prev": 78000,
+    "lead_size": 11200,
+    "disc_size": 25300,
+    "improved": true,
+    "year": 2024
+  },
+
+  {
+    "subject": "Physics",
+    "article": "Black_Holes",
+    "avg_pv": 750,
+    "avg_pv_prev": 680,
+    "size": 98760,
+    "size_prev": 92000,
+    "lead_size": 12800,
+    "disc_size": 28400,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Physics",
+    "article": "Quantum_Mechanics",
+    "avg_pv": 520,
+    "avg_pv_prev": 510,
+    "size": 87650,
+    "size_prev": 86500,
+    "lead_size": 10400,
+    "disc_size": 19800,
+    "improved": false,
+    "year": 2024
+  },
+  {
+    "subject": "Physics",
+    "article": "String_Theory",
+    "avg_pv": 180,
+    "avg_pv_prev": 220,
+    "size": 45600,
+    "size_prev": 48000,
+    "lead_size": 5800,
+    "disc_size": 12600,
+    "improved": false,
+    "year": 2024
+  },
+
+  {
+    "subject": "Medicine",
+    "article": "COVID-19",
+    "avg_pv": 1850,
+    "avg_pv_prev": 3200,
+    "size": 245800,
+    "size_prev": 198000,
+    "lead_size": 28900,
+    "disc_size": 78500,
+    "improved": false,
+    "year": 2024
+  },
+  {
+    "subject": "Medicine",
+    "article": "Cancer",
+    "avg_pv": 680,
+    "avg_pv_prev": 650,
+    "size": 134500,
+    "size_prev": 128000,
+    "lead_size": 16700,
+    "disc_size": 42300,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Medicine",
+    "article": "Diabetes",
+    "avg_pv": 420,
+    "avg_pv_prev": 390,
+    "size": 76800,
+    "size_prev": 73000,
+    "lead_size": 9200,
+    "disc_size": 18900,
+    "improved": true,
+    "year": 2024
+  },
+
+  {
+    "subject": "Geography",
+    "article": "Mount_Everest",
+    "avg_pv": 340,
+    "avg_pv_prev": 320,
+    "size": 62400,
+    "size_prev": 59000,
+    "lead_size": 7800,
+    "disc_size": 14200,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Geography",
+    "article": "Amazon_Rainforest",
+    "avg_pv": 290,
+    "avg_pv_prev": 310,
+    "size": 89300,
+    "size_prev": 91000,
+    "lead_size": 11200,
+    "disc_size": 22600,
+    "improved": false,
+    "year": 2024
+  },
+  {
+    "subject": "Geography",
+    "article": "Sahara_Desert",
+    "avg_pv": 155,
+    "avg_pv_prev": 170,
+    "size": 38900,
+    "size_prev": 40000,
+    "lead_size": 4200,
+    "disc_size": 8100,
+    "improved": false,
+    "year": 2024
+  },
+
+  {
+    "subject": "Arts",
+    "article": "Leonardo_da_Vinci",
+    "avg_pv": 580,
+    "avg_pv_prev": 520,
+    "size": 102800,
+    "size_prev": 96000,
+    "lead_size": 13400,
+    "disc_size": 31200,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Arts",
+    "article": "Vincent_van_Gogh",
+    "avg_pv": 470,
+    "avg_pv_prev": 450,
+    "size": 84600,
+    "size_prev": 82000,
+    "lead_size": 10800,
+    "disc_size": 24100,
+    "improved": false,
+    "year": 2024
+  },
+  {
+    "subject": "Arts",
+    "article": "Abstract_Expressionism",
+    "avg_pv": 95,
+    "avg_pv_prev": 110,
+    "size": 28400,
+    "size_prev": 30000,
+    "lead_size": 3200,
+    "disc_size": 5800,
+    "improved": false,
+    "year": 2024
+  },
+
+  {
+    "subject": "Sports",
+    "article": "FIFA_World_Cup",
+    "avg_pv": 920,
+    "avg_pv_prev": 1450,
+    "size": 156700,
+    "size_prev": 142000,
+    "lead_size": 19800,
+    "disc_size": 48900,
+    "improved": false,
+    "year": 2024
+  },
+  {
+    "subject": "Sports",
+    "article": "Olympic_Games",
+    "avg_pv": 1020,
+    "avg_pv_prev": 780,
+    "size": 178900,
+    "size_prev": 165000,
+    "lead_size": 22100,
+    "disc_size": 52300,
+    "improved": true,
+    "year": 2024
+  },
+  {
+    "subject": "Sports",
+    "article": "Tennis",
+    "avg_pv": 230,
+    "avg_pv_prev": 240,
+    "size": 67800,
+    "size_prev": 68500,
+    "lead_size": 8400,
+    "disc_size": 16200,
+    "improved": false,
+    "year": 2024
   }
 ]
