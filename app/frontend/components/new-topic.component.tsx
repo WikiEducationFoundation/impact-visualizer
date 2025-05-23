@@ -16,8 +16,8 @@ const defaultValues = {
   description: '',
   slug: '',
   editor_label: 'participant',
-  timepoint_day_interval: 30,
-  chart_time_unit: 'month'
+  timepoint_day_interval: 365,
+  chart_time_unit: 'year'
 }
 
 function NewTopic() {
