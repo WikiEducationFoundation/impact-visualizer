@@ -6,6 +6,7 @@ class ArticleStatsService
     @wiki_action_api = WikiActionApi.new(wiki)
     @visualizer_tools_api = VisualizerToolsApi.new(wiki)
     @lift_wing_api = LiftWingApi.new(wiki) if LiftWingApi.valid_wiki?(wiki)
+    @wikimedia_pageviews_api = WikimediaPageviewsApi.new(wiki)
   end
 
   def update_title_for_article(article:)
@@ -128,5 +129,24 @@ class ArticleStatsService
     return nil unless probabilities
     language = @wiki.language
     OresScoreTransformer.weighted_mean_score_from_probabilities(probabilities:, language:)
+  end
+
+  def get_average_daily_views(
+    article:,
+    year:,
+    start_month: 1,
+    start_day: 1,
+    end_month: 12,
+    end_day: 31
+  )
+    title = article.respond_to?(:title) ? article.title : article
+    @wikimedia_pageviews_api.get_average_daily_views(
+      article: title,
+      year:,
+      start_month:,
+      start_day:,
+      end_month:,
+      end_day:
+    )
   end
 end
