@@ -24,6 +24,7 @@ Rails.application.routes.draw do
       get :import_articles, on: :member
       get :generate_timepoints, on: :member
       get :incremental_topic_build, on: :member
+      get :pageviews, on: :member
       resources :topic_timepoints, only: [:index]
     end
     resources :classifications, only: [:index]

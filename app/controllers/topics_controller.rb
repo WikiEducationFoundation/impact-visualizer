@@ -64,6 +64,22 @@ class TopicsController < ApiController
     render :show
   end
 
+  def pageviews
+    wiki = Wiki.all.find { |w| w.domain == params[:project] }
+    return render json: { error: 'Wiki not found' }, status: :not_found unless wiki
+    article_stats_service = ArticleStatsService.new(wiki)
+    average_views = article_stats_service.get_average_daily_views(
+      article: params[:article],
+      year: params[:year].to_i,
+      start_month: params[:start_month]&.to_i || 1,
+      start_day: params[:start_day]&.to_i || 1,
+      end_month: params[:end_month]&.to_i || 12,
+      end_day: params[:end_day]&.to_i || 31
+    )
+
+    render json: { average_daily_views: average_views }
+  end
+
   def incremental_topic_build
     topic = current_topic_editor.topics.find(params[:id])
     topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
@@ -77,9 +93,9 @@ class TopicsController < ApiController
 
   def topic_params
     the_params = params.require(:topic).permit(:name, :description, :wiki_id, :chart_time_unit,
-                                :editor_label, :start_date, :end_date, :users_csv,
-                                :articles_csv, :slug, :timepoint_day_interval,
-                                :convert_tokens_to_words, :tokens_per_word)
+                                               :editor_label, :start_date, :end_date, :users_csv,
+                                               :articles_csv, :slug, :timepoint_day_interval,
+                                               :convert_tokens_to_words, :tokens_per_word)
 
     # Working around Axios bug on front-end that leads to a hash instead of array
     unsafe = params[:topic].to_unsafe_h
