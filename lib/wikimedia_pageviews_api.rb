@@ -13,14 +13,15 @@ class WikimediaPageviewsApi
 
   def get_average_daily_views(
     article:,
-    year:,
+    start_year: Date.current.year,
+    end_year: Date.current.year,
     start_month: 1,
     start_day: 1,
     end_month: 12,
     end_day: 31
   )
-    start_date = format_date(year, start_month, start_day)
-    end_date = format_date(year, end_month, end_day)
+    start_date = format_date(start_year, start_month, start_day)
+    end_date = format_date(end_year, end_month, end_day)
 
     project = @wiki.domain
     encoded_article = CGI.escape(article)

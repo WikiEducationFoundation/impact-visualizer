@@ -1,19 +1,22 @@
-export async function fetchAverageDailyViews(
-  topicId: number | string,
-  article: string,
-  year: number,
-  startMonth: number = 1,
-  startDay: number = 1,
-  endMonth: number = 12,
-  endDay: number = 31
-): Promise<number> {
+export async function fetchAverageDailyViews({
+  topicId,
+  startDate,
+  endDate,
+}: {
+  topicId: number | string;
+  startDate?: string;
+  endDate?: string;
+}): Promise<number> {
+  const start = startDate ? new Date(startDate) : new Date();
+  const end = endDate ? new Date(endDate) : new Date();
+
   const params = new URLSearchParams({
-    article,
-    year: year.toString(),
-    start_month: startMonth.toString(),
-    start_day: startDay.toString(),
-    end_month: endMonth.toString(),
-    end_day: endDay.toString(),
+    start_year: start.getFullYear().toString(),
+    end_year: end.getFullYear().toString(),
+    start_month: (start.getMonth() + 1).toString(),
+    start_day: start.getDate().toString(),
+    end_month: (end.getMonth() + 1).toString(),
+    end_day: end.getDate().toString(),
   });
 
   const url = `/api/topics/${topicId}/pageviews?${params}`;

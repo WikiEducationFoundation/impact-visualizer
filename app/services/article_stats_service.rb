@@ -133,7 +133,8 @@ class ArticleStatsService
 
   def get_average_daily_views(
     article:,
-    year:,
+    start_year: Date.current.year,
+    end_year: Date.current.year,
     start_month: 1,
     start_day: 1,
     end_month: 12,
@@ -142,7 +143,8 @@ class ArticleStatsService
     title = article.respond_to?(:title) ? article.title : article
     @wikimedia_pageviews_api.get_average_daily_views(
       article: title,
-      year:,
+      start_year:,
+      end_year:,
       start_month:,
       start_day:,
       end_month:,

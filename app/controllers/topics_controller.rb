@@ -65,12 +65,15 @@ class TopicsController < ApiController
   end
 
   def pageviews
-    wiki = Wiki.all.find { |w| w.domain == params[:project] }
+    topic = Topic.find(params[:id])
+    wiki = topic.wiki
+    article = topic.active_article_bag.articles.first.title
     return render json: { error: 'Wiki not found' }, status: :not_found unless wiki
     article_stats_service = ArticleStatsService.new(wiki)
     average_views = article_stats_service.get_average_daily_views(
-      article: params[:article],
-      year: params[:year].to_i,
+      article:,
+      start_year: params[:start_year]&.to_i,
+      end_year: params[:end_year]&.to_i,
       start_month: params[:start_month]&.to_i || 1,
       start_day: params[:start_day]&.to_i || 1,
       end_month: params[:end_month]&.to_i || 12,
