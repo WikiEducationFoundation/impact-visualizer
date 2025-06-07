@@ -67,20 +67,28 @@ class TopicsController < ApiController
   def pageviews
     topic = Topic.find(params[:id])
     wiki = topic.wiki
-    article = topic.active_article_bag.articles.first.title
     return render json: { error: 'Wiki not found' }, status: :not_found unless wiki
-    article_stats_service = ArticleStatsService.new(wiki)
-    average_views = article_stats_service.get_average_daily_views(
-      article:,
-      start_year: params[:start_year]&.to_i,
-      end_year: params[:end_year]&.to_i,
-      start_month: params[:start_month]&.to_i || 1,
-      start_day: params[:start_day]&.to_i || 1,
-      end_month: params[:end_month]&.to_i || 12,
-      end_day: params[:end_day]&.to_i || 31
-    )
 
-    render json: { average_daily_views: average_views }
+    article_titles = topic.active_article_bag.articles.pluck(:title)
+    return render json: { error: 'No articles found' }, status: :not_found if article_titles.empty?
+
+    article_stats_service = ArticleStatsService.new(wiki)
+    article_pageviews = {}
+
+    article_titles.each do |article_title|
+      average_views = article_stats_service.get_average_daily_views(
+        article: article_title,
+        start_year: params[:start_year]&.to_i,
+        end_year: params[:end_year]&.to_i,
+        start_month: params[:start_month]&.to_i || 1,
+        start_day: params[:start_day]&.to_i || 1,
+        end_month: params[:end_month]&.to_i || 12,
+        end_day: params[:end_day]&.to_i || 31
+      )
+      article_pageviews[article_title] = average_views.round
+    end
+
+    render json: article_pageviews
   end
 
   def incremental_topic_build
