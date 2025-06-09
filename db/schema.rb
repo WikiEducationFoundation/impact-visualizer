@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_06_09_190625) do
+ActiveRecord::Schema[7.0].define(version: 2025_06_09_192907) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -131,6 +131,15 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_09_190625) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "topic_article_analytics", force: :cascade do |t|
+    t.bigint "topic_id", null: false
+    t.bigint "article_id", null: false
+    t.integer "average_daily_views", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["topic_id", "article_id"], name: "index_topic_article_analytics_on_topic_id_and_article_id", unique: true
+  end
+
   create_table "topic_article_timepoints", force: :cascade do |t|
     t.integer "length_delta"
     t.integer "revisions_count_delta"
@@ -147,15 +156,6 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_09_190625) do
     t.index ["article_timepoint_id"], name: "index_topic_article_timepoints_on_article_timepoint_id"
     t.index ["attributed_creator_id"], name: "index_topic_article_timepoints_on_attributed_creator_id"
     t.index ["topic_timepoint_id"], name: "index_topic_article_timepoints_on_topic_timepoint_id"
-  end
-
-  create_table "topic_articles", force: :cascade do |t|
-    t.bigint "topic_id", null: false
-    t.bigint "article_id", null: false
-    t.integer "average_daily_views", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["topic_id", "article_id"], name: "index_topic_articles_on_topic_id_and_article_id", unique: true
   end
 
   create_table "topic_classifications", force: :cascade do |t|
@@ -260,6 +260,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_09_190625) do
     t.boolean "convert_tokens_to_words", default: false
     t.float "tokens_per_word", default: 3.25
     t.string "incremental_topic_build_job_id"
+    t.string "generate_article_analytics_job_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -289,11 +290,11 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_09_190625) do
   add_foreign_key "article_classifications", "classifications"
   add_foreign_key "article_timepoints", "articles"
   add_foreign_key "articles", "wikis"
+  add_foreign_key "topic_article_analytics", "articles"
+  add_foreign_key "topic_article_analytics", "topics"
   add_foreign_key "topic_article_timepoints", "article_timepoints"
   add_foreign_key "topic_article_timepoints", "topic_timepoints"
   add_foreign_key "topic_article_timepoints", "users", column: "attributed_creator_id"
-  add_foreign_key "topic_articles", "articles"
-  add_foreign_key "topic_articles", "topics"
   add_foreign_key "topic_classifications", "classifications"
   add_foreign_key "topic_classifications", "topics"
   add_foreign_key "topic_editor_topics", "topic_editors"
