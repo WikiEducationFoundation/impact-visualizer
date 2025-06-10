@@ -3,7 +3,7 @@
 class TopicsController < ApiController
   before_action :authenticate_topic_editor!, only: [:create, :update, :destroy, :import_users,
                                                     :import_articles, :generate_timepoints,
-                                                    :incremental_topic_build]
+                                                    :incremental_topic_build, :generate_article_analytics]
 
   def index
     if current_topic_editor && params[:owned]
@@ -64,6 +64,14 @@ class TopicsController < ApiController
     render :show
   end
 
+  def generate_article_analytics
+    topic = current_topic_editor.topics.find(params[:id])
+    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    topic_service.generate_article_analytics
+    @topic = topic.reload
+    render :show
+  end
+
   def pageviews
     topic = Topic.find(params[:id])
     wiki = topic.wiki
@@ -72,23 +80,15 @@ class TopicsController < ApiController
     article_titles = topic.active_article_bag.articles.pluck(:title)
     return render json: { error: 'No articles found' }, status: :not_found if article_titles.empty?
 
-    article_stats_service = ArticleStatsService.new(wiki)
-    article_pageviews = {}
-
-    article_titles.each do |article_title|
-      average_views = article_stats_service.get_average_daily_views(
-        article: article_title,
-        start_year: params[:start_year]&.to_i,
-        end_year: params[:end_year]&.to_i,
-        start_month: params[:start_month]&.to_i || 1,
-        start_day: params[:start_day]&.to_i || 1,
-        end_month: params[:end_month]&.to_i || 12,
-        end_day: params[:end_day]&.to_i || 31
-      )
-      article_pageviews[article_title] = average_views.round
+    if topic.pageviews_exist?
+      render json: topic.pageviews_data
+    else
+      render json: {
+        status: topic.generate_article_analytics_status,
+        percent_complete: topic.generate_article_analytics_percent_complete,
+        message: 'Article analytics need to be generated. Please run generate_article_analytics first.'
+      }
     end
-
-    render json: article_pageviews
   end
 
   def incremental_topic_build

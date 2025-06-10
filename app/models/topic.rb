@@ -13,6 +13,7 @@ class Topic < ApplicationRecord
   has_many :topic_users, dependent: :delete_all
   has_many :users, through: :topic_users
   has_many :topic_timepoints, dependent: :delete_all
+  has_many :topic_article_analytics, dependent: :delete_all
   has_many :topic_summaries, dependent: :delete_all
   has_many :topic_editor_topics, dependent: :delete_all
   has_many :topic_editors, through: :topic_editor_topics
@@ -130,6 +131,17 @@ class Topic < ApplicationRecord
     topic_summaries.last
   end
 
+  def pageviews_data
+    topic_article_analytics.with_pageviews
+                           .joins(:article)
+                           .pluck('articles.title', :average_daily_views)
+                           .to_h
+  end
+
+  def pageviews_exist?
+    topic_article_analytics.with_pageviews.exists?
+  end
+
   def queue_articles_import
     job_id = ImportArticlesJob.perform_async(id)
     update article_import_job_id: job_id
@@ -154,6 +166,11 @@ class Topic < ApplicationRecord
       id, stage.to_s, queue_next_stage, force_updates
     )
     update incremental_topic_build_job_id: job_id
+  end
+
+  def queue_generate_article_analytics
+    job_id = GenerateArticleAnalyticsJob.perform_async(id)
+    update generate_article_analytics_job_id: job_id
   end
 
   def incremental_topic_build_stage_message
@@ -186,6 +203,11 @@ class Topic < ApplicationRecord
     Sidekiq::Status::status(incremental_topic_build_job_id)
   end
 
+  def generate_article_analytics_status
+    return :idle unless generate_article_analytics_job_id
+    Sidekiq::Status::status(generate_article_analytics_job_id)
+  end
+
   def users_import_percent_complete
     return nil unless users_import_job_id
     Sidekiq::Status::pct_complete(users_import_job_id)
@@ -204,6 +226,11 @@ class Topic < ApplicationRecord
   def incremental_topic_build_percent_complete
     return nil unless incremental_topic_build_job_id
     Sidekiq::Status::pct_complete(incremental_topic_build_job_id)
+  end
+
+  def generate_article_analytics_percent_complete
+    return nil unless generate_article_analytics_job_id
+    Sidekiq::Status::pct_complete(generate_article_analytics_job_id)
   end
 
   def incremental_topic_build_stage

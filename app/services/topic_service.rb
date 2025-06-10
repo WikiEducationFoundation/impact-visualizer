@@ -51,6 +51,14 @@ class TopicService
     topic.queue_generate_timepoints(force_updates:)
   end
 
+  def generate_article_analytics
+    raise ImpactVisualizerErrors::TopicMissing unless topic
+    unless topic.user_count.positive? && topic.articles_count.positive?
+      raise ImpactVisualizerErrors::TopicNotReadyForArticleAnalyticsGeneration
+    end
+    topic.queue_generate_article_analytics
+  end
+
   def incremental_topic_build(force_updates: false)
     raise ImpactVisualizerErrors::TopicMissing unless topic
     unless topic.user_count.positive? && topic.articles_count.positive?

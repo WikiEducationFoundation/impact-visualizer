@@ -11,6 +11,7 @@ class Article < ApplicationRecord
   has_many :article_timepoints
   has_many :article_classifications
   has_many :classifications, through: :article_classifications
+  has_many :topic_article_analytics
 
   ## Scopes
   scope :missing, lambda {

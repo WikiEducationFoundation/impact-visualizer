@@ -14,5 +14,6 @@ class ImpactVisualizerErrors
   class TopicMissing < StandardError; end
   class TopicEditorNotAuthorizedForTopic < StandardError; end
   class TopicNotReadyForTimepointGeneration < StandardError; end
+  class TopicNotReadyForArticleAnalyticsGeneration < StandardError; end
   class LiftWingError < StandardError; end
 end
