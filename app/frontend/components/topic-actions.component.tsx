@@ -1,34 +1,42 @@
 // NPM
-import _ from 'lodash';
-import React, { useState } from 'react';
+import _ from "lodash";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import cn from 'classnames';
+import cn from "classnames";
 
 // Types
 
 // Components
-import TopicAction from './topic-action.component';
+import TopicAction from "./topic-action.component";
 
 // Utils
 
 function renderActions({ topic, setCanEditTopic }) {
-  const output:React.JSX.Element[] = [];
-  const actions:String[] = [];
+  const output: React.JSX.Element[] = [];
+  const actions: String[] = [];
   let proceed = true;
 
-  if (topic.user_count > 0 && topic.articles_count > 0 &&
-      (!topic.users_import_status || topic.users_import_status === 'idle' || topic.users_import_status === 'complete') &&
-      (!topic.articles_import_status || topic.articles_import_status === 'idle' || topic.articles_import_status === 'complete')) {
+  if (
+    topic.user_count > 0 &&
+    topic.articles_count > 0 &&
+    (!topic.users_import_status ||
+      topic.users_import_status === "idle" ||
+      topic.users_import_status === "complete") &&
+    (!topic.articles_import_status ||
+      topic.articles_import_status === "idle" ||
+      topic.articles_import_status === "complete")
+  ) {
     // actions.push('timepoints');
-    actions.push('incremental_topic_build');
+    actions.push("incremental_topic_build");
     proceed = true;
   }
 
-  actions.push('users');
+  actions.push("users");
   if (!topic.users_csv_filename) proceed = false;
 
   if (proceed) {
-    actions.push('articles');
+    actions.push("articles");
+    actions.push("article_analytics");
   }
 
   actions.forEach((action) => {
@@ -39,8 +47,8 @@ function renderActions({ topic, setCanEditTopic }) {
         key={action as React.Key}
         actionKey={action}
       />
-    )
-  })
+    );
+  });
 
   return output;
 }
@@ -57,22 +65,21 @@ function TopicActions({ topic }) {
       </div>
 
       <div className="TopicActions-finePrint">
-        Actions execute the background, you <strong>may</strong> navigate
-        away from the page after initiating.
+        Actions execute the background, you <strong>may</strong> navigate away
+        from the page after initiating.
       </div>
 
       <Link
         to={`/my-topics/edit/${topic.id}`}
         className={cn({
-          "Button": true,
-          "Button--disabled": !canEditTopic
+          Button: true,
+          "Button--disabled": !canEditTopic,
         })}
       >
         Edit Topic
       </Link>
-
     </div>
-  )
+  );
 }
 
 export default TopicActions;

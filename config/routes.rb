@@ -23,6 +23,7 @@ Rails.application.routes.draw do
       get :import_users, on: :member
       get :import_articles, on: :member
       get :generate_timepoints, on: :member
+      get :generate_article_analytics, on: :member
       get :incremental_topic_build, on: :member
       get :pageviews, on: :member
       resources :topic_timepoints, only: [:index]

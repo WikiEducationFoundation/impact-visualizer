@@ -28,6 +28,7 @@ if owned
   json.extract! topic, :timepoint_generate_percent_complete,
                 :articles_import_percent_complete, :users_import_percent_complete,
                 :articles_import_status, :timepoint_generate_status,
+                :generate_article_analytics_status, :generate_article_analytics_percent_complete,
                 :incremental_topic_build_percent_complete,
                 :incremental_topic_build_status,
                 :incremental_topic_build_stage_message,
