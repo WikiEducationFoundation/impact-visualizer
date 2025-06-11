@@ -18,6 +18,8 @@ import TopicService from "../services/topic.service";
 import TopicUtils from "../utils/topic-utils";
 import ChartUtils from "../utils/chart-utils";
 import { fetchAverageDailyViews } from "../utils/bubble-chart-utils";
+import WikiBubbleChart from "./wiki-bubble-chart.component";
+import wikiRows from "../mock/wikiRows.json";
 
 function renderLoading() {
   return (
@@ -138,6 +140,17 @@ function renderStatBlocks({
           },
         ]}
       />
+      <StatBlock
+        active={activeStat === "bubble"}
+        onSelect={() => handleStatSelect("bubble")}
+        stats={[
+          {
+            label: "Articles in Chart",
+            value: topic.articles_count,
+            primary: true,
+          },
+        ]}
+      />
 
       {!_.isEmpty(topic.wp10_prediction_categories) && (
         <QualityStatBlock
@@ -208,25 +221,32 @@ function TopicDetail() {
                 editorLabel,
                 activeStat,
               })}
-
-              <StatDetail
-                stat={activeStat}
-                topic={topic}
-                topicTimepoints={topicTimepoints}
-                fields={ChartUtils.fieldsForStat(activeStat)}
-                type="delta"
-              />
-
-              <br />
-
-              {activeStat !== "wp10" && (
-                <StatDetail
-                  stat={activeStat}
-                  topic={topic}
-                  topicTimepoints={topicTimepoints}
-                  fields={ChartUtils.fieldsForStat(activeStat)}
-                  type="cumulative"
-                />
+              {activeStat === "bubble" && (
+                <div className="u-mt2">
+                  <WikiBubbleChart data={wikiRows} actions />
+                </div>
+              )}
+              {activeStat !== "bubble" && (
+                <>
+                  {" "}
+                  <StatDetail
+                    stat={activeStat}
+                    topic={topic}
+                    topicTimepoints={topicTimepoints}
+                    fields={ChartUtils.fieldsForStat(activeStat)}
+                    type="delta"
+                  />
+                  <br />
+                  {activeStat !== "wp10" && (
+                    <StatDetail
+                      stat={activeStat}
+                      topic={topic}
+                      topicTimepoints={topicTimepoints}
+                      fields={ChartUtils.fieldsForStat(activeStat)}
+                      type="cumulative"
+                    />
+                  )}
+                </>
               )}
             </>
           )}
