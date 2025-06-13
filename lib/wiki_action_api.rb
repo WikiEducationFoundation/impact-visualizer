@@ -204,6 +204,24 @@ class WikiActionApi
     response.data.dig('entities') if response&.status == 200
   end
 
+  def get_lead_section_wikitext(pageid: nil, title: nil, revision_id: nil)
+    query_parameters = {
+      prop: 'revisions',
+      rvprop: ['content'],
+      formatversion: '2',
+      rvsection: 0
+    }
+
+    query_parameters[:pageids] = [pageid] if pageid
+    query_parameters[:titles] = [title] if title && !pageid
+    query_parameters[:rvstartid] = revision_id if revision_id
+    query_parameters[:rvendid] = revision_id if revision_id
+
+    response = query(query_parameters:)
+
+    response.data.dig('pages', 0, 'revisions', 0, 'content') if response&.status == 200
+  end
+
   private
 
   def api_client

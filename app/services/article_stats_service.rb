@@ -182,4 +182,22 @@ class ArticleStatsService
     Rails.logger.error("[ArticleStatsService] Error fetching talk page size for #{talk_title}: #{e.message}")
     nil
   end
+
+  def get_lead_section_size_at_date(article:, date: Date.current)
+    update_details_for_article(article:)
+
+    pageid = article.pageid
+    return nil unless pageid
+
+    revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp: date)
+    return nil unless revision
+
+    wikitext = @wiki_action_api.get_lead_section_wikitext(pageid:, revision_id: revision['revid'])
+    return nil unless wikitext
+
+    wikitext.bytesize
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching lead section size for #{article.id || article}: #{e.message}")
+    nil
+  end
 end
