@@ -55,7 +55,7 @@ class TopicService {
 
   getArticleAnalytics(id: number | string) {
     return http
-      .get(`/topics/${id}/pageviews`)
+      .get(`/topics/${id}/topic_article_analytics`)
       .then((response: AxiosResponse) => {
         return _.get(response, "data");
       });

@@ -131,7 +131,7 @@ class Topic < ApplicationRecord
     topic_summaries.last
   end
 
-  def pageviews_data
+  def article_analytics_data
     topic_article_analytics
       .joins(:article)
       .pluck('articles.title', :average_daily_views, :article_size)
@@ -141,8 +141,8 @@ class Topic < ApplicationRecord
       .to_h
   end
 
-  def pageviews_exist?
-    topic_article_analytics.with_pageviews.exists?
+  def article_analytics_exist?
+    topic_article_analytics.with_pageviews.exists? && topic_article_analytics.with_size.exists?
   end
 
   def queue_articles_import

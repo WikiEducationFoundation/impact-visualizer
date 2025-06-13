@@ -22,7 +22,7 @@ end
 # end
 
 json.has_stats topic.most_recent_summary.present?
-json.has_analytics topic.pageviews_exist?
+json.has_analytics topic.article_analytics_exist?
 json.owned owned
 
 if owned

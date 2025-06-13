@@ -72,7 +72,7 @@ class TopicsController < ApiController
     render :show
   end
 
-  def pageviews
+  def topic_article_analytics
     topic = Topic.find(params[:id])
     wiki = topic.wiki
     return render json: { error: 'Wiki not found' }, status: :not_found unless wiki
@@ -80,8 +80,8 @@ class TopicsController < ApiController
     article_titles = topic.active_article_bag.articles.pluck(:title)
     return render json: { error: 'No articles found' }, status: :not_found if article_titles.empty?
 
-    if topic.pageviews_exist?
-      render json: topic.pageviews_data
+    if topic.article_analytics_exist?
+      render json: topic.article_analytics_data
     else
       render json: {
         status: topic.generate_article_analytics_status,

@@ -19,7 +19,7 @@ export async function fetchAverageDailyViews({
     end_day: end.getDate().toString(),
   });
 
-  const url = `/api/topics/${topicId}/pageviews?${params}`;
+  const url = `/api/topics/${topicId}/topic_article_analytics?${params}`;
 
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch pageviews: ${res.statusText}`);

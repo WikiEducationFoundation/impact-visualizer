@@ -25,7 +25,7 @@ Rails.application.routes.draw do
       get :generate_timepoints, on: :member
       get :generate_article_analytics, on: :member
       get :incremental_topic_build, on: :member
-      get :pageviews, on: :member
+      get :topic_article_analytics, on: :member
       resources :topic_timepoints, only: [:index]
     end
     resources :classifications, only: [:index]
