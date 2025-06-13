@@ -45,10 +45,13 @@ class GenerateArticleAnalyticsJob
       topic_article_analytic.update!(
         average_daily_views: average_views.round,
         article_size: fetch_article_size(article_stats_service:, article:, date: end_date),
-        prev_article_size: fetch_article_size(article_stats_service:, article:, date: prev_end_date)
+        prev_article_size: fetch_article_size(article_stats_service:, article:,
+                                              date: prev_end_date),
+        talk_size: fetch_talk_size(article_stats_service:, article:, date: end_date),
+        prev_talk_size: fetch_talk_size(article_stats_service:, article:, date: prev_end_date)
       )
 
-      Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}")
+      Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}")
 
       at(index + 1, "Processed #{article.title}")
     end
@@ -67,6 +70,14 @@ class GenerateArticleAnalyticsJob
     article_stats_service.get_article_size_at_date(article:, date:)
   rescue StandardError => e
     Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching size for #{article.title}: #{e.message}")
+    nil
+  end
+
+  def fetch_talk_size(article_stats_service:, article:, date:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching talk size for #{article.title} at #{date}")
+    article_stats_service.get_talk_page_size_at_date(article:, date:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching talk size for #{article.title}: #{e.message}")
     nil
   end
 end

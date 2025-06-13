@@ -165,4 +165,21 @@ class ArticleStatsService
     puts "Error fetching article size for #{article.id || article}: #{e.message}"
     nil
   end
+
+  def get_talk_page_size_at_date(article:, date: Date.current)
+    title = article.respond_to?(:title) ? article.title : article
+    talk_title = "Talk:#{title}"
+
+    page_info = @wiki_action_api.get_page_info(title: talk_title)
+    return nil unless page_info && !page_info['missing']
+
+    pageid = page_info['pageid']
+    revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp: date)
+    Rails.logger.info("[ArticleStatsService] Final talk page size: #{revision['size']}")
+
+    revision ? revision['size'] : nil
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching talk page size for #{talk_title}: #{e.message}")
+    nil
+  end
 end
