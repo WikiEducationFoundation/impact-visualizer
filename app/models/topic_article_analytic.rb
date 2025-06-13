@@ -6,6 +6,7 @@ class TopicArticleAnalytic < ApplicationRecord
 
   validates :average_daily_views, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validates :article_size, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+  validates :prev_article_size, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
   validates :topic_id, uniqueness: { scope: :article_id }
 
   scope :with_pageviews, -> { where.not(average_daily_views: 0) }
@@ -19,6 +20,7 @@ end
 #  id                  :bigint           not null, primary key
 #  article_size        :integer
 #  average_daily_views :integer          default(0)
+#  prev_article_size   :integer
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  article_id          :bigint           not null

@@ -134,9 +134,9 @@ class Topic < ApplicationRecord
   def article_analytics_data
     topic_article_analytics
       .joins(:article)
-      .pluck('articles.title', :average_daily_views, :article_size)
-      .map do |title, average_daily_views, article_size|
-        [title, { average_daily_views:, article_size: }]
+      .pluck('articles.title', :average_daily_views, :article_size, :prev_article_size)
+      .map do |title, average_daily_views, article_size, prev_article_size|
+        [title, { average_daily_views:, article_size:, prev_article_size: }]
       end
       .to_h
   end
