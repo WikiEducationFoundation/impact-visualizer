@@ -27,6 +27,7 @@ export default interface Topic {
   token_count: number;
   token_count_delta: number;
   has_stats: boolean;
+  has_analytics: boolean;
   owned: boolean;
   users_csv_url: string;
   users_csv_filename: string;

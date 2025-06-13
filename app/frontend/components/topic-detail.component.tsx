@@ -17,7 +17,6 @@ import TopicActions from "./topic-actions.component";
 import TopicService from "../services/topic.service";
 import TopicUtils from "../utils/topic-utils";
 import ChartUtils from "../utils/chart-utils";
-import { fetchAverageDailyViews } from "../utils/bubble-chart-utils";
 import WikiBubbleChart from "./wiki-bubble-chart.component";
 import wikiRows from "../mock/wikiRows.json";
 
@@ -183,6 +182,11 @@ function TopicDetail() {
     queryFn: ({ queryKey }) => TopicService.getTopicTimepoints(queryKey[1]),
   });
 
+  const { data: articleAnalytics } = useQuery({
+    queryKey: ["articleAnalytics", id],
+    queryFn: ({ queryKey }) => TopicService.getArticleAnalytics(queryKey[1]),
+  });
+
   if (status === "pending" || !topic) {
     return renderLoading();
   }
@@ -195,12 +199,8 @@ function TopicDetail() {
   function handleStatSelect(key: string) {
     navigate(`#${key}`, { preventScrollReset: true });
   }
-  const averageDailyViews = fetchAverageDailyViews({
-    topicId: topic.id,
-    startDate: topic.start_date,
-    endDate: topic.end_date,
-  });
-  console.log(averageDailyViews);
+  const hasTimepointStats = topic.has_stats && topicTimepoints;
+  const hasArticleAnalytics = topic.has_analytics;
   return (
     <section className="Section">
       <div className="Container Container--padded">
@@ -213,7 +213,7 @@ function TopicDetail() {
 
           {renderIntro({ topic, editorLabel })}
 
-          {topic.has_stats && topicTimepoints && (
+          {hasTimepointStats && (
             <>
               {renderStatBlocks({
                 topic,
@@ -228,7 +228,6 @@ function TopicDetail() {
               )}
               {activeStat !== "bubble" && (
                 <>
-                  {" "}
                   <StatDetail
                     stat={activeStat}
                     topic={topic}
@@ -251,7 +250,14 @@ function TopicDetail() {
             </>
           )}
 
-          {!topic.has_stats && (
+          {!hasTimepointStats && hasArticleAnalytics && (
+            <div className="u-mt2">
+              <h3>Article Analytics</h3>
+              <WikiBubbleChart data={wikiRows} actions />
+            </div>
+          )}
+
+          {!hasTimepointStats && !hasArticleAnalytics && (
             <div className="TopicDetail-noStats">
               This Topic has not yet been analyzed
             </div>

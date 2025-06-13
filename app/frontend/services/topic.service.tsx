@@ -53,6 +53,14 @@ class TopicService {
       });
   }
 
+  getArticleAnalytics(id: number | string) {
+    return http
+      .get(`/topics/${id}/pageviews`)
+      .then((response: AxiosResponse) => {
+        return _.get(response, "data");
+      });
+  }
+
   createTopic(params: FieldValues) {
     return http
       .post<Topic>(
