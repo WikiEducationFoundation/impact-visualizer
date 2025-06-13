@@ -132,10 +132,13 @@ class Topic < ApplicationRecord
   end
 
   def pageviews_data
-    topic_article_analytics.with_pageviews
-                           .joins(:article)
-                           .pluck('articles.title', :average_daily_views)
-                           .to_h
+    topic_article_analytics
+      .joins(:article)
+      .pluck('articles.title', :average_daily_views, :article_size)
+      .map do |title, average_daily_views, article_size|
+        [title, { average_daily_views:, article_size: }]
+      end
+      .to_h
   end
 
   def pageviews_exist?

@@ -151,4 +151,18 @@ class ArticleStatsService
       end_day:
     )
   end
+
+  def get_article_size_at_date(article:, date: Date.current)
+    update_details_for_article(article:)
+
+    pageid = article.pageid
+    return nil unless pageid
+
+    revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp: date)
+
+    revision ? revision['size'] : nil
+  rescue StandardError => e
+    puts "Error fetching article size for #{article.id || article}: #{e.message}"
+    nil
+  end
 end

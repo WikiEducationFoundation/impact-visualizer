@@ -137,6 +137,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_06_09_192907) do
     t.integer "average_daily_views", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "article_size"
     t.index ["topic_id", "article_id"], name: "index_topic_article_analytics_on_topic_id_and_article_id", unique: true
   end
 

@@ -39,7 +39,8 @@ class GenerateArticleAnalyticsJob
       )
 
       topic_article_analytic.update!(
-        average_daily_views: average_views.round
+        average_daily_views: average_views.round,
+        article_size: fetch_article_size(article_stats_service:, article:, date: end_date)
       )
 
       at(index + 1, "Processed #{article.title}")
@@ -50,5 +51,14 @@ class GenerateArticleAnalyticsJob
 
   def expiration
     @expiration = 60 * 60 * 24 * 7
+  end
+
+  private
+
+  def fetch_article_size(article_stats_service:, article:, date:)
+    article_stats_service.get_article_size_at_date(article:, date:)
+  rescue StandardError => e
+    puts "Error fetching size for #{article.title}: #{e.message}"
+    nil
   end
 end
