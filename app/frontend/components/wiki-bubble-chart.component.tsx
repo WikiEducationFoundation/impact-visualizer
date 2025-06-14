@@ -1,19 +1,21 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
-import * as vega from "vega";
+
+type ArticleMetrics = {
+  average_daily_views: number;
+  article_size: number;
+  prev_article_size: number | null;
+  talk_size: number;
+  prev_talk_size: number | null;
+  lead_section_size: number;
+};
 
 interface WikiBubbleChartProps {
-  data: {
-    article: string;
-    subject: string;
-    avg_pv: number;
-    avg_pv_prev: number;
-    size: number;
-    size_prev: number;
-    lead_size: number;
-    disc_size: number;
-    improved: boolean;
-  }[];
+  /**
+   * The API can return either an array of metric rows or an object keyed by
+   * article title. We support both shapes here.
+   */
+  data?: ArticleMetrics[] | Record<string, ArticleMetrics>;
   actions?: boolean;
 }
 
@@ -22,22 +24,35 @@ const MIN_WIDTH = 650;
 const HEIGHT = 650;
 
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
-  data,
+  data = [],
   actions = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
+  const rows = useMemo(() => {
+    if (Array.isArray(data))
+      return data as (ArticleMetrics & { article: string })[];
+    if (data && typeof data === "object") {
+      return Object.entries(data).map(([article, metrics]) => ({
+        article,
+        ...metrics,
+      }));
+    }
+    return [];
+  }, [data]);
+
+  console.log("rows:", rows);
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-      width: Math.max(MIN_WIDTH, data.length * STEP + 120),
+      width: Math.max(MIN_WIDTH, rows.length * STEP + 120),
       height: HEIGHT,
       padding: { left: 25, top: 25, right: 60, bottom: 60 },
       background: "#ffffff",
-      data: { name: "table" },
+      data: { values: rows },
       config: {
         legend: { disable: true },
       },
@@ -52,8 +67,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           },
           encoding: {
             x: { field: "article", type: "nominal", axis: null },
-            y: { field: "avg_pv_prev", type: "quantitative" },
-            y2: { field: "avg_pv", type: "quantitative" },
+            y: { field: "average_daily_views", type: "quantitative" },
           },
         },
 
@@ -67,9 +81,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           },
           encoding: {
             x: { field: "article", type: "nominal" },
-            y: { field: "avg_pv", type: "quantitative" },
+            y: { field: "average_daily_views", type: "quantitative" },
             size: {
-              field: "disc_size",
+              field: "talk_size",
               type: "quantitative",
               scale: { type: "sqrt", range: [50, 1500] },
             },
@@ -79,9 +93,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           mark: { type: "circle", opacity: 0.8, fill: "#64b5f6" },
           encoding: {
             x: { field: "article", type: "nominal" },
-            y: { field: "avg_pv", type: "quantitative" },
+            y: { field: "average_daily_views", type: "quantitative" },
             size: {
-              field: "lead_size",
+              field: "lead_section_size",
               type: "quantitative",
               scale: { type: "sqrt", range: [30, 800] },
             },
@@ -96,19 +110,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           },
           encoding: {
             x: { field: "article", type: "nominal" },
-            y: { field: "avg_pv", type: "quantitative" },
+            y: { field: "average_daily_views", type: "quantitative" },
             size: {
-              field: "size",
+              field: "article_size",
               type: "quantitative",
               scale: { type: "sqrt", range: [20, 600] },
             },
             tooltip: [
               { field: "article", title: "Article" },
-              { field: "avg_pv", title: "Avg visits" },
-              { field: "avg_pv_prev", title: "Prev year" },
-              { field: "size", title: "Size (bytes)" },
-              { field: "lead_size", title: "Lead (bytes)" },
-              { field: "disc_size", title: "Talk (bytes)" },
+              { field: "average_daily_views", title: "Avg visits" },
+              { field: "prev_article_size", title: "Prev year" },
+              { field: "article_size", title: "Size (bytes)" },
+              { field: "lead_section_size", title: "Lead (bytes)" },
+              { field: "talk_size", title: "Talk (bytes)" },
             ],
           },
         },
@@ -141,7 +155,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           axis: { labelAngle: -40, title: null, tickSize: 0 },
         },
         y: {
-          field: "avg_pv",
+          field: "average_daily_views",
           type: "quantitative",
           axis: { title: "avg daily visits" },
         },
@@ -159,15 +173,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     vegaEmbed(containerRef.current, spec, options)
       .then((result) => {
         viewRef.current = result;
-        result.view
-          .change(
-            "table",
-            vega
-              .changeset()
-              .remove(() => true)
-              .insert(data)
-          )
-          .runAsync();
       })
       .catch(console.error);
 
@@ -175,7 +180,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       viewRef.current?.view.finalize();
       viewRef.current = null;
     };
-  }, [data, actions]);
+  }, [rows, actions]);
 
   return (
     <div
