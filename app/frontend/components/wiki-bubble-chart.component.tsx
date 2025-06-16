@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 
-type ArticleMetrics = {
+type ArticleAnalytics = {
   average_daily_views: number;
   article_size: number;
   prev_article_size: number | null;
@@ -11,11 +11,7 @@ type ArticleMetrics = {
 };
 
 interface WikiBubbleChartProps {
-  /**
-   * The API can return either an array of metric rows or an object keyed by
-   * article title. We support both shapes here.
-   */
-  data?: ArticleMetrics[] | Record<string, ArticleMetrics>;
+  data?: Record<string, ArticleAnalytics>;
   actions?: boolean;
 }
 
@@ -24,24 +20,20 @@ const MIN_WIDTH = 650;
 const HEIGHT = 650;
 
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
-  data = [],
+  data = {},
   actions = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
   const rows = useMemo(() => {
-    if (Array.isArray(data))
-      return data as (ArticleMetrics & { article: string })[];
     if (data && typeof data === "object") {
-      return Object.entries(data).map(([article, metrics]) => ({
+      return Object.entries(data).map(([article, analytics]) => ({
         article,
-        ...metrics,
+        ...analytics,
       }));
     }
     return [];
   }, [data]);
-
-  console.log("rows:", rows);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -118,11 +110,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
             tooltip: [
               { field: "article", title: "Article" },
-              { field: "average_daily_views", title: "Avg visits" },
-              { field: "prev_article_size", title: "Prev year" },
-              { field: "article_size", title: "Size (bytes)" },
-              { field: "lead_section_size", title: "Lead (bytes)" },
-              { field: "talk_size", title: "Talk (bytes)" },
+              { field: "average_daily_views", title: "Daily visits" },
+              { field: "article_size", title: "Size" },
+              { field: "prev_article_size", title: "Size (prev year)" },
+              { field: "lead_section_size", title: "Lead size" },
+              { field: "talk_size", title: "Talk size" },
+              { field: "prev_talk_size", title: "Talk size (prev year)" },
             ],
           },
         },
