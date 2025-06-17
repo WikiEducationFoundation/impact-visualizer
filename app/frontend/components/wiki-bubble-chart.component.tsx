@@ -60,17 +60,18 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           },
           encoding: {
             x: { field: "article", type: "nominal", axis: null },
-            y: { field: "average_daily_views", type: "quantitative" },
+            y: { field: "prev_average_daily_views", type: "quantitative" },
+            y2: { field: "average_daily_views", type: "quantitative" },
           },
         },
 
+        // Discussion size circle (talk_size)
         {
           mark: {
             type: "circle",
             fill: null,
-            strokeDash: [4, 4],
-            strokeWidth: 1.5,
             stroke: "#2196f3",
+            strokeWidth: 1.5,
           },
           encoding: {
             x: { field: "article", type: "nominal" },
@@ -82,8 +83,28 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           },
         },
+        // Previous article size circle (prev_article_size)
         {
-          mark: { type: "circle", opacity: 0.8, fill: "#64b5f6" },
+          mark: {
+            type: "circle",
+            fill: null,
+            strokeDash: [4, 4],
+            stroke: "#64b5f6",
+            strokeWidth: 1.5,
+          },
+          encoding: {
+            x: { field: "article", type: "nominal" },
+            y: { field: "average_daily_views", type: "quantitative" },
+            size: {
+              field: "prev_article_size",
+              type: "quantitative",
+              scale: { type: "sqrt", range: [20, 600] },
+            },
+          },
+        },
+        // Lead section size circle (lead_section_size)
+        {
+          mark: { type: "circle", opacity: 0.8, fill: "#90caf9" },
           encoding: {
             x: { field: "article", type: "nominal" },
             y: { field: "average_daily_views", type: "quantitative" },
@@ -94,10 +115,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           },
         },
+        // Article size circle (article_size)
         {
           mark: {
             type: "circle",
-            fill: "#1976d2",
+            fill: "#0d47a1",
+            opacity: 0.5,
             stroke: "white",
             strokeWidth: 1,
           },
