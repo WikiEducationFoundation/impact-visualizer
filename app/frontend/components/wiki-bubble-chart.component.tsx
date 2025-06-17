@@ -8,6 +8,7 @@ type ArticleAnalytics = {
   talk_size: number;
   prev_talk_size: number | null;
   lead_section_size: number;
+  prev_average_daily_views: number | null;
 };
 
 interface WikiBubbleChartProps {
@@ -111,6 +112,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             tooltip: [
               { field: "article", title: "Article" },
               { field: "average_daily_views", title: "Daily visits" },
+              {
+                field: "prev_average_daily_views",
+                title: "Daily visits (prev year)",
+              },
               { field: "article_size", title: "Size" },
               { field: "prev_article_size", title: "Size (prev year)" },
               { field: "lead_section_size", title: "Lead size" },

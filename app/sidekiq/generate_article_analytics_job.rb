@@ -21,6 +21,7 @@ class GenerateArticleAnalyticsJob
     end_date = topic.end_date || Date.current.end_of_year
 
     prev_end_date = end_date.prev_year
+    prev_start_date = start_date.prev_year
 
     article_stats_service = ArticleStatsService.new(wiki)
 
@@ -37,6 +38,16 @@ class GenerateArticleAnalyticsJob
         end_day: end_date.day
       )
 
+      prev_average_views = article_stats_service.get_average_daily_views(
+        article: article.title,
+        start_year: prev_start_date.year,
+        end_year: prev_end_date.year,
+        start_month: prev_start_date.month,
+        start_day: prev_start_date.day,
+        end_month: prev_end_date.month,
+        end_day: prev_end_date.day
+      )
+
       topic_article_analytic = TopicArticleAnalytic.find_or_initialize_by(
         topic:,
         article:
@@ -44,6 +55,7 @@ class GenerateArticleAnalyticsJob
 
       topic_article_analytic.update!(
         average_daily_views: average_views.round,
+        prev_average_daily_views: prev_average_views&.round,
         article_size: fetch_article_size(article_stats_service:, article:, date: end_date),
         prev_article_size: fetch_article_size(article_stats_service:, article:,
                                               date: prev_end_date),
@@ -53,7 +65,7 @@ class GenerateArticleAnalyticsJob
                                                    date: end_date)
       )
 
-      Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}, lead_section_size: #{topic_article_analytic.lead_section_size}}")
+      Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, prev_average_views: #{prev_average_views&.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}, lead_section_size: #{topic_article_analytic.lead_section_size}")
 
       at(index + 1, "Processed #{article.title}")
     end
