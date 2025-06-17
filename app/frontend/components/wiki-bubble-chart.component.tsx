@@ -204,14 +204,86 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   }, [rows, actions]);
 
   return (
-    <div
-      style={{
-        overflowX: "auto",
-        overflowY: "hidden",
-        maxWidth: "100%",
-      }}
-      ref={containerRef}
-    />
+    <div>
+      <div
+        style={{
+          overflowX: "auto",
+          overflowY: "hidden",
+          maxWidth: "100%",
+        }}
+        ref={containerRef}
+      />
+
+      {/* Legend */}
+      <div
+        style={{
+          marginTop: "8px",
+          display: "flex",
+          gap: "16px",
+          flexWrap: "wrap",
+          alignItems: "center",
+          fontSize: "0.9rem",
+        }}
+      >
+        {/* Article size */}
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <span
+            style={{
+              display: "inline-block",
+              width: "12px",
+              height: "12px",
+              borderRadius: "50%",
+              backgroundColor: "rgba(13, 71, 161, 0.5)",
+            }}
+          />
+          <span>Article size</span>
+        </div>
+
+        {/* Lead section size */}
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <span
+            style={{
+              display: "inline-block",
+              width: "12px",
+              height: "12px",
+              borderRadius: "50%",
+              backgroundColor: "#90caf9",
+            }}
+          />
+          <span>Lead section size</span>
+        </div>
+
+        {/* Discussion size */}
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <span
+            style={{
+              display: "inline-block",
+              width: "12px",
+              height: "12px",
+              borderRadius: "50%",
+              border: "2px solid #2196f3",
+              backgroundColor: "transparent",
+            }}
+          />
+          <span>Discussion size</span>
+        </div>
+
+        {/* Previous article size */}
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <span
+            style={{
+              display: "inline-block",
+              width: "12px",
+              height: "12px",
+              borderRadius: "50%",
+              border: "2px dashed #64b5f6",
+              backgroundColor: "transparent",
+            }}
+          />
+          <span>Prev. article size</span>
+        </div>
+      </div>
+    </div>
   );
 };
 
