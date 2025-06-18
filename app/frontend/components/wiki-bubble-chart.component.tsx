@@ -16,7 +16,7 @@ interface WikiBubbleChartProps {
   actions?: boolean;
 }
 
-const STEP = 60;
+const STEP = 25;
 const MIN_WIDTH = 650;
 const HEIGHT = 650;
 
@@ -49,8 +49,28 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       config: {
         legend: { disable: true },
       },
-
       layer: [
+        {
+          mark: {
+            type: "circle",
+            opacity: 0,
+          },
+          params: [
+            {
+              name: "highlight",
+              select: {
+                type: "point",
+                fields: ["article"],
+                on: "mouseover",
+                clear: "mouseout",
+              },
+            },
+          ],
+          encoding: {
+            x: { field: "article", type: "nominal" },
+            y: { field: "average_daily_views", type: "quantitative" },
+          },
+        },
         {
           mark: {
             type: "rule",
@@ -81,6 +101,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [50, 1500] },
             },
+            opacity: {
+              condition: { param: "highlight", value: 1 },
+              value: 0.2,
+            },
           },
         },
         // Previous article size circle (prev_article_size)
@@ -100,11 +124,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [20, 600] },
             },
+            opacity: {
+              condition: { param: "highlight", value: 1 },
+              value: 0.2,
+            },
           },
         },
         // Lead section size circle (lead_section_size)
         {
-          mark: { type: "circle", opacity: 0.8, fill: "#90caf9" },
+          mark: { type: "circle", fill: "#90caf9", opacity: 0.8 },
           encoding: {
             x: { field: "article", type: "nominal" },
             y: { field: "average_daily_views", type: "quantitative" },
@@ -112,6 +140,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               field: "lead_section_size",
               type: "quantitative",
               scale: { type: "sqrt", range: [30, 800] },
+            },
+            opacity: {
+              condition: { param: "highlight", value: 0.8 },
+              value: 0.2,
             },
           },
         },
@@ -131,6 +163,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               field: "article_size",
               type: "quantitative",
               scale: { type: "sqrt", range: [20, 600] },
+            },
+            opacity: {
+              condition: { param: "highlight", value: 0.5 },
+              value: 0.2,
             },
             tooltip: [
               { field: "article", title: "Article" },
