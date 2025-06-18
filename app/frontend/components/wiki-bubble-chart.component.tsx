@@ -236,7 +236,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               backgroundColor: "rgba(13, 71, 161, 0.5)",
             }}
           />
-          <span>Article size</span>
+          <span>Article size (bytes)</span>
         </div>
 
         {/* Lead section size */}
@@ -250,7 +250,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               backgroundColor: "#90caf9",
             }}
           />
-          <span>Lead section size</span>
+          <span>Lead section size (bytes)</span>
         </div>
 
         {/* Discussion size */}
@@ -265,7 +265,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               backgroundColor: "transparent",
             }}
           />
-          <span>Discussion size</span>
+          <span>Discussion size (bytes)</span>
         </div>
 
         {/* Previous article size */}
@@ -280,7 +280,20 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               backgroundColor: "transparent",
             }}
           />
-          <span>Prev. article size</span>
+          <span>Prev. article size (bytes)</span>
+        </div>
+
+        {/* Daily views change (dotted line) */}
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <span
+            style={{
+              display: "inline-block",
+              width: "16px",
+              height: "0",
+              borderTop: "2px dashed #757575",
+            }}
+          />
+          <span>Change in daily views</span>
         </div>
       </div>
     </div>
