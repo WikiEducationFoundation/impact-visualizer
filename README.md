@@ -137,7 +137,7 @@ If you would like to force existing analysis to be recomputed, you may force upd
 
 ### Setting up Sidekiq
 
-1. `bundle exec sidekiq -q import -q timepoints` (in a separate terminal window/pane)
+1. `bundle exec sidekiq -q import -q timepoints -q article_analytics` (in a separate terminal window/pane)
 2. Sidekiq web interface will be available at http://localhost:3000/admin/sidekiq/
 
 ### Run Tests
