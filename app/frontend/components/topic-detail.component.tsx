@@ -18,7 +18,6 @@ import TopicService from "../services/topic.service";
 import TopicUtils from "../utils/topic-utils";
 import ChartUtils from "../utils/chart-utils";
 import WikiBubbleChart from "./wiki-bubble-chart.component";
-import wikiRows from "../mock/wikiRows.json";
 
 function renderLoading() {
   return (
@@ -147,6 +146,10 @@ function renderStatBlocks({
             label: "Articles in Chart",
             value: topic.articles_count,
             primary: true,
+          },
+          {
+            label: "Missing Articles",
+            value: topic.missing_articles_count,
           },
         ]}
       />
