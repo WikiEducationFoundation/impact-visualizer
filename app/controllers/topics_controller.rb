@@ -3,7 +3,7 @@
 class TopicsController < ApiController
   before_action :authenticate_topic_editor!, only: [:create, :update, :destroy, :import_users,
                                                     :import_articles, :generate_timepoints,
-                                                    :incremental_topic_build]
+                                                    :incremental_topic_build, :generate_article_analytics]
 
   def index
     if current_topic_editor && params[:owned]
@@ -64,6 +64,33 @@ class TopicsController < ApiController
     render :show
   end
 
+  def generate_article_analytics
+    topic = current_topic_editor.topics.find(params[:id])
+    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    topic_service.generate_article_analytics
+    @topic = topic.reload
+    render :show
+  end
+
+  def topic_article_analytics
+    topic = Topic.find(params[:id])
+    wiki = topic.wiki
+    return render json: { error: 'Wiki not found' }, status: :not_found unless wiki
+
+    article_titles = topic.active_article_bag.articles.pluck(:title)
+    return render json: { error: 'No articles found' }, status: :not_found if article_titles.empty?
+
+    if topic.article_analytics_exist?
+      render json: topic.article_analytics_data
+    else
+      render json: {
+        status: topic.generate_article_analytics_status,
+        percent_complete: topic.generate_article_analytics_percent_complete,
+        message: 'Article analytics need to be generated. Please run generate_article_analytics first.'
+      }
+    end
+  end
+
   def incremental_topic_build
     topic = current_topic_editor.topics.find(params[:id])
     topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
@@ -77,9 +104,9 @@ class TopicsController < ApiController
 
   def topic_params
     the_params = params.require(:topic).permit(:name, :description, :wiki_id, :chart_time_unit,
-                                :editor_label, :start_date, :end_date, :users_csv,
-                                :articles_csv, :slug, :timepoint_day_interval,
-                                :convert_tokens_to_words, :tokens_per_word)
+                                               :editor_label, :start_date, :end_date, :users_csv,
+                                               :articles_csv, :slug, :timepoint_day_interval,
+                                               :convert_tokens_to_words, :tokens_per_word)
 
     # Working around Axios bug on front-end that leads to a hash instead of array
     unsafe = params[:topic].to_unsafe_h

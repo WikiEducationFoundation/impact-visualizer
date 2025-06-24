@@ -6,6 +6,7 @@ class ArticleStatsService
     @wiki_action_api = WikiActionApi.new(wiki)
     @visualizer_tools_api = VisualizerToolsApi.new(wiki)
     @lift_wing_api = LiftWingApi.new(wiki) if LiftWingApi.valid_wiki?(wiki)
+    @wikimedia_pageviews_api = WikimediaPageviewsApi.new(wiki)
   end
 
   def update_title_for_article(article:)
@@ -128,5 +129,75 @@ class ArticleStatsService
     return nil unless probabilities
     language = @wiki.language
     OresScoreTransformer.weighted_mean_score_from_probabilities(probabilities:, language:)
+  end
+
+  def get_average_daily_views(
+    article:,
+    start_year: Date.current.year,
+    end_year: Date.current.year,
+    start_month: 1,
+    start_day: 1,
+    end_month: 12,
+    end_day: 31
+  )
+    title = article.respond_to?(:title) ? article.title : article
+    @wikimedia_pageviews_api.get_average_daily_views(
+      article: title,
+      start_year:,
+      end_year:,
+      start_month:,
+      start_day:,
+      end_month:,
+      end_day:
+    )
+  end
+
+  def get_article_size_at_date(article:, date: Date.current)
+    update_details_for_article(article:)
+
+    pageid = article.pageid
+    return nil unless pageid
+
+    revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp: date)
+
+    revision ? revision['size'] : nil
+  rescue StandardError => e
+    puts "Error fetching article size for #{article.id || article}: #{e.message}"
+    nil
+  end
+
+  def get_talk_page_size_at_date(article:, date: Date.current)
+    title = article.respond_to?(:title) ? article.title : article
+    talk_title = "Talk:#{title}"
+
+    page_info = @wiki_action_api.get_page_info(title: talk_title)
+    return nil unless page_info && !page_info['missing']
+
+    pageid = page_info['pageid']
+    revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp: date)
+    Rails.logger.info("[ArticleStatsService] Final talk page size: #{revision['size']}")
+
+    revision ? revision['size'] : nil
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching talk page size for #{talk_title}: #{e.message}")
+    nil
+  end
+
+  def get_lead_section_size_at_date(article:, date: Date.current)
+    update_details_for_article(article:)
+
+    pageid = article.pageid
+    return nil unless pageid
+
+    revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp: date)
+    return nil unless revision
+
+    wikitext = @wiki_action_api.get_lead_section_wikitext(pageid:, revision_id: revision['revid'])
+    return nil unless wikitext
+
+    wikitext.bytesize
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching lead section size for #{article.id || article}: #{e.message}")
+    nil
   end
 end
