@@ -152,7 +152,7 @@ const actions = {
     label: "Timepoints",
     buttonLabel: "Generate Timepoints",
     isReady: (topic: Topic) => {
-      return topic.user_count > 0 && topic.articles_count > 0;
+      return topic.articles_count > 0;
     },
     isBusy: (topic: Topic) => {
       return topic.timepoint_generate_status !== "idle";
@@ -206,7 +206,7 @@ const actions = {
     label: "Article Analytics",
     buttonLabel: "Generate Article Analytics",
     isReady: (topic: Topic) => {
-      return topic.user_count > 0 && topic.articles_count > 0;
+      return topic.articles_count > 0;
     },
     isBusy: (topic: Topic) => {
       return topic.generate_article_analytics_status !== "idle";
