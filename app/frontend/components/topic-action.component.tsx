@@ -238,7 +238,7 @@ const actions = {
     label: "Timepoints",
     buttonLabel: "Generate Timepoints",
     isReady: (topic: Topic) => {
-      return topic.user_count > 0 && topic.articles_count > 0;
+      return topic.articles_count > 0;
     },
     isBusy: (topic: Topic) => {
       return topic.incremental_topic_build_status !== "idle";
