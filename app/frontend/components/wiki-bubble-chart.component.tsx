@@ -11,9 +11,15 @@ type ArticleAnalytics = {
   prev_average_daily_views: number | null;
 };
 
+type Wiki = {
+  language: string;
+  project: string;
+};
+
 interface WikiBubbleChartProps {
   data?: Record<string, ArticleAnalytics>;
   actions?: boolean;
+  wiki?: Wiki;
 }
 
 const STEP = 25;
@@ -23,6 +29,7 @@ const HEIGHT = 650;
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
   actions = false,
+  wiki,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
@@ -251,7 +258,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         result.view.addEventListener("click", (event, item) => {
           if (item && item.datum && item.datum.article) {
             const articleName = item.datum.article;
-            const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(
+            const language = wiki?.language || "en";
+            const project = wiki?.project || "wikipedia";
+            const wikiUrl = `https://${language}.${project}.org/wiki/${encodeURIComponent(
               articleName.replace(/ /g, "_")
             )}`;
             window.open(wikiUrl, "_blank");
@@ -264,7 +273,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       viewRef.current?.view.finalize();
       viewRef.current = null;
     };
-  }, [rows, actions]);
+  }, [rows, actions, wiki]);
 
   return (
     <div>
