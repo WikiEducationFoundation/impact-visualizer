@@ -65,6 +65,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 clear: "mouseout",
               },
             },
+            {
+              name: "clickSelection",
+              select: {
+                type: "point",
+                fields: ["article"],
+                on: "click",
+              },
+            },
           ],
           encoding: {
             x: { field: "article", type: "nominal" },
@@ -92,6 +100,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             fill: null,
             stroke: "#2196f3",
             strokeWidth: 1.5,
+            cursor: "pointer",
           },
           encoding: {
             x: { field: "article", type: "nominal" },
@@ -115,6 +124,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             strokeDash: [4, 4],
             stroke: "#64b5f6",
             strokeWidth: 1.5,
+            cursor: "pointer",
           },
           encoding: {
             x: { field: "article", type: "nominal" },
@@ -132,7 +142,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         },
         // Lead section size circle (lead_section_size)
         {
-          mark: { type: "circle", fill: "#90caf9", opacity: 0.8 },
+          mark: {
+            type: "circle",
+            fill: "#90caf9",
+            opacity: 0.8,
+            cursor: "pointer",
+          },
           encoding: {
             x: { field: "article", type: "nominal" },
             y: { field: "average_daily_views", type: "quantitative" },
@@ -155,6 +170,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             opacity: 0.5,
             stroke: "white",
             strokeWidth: 1,
+            cursor: "pointer",
           },
           encoding: {
             x: { field: "article", type: "nominal" },
@@ -197,6 +213,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             size: 5,
             fill: "#000",
             stroke: "#000",
+            cursor: "pointer",
           },
           encoding: {
             x: { field: "article", type: "nominal" },
@@ -230,6 +247,16 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     vegaEmbed(containerRef.current, spec, options)
       .then((result) => {
         viewRef.current = result;
+
+        result.view.addEventListener("click", (event, item) => {
+          if (item && item.datum && item.datum.article) {
+            const articleName = item.datum.article;
+            const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(
+              articleName.replace(/ /g, "_")
+            )}`;
+            window.open(wikiUrl, "_blank");
+          }
+        });
       })
       .catch(console.error);
 
