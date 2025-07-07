@@ -178,6 +178,18 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             stroke: "white",
             strokeWidth: 1,
             cursor: "pointer",
+            tooltip: {
+              signal: `{
+                title: datum.article,
+                "Daily visits": format(datum.average_daily_views, ','),
+                "Daily visits (prev year)": isValid(datum.prev_average_daily_views) ? format(datum.prev_average_daily_views, ',') : 'n/a',
+                "Size": format(datum.article_size, ','),
+                "Size (prev year)": isValid(datum.prev_article_size) ? format(datum.prev_article_size, ',') : 'n/a',
+                "Lead size": format(datum.lead_section_size, ','),
+                "Talk size": format(datum.talk_size, ','),
+                "Talk size (prev year)": isValid(datum.prev_talk_size) ? format(datum.prev_talk_size, ',') : 'n/a'
+              }`,
+            },
           },
           encoding: {
             x: { field: "article", type: "nominal" },
@@ -191,19 +203,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: { param: "highlight", value: 0.5 },
               value: 0.2,
             },
-            tooltip: [
-              { field: "article", title: "Article" },
-              { field: "average_daily_views", title: "Daily visits" },
-              {
-                field: "prev_average_daily_views",
-                title: "Daily visits (prev year)",
-              },
-              { field: "article_size", title: "Size" },
-              { field: "prev_article_size", title: "Size (prev year)" },
-              { field: "lead_section_size", title: "Lead size" },
-              { field: "talk_size", title: "Talk size" },
-              { field: "prev_talk_size", title: "Talk size (prev year)" },
-            ],
           },
         },
         {
