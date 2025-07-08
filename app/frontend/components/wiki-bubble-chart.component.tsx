@@ -205,27 +205,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           },
         },
-        {
-          transform: [
-            { filter: "datum.improved" },
-            {
-              calculate: "datum.avg_pv + sqrt(datum.size) * 0.2 + 5",
-              as: "triangle_y",
-            },
-          ],
-          mark: {
-            type: "point",
-            shape: "triangle-up",
-            size: 5,
-            fill: "#000",
-            stroke: "#000",
-            cursor: "pointer",
-          },
-          encoding: {
-            x: { field: "article", type: "nominal" },
-            y: { field: "triangle_y", type: "quantitative" },
-          },
-        },
       ],
 
       encoding: {
