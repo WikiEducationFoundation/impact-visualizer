@@ -53,9 +53,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       padding: { left: 25, top: 25, right: 60, bottom: 60 },
       background: "#ffffff",
       data: { values: rows },
+      transform: [{ window: [{ op: "row_number", as: "idx" }] }],
       config: {
         legend: { disable: true },
       },
+
       layer: [
         {
           mark: {
@@ -73,6 +75,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               },
             },
             {
+              name: "grid",
+              select: { type: "interval", zoom: true },
+              bind: "scales",
+            },
+            {
               name: "clickSelection",
               select: {
                 type: "point",
@@ -82,7 +89,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           ],
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
           },
         },
@@ -94,7 +101,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             opacity: 0.6,
           },
           encoding: {
-            x: { field: "article", type: "nominal", axis: null },
+            x: { field: "idx", type: "quantitative", axis: null },
             y: { field: "prev_average_daily_views", type: "quantitative" },
             y2: { field: "average_daily_views", type: "quantitative" },
           },
@@ -110,7 +117,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "talk_size",
@@ -134,7 +141,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "prev_article_size",
@@ -156,7 +163,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "lead_section_size",
@@ -192,7 +199,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           },
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "article_size",
@@ -209,9 +216,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
       encoding: {
         x: {
-          field: "article",
-          type: "nominal",
-          axis: { labelAngle: -40, title: null, tickSize: 0 },
+          field: "idx",
+          type: "quantitative",
+          axis: null,
         },
         y: {
           field: "average_daily_views",
@@ -233,7 +240,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       .then((result) => {
         viewRef.current = result;
 
-        result.view.addEventListener("click", (event, item) => {
+        result.view.addEventListener("click", (_event, item) => {
           if (item && item.datum && item.datum.article) {
             const articleName = item.datum.article;
             const language = wiki?.language || "en";
