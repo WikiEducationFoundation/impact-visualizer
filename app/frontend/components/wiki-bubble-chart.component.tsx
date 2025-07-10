@@ -44,7 +44,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   }, [data]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || rows.length === 0) return;
 
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
