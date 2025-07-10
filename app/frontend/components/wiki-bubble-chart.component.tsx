@@ -22,8 +22,6 @@ interface WikiBubbleChartProps {
   wiki?: Wiki;
 }
 
-const STEP = 25;
-const MIN_WIDTH = 650;
 const HEIGHT = 650;
 
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
@@ -46,9 +44,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   useEffect(() => {
     if (!containerRef.current || rows.length === 0) return;
 
+    const containerWidth = containerRef.current.offsetWidth;
+    const dataBasedWidth = Math.max(
+      600,
+      Math.min(1200, rows.length * 30 + 200)
+    );
+    const chartWidth =
+      containerWidth > 0
+        ? Math.min(containerWidth - 40, dataBasedWidth)
+        : dataBasedWidth;
+
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-      width: Math.max(MIN_WIDTH, rows.length * STEP + 120),
+      width: chartWidth,
       height: HEIGHT,
       padding: { left: 25, top: 25, right: 60, bottom: 60 },
       background: "#ffffff",
@@ -56,6 +64,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       transform: [{ window: [{ op: "row_number", as: "idx" }] }],
       config: {
         legend: { disable: true },
+        style: {
+          cell: { cursor: "grab" },
+        },
       },
 
       layer: [
@@ -264,9 +275,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     <div>
       <div
         style={{
-          overflowX: "auto",
           overflowY: "hidden",
-          maxWidth: "100%",
         }}
         ref={containerRef}
       />
