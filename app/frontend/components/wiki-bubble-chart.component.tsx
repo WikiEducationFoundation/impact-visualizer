@@ -68,6 +68,17 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           cell: { cursor: "grab" },
         },
       },
+      params: [
+        {
+          name: "search_input",
+          bind: {
+            input: "search",
+            placeholder: "Car model",
+            name: "Search",
+          },
+          value: "",
+        },
+      ],
 
       layer: [
         {
@@ -136,7 +147,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [50, 1500] },
             },
             opacity: {
-              condition: { param: "highlight", value: 1 },
+              condition: {
+                test: "test(regexp(search_input,'i'), datum.article)",
+                value: 1,
+              },
               value: 0.2,
             },
           },
@@ -160,7 +174,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             opacity: {
-              condition: { param: "highlight", value: 1 },
+              condition: {
+                test: "test(regexp(search_input,'i'), datum.article)",
+                value: 1,
+              },
               value: 0.2,
             },
           },
@@ -182,7 +199,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [30, 800] },
             },
             opacity: {
-              condition: { param: "highlight", value: 0.8 },
+              condition: {
+                test: "test(regexp(search_input,'i'), datum.article)",
+                value: 0.8,
+              },
               value: 0.2,
             },
           },
@@ -218,7 +238,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             opacity: {
-              condition: { param: "highlight", value: 0.5 },
+              condition: {
+                test: "test(regexp(search_input,'i'), datum.article)",
+                value: 0.5,
+              },
               value: 0.2,
             },
           },
