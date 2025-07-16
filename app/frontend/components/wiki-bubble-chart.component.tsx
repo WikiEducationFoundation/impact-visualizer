@@ -315,13 +315,23 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   return (
     <div>
       <div
-        id={searchContainerId}
         style={{
           display: "flex",
-          justifyContent: "center",
-          marginBottom: "8px",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "4px 12px",
         }}
-      />
+      >
+        <h2 className="u-mb0" style={{ margin: 0 }}>
+          Article analytics over chosen focus period
+        </h2>
+
+        <div
+          id={searchContainerId}
+          style={{ display: "flex", justifyContent: "flex-end" }}
+        />
+      </div>
 
       <div>
         <style>
