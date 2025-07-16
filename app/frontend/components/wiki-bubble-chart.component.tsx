@@ -31,6 +31,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
+  // Generating a unique random id for the search container to avoid re-rendering issues
+  const searchContainerId = useMemo(
+    () => `search-container-${Math.random().toString(36).slice(2)}`,
+    []
+  );
   const rows = useMemo(() => {
     if (data && typeof data === "object") {
       return Object.entries(data).map(([article, analytics]) => ({
@@ -75,6 +80,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             input: "search",
             placeholder: "Article name",
             name: "Search",
+            element: `#${searchContainerId}`,
           },
           value: "",
         },
@@ -309,11 +315,32 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   return (
     <div>
       <div
+        id={searchContainerId}
         style={{
-          overflowY: "hidden",
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: "8px",
         }}
-        ref={containerRef}
       />
+
+      <div>
+        <style>
+          {`
+            .vega-bindings {
+              display: flex;
+              justify-content: center;
+              margin-bottom: 8px;
+            }
+          `}
+        </style>
+
+        <div
+          style={{
+            overflowY: "hidden",
+          }}
+          ref={containerRef}
+        />
+      </div>
 
       {/* Legend */}
       <div
