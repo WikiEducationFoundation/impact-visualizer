@@ -49,21 +49,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   useEffect(() => {
     if (!containerRef.current || rows.length === 0) return;
 
-    const containerWidth = containerRef.current.offsetWidth;
-    const dataBasedWidth = Math.max(
-      600,
-      Math.min(1200, rows.length * 30 + 200)
-    );
-    const chartWidth =
-      containerWidth > 0
-        ? Math.min(containerWidth - 40, dataBasedWidth)
-        : dataBasedWidth;
-
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-      width: chartWidth,
       height: HEIGHT,
-      padding: { left: 25, top: 25, right: 60, bottom: 60 },
+      width: "container",
       background: "#ffffff",
       data: { values: rows },
       transform: [{ window: [{ op: "row_number", as: "idx" }] }],
@@ -313,19 +302,23 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   }, [rows, actions, wiki]);
 
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: "white",
+        border: "1px solid #e0e0e0",
+        padding: "12px",
+      }}
+    >
       <div
         style={{
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "4px 12px",
+          padding: "4px 40px",
         }}
       >
-        <h2 className="u-mb0" style={{ margin: 0 }}>
-          Article analytics over chosen focus period
-        </h2>
+        <h2 className="u-mb0">Article analytics over chosen focus period</h2>
 
         <div
           id={searchContainerId}
@@ -347,6 +340,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         <div
           style={{
             overflowY: "hidden",
+            width: "100%",
           }}
           ref={containerRef}
         />
