@@ -306,7 +306,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       style={{
         backgroundColor: "white",
         border: "1px solid #e0e0e0",
-        padding: "12px",
+        padding: "0 24px",
       }}
     >
       <div
@@ -315,7 +315,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "4px 40px",
         }}
       >
         <h2 className="u-mb0">Article analytics over chosen focus period</h2>
