@@ -190,8 +190,6 @@ function TopicDetail() {
     queryFn: ({ queryKey }) => TopicService.getArticleAnalytics(queryKey[1]),
   });
 
-  console.log(articleAnalytics);
-
   if (status === "pending" || !topic) {
     return renderLoading();
   }
