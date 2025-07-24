@@ -11,21 +11,31 @@ type ArticleAnalytics = {
   prev_average_daily_views: number | null;
 };
 
+type Wiki = {
+  language: string;
+  project: string;
+};
+
 interface WikiBubbleChartProps {
   data?: Record<string, ArticleAnalytics>;
   actions?: boolean;
+  wiki?: Wiki;
 }
 
-const STEP = 25;
-const MIN_WIDTH = 650;
 const HEIGHT = 650;
 
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
   actions = false,
+  wiki,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
+  // Generating a unique random id for the search container to avoid re-rendering issues
+  const searchContainerId = useMemo(
+    () => `search-container-${Math.random().toString(36).slice(2)}`,
+    []
+  );
   const rows = useMemo(() => {
     if (data && typeof data === "object") {
       return Object.entries(data).map(([article, analytics]) => ({
@@ -37,18 +47,34 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   }, [data]);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || rows.length === 0) return;
 
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-      width: Math.max(MIN_WIDTH, rows.length * STEP + 120),
       height: HEIGHT,
-      padding: { left: 25, top: 25, right: 60, bottom: 60 },
+      width: "container",
       background: "#ffffff",
       data: { values: rows },
+      transform: [{ window: [{ op: "row_number", as: "idx" }] }],
       config: {
         legend: { disable: true },
+        style: {
+          cell: { cursor: "grab" },
+        },
       },
+      params: [
+        {
+          name: "search_input",
+          bind: {
+            input: "search",
+            placeholder: "Article name",
+            name: "Search",
+            element: `#${searchContainerId}`,
+          },
+          value: "",
+        },
+      ],
+
       layer: [
         {
           mark: {
@@ -65,9 +91,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 clear: "mouseout",
               },
             },
+            {
+              name: "grid",
+              select: { type: "interval", zoom: true },
+              bind: "scales",
+            },
+            {
+              name: "clickSelection",
+              select: {
+                type: "point",
+                fields: ["article"],
+                on: "click",
+              },
+            },
           ],
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
           },
         },
@@ -79,7 +118,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             opacity: 0.6,
           },
           encoding: {
-            x: { field: "article", type: "nominal", axis: null },
+            x: { field: "idx", type: "quantitative", axis: null },
             y: { field: "prev_average_daily_views", type: "quantitative" },
             y2: { field: "average_daily_views", type: "quantitative" },
           },
@@ -92,9 +131,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             fill: null,
             stroke: "#2196f3",
             strokeWidth: 1.5,
+            cursor: "pointer",
           },
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "talk_size",
@@ -102,7 +142,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [50, 1500] },
             },
             opacity: {
-              condition: { param: "highlight", value: 1 },
+              condition: [
+                { param: "highlight", empty: false, value: 1 },
+                {
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article))",
+                  value: 1,
+                },
+              ],
               value: 0.2,
             },
           },
@@ -115,9 +161,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             strokeDash: [4, 4],
             stroke: "#64b5f6",
             strokeWidth: 1.5,
+            cursor: "pointer",
           },
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "prev_article_size",
@@ -125,16 +172,27 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             opacity: {
-              condition: { param: "highlight", value: 1 },
+              condition: [
+                { param: "highlight", empty: false, value: 1 },
+                {
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article))",
+                  value: 1,
+                },
+              ],
               value: 0.2,
             },
           },
         },
         // Lead section size circle (lead_section_size)
         {
-          mark: { type: "circle", fill: "#90caf9", opacity: 0.8 },
+          mark: {
+            type: "circle",
+            fill: "#90caf9",
+            opacity: 0.8,
+            cursor: "pointer",
+          },
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "lead_section_size",
@@ -142,7 +200,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [30, 800] },
             },
             opacity: {
-              condition: { param: "highlight", value: 0.8 },
+              condition: [
+                { param: "highlight", empty: false, value: 0.8 },
+                {
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article))",
+                  value: 0.8,
+                },
+              ],
               value: 0.2,
             },
           },
@@ -155,9 +219,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             opacity: 0.5,
             stroke: "white",
             strokeWidth: 1,
+            cursor: "pointer",
+            tooltip: {
+              signal: `{
+                title: datum.article,
+                "Daily visits": format(datum.average_daily_views, ','),
+                "Daily visits (prev year)": isValid(datum.prev_average_daily_views) ? format(datum.prev_average_daily_views, ',') : 'n/a',
+                "Size": format(datum.article_size, ','),
+                "Size (prev year)": isValid(datum.prev_article_size) ? format(datum.prev_article_size, ',') : 'n/a',
+                "Lead size": format(datum.lead_section_size, ','),
+                "Talk size": format(datum.talk_size, ','),
+                "Talk size (prev year)": isValid(datum.prev_talk_size) ? format(datum.prev_talk_size, ',') : 'n/a'
+              }`,
+            },
           },
           encoding: {
-            x: { field: "article", type: "nominal" },
+            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "article_size",
@@ -165,51 +242,24 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             opacity: {
-              condition: { param: "highlight", value: 0.5 },
+              condition: [
+                { param: "highlight", empty: false, value: 0.5 },
+                {
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article))",
+                  value: 0.5,
+                },
+              ],
               value: 0.2,
             },
-            tooltip: [
-              { field: "article", title: "Article" },
-              { field: "average_daily_views", title: "Daily visits" },
-              {
-                field: "prev_average_daily_views",
-                title: "Daily visits (prev year)",
-              },
-              { field: "article_size", title: "Size" },
-              { field: "prev_article_size", title: "Size (prev year)" },
-              { field: "lead_section_size", title: "Lead size" },
-              { field: "talk_size", title: "Talk size" },
-              { field: "prev_talk_size", title: "Talk size (prev year)" },
-            ],
-          },
-        },
-        {
-          transform: [
-            { filter: "datum.improved" },
-            {
-              calculate: "datum.avg_pv + sqrt(datum.size) * 0.2 + 5",
-              as: "triangle_y",
-            },
-          ],
-          mark: {
-            type: "point",
-            shape: "triangle-up",
-            size: 5,
-            fill: "#000",
-            stroke: "#000",
-          },
-          encoding: {
-            x: { field: "article", type: "nominal" },
-            y: { field: "triangle_y", type: "quantitative" },
           },
         },
       ],
 
       encoding: {
         x: {
-          field: "article",
-          type: "nominal",
-          axis: { labelAngle: -40, title: null, tickSize: 0 },
+          field: "idx",
+          type: "quantitative",
+          axis: null,
         },
         y: {
           field: "average_daily_views",
@@ -230,6 +280,18 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     vegaEmbed(containerRef.current, spec, options)
       .then((result) => {
         viewRef.current = result;
+
+        result.view.addEventListener("click", (_event, item) => {
+          if (item && item.datum && item.datum.article) {
+            const articleName = item.datum.article;
+            const language = wiki?.language || "en";
+            const project = wiki?.project || "wikipedia";
+            const wikiUrl = `https://${language}.${project}.org/wiki/${encodeURIComponent(
+              articleName.replace(/ /g, "_")
+            )}`;
+            window.open(wikiUrl, "_blank");
+          }
+        });
       })
       .catch(console.error);
 
@@ -237,18 +299,51 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       viewRef.current?.view.finalize();
       viewRef.current = null;
     };
-  }, [rows, actions]);
+  }, [rows, actions, wiki]);
 
   return (
-    <div>
+    <div
+      style={{
+        backgroundColor: "white",
+        border: "1px solid #e0e0e0",
+        padding: "0 24px",
+      }}
+    >
       <div
         style={{
-          overflowX: "auto",
-          overflowY: "hidden",
-          maxWidth: "100%",
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
-        ref={containerRef}
-      />
+      >
+        <h2 className="u-mb0">Article analytics over chosen focus period</h2>
+
+        <div
+          id={searchContainerId}
+          style={{ display: "flex", justifyContent: "flex-end" }}
+        />
+      </div>
+
+      <div>
+        <style>
+          {`
+            .vega-bindings {
+              display: flex;
+              justify-content: center;
+              margin-bottom: 8px;
+            }
+          `}
+        </style>
+
+        <div
+          style={{
+            overflowY: "hidden",
+            width: "100%",
+          }}
+          ref={containerRef}
+        />
+      </div>
 
       {/* Legend */}
       <div

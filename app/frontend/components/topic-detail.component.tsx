@@ -190,8 +190,6 @@ function TopicDetail() {
     queryFn: ({ queryKey }) => TopicService.getArticleAnalytics(queryKey[1]),
   });
 
-  console.log(articleAnalytics);
-
   if (status === "pending" || !topic) {
     return renderLoading();
   }
@@ -228,7 +226,11 @@ function TopicDetail() {
               })}
               {activeStat === "bubble" && (
                 <div className="u-mt2">
-                  <WikiBubbleChart data={articleAnalytics} actions />
+                  <WikiBubbleChart
+                    data={articleAnalytics}
+                    actions
+                    wiki={topic.wiki}
+                  />
                 </div>
               )}
               {activeStat !== "bubble" && (
@@ -258,7 +260,11 @@ function TopicDetail() {
           {!hasTimepointStats && hasArticleAnalytics && (
             <div className="u-mt2">
               <h3>Article Analytics</h3>
-              <WikiBubbleChart data={articleAnalytics} actions />
+              <WikiBubbleChart
+                data={articleAnalytics}
+                actions
+                wiki={topic.wiki}
+              />
             </div>
           )}
 
