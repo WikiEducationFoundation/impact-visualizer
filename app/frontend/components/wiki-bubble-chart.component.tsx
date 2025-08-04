@@ -307,6 +307,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         backgroundColor: "white",
         border: "1px solid #e0e0e0",
         padding: "0 24px",
+        width: "calc(100vw - 48px)",
+        marginLeft: "calc(-50vw + 50% + 24px)",
       }}
     >
       <div

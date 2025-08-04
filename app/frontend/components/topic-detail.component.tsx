@@ -259,7 +259,6 @@ function TopicDetail() {
 
           {!hasTimepointStats && hasArticleAnalytics && (
             <div className="u-mt2">
-              <h3>Article Analytics</h3>
               <WikiBubbleChart
                 data={articleAnalytics}
                 actions
