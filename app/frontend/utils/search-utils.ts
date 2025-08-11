@@ -307,4 +307,5 @@ export {
   extractDashboardURLInfo,
   extractDashboardUsername,
   convertTitlesToWikicode,
+  escapeCSVSpecialCharacters,
 };

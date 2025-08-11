@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import CSVButton from "./CSV-button.component";
+import { convertAnalyticsToCSV } from "../utils/bubble-chart-utils";
 
 type ArticleAnalytics = {
   average_daily_views: number;
@@ -24,41 +25,6 @@ interface WikiBubbleChartProps {
 }
 
 const HEIGHT = 650;
-
-function escapeCSV(text: string): string {
-  return `"${text.replace(/"/g, '""')}"`;
-}
-
-function convertAnalyticsToCSV(
-  rows: Array<{
-    article: string;
-    average_daily_views: number;
-    prev_average_daily_views: number | null;
-    article_size: number;
-    prev_article_size: number | null;
-    lead_section_size: number;
-    talk_size: number;
-    prev_talk_size: number | null;
-  }>
-): string {
-  let csvContent = "data:text/csv;charset=utf-8,";
-  csvContent +=
-    "Article,Average Daily Views,Average Daily Views (prev year),Article Size,Article Size (prev year),Lead Section Size,Talk Size,Talk Size (prev year)\n";
-  rows.forEach((row) => {
-    csvContent +=
-      [
-        escapeCSV(row.article),
-        row.average_daily_views,
-        row.prev_average_daily_views ?? "",
-        row.article_size,
-        row.prev_article_size ?? "",
-        row.lead_section_size,
-        row.talk_size,
-        row.prev_talk_size ?? "",
-      ].join(",") + "\n";
-  });
-  return csvContent;
-}
 
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
