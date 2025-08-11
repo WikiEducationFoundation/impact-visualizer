@@ -304,24 +304,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   }, [rows, actions, wiki]);
 
   return (
-    <div
-      style={{
-        backgroundColor: "white",
-        border: "1px solid #e0e0e0",
-        padding: "0 24px",
-        width: "calc(100vw - 48px)",
-        marginLeft: "calc(-50vw + 50% + 24px)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+    <div className="WikiBubbleChart">
+      <div className="WikiBubbleChartHeader">
+        <div className="WikiBubbleChartTitleRow">
           <h2 className="u-mb0">Article analytics over chosen focus period</h2>
           <CSVButton
             articles={rows}
@@ -332,109 +317,43 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
         <div
           id={searchContainerId}
-          style={{ display: "flex", justifyContent: "flex-end" }}
+          className="WikiBubbleChartSearchContainer"
         />
       </div>
 
       <div>
-        <style>
-          {`
-            .vega-bindings {
-              display: flex;
-              justify-content: center;
-              margin-bottom: 8px;
-            }
-          `}
-        </style>
-
-        <div
-          style={{
-            overflowY: "hidden",
-            width: "100%",
-          }}
-          ref={containerRef}
-        />
+        <div className="WikiBubbleChartChartContainer" ref={containerRef} />
       </div>
 
       {/* Legend */}
-      <div
-        style={{
-          marginTop: "8px",
-          display: "flex",
-          gap: "16px",
-          flexWrap: "wrap",
-          alignItems: "center",
-          fontSize: "0.9rem",
-        }}
-      >
+      <div className="WikiBubbleChartLegend">
         {/* Article size */}
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span
-            style={{
-              display: "inline-block",
-              width: "12px",
-              height: "12px",
-              borderRadius: "50%",
-              backgroundColor: "rgba(13, 71, 161, 0.5)",
-            }}
-          />
+        <div className="WikiBubbleChartLegendItem">
+          <span className="WikiBubbleChartLegendDotArticle" />
           <span>Article size (bytes)</span>
         </div>
 
         {/* Lead section size */}
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span
-            style={{
-              display: "inline-block",
-              width: "12px",
-              height: "12px",
-              borderRadius: "50%",
-              backgroundColor: "#90caf9",
-            }}
-          />
+        <div className="WikiBubbleChartLegendItem">
+          <span className="WikiBubbleChartLegendDotLead" />
           <span>Lead section size (bytes)</span>
         </div>
 
         {/* Discussion size */}
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span
-            style={{
-              display: "inline-block",
-              width: "12px",
-              height: "12px",
-              borderRadius: "50%",
-              border: "2px solid #2196f3",
-              backgroundColor: "transparent",
-            }}
-          />
+        <div className="WikiBubbleChartLegendItem">
+          <span className="WikiBubbleChartLegendRingDiscussion" />
           <span>Discussion size (bytes)</span>
         </div>
 
         {/* Previous article size */}
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span
-            style={{
-              display: "inline-block",
-              width: "12px",
-              height: "12px",
-              borderRadius: "50%",
-              border: "2px dashed #64b5f6",
-              backgroundColor: "transparent",
-            }}
-          />
+        <div className="WikiBubbleChartLegendItem">
+          <span className="WikiBubbleChartLegendRingPrevArticle" />
           <span>Prev. article size (bytes)</span>
         </div>
 
         {/* Daily views change (dotted line) */}
-        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span
-            style={{
-              display: "inline-block",
-              width: "16px",
-              height: "0",
-              borderTop: "2px dashed #757575",
-            }}
-          />
+        <div className="WikiBubbleChartLegendItem">
+          <span className="WikiBubbleChartLegendLineChange" />
           <span>Change in daily views</span>
         </div>
       </div>
