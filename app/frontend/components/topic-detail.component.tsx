@@ -151,6 +151,10 @@ function renderStatBlocks({
             label: "Missing Articles",
             value: topic.missing_articles_count,
           },
+          {
+            label: "Total Average Daily Visits",
+            value: topic.total_average_daily_visits || 0,
+          },
         ]}
       />
 

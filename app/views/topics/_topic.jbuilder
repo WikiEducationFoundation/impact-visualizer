@@ -4,7 +4,8 @@ owned = current_topic_editor&.can_edit_topic?(topic) || false
 
 json.extract! topic, :id, :name, :description, :end_date, :slug,
               :start_date, :timepoint_day_interval, :user_count, :editor_label,
-              :chart_time_unit, :wiki_id, :articles_count, :missing_articles_count, :users_csv_url,
+              :chart_time_unit, :wiki_id, :articles_count, :missing_articles_count,
+              :total_average_daily_visits, :users_csv_url,
               :users_csv_filename, :articles_csv_url, :articles_csv_filename,
               :timepoint_generate_job_id, :users_import_job_id, :article_import_job_id,
               :timepoints_count, :summaries_count, :tokens_per_word, :convert_tokens_to_words,

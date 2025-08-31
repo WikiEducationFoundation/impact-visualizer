@@ -127,6 +127,10 @@ class Topic < ApplicationRecord
     active_article_bag&.articles&.missing&.count || 0
   end
 
+  def total_average_daily_visits
+    topic_article_analytics.sum(:average_daily_views)
+  end
+
   def most_recent_summary
     topic_summaries.last
   end
