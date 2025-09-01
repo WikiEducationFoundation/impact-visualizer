@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useMemo } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import CSVButton from "./CSV-button.component";
-import { convertAnalyticsToCSV } from "../utils/bubble-chart-utils";
+import {
+  convertAnalyticsToCSV,
+  getAssessmentColor,
+} from "../utils/bubble-chart-utils";
 
 type ArticleAnalytics = {
   average_daily_views: number;
@@ -11,7 +14,7 @@ type ArticleAnalytics = {
   prev_talk_size: number | null;
   lead_section_size: number;
   prev_average_daily_views: number | null;
-  assessment_grade?: string | null;
+  assessment_grade: string | null;
 };
 
 type Wiki = {
@@ -44,6 +47,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       return Object.entries(data).map(([article, analytics]) => ({
         article,
         ...analytics,
+        assessment_grade_color: getAssessmentColor(analytics.assessment_grade),
       }));
     }
     return [];
@@ -225,7 +229,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
             tooltip: {
               signal: `{
-                title: datum.article,
+                title: datum.assessment_grade ? '<div style=\"display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%\"><span>' + datum.article + '</span><span style=\"background-color:' + datum.assessment_grade_color + '; padding:2px 6px; border-radius:4px; color:#000; white-space:nowrap\">' + datum.assessment_grade + '</span></div>' : datum.article,
                 "Daily visits": format(datum.average_daily_views, ','),
                 "Daily visits (prev year)": isValid(datum.prev_average_daily_views) ? format(datum.prev_average_daily_views, ',') : 'n/a',
                 "Size": format(datum.article_size, ','),
@@ -279,6 +283,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       actions,
       renderer: "canvas",
       mode: "vega-lite",
+      tooltip: {
+        sanitize: (value: string) => value,
+      } as EmbedOptions["tooltip"],
     };
 
     vegaEmbed(containerRef.current, spec, options)
