@@ -62,7 +62,8 @@ class GenerateArticleAnalyticsJob
         talk_size: fetch_talk_size(article_stats_service:, article:, date: end_date),
         prev_talk_size: fetch_talk_size(article_stats_service:, article:, date: prev_end_date),
         lead_section_size: fetch_lead_section_size(article_stats_service:, article:,
-                                                   date: end_date)
+                                                   date: end_date),
+        assessment_grade: fetch_assessment_grade(article_stats_service:, article:)
       )
 
       Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, prev_average_views: #{prev_average_views&.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}, lead_section_size: #{topic_article_analytic.lead_section_size}")
@@ -100,6 +101,14 @@ class GenerateArticleAnalyticsJob
     article_stats_service.get_lead_section_size_at_date(article:, date:)
   rescue StandardError => e
     Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching lead section size for #{article.title}: #{e.message}")
+    nil
+  end
+
+  def fetch_assessment_grade(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching assessment grade for #{article.title}")
+    article_stats_service.get_page_assessment_grade(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching assessment for #{article.title}: #{e.message}")
     nil
   end
 end

@@ -24,6 +24,7 @@ end
 #
 #  id                       :bigint           not null, primary key
 #  article_size             :integer
+#  assessment_grade         :string
 #  average_daily_views      :integer          default(0)
 #  lead_section_size        :integer
 #  prev_article_size        :integer
