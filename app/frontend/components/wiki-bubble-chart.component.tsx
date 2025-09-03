@@ -47,7 +47,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       return Object.entries(data).map(([article, analytics]) => ({
         article,
         ...analytics,
-        assessment_grade_color: getAssessmentColor(analytics.assessment_grade),
+        assessment_grade_color: getAssessmentColor(analytics?.assessment_grade),
       }));
     }
     return [];
