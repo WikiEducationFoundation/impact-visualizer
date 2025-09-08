@@ -151,6 +151,10 @@ function renderStatBlocks({
             label: "Missing Articles",
             value: topic.missing_articles_count,
           },
+          {
+            label: "Total Average Daily Visits",
+            value: topic.total_average_daily_visits || 0,
+          },
         ]}
       />
 
@@ -259,7 +263,6 @@ function TopicDetail() {
 
           {!hasTimepointStats && hasArticleAnalytics && (
             <div className="u-mt2">
-              <h3>Article Analytics</h3>
               <WikiBubbleChart
                 data={articleAnalytics}
                 actions

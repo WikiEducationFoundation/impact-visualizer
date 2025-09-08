@@ -95,7 +95,7 @@ class ArticleStatsService
         weighted_quality = weighted_revision_quality(lift_wing_response:)
         predicted_category = lift_wing_response['prediction']
       rescue StandardError => e
-        puts "LiftWing Failure for revision: #{revision['revid']}, article: #{article.id}, article_timepoint: #{article_timepoint}"
+        puts "LiftWing Failure for revision: #{revision['revid']}, article: #{article.id}, article_timepoint: #{article_timepoint} – #{e.message}"
       end
     end
 
@@ -198,6 +198,40 @@ class ArticleStatsService
     wikitext.bytesize
   rescue StandardError => e
     Rails.logger.error("[ArticleStatsService] Error fetching lead section size for #{article.id || article}: #{e.message}")
+    nil
+  end
+
+  def get_page_assessment_grade(article:)
+    title = article.respond_to?(:title) ? article.title : article
+    assessments = @wiki_action_api.get_page_assessments(title:)
+    ArticleStatsService.project_independent_assessment_class(assessments)
+  end
+
+  def self.best_assessment_class_from_pageassessments(assessments)
+    return nil unless assessments.is_a?(Hash) && assessments.any?
+    classes = assessments.values.filter_map { |a| a['class'] || a[:class] }
+    return nil if classes.empty?
+    order = %w[FA FL A GA B C Start Stub]
+    classes.min_by { |c| order.index(c) || 999 }
+  end
+
+  def self.project_independent_assessment_class(assessments)
+    return nil unless assessments.is_a?(Hash) && assessments.any?
+
+    # The empty string key is used by some wikis for project-independent assessments
+    info = assessments['']
+    cls = info && (info['class'] || info[:class])
+    return cls if cls
+    # The key for project independent assessments isn't fully consistent across wikis
+    # so these are some fallback options.
+    preferred_keys = ['Project-independent assessment', 'Project-independent', 'Independent',
+                      'General']
+    preferred_keys.each do |key|
+      info = assessments[key]
+      cls = info && (info['class'] || info[:class])
+      return cls if cls
+    end
+
     nil
   end
 end

@@ -127,6 +127,10 @@ class Topic < ApplicationRecord
     active_article_bag&.articles&.missing&.count || 0
   end
 
+  def total_average_daily_visits
+    topic_article_analytics.sum(:average_daily_views)
+  end
+
   def most_recent_summary
     topic_summaries.last
   end
@@ -134,11 +138,11 @@ class Topic < ApplicationRecord
   def article_analytics_data
     topic_article_analytics
       .joins(:article)
-      .pluck('articles.title', :average_daily_views, :prev_average_daily_views, :article_size, :prev_article_size, :talk_size, :prev_talk_size, :lead_section_size)
-      .map do |title, average_daily_views, prev_average_daily_views, article_size, prev_article_size, talk_size, prev_talk_size, lead_section_size|
+      .pluck('articles.title', :average_daily_views, :prev_average_daily_views, :article_size, :prev_article_size, :talk_size, :prev_talk_size, :lead_section_size, :assessment_grade)
+      .map do |title, average_daily_views, prev_average_daily_views, article_size, prev_article_size, talk_size, prev_talk_size, lead_section_size, assessment_grade|
         [title,
          { average_daily_views:, prev_average_daily_views:, article_size:, prev_article_size:, talk_size:, prev_talk_size:,
-           lead_section_size: }]
+           lead_section_size:, assessment_grade: }]
       end
       .to_h
   end

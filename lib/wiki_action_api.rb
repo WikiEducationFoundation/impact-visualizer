@@ -222,6 +222,24 @@ class WikiActionApi
     response.data.dig('pages', 0, 'revisions', 0, 'content') if response&.status == 200
   end
 
+  def get_page_assessments(pageid: nil, title: nil)
+    query_parameters = {
+      prop: 'pageassessments',
+      redirects: true,
+      palimit: 'max',
+      formatversion: '2'
+    }
+
+    query_parameters['pageids'] = [pageid] if pageid
+    query_parameters['titles'] = [title] if title
+
+    response = query(query_parameters:)
+
+    return nil unless response&.status == 200
+
+    response.data.dig('pages', 0, 'pageassessments')
+  end
+
   private
 
   def api_client
