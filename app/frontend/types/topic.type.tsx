@@ -39,6 +39,8 @@ export default interface Topic {
   timepoint_generate_percent_complete: number;
   generate_article_analytics_status: string;
   generate_article_analytics_percent_complete: number;
+  generate_article_analytics_articles_fetched: number;
+  generate_article_analytics_articles_total: number;
   articles_import_percent_complete: number;
   users_import_percent_complete: number;
   articles_import_status: string;
@@ -46,6 +48,7 @@ export default interface Topic {
   users_import_status: string;
   incremental_topic_build_status: string;
   incremental_topic_build_percent_complete: number;
+  generate_article_analytics_message: string;
   incremental_topic_build_stage_message: string;
   classifications: Array<Classification>;
   convert_tokens_to_words: boolean;

@@ -242,9 +242,24 @@ class Topic < ApplicationRecord
     Sidekiq::Status::pct_complete(generate_article_analytics_job_id)
   end
 
+  def generate_article_analytics_articles_fetched
+    return nil unless generate_article_analytics_job_id
+    Sidekiq::Status::at(generate_article_analytics_job_id)
+  end
+
+  def generate_article_analytics_articles_total
+    return nil unless generate_article_analytics_job_id
+    Sidekiq::Status::total(generate_article_analytics_job_id)
+  end
+
   def incremental_topic_build_stage
     return nil unless incremental_topic_build_job_id
     Sidekiq::Status::get(incremental_topic_build_job_id, :stage)
+  end
+
+  def generate_article_analytics_message
+    return '' unless generate_article_analytics_job_id
+    Sidekiq::Status::get(generate_article_analytics_job_id, :message) || ''
   end
 
   # For ActiveAdmin

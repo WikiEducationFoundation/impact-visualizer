@@ -16,6 +16,7 @@ class GenerateArticleAnalyticsJob
     return if articles.empty?
 
     total(articles.count)
+    at(0, 'Starting article analytics generation')
 
     start_date = topic.start_date || Date.current.beginning_of_year
     end_date = topic.end_date || Date.current.end_of_year
@@ -26,6 +27,7 @@ class GenerateArticleAnalyticsJob
     article_stats_service = ArticleStatsService.new(wiki)
 
     articles.each_with_index do |article, index|
+      at(index, "Fetching \"#{article.title}\"")
       Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching average daily views for #{article.title} between #{start_date} and #{end_date}")
 
       average_views = article_stats_service.get_average_daily_views(
