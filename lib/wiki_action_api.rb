@@ -243,11 +243,17 @@ class WikiActionApi
   private
 
   def api_client
-    MediawikiApi::Client.new @api_url
+    client = MediawikiApi::Client.new @api_url
+    user_agent = ENV['VISUALIZER_USER_AGENT'] || 'ImpactVisualizer/1.0 (https://impact.wikiedu.org/)'
+    client.connection.headers[:user_agent] = user_agent if client.respond_to?(:connection)
+    client
   end
 
   def wikidata_api_client
-    MediawikiApi::Client.new 'https://www.wikidata.org/w/api.php'
+    client = MediawikiApi::Client.new 'https://www.wikidata.org/w/api.php'
+    user_agent = ENV['VISUALIZER_USER_AGENT'] || 'ImpactVisualizer/1.0 (https://impact.wikiedu.org/)'
+    client.connection.headers[:user_agent] = user_agent if client.respond_to?(:connection)
+    client
   end
 
   def mediawiki(action, query, wikidata = false)

@@ -49,7 +49,7 @@ class WikimediaPageviewsApi
 
   def api_client
     Faraday.new do |conn|
-      conn.headers['User-Agent'] = 'ImpactVisualizer/1.0 (https://impact-visualizer.toolforge.org/)'
+      conn.headers['User-Agent'] = 'ImpactVisualizer/1.0 (https://impact.wikiedu.org/)'
       conn.adapter Faraday.default_adapter
       conn.options.timeout = 30
       conn.options.open_timeout = 10

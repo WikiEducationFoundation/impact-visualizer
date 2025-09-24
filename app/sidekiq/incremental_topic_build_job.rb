@@ -8,7 +8,7 @@ class IncrementalTopicBuildJob
   def perform(topic_id, stage = TimepointService::STAGES.first,
               queue_next_stage = false, force_updates = false)
     @expiration = 60 * 60 * 24 * 30
-    store stage: stage
+    store(stage:)
     job_id = @provider_job_id || @job_id || @jid
     topic = Topic.find_by(id: topic_id)
     topic.update incremental_topic_build_job_id: job_id
@@ -19,7 +19,8 @@ class IncrementalTopicBuildJob
     begin
       timepoint_service = TimepointService.new(
         topic:, force_updates:, logging_enabled: Rails.env.development?,
-        total: method(:total), at: method(:at)
+        total: method(:total), at: method(:at),
+        message: proc { |msg| store message: msg }
       )
       timepoint_service.incremental_build(stage.to_sym, queue_next_stage:)
     rescue StandardError => e

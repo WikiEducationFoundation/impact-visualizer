@@ -8,7 +8,8 @@ class TimepointService
 
   attr_accessor :topic, :logging_enabled, :force_updates
 
-  def initialize(topic:, force_updates: false, logging_enabled: false, total: nil, at: nil)
+  def initialize(topic:, force_updates: false, logging_enabled: false, total: nil, at: nil,
+                 message: nil)
     @topic = topic
     @article_stats_service = ArticleStatsService.new(@topic.wiki)
     @topic_timepoint_stats_service = TopicTimepointStatsService.new
@@ -20,6 +21,7 @@ class TimepointService
     @progress_count = 0
     @at = at
     @total = total
+    @message = message || proc { |_msg| }
 
     log('TimepointService: initialize')
   end
@@ -65,22 +67,26 @@ class TimepointService
 
     # Classify all articles
     log '#classify_all_articles'
+    notify('Classifying articles…')
     classify_all_articles
 
     # Loop through Topic's timestamps
     # Build/update most everything for each timestamp
     log '#build_timepoints_for_all_timestamps'
+    notify('Building article timepoints…')
     build_timepoints_for_all_timestamps
 
     # Handle tokens separately, because...
     # WikiWho API only needs 1 API call per article
-    #(as opposed to per timepoint AND article)
+    # (as opposed to per timepoint AND article)
     log '#update_token_stats'
+    notify('Updating token stats…')
     update_token_stats
 
     # Update TopicTimepoints with summarized stats
     # This needs to happen AFTER token stats update
     log '#build_topic_timepoints'
+    notify('Building topic timepoints…')
     build_topic_timepoints
 
     log "#build_timepoints – Started at #{start_time}. Finished at #{Time.zone.now}"
@@ -102,6 +108,7 @@ class TimepointService
       timestamp_count += 1
       # increment_progress_count
       log "#build_timepoints_for_timestamp timestamp:#{timestamp_count}/#{timestamps.count}"
+      notify("Building timepoints for timestamp #{timestamp_count}/#{timestamps.count}…")
       build_timepoints_for_timestamp(timestamp:)
     end
   end
@@ -134,6 +141,9 @@ class TimepointService
           article_count += 1
           increment_progress_count
           log "  #build_timepoints_for_article timestamp:#{timestamp} topic_timepoint_id:#{topic_timepoint.id} article_id:#{article_bag_article.article_id} article:#{article_count}/#{article_bag_articles.count}"
+          if (article_count % 200).zero?
+            notify("Built article timepoint #{article_count}/#{article_bag_articles.count} for #{timestamp}")
+          end
           build_timepoints_for_article(article_bag_article:, topic_timepoint:)
           ActiveRecord::Base.connection_pool.release_connection
         end
@@ -196,6 +206,9 @@ class TimepointService
         article_count += 1
         increment_progress_count
         log "  #update_token_stats_for_article article:#{article_count}/#{article_bag_articles.count} article_id: #{article.id}"
+        if (article_count % 50).zero?
+          notify("Updating token stats #{article_count}/#{article_bag_articles.count}…")
+        end
 
         # Update stats for all timestamps for article
         update_token_stats_for_article(article:)
@@ -291,5 +304,9 @@ class TimepointService
   def log(message)
     return unless @logging_enabled
     ap message
+  end
+
+  def notify(msg)
+    @message.call(msg) if @message
   end
 end

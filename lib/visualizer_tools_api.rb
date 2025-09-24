@@ -52,6 +52,8 @@ class VisualizerToolsApi
       faraday.response :raise_error
       faraday.adapter Faraday.default_adapter
     end
+    user_agent = ENV['VISUALIZER_USER_AGENT'] || 'ImpactVisualizer/1.0 (https://impact.wikiedu.org/)'
+    connection.headers['User-Agent'] = user_agent
     connection
   end
 
@@ -60,9 +62,22 @@ class VisualizerToolsApi
     response = @client.send(action, url, params)
   rescue StandardError => e
     tries += 1
-    unless Rails.env.test?
-      puts "VisualizerToolsApi / Error – Trys remaining: #{tries}"
-      sleep 1 * tries
+    status = e.response && e.response[:status]
+    if status == 429
+      retry_after = (e.response && (e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After']))
+      wait_seconds = retry_after.to_i if retry_after
+      wait_seconds = [wait_seconds || 0, 1].max
+      wait_seconds = [wait_seconds, 30].min
+      wait_seconds += rand(0.0..0.5)
+      unless Rails.env.test?
+        puts "VisualizerToolsApi / 429 Too Many Requests - waiting #{wait_seconds.round(2)}s (attempt #{tries}/3)"
+        sleep wait_seconds
+      end
+    else
+      unless Rails.env.test?
+        puts "VisualizerToolsApi / Error - attempt #{tries}/3"
+        sleep 1 * tries
+      end
     end
     retry unless tries == 3
     log_error(e, response)

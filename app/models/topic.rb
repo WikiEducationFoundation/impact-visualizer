@@ -207,9 +207,19 @@ class Topic < ApplicationRecord
     Sidekiq::Status::status(timepoint_generate_job_id)
   end
 
+  def timepoint_generate_message
+    return '' unless timepoint_generate_job_id
+    Sidekiq::Status::get(timepoint_generate_job_id, :message) || ''
+  end
+
   def incremental_topic_build_status
     return :idle unless incremental_topic_build_job_id
     Sidekiq::Status::status(incremental_topic_build_job_id)
+  end
+
+  def incremental_topic_build_message
+    return '' unless incremental_topic_build_job_id
+    Sidekiq::Status::get(incremental_topic_build_job_id, :message) || ''
   end
 
   def generate_article_analytics_status

@@ -37,7 +37,9 @@ if owned
                 :incremental_topic_build_percent_complete,
                 :incremental_topic_build_status,
                 :incremental_topic_build_stage_message,
-                :users_import_status
+                :users_import_status,
+                :timepoint_generate_message,
+                :incremental_topic_build_message
 end
 
 if topic.most_recent_summary

@@ -53,7 +53,8 @@ class OresApi
 
   def ores_server
     conn = Faraday.new(url: ORES_SERVER_URL)
-    # conn.headers['User-Agent'] = ENV['visualizer_url'] + ' ' + Rails.env
+    user_agent = ENV['VISUALIZER_USER_AGENT'] || 'ImpactVisualizer/1.0 (https://impact.wikiedu.org/)'
+    conn.headers['User-Agent'] = user_agent
     conn
   end
 end
