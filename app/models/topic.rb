@@ -262,6 +262,12 @@ class Topic < ApplicationRecord
     Sidekiq::Status::total(generate_article_analytics_job_id)
   end
 
+  def generate_article_analytics_skipped
+    return nil unless generate_article_analytics_job_id
+    value = Sidekiq::Status::get(generate_article_analytics_job_id, :skipped)
+    value&.to_i || 0
+  end
+
   def incremental_topic_build_stage
     return nil unless incremental_topic_build_job_id
     Sidekiq::Status::get(incremental_topic_build_job_id, :stage)

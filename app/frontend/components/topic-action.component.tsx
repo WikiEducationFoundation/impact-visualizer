@@ -219,8 +219,10 @@ const actions = {
     progressLabel: (topic: Topic) => {
       const x = topic.generate_article_analytics_articles_fetched;
       const y = topic.generate_article_analytics_articles_total;
+      const z = topic.generate_article_analytics_skipped;
       if (_.isNumber(x) && _.isNumber(y)) {
-        return `${x}/${y} Articles Fetched`;
+        const notFound = _.isNumber(z) && z > 0 ? ` (${z} not found)` : "";
+        return `${x}/${y} Articles Processed${notFound}`;
       }
       return null;
     },

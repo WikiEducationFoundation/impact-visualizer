@@ -41,6 +41,7 @@ export default interface Topic {
   generate_article_analytics_percent_complete: number;
   generate_article_analytics_articles_fetched: number;
   generate_article_analytics_articles_total: number;
+  generate_article_analytics_skipped: number;
   articles_import_percent_complete: number;
   users_import_percent_complete: number;
   articles_import_status: string;

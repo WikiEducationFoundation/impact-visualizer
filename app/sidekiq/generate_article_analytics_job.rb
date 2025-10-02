@@ -17,6 +17,7 @@ class GenerateArticleAnalyticsJob
 
     total(articles.count)
     at(0, 'Starting article analytics generation')
+    store(skipped: 0)
 
     start_date = topic.start_date || Date.current.beginning_of_year
     end_date = topic.end_date || Date.current.end_of_year
@@ -29,6 +30,16 @@ class GenerateArticleAnalyticsJob
     articles.each_with_index do |article, index|
       at(index, "Fetching \"#{article.title}\"")
       Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching average daily views for #{article.title} between #{start_date} and #{end_date}")
+
+      # skip if the page doesn't exist
+      article_stats_service.update_details_for_article(article:)
+      if article.reload.missing
+        Rails.logger.info("[GenerateArticleAnalyticsJob] Article not found: #{article.title}")
+        current_skipped = (Sidekiq::Status::get(@jid, :skipped) || '0').to_i
+        store(skipped: current_skipped + 1)
+        at(index + 1, "Not found: #{article.title}")
+        next
+      end
 
       average_views = article_stats_service.get_average_daily_views(
         article: article.title,

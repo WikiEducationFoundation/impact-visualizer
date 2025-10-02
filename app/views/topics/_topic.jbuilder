@@ -34,6 +34,7 @@ if owned
                 :generate_article_analytics_message,
                 :generate_article_analytics_articles_fetched,
                 :generate_article_analytics_articles_total,
+                :generate_article_analytics_skipped,
                 :incremental_topic_build_percent_complete,
                 :incremental_topic_build_status,
                 :incremental_topic_build_stage_message,

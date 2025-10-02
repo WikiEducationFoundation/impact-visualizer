@@ -28,7 +28,10 @@ class WikimediaPageviewsApi
 
     url = "#{@base_url}/per-article/#{project}/all-access/all-agents/#{encoded_article}/daily/#{start_date}/#{end_date}"
 
+    Rails.logger.info("[WikimediaPageviewsApi] GET #{url}")
     response = @client.get(url)
+    Rails.logger.info("[WikimediaPageviewsApi] STATUS: #{response&.status}")
+    Rails.logger.info("[WikimediaPageviewsApi] BODY: #{response&.body}")
 
     return 0 unless response&.status == 200
 
