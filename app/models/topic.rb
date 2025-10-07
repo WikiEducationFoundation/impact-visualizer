@@ -207,9 +207,19 @@ class Topic < ApplicationRecord
     Sidekiq::Status::status(timepoint_generate_job_id)
   end
 
+  def timepoint_generate_message
+    return '' unless timepoint_generate_job_id
+    Sidekiq::Status::get(timepoint_generate_job_id, :message) || ''
+  end
+
   def incremental_topic_build_status
     return :idle unless incremental_topic_build_job_id
     Sidekiq::Status::status(incremental_topic_build_job_id)
+  end
+
+  def incremental_topic_build_message
+    return '' unless incremental_topic_build_job_id
+    Sidekiq::Status::get(incremental_topic_build_job_id, :message) || ''
   end
 
   def generate_article_analytics_status
@@ -242,9 +252,30 @@ class Topic < ApplicationRecord
     Sidekiq::Status::pct_complete(generate_article_analytics_job_id)
   end
 
+  def generate_article_analytics_articles_fetched
+    return nil unless generate_article_analytics_job_id
+    Sidekiq::Status::at(generate_article_analytics_job_id)
+  end
+
+  def generate_article_analytics_articles_total
+    return nil unless generate_article_analytics_job_id
+    Sidekiq::Status::total(generate_article_analytics_job_id)
+  end
+
+  def generate_article_analytics_skipped
+    return nil unless generate_article_analytics_job_id
+    value = Sidekiq::Status::get(generate_article_analytics_job_id, :skipped)
+    value&.to_i || 0
+  end
+
   def incremental_topic_build_stage
     return nil unless incremental_topic_build_job_id
     Sidekiq::Status::get(incremental_topic_build_job_id, :stage)
+  end
+
+  def generate_article_analytics_message
+    return '' unless generate_article_analytics_job_id
+    Sidekiq::Status::get(generate_article_analytics_job_id, :message) || ''
   end
 
   # For ActiveAdmin

@@ -34,11 +34,9 @@ class WikiWhoApi
     # where the content is not available but the existence revision itself remains in the history.
     # Those will be a 500 error. For example: http://wikiwho-api.wmcloud.org/en/api/v1.0.0-beta/rev_content/rev_id/1284698874/?o_rev_id=true&editor=true&token_id=true&out=true&in=true
     # Work around it by treating it the same way as a 400 or 408.
-    if response&.status == 400 || response&.status == 408 || response&.status == 500
-      return nil
-    end
+    return nil if response&.status == 400 || response&.status == 408 || response&.status == 500
 
-    raise RevisionTokenError, "status: #{response&.status || "nil"} / revision_id: #{revision_id}"
+    raise RevisionTokenError, "status: #{response&.status || 'nil'} / revision_id: #{revision_id}"
   end
 
   class InvalidLanguageError < StandardError
@@ -61,6 +59,7 @@ class WikiWhoApi
       faraday.response :raise_error
       faraday.adapter Faraday.default_adapter
     end
+    conn.headers['User-Agent'] = Features.user_agent
     conn
   end
 

@@ -12,7 +12,8 @@ class GenerateTimepointsJob
     force_updates = ActiveModel::Type::Boolean.new.cast(force_updates)
     timepoint_service = TimepointService.new(
       topic:, force_updates:, logging_enabled: true,
-      total: method(:total), at: method(:at)
+      total: method(:total), at: method(:at),
+      message: proc { |msg| store message: msg }
     )
     timepoint_service.full_timepoint_build
     TopicSummaryService.new(topic:).create_summary

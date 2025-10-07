@@ -45,21 +45,27 @@ class WikiRestApi
       faraday.response :raise_error
       faraday.adapter Faraday.default_adapter
     end
-    # connection.headers['User-Agent'] = ENV['visualizer_url'] + ' ' + Rails.env
+    connection.headers['User-Agent'] = Features.user_agent
     connection
   end
 
   def make_request(action, url, params)
     tries ||= 3
-    @client.send(action, url, params)
+    response = @client.send(action, url, params)
+    response
   rescue StandardError => e
     tries -= 1
     # Continue for typical errors so that the request can be retried, but wait
     # a short bit in the case of 429 — too many request — errors.
     if too_many_requests?(e)
+      retry_after = (e.response && (e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After']))
+      wait_seconds = retry_after.to_i if retry_after
+      wait_seconds = [wait_seconds || 0, 1].max
+      wait_seconds = [wait_seconds, 30].min
+      wait_seconds += rand(0.0..0.5)
       unless Rails.env.test?
-        ap "WikiRestApi / Too many requests – Trys remaining: #{tries}"
-        sleep 1
+        ap "WikiRestApi / 429 Too Many Requests - waiting #{wait_seconds.round(2)}s, tries remaining: #{tries}"
+        sleep wait_seconds
       end
       retry unless tries.zero?
     else

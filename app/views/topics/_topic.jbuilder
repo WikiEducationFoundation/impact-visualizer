@@ -31,10 +31,16 @@ if owned
                 :articles_import_percent_complete, :users_import_percent_complete,
                 :articles_import_status, :timepoint_generate_status,
                 :generate_article_analytics_status, :generate_article_analytics_percent_complete,
+                :generate_article_analytics_message,
+                :generate_article_analytics_articles_fetched,
+                :generate_article_analytics_articles_total,
+                :generate_article_analytics_skipped,
                 :incremental_topic_build_percent_complete,
                 :incremental_topic_build_status,
                 :incremental_topic_build_stage_message,
-                :users_import_status
+                :users_import_status,
+                :timepoint_generate_message,
+                :incremental_topic_build_message
 end
 
 if topic.most_recent_summary

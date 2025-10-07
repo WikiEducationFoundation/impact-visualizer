@@ -2,11 +2,7 @@
 import _ from "lodash";
 import React from "react";
 import cn from "classnames";
-import {
-  UseMutateFunction,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import pluralize from "pluralize";
 
 // Types
@@ -34,7 +30,7 @@ const actions = {
     progress: (topic: Topic) => {
       return topic.articles_import_percent_complete;
     },
-    renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+    renderButtons: (topic: Topic, mutate: (variables?: any) => void) => {
       return null;
       const actionLabel = topic.articles_count > 0 ? "Reimport" : "Import";
       return (
@@ -98,7 +94,7 @@ const actions = {
     progress: (topic: Topic) => {
       return topic.users_import_percent_complete;
     },
-    renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+    renderButtons: (topic: Topic, mutate: (variables?: any) => void) => {
       return null;
 
       const actionLabel = topic.user_count > 0 ? "Reimport" : "Import";
@@ -163,7 +159,7 @@ const actions = {
     progress: (topic: Topic) => {
       return topic.timepoint_generate_percent_complete;
     },
-    renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+    renderButtons: (topic: Topic, mutate: (variables?: any) => void) => {
       const actionLabel =
         topic.timepoints_count > 0 ? "Generate new" : "Generate";
       return (
@@ -217,6 +213,19 @@ const actions = {
     progress: (topic: Topic) => {
       return topic.generate_article_analytics_percent_complete;
     },
+    message: (topic: Topic) => {
+      return topic.generate_article_analytics_message;
+    },
+    progressLabel: (topic: Topic) => {
+      const x = topic.generate_article_analytics_articles_fetched;
+      const y = topic.generate_article_analytics_articles_total;
+      const z = topic.generate_article_analytics_skipped;
+      if (_.isNumber(x) && _.isNumber(y)) {
+        const notFound = _.isNumber(z) && z > 0 ? ` (${z} not found)` : "";
+        return `${x}/${y} Articles Processed${notFound}`;
+      }
+      return null;
+    },
     renderButtons: (_topic, mutate) => {
       return (
         <button className="Button Button--outlined" onClick={() => mutate()}>
@@ -252,7 +261,7 @@ const actions = {
     message: (topic: Topic) => {
       return topic.incremental_topic_build_stage_message;
     },
-    renderButtons: (topic: Topic, mutate: UseMutateFunction) => {
+    renderButtons: (topic: Topic, mutate: (variables?: any) => void) => {
       const actionLabel =
         topic.timepoints_count > 0 ? "Generate new" : "Generate";
       return (
@@ -297,8 +306,8 @@ function TopicAction({ topic, actionKey, setCanEditTopic }) {
   const queryClient = useQueryClient();
   const action = actions[actionKey];
 
-  const mutation = useMutation({
-    mutationFn: (params) => action.mutationFn(topic.id, params),
+  const mutation = useMutation<Topic, unknown, any>({
+    mutationFn: (params: any) => action.mutationFn(topic.id, params),
     onSuccess: (data) => {
       queryClient.setQueryData(["topic", topic.id.toString()], data);
     },
@@ -319,23 +328,37 @@ function TopicAction({ topic, actionKey, setCanEditTopic }) {
       {isReady && !isBusy && action.renderButtons(topic, mutation.mutate)}
 
       {isReady && isBusy && (
-        <div className="TopicAction-statusAndProgress">
-          <span
-            className={cn({
-              TopicActionStatus: true,
-              [`TopicActionStatus--${status}`]: true,
-            })}
-          >
-            {status}
-          </span>
-          <span className="u-ml05 TopicAction-progress">
-            {typeof action.message === "function" && (
-              <span className="u-mr05 TopicAction-progress">
-                {action.message(topic)}
-              </span>
-            )}
-            {progress}%
-          </span>
+        <div className="TopicAction-statusContainer">
+          {typeof action.message === "function" && action.message(topic) && (
+            <div className="TopicAction-messageRow">
+              {action.message(topic)}
+            </div>
+          )}
+          <div className="TopicAction-statusRow">
+            <span
+              className={cn({
+                TopicActionStatus: true,
+                [`TopicActionStatus--${status}`]: true,
+              })}
+            >
+              {status}
+            </span>
+            <div className="TopicAction-statusMeta u-ml05">
+              {typeof action.progressLabel === "function" &&
+                action.progressLabel(topic) && (
+                  <span className="TopicAction-count u-mr05">
+                    {action.progressLabel(topic)}
+                  </span>
+                )}
+              <span className="TopicAction-percent">{progress}%</span>
+            </div>
+          </div>
+          <div className="TopicAction-progressBar">
+            <div
+              className="TopicAction-progressBarFill"
+              style={{ width: `${progress || 0}%` }}
+            />
+          </div>
         </div>
       )}
 
