@@ -43,7 +43,7 @@ class VisualizerToolsApi
 
   def impact_visualizer_tools_client
     options = {
-      url: 'https://impact-visualizer-tools.wmcloud.org',
+      url: Features.tools_base_url,
       headers: {
         'Content-Type': 'application/json'
       }
@@ -52,8 +52,7 @@ class VisualizerToolsApi
       faraday.response :raise_error
       faraday.adapter Faraday.default_adapter
     end
-    user_agent = ENV['VISUALIZER_USER_AGENT'] || 'ImpactVisualizer/1.0 (https://impact.wikiedu.org/)'
-    connection.headers['User-Agent'] = user_agent
+    connection.headers['User-Agent'] = Features.user_agent
     connection
   end
 

@@ -59,8 +59,7 @@ class WikiWhoApi
       faraday.response :raise_error
       faraday.adapter Faraday.default_adapter
     end
-    user_agent = ENV['VISUALIZER_USER_AGENT'] || 'ImpactVisualizer/1.0 (https://impact.wikiedu.org/)'
-    conn.headers['User-Agent'] = user_agent
+    conn.headers['User-Agent'] = Features.user_agent
     conn
   end
 

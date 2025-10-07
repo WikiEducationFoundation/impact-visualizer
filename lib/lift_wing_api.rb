@@ -60,8 +60,7 @@ class LiftWingApi
       faraday.response :raise_error
       faraday.adapter Faraday.default_adapter
     end
-    user_agent = ENV['VISUALIZER_USER_AGENT'] || 'ImpactVisualizer/1.0 (https://impact.wikiedu.org/)'
-    connection.headers['User-Agent'] = user_agent
+    connection.headers['User-Agent'] = Features.user_agent
     connection
   end
 
