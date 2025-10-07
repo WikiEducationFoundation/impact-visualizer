@@ -2,7 +2,9 @@
 
 class Features
   def self.user_agent
-    ENV['VISUALIZER_USER_AGENT']
+    base = ENV['VISUALIZER_USER_AGENT']
+    return base unless base.present?
+    "#{base} #{Rails.env}"
   end
 
   def self.tools_base_url
