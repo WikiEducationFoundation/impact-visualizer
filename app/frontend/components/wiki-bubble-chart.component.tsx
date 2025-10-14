@@ -80,6 +80,39 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           },
           value: "",
         },
+        {
+          name: "assessment_filter",
+          bind: {
+            input: "select",
+            options: [
+              "all",
+              "FA",
+              "GA",
+              "A",
+              "FL",
+              "B",
+              "C",
+              "Start",
+              "Stub",
+              "List",
+            ],
+            labels: [
+              "all",
+              "FA",
+              "GA",
+              "A",
+              "FL",
+              "B",
+              "C",
+              "Start",
+              "Stub",
+              "List",
+            ],
+            name: "Quality assessment",
+            element: `#${searchContainerId}`,
+          },
+          value: "all",
+        },
       ],
 
       layer: [
@@ -152,11 +185,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 1 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && (assessment_filter == 'all' || (isValid(datum.assessment_grade) && datum.assessment_grade == assessment_filter))",
                   value: 1,
                 },
               ],
-              value: 0.2,
+              value: 0.06,
             },
           },
         },
@@ -182,11 +215,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 1 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && (assessment_filter == 'all' || (isValid(datum.assessment_grade) && datum.assessment_grade == assessment_filter))",
                   value: 1,
                 },
               ],
-              value: 0.2,
+              value: 0.06,
             },
           },
         },
@@ -210,11 +243,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 0.8 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && (assessment_filter == 'all' || (isValid(datum.assessment_grade) && datum.assessment_grade == assessment_filter))",
                   value: 0.8,
                 },
               ],
-              value: 0.2,
+              value: 0.06,
             },
           },
         },
@@ -253,11 +286,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 0.5 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && (assessment_filter == 'all' || (isValid(datum.assessment_grade) && datum.assessment_grade == assessment_filter))",
                   value: 0.5,
                 },
               ],
-              value: 0.2,
+              value: 0.06,
             },
           },
         },
