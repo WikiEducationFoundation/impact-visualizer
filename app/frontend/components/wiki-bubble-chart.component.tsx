@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import CSVButton from "./CSV-button.component";
 import {
@@ -30,6 +30,51 @@ interface WikiBubbleChartProps {
 
 const HEIGHT = 650;
 
+const gradeGroups = [
+  { id: "fa", label: "Featured", grades: ["FA", "FL"], dot: "#9CBDFF" },
+  { id: "ga", label: "GA", grades: ["GA"], dot: "#66FF66" },
+  { id: "aclass", label: "A-Class", grades: ["A"], dot: "#66FFFF" },
+  { id: "bclass", label: "B-Class", grades: ["B"], dot: "#B2FF66" },
+  { id: "cclass", label: "C-Class", grades: ["C"], dot: "#FFFF66" },
+  { id: "start", label: "Start", grades: ["Start"], dot: "#FFAA66" },
+  { id: "stub", label: "Stub", grades: ["Stub"], dot: "#FFA4A4" },
+  { id: "list", label: "List", grades: ["List"], dot: "#C7B1FF" },
+];
+
+function QualityFilterButtons({
+  onToggle,
+  selected,
+}: {
+  onToggle: (grades: string[], on: boolean) => void;
+  selected: Record<string, boolean>;
+}) {
+  return (
+    <div className="QualityAssessment">
+      <div className="QualityAssessmentTitle">Quality assessment</div>
+      <div className="QualityFilterGrid">
+        {gradeGroups.map((g) => {
+          const isOn = g.grades.every((x) => selected[x] !== false);
+          return (
+            <button
+              key={g.id}
+              type="button"
+              className={`QualityFilterBtn ${isOn ? "is-selected" : ""}`}
+              data-group={g.id}
+              onClick={() => onToggle(g.grades, !isOn)}
+            >
+              <span
+                className="QualityFilterDot"
+                style={{ backgroundColor: g.dot }}
+              />
+              <span className="QualityFilterLabel">{g.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
   actions = false,
@@ -42,6 +87,20 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     () => `search-container-${Math.random().toString(36).slice(2)}`,
     []
   );
+  const [selectedGrades, setSelectedGrades] = useState<Record<string, boolean>>(
+    {
+      FA: true,
+      FL: true,
+      A: true,
+      GA: true,
+      B: true,
+      C: true,
+      Start: true,
+      Stub: true,
+      List: true,
+    }
+  );
+
   const rows = useMemo(() => {
     if (data && typeof data === "object") {
       return Object.entries(data).map(([article, analytics]) => ({
@@ -80,39 +139,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           },
           value: "",
         },
-        {
-          name: "assessment_filter",
-          bind: {
-            input: "select",
-            options: [
-              "all",
-              "FA",
-              "GA",
-              "A",
-              "FL",
-              "B",
-              "C",
-              "Start",
-              "Stub",
-              "List",
-            ],
-            labels: [
-              "all",
-              "FA",
-              "GA",
-              "A",
-              "FL",
-              "B",
-              "C",
-              "Start",
-              "Stub",
-              "List",
-            ],
-            name: "Quality assessment",
-            element: `#${searchContainerId}`,
-          },
-          value: "all",
-        },
+        { name: "grade_FA", value: selectedGrades.FA },
+        { name: "grade_GA", value: selectedGrades.GA },
+        { name: "grade_A", value: selectedGrades.A },
+        { name: "grade_FL", value: selectedGrades.FL },
+        { name: "grade_B", value: selectedGrades.B },
+        { name: "grade_C", value: selectedGrades.C },
+        { name: "grade_Start", value: selectedGrades.Start },
+        { name: "grade_Stub", value: selectedGrades.Stub },
+        { name: "grade_List", value: selectedGrades.List },
       ],
 
       layer: [
@@ -185,7 +220,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 1 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && (assessment_filter == 'all' || (isValid(datum.assessment_grade) && datum.assessment_grade == assessment_filter))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List'))",
                   value: 1,
                 },
               ],
@@ -215,7 +250,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 1 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && (assessment_filter == 'all' || (isValid(datum.assessment_grade) && datum.assessment_grade == assessment_filter))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List'))",
                   value: 1,
                 },
               ],
@@ -243,7 +278,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 0.8 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && (assessment_filter == 'all' || (isValid(datum.assessment_grade) && datum.assessment_grade == assessment_filter))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List'))",
                   value: 0.8,
                 },
               ],
@@ -286,7 +321,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 0.5 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && (assessment_filter == 'all' || (isValid(datum.assessment_grade) && datum.assessment_grade == assessment_filter))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List'))",
                   value: 0.5,
                 },
               ],
@@ -343,7 +378,21 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       viewRef.current?.view.finalize();
       viewRef.current = null;
     };
-  }, [rows, actions, wiki]);
+  }, [rows, actions, wiki, selectedGrades, searchContainerId]);
+
+  const toggleGrades = (grades: string[], on: boolean) => {
+    setSelectedGrades((prev) => {
+      const next = { ...prev };
+      grades.forEach((g) => {
+        next[g] = on;
+      });
+      if (viewRef.current) {
+        grades.forEach((g) => viewRef.current!.view.signal(`grade_${g}`, on));
+        viewRef.current.view.runAsync();
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="WikiBubbleChart">
@@ -357,10 +406,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           />
         </div>
 
-        <div
-          id={searchContainerId}
-          className="WikiBubbleChartSearchContainer"
-        />
+        <div className="WikiBubbleChartSearchContainer">
+          <div id={searchContainerId} />
+          <QualityFilterButtons
+            onToggle={toggleGrades}
+            selected={selectedGrades}
+          />
+        </div>
       </div>
 
       <div>
