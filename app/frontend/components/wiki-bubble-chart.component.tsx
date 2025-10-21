@@ -397,21 +397,38 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   return (
     <div className="WikiBubbleChart">
       <div className="WikiBubbleChartHeader">
-        <div className="WikiBubbleChartTitleRow">
-          <h2 className="u-mb0">Article analytics over chosen focus period</h2>
-          <CSVButton
-            articles={rows}
-            csvConvert={convertAnalyticsToCSV}
-            filename="article-analytics"
-          />
-        </div>
-
-        <div className="WikiBubbleChartSearchContainer">
-          <div id={searchContainerId} />
+        <div className="WikiBubbleChartHeaderLeft">
           <QualityFilterButtons
             onToggle={toggleGrades}
             selected={selectedGrades}
           />
+        </div>
+
+        <div className="WikiBubbleChartHeaderMiddle">
+          <div className="WikiBubbleChartHeaderBox">
+            <div className="WikiBubbleChartTitleRow">
+              <h2 className="u-mb0">
+                Article analytics over chosen focus period
+              </h2>
+              <CSVButton
+                articles={rows}
+                csvConvert={convertAnalyticsToCSV}
+                filename="article-analytics"
+              />
+            </div>
+          </div>
+          <div className="WikiBubbleChartHeaderBox WikiBubbleChartHeaderSearch">
+            <div className="WikiBubbleChartSearchContainer">
+              <div id={searchContainerId} />
+            </div>
+          </div>
+        </div>
+
+        <div className="WikiBubbleChartHeaderRight">
+          <div>place holder ui here</div>
+        </div>
+        <div className="WikiBubbleChartHeaderRight">
+          <div>place holder ui here</div>
         </div>
       </div>
 
