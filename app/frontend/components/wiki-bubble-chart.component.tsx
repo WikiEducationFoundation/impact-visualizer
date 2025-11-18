@@ -406,7 +406,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   return (
     <div className="WikiBubbleChart">
-      <h2 className="u-mb0">Article analytics over chosen focus period</h2>
+      <div className="WikiBubbleChartTitleRow u-pt1">
+        <h2 className="u-mb0">Article analytics over chosen focus period</h2>
+        <CSVButton
+          articles={sortedRows}
+          csvConvert={convertAnalyticsToCSV}
+          filename="article-analytics"
+        />
+      </div>
       <div className="WikiBubbleChartHeader">
         <div className="WikiBubbleChartHeaderLeft">
           <QualityFilterButtons
@@ -416,15 +423,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderMiddle">
-          <div className="WikiBubbleChartHeaderBox">
-            <div className="WikiBubbleChartTitleRow">
-              <CSVButton
-                articles={sortedRows}
-                csvConvert={convertAnalyticsToCSV}
-                filename="article-analytics"
-              />
-            </div>
-          </div>
           <div className="WikiBubbleChartHeaderBox WikiBubbleChartHeaderSearch">
             <div className="WikiBubbleChartSearchContainer">
               <div id={searchContainerId} />
