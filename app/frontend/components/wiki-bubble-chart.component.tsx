@@ -112,15 +112,25 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     return [];
   }, [data]);
 
+  const sortedRows = useMemo(() => {
+    if (!rows.length) return [];
+
+    const next = [...rows];
+
+    next.sort((a, b) => a.article.localeCompare(b.article));
+
+    return next;
+  }, [rows]);
+
   useEffect(() => {
-    if (!containerRef.current || rows.length === 0) return;
+    if (!containerRef.current || sortedRows.length === 0) return;
 
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
       height: HEIGHT,
       width: "container",
       background: "#ffffff",
-      data: { values: rows },
+      data: { values: sortedRows },
       transform: [{ window: [{ op: "row_number", as: "idx" }] }],
       config: {
         legend: { disable: true },
@@ -378,7 +388,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       viewRef.current?.view.finalize();
       viewRef.current = null;
     };
-  }, [rows, actions, wiki, selectedGrades, searchContainerId]);
+  }, [sortedRows, actions, wiki, selectedGrades, searchContainerId]);
 
   const toggleGrades = (grades: string[], on: boolean) => {
     setSelectedGrades((prev) => {
@@ -396,6 +406,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   return (
     <div className="WikiBubbleChart">
+      <h2 className="u-mb0">Article analytics over chosen focus period</h2>
       <div className="WikiBubbleChartHeader">
         <div className="WikiBubbleChartHeaderLeft">
           <QualityFilterButtons
@@ -407,11 +418,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         <div className="WikiBubbleChartHeaderMiddle">
           <div className="WikiBubbleChartHeaderBox">
             <div className="WikiBubbleChartTitleRow">
-              <h2 className="u-mb0">
-                Article analytics over chosen focus period
-              </h2>
               <CSVButton
-                articles={rows}
+                articles={sortedRows}
                 csvConvert={convertAnalyticsToCSV}
                 filename="article-analytics"
               />
@@ -425,7 +433,17 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderRight">
-          <div>place holder ui here</div>
+          <div className="WikiBubbleChartSort">
+            <label
+              htmlFor="wiki-bubble-sort"
+              className="WikiBubbleChartSortLabel"
+            >
+              Sort articles
+            </label>
+            <select id="wiki-bubble-sort" className="WikiBubbleChartSortSelect">
+              <option value="title-asc">Article title (A-Z)</option>
+            </select>
+          </div>
         </div>
         <div className="WikiBubbleChartHeaderRight">
           <div>place holder ui here</div>

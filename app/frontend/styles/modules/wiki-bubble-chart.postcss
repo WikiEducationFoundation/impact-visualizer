@@ -55,7 +55,27 @@ div[id^="search-container"] {
   &HeaderBox {
     border: 1px solid #cfcfcf;
     padding: 8px;
-    box-sizing: border-box;
+  }
+
+  &Sort {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+
+  &SortLabel {
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  &SortSelect {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #cfcfcf;
+    font-size: 13px;
+    width: 100%;
+    background-color: #fff;
   }
 
   &HeaderSearch {
