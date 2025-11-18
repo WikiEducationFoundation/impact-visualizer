@@ -443,9 +443,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             </select>
           </div>
         </div>
-        <div className="WikiBubbleChartHeaderRight">
-          <div>place holder ui here</div>
-        </div>
       </div>
 
       <div>
