@@ -406,7 +406,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   return (
     <div className="WikiBubbleChart">
-      <div className="WikiBubbleChartTitleRow u-pt1">
+      <div className="WikiBubbleChartTitleRow">
         <h2 className="u-mb0">Article analytics over chosen focus period</h2>
         <CSVButton
           articles={sortedRows}

@@ -18,34 +18,27 @@ div[id^="search-container"] {
 .WikiBubbleChart {
   background-color: white;
   border: 1px solid #e0e0e0;
-  padding: 0 24px;
-  width: calc(100vw - 48px);
-  margin-left: calc(-50vw + 50% + 24px);
-
+  width: 100%;
   &Header {
     display: grid;
     grid-template-columns: 460px 1fr 260px;
-    gap: 16px;
+    gap: 0;
     align-items: stretch;
-    padding: 6px 0 6px;
   }
 
   &HeaderLeft {
-    border: 1px solid #cfcfcf;
-    padding: 8px;
-    box-sizing: border-box;
+    border-right: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    padding-right: 12px;
   }
 
   &HeaderMiddle {
-    display: grid;
-    grid-template-rows: auto auto;
-    gap: 8px;
-    min-width: 0; /* allow children to shrink within grid */
+    border-bottom: 1px solid #d9d9d9;
+    border-right: 1px solid #d9d9d9;
   }
 
   &HeaderRight {
-    border: 1px solid #cfcfcf;
-    padding: 8px;
+    border-bottom: 1px solid #d9d9d9;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -53,8 +46,6 @@ div[id^="search-container"] {
   }
 
   &HeaderBox {
-    border: 1px solid #cfcfcf;
-    padding: 8px;
   }
 
   &Sort {
@@ -82,6 +73,7 @@ div[id^="search-container"] {
   }
 
   &TitleRow {
+    border-bottom: 1px solid #d9d9d9;
     display: flex;
     align-items: center;
     gap: 12px;
