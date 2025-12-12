@@ -415,22 +415,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         />
       </div>
       <div className="WikiBubbleChartHeader">
-        <div className="WikiBubbleChartHeaderLeft">
+        <div className="WikiBubbleChartHeaderFilters">
           <QualityFilterButtons
             onToggle={toggleGrades}
             selected={selectedGrades}
           />
         </div>
 
-        <div className="WikiBubbleChartHeaderMiddle">
-          <div className="WikiBubbleChartHeaderBox WikiBubbleChartHeaderSearch">
+        <div className="WikiBubbleChartHeaderSearch">
+          <div className="WikiBubbleChartHeaderBox ">
             <div className="WikiBubbleChartSearchContainer">
               <div id={searchContainerId} />
             </div>
           </div>
         </div>
 
-        <div className="WikiBubbleChartHeaderRight">
+        <div className="WikiBubbleChartHeaderSort">
           <div className="WikiBubbleChartSort">
             <label
               htmlFor="wiki-bubble-sort"
@@ -441,6 +441,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             <select id="wiki-bubble-sort" className="WikiBubbleChartSortSelect">
               <option value="title-asc">Article title (A-Z)</option>
             </select>
+          </div>
+        </div>
+
+        <div className="WikiBubbleChartHeaderExtra">
+          <div className="WikiBubbleChartHeaderBox">
+            <span>Additional panel (placeholder)</span>
           </div>
         </div>
       </div>

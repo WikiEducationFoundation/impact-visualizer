@@ -21,28 +21,35 @@ div[id^="search-container"] {
   width: 100%;
   &Header {
     display: grid;
-    grid-template-columns: 460px 1fr 260px;
+    grid-template-columns: 460px 1fr 220px 220px;
     gap: 0;
     align-items: stretch;
   }
 
-  &HeaderLeft {
+  &HeaderFilters {
     border-right: 1px solid #d9d9d9;
     border-bottom: 1px solid #d9d9d9;
     padding-right: 12px;
   }
 
-  &HeaderMiddle {
+  &HeaderSearch {
     border-bottom: 1px solid #d9d9d9;
     border-right: 1px solid #d9d9d9;
   }
 
-  &HeaderRight {
+  &HeaderSort {
+    border-bottom: 1px solid #d9d9d9;
+    border-right: 1px solid #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &HeaderExtra {
     border-bottom: 1px solid #d9d9d9;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-sizing: border-box;
   }
 
   &HeaderBox {
@@ -67,9 +74,6 @@ div[id^="search-container"] {
     font-size: 13px;
     width: 100%;
     background-color: #fff;
-  }
-
-  &HeaderSearch {
   }
 
   &TitleRow {
