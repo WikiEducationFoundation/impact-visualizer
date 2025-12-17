@@ -50,7 +50,7 @@ function QualityFilterButtons({
 }) {
   return (
     <div className="QualityAssessment">
-      <div className="QualityAssessmentTitle">Quality assessment</div>
+      <div className="BoxTitle">Quality assessment</div>
       <div className="QualityFilterGrid">
         {gradeGroups.map((g) => {
           const isOn = g.grades.every((x) => selected[x] !== false);
@@ -415,39 +415,32 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         />
       </div>
       <div className="WikiBubbleChartHeader">
-        <div className="WikiBubbleChartHeaderFilters">
+        <div className="WikiBubbleChartHeaderBox">
           <QualityFilterButtons
             onToggle={toggleGrades}
             selected={selectedGrades}
           />
         </div>
 
-        <div className="WikiBubbleChartHeaderSearch">
-          <div className="WikiBubbleChartHeaderBox ">
-            <div className="WikiBubbleChartSearchContainer">
-              <div id={searchContainerId} />
-            </div>
-          </div>
+        <div className="WikiBubbleChartHeaderBox">
+          <div id={searchContainerId} />
         </div>
 
-        <div className="WikiBubbleChartHeaderSort">
-          <div className="WikiBubbleChartSort">
-            <label
-              htmlFor="wiki-bubble-sort"
-              className="WikiBubbleChartSortLabel"
-            >
-              Sort articles
-            </label>
-            <select id="wiki-bubble-sort" className="WikiBubbleChartSortSelect">
-              <option value="title-asc">Article title (A-Z)</option>
-            </select>
-          </div>
+        <div className="WikiBubbleChartHeaderBox">
+          <label htmlFor="wiki-bubble-sort" className="BoxTitle">
+            Sort articles
+          </label>
+          <select id="wiki-bubble-sort" className="WikiBubbleChartSortSelect">
+            <option value="title-asc">Article title (A-Z)</option>
+          </select>
         </div>
 
-        <div className="WikiBubbleChartHeaderExtra">
-          <div className="WikiBubbleChartHeaderBox">
-            <span>Additional panel (placeholder)</span>
-          </div>
+        <div className="WikiBubbleChartHeaderBox">
+          <div className="BoxTitle">Placeholder title</div>
+        </div>
+
+        <div className="WikiBubbleChartHeaderBox">
+          <div className="BoxTitle">Placeholder</div>
         </div>
       </div>
 
