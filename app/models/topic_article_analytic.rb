@@ -30,6 +30,7 @@ end
 #  prev_article_size        :integer
 #  prev_average_daily_views :integer
 #  prev_talk_size           :integer
+#  publication_date         :date
 #  talk_size                :integer
 #  created_at               :datetime         not null
 #  updated_at               :datetime         not null

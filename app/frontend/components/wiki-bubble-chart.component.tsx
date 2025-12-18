@@ -15,7 +15,31 @@ type ArticleAnalytics = {
   lead_section_size: number;
   prev_average_daily_views: number | null;
   assessment_grade: string | null;
+  publication_date: string | null;
 };
+
+function compareArticlesByPublicationDateAsc(
+  firstArticle: { publication_date: string | null; article: string },
+  secondArticle: { publication_date: string | null; article: string }
+): number {
+  const firstPubDateParsed = firstArticle.publication_date
+    ? Date.parse(firstArticle.publication_date)
+    : NaN;
+  const secondPubDateParsed = secondArticle.publication_date
+    ? Date.parse(secondArticle.publication_date)
+    : NaN;
+
+  // If pub date is not valid, use positive infinity as sort key
+  const firstSortKey = Number.isFinite(firstPubDateParsed)
+    ? firstPubDateParsed
+    : Number.POSITIVE_INFINITY;
+  const secondSortKey = Number.isFinite(secondPubDateParsed)
+    ? secondPubDateParsed
+    : Number.POSITIVE_INFINITY;
+
+  if (firstSortKey !== secondSortKey) return firstSortKey - secondSortKey;
+  return firstArticle.article.localeCompare(secondArticle.article);
+}
 
 type Wiki = {
   language: string;
@@ -100,6 +124,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       List: true,
     }
   );
+  const [sortKey, setSortKey] = useState<"title-asc" | "publication-date-asc">(
+    "title-asc"
+  );
 
   const rows = useMemo(() => {
     if (data && typeof data === "object") {
@@ -117,10 +144,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
     const next = [...rows];
 
-    next.sort((a, b) => a.article.localeCompare(b.article));
+    if (sortKey === "publication-date-asc") {
+      next.sort(compareArticlesByPublicationDateAsc);
+    } else {
+      next.sort((a, b) => a.article.localeCompare(b.article));
+    }
 
     return next;
-  }, [rows]);
+  }, [rows, sortKey]);
 
   useEffect(() => {
     if (!containerRef.current || sortedRows.length === 0) return;
@@ -430,8 +461,18 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           <label htmlFor="wiki-bubble-sort" className="BoxTitle">
             Sort articles
           </label>
-          <select id="wiki-bubble-sort" className="WikiBubbleChartSortSelect">
+          <select
+            id="wiki-bubble-sort"
+            className="WikiBubbleChartSortSelect"
+            value={sortKey}
+            onChange={(e) =>
+              setSortKey(e.target.value as "title-asc" | "publication-date-asc")
+            }
+          >
             <option value="title-asc">Article title (A-Z)</option>
+            <option value="publication-date-asc">
+              Publication date (Old-New)
+            </option>
           </select>
         </div>
 
@@ -440,7 +481,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
-          <div className="BoxTitle">Placeholder</div>
+          <div className="BoxTitle">Placeholder title</div>
+        </div>
+
+        <div className="WikiBubbleChartHeaderBox">
+          <div className="BoxTitle">Placeholder title</div>
         </div>
       </div>
 

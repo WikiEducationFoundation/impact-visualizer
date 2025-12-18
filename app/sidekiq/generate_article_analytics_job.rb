@@ -69,6 +69,7 @@ class GenerateArticleAnalyticsJob
       topic_article_analytic.update!(
         average_daily_views: average_views.round,
         prev_average_daily_views: prev_average_views&.round,
+        publication_date: article.first_revision_at&.to_date,
         article_size: fetch_article_size(article_stats_service:, article:, date: end_date),
         prev_article_size: fetch_article_size(article_stats_service:, article:,
                                               date: prev_end_date),
