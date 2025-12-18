@@ -338,7 +338,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
             tooltip: {
               signal: `{
-                title: datum.assessment_grade ? '<div style=\"display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%\"><span>' + datum.article + '</span><span style=\"background-color:' + datum.assessment_grade_color + '; padding:2px 6px; border-radius:4px; color:#000; white-space:nowrap\">' + datum.assessment_grade + '</span></div>' : datum.article,
+                title: datum.assessment_grade
+                  ? '<div style=\"display:flex;align-items:flex-start;justify-content:space-between;gap:8px;width:100%\">' +
+                      '<div style=\"display:flex;flex-direction:column;\">' +
+                        '<span style=\"font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap\">' + datum.article + '</span>' +
+                        ((datum.publication_date && isValid(toDate(datum.publication_date)))
+                          ? '<span style=\"font-size:12px;color:#666;margin-top:2px\">' + timeFormat(toDate(datum.publication_date), '%b %d, %Y') + '</span>'
+                          : '') +
+                      '</div>' +
+                      '<span style=\"background-color:' + datum.assessment_grade_color + '; padding:2px 6px; border-radius:4px; color:#000; white-space:nowrap; flex:0 0 auto\">' + datum.assessment_grade + '</span>' +
+                    '</div>'
+                  : '<div style=\"display:flex;flex-direction:column\">' +
+                      '<span style=\"font-weight:600\">' + datum.article + '</span>' +
+                      ((datum.publication_date && isValid(toDate(datum.publication_date)))
+                        ? '<span style=\"font-size:12px;color:#666;margin-top:2px\">' + timeFormat(toDate(datum.publication_date), '%b %d, %Y') + '</span>'
+                        : '') +
+                    '</div>',
                 "Daily visits": format(datum.average_daily_views, ','),
                 "Daily visits (prev year)": isValid(datum.prev_average_daily_views) ? format(datum.prev_average_daily_views, ',') : 'n/a',
                 "Size": format(datum.article_size, ','),
@@ -346,7 +361,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 "Lead size": format(datum.lead_section_size, ','),
                 "Talk size": format(datum.talk_size, ','),
                 "Talk size (prev year)": isValid(datum.prev_talk_size) ? format(datum.prev_talk_size, ',') : 'n/a',
-                "Assessment": isValid(datum.assessment_grade) ? datum.assessment_grade : 'n/a'
               }`,
             },
           },
