@@ -22,20 +22,21 @@ end
 #
 # Table name: topic_article_analytics
 #
-#  id                       :bigint           not null, primary key
-#  article_size             :integer
-#  assessment_grade         :string
-#  average_daily_views      :integer          default(0)
-#  lead_section_size        :integer
-#  prev_article_size        :integer
-#  prev_average_daily_views :integer
-#  prev_talk_size           :integer
-#  publication_date         :date
-#  talk_size                :integer
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  article_id               :bigint           not null
-#  topic_id                 :bigint           not null
+#  id                        :bigint           not null, primary key
+#  article_size              :integer
+#  assessment_grade          :string
+#  average_daily_views       :integer          default(0)
+#  lead_section_size         :integer
+#  linguistic_versions_count :integer          default(0), not null
+#  prev_article_size         :integer
+#  prev_average_daily_views  :integer
+#  prev_talk_size            :integer
+#  publication_date          :date
+#  talk_size                 :integer
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  article_id                :bigint           not null
+#  topic_id                  :bigint           not null
 #
 # Indexes
 #

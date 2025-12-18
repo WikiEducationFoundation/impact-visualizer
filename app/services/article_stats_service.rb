@@ -207,6 +207,21 @@ class ArticleStatsService
     ArticleStatsService.project_independent_assessment_class(assessments)
   end
 
+  def get_linguistic_versions_count(article:)
+    update_details_for_article(article:)
+    return 0 if article.missing
+
+    title = article.title
+    return 0 unless title.present?
+
+    other_lang_count = @wiki_action_api.get_langlinks_count(title:)
+    # We add 1 here to include the current wiki edition itself
+    other_lang_count + 1
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching linguistic versions count for #{article.id || article}: #{e.message}")
+    0
+  end
+
   def self.best_assessment_class_from_pageassessments(assessments)
     return nil unless assessments.is_a?(Hash) && assessments.any?
     classes = assessments.values.filter_map { |a| a['class'] || a[:class] }

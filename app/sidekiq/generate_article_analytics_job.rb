@@ -70,6 +70,8 @@ class GenerateArticleAnalyticsJob
         average_daily_views: average_views.round,
         prev_average_daily_views: prev_average_views&.round,
         publication_date: article.first_revision_at&.to_date,
+        linguistic_versions_count: fetch_linguistic_versions_count(article_stats_service:,
+                                                                   article:),
         article_size: fetch_article_size(article_stats_service:, article:, date: end_date),
         prev_article_size: fetch_article_size(article_stats_service:, article:,
                                               date: prev_end_date),
@@ -124,5 +126,13 @@ class GenerateArticleAnalyticsJob
   rescue StandardError => e
     Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching assessment for #{article.title}: #{e.message}")
     nil
+  end
+
+  def fetch_linguistic_versions_count(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching linguistic versions count for #{article.title}")
+    article_stats_service.get_linguistic_versions_count(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching linguistic versions count for #{article.title}: #{e.message}")
+    0
   end
 end

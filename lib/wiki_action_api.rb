@@ -240,6 +240,24 @@ class WikiActionApi
     response.data.dig('pages', 0, 'pageassessments')
   end
 
+  def get_langlinks_count(title:)
+    query_parameters = {
+      titles: [title],
+      prop: 'langlinks',
+      lllimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    data = fetch_all(query_parameters:)
+    page = data.dig('pages', 0)
+    return 0 unless page
+    return 0 if page['missing']
+
+    langlinks = page['langlinks'] || []
+    langlinks.is_a?(Array) ? langlinks.length : 0
+  end
+
   private
 
   def api_client
