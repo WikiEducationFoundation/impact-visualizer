@@ -42,24 +42,24 @@ function compareArticlesByPublicationDateAsc(
   return firstArticle.article.localeCompare(secondArticle.article);
 }
 
-function compareArticlesByLinguisticVersionsAsc(
-  firstArticle: { linguistic_versions_count: number; article: string },
-  secondArticle: { linguistic_versions_count: number; article: string }
-): number {
-  if (
-    firstArticle.linguistic_versions_count !==
-    secondArticle.linguistic_versions_count
-  ) {
-    return (
-      firstArticle.linguistic_versions_count -
-      secondArticle.linguistic_versions_count
-    );
-  }
+function compareArticlesByNumericFieldAsc<
+  T extends { article: string },
+  K extends keyof T
+>(firstArticle: T, secondArticle: T, field: K): number {
+  const a = firstArticle[field] as unknown as number;
+  const b = secondArticle[field] as unknown as number;
+  if (a !== b) return a - b;
   return firstArticle.article.localeCompare(secondArticle.article);
 }
 
 function xAxisTitleForSortKey(
-  sortKey: "title-asc" | "publication-date-asc" | "linguistic-versions-asc"
+  sortKey:
+    | "title-asc"
+    | "publication-date-asc"
+    | "linguistic-versions-asc"
+    | "article-size-asc"
+    | "lead-section-size-asc"
+    | "discussion-page-size-asc"
 ): string {
   switch (sortKey) {
     case "title-asc":
@@ -68,6 +68,12 @@ function xAxisTitleForSortKey(
       return "Articles from oldest to newest (sort by publication date)";
     case "linguistic-versions-asc":
       return "Articles from least to most linguistic versions (sort by number of linguistic versions)";
+    case "article-size-asc":
+      return "Articles from smallest to largest (sort by article size)";
+    case "lead-section-size-asc":
+      return "Articles from smallest to largest (sort by lead section size)";
+    case "discussion-page-size-asc":
+      return "Articles from smallest to largest (sort by discussion page size)";
     default:
       return "Articles";
   }
@@ -157,7 +163,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
   );
   const [sortKey, setSortKey] = useState<
-    "title-asc" | "publication-date-asc" | "linguistic-versions-asc"
+    | "title-asc"
+    | "publication-date-asc"
+    | "linguistic-versions-asc"
+    | "article-size-asc"
+    | "lead-section-size-asc"
+    | "discussion-page-size-asc"
   >("title-asc");
 
   const rows = useMemo(() => {
@@ -179,7 +190,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     if (sortKey === "publication-date-asc") {
       next.sort(compareArticlesByPublicationDateAsc);
     } else if (sortKey === "linguistic-versions-asc") {
-      next.sort(compareArticlesByLinguisticVersionsAsc);
+      next.sort((a, b) =>
+        compareArticlesByNumericFieldAsc(a, b, "linguistic_versions_count")
+      );
+    } else if (sortKey === "article-size-asc") {
+      next.sort((a, b) =>
+        compareArticlesByNumericFieldAsc(a, b, "article_size")
+      );
+    } else if (sortKey === "lead-section-size-asc") {
+      next.sort((a, b) =>
+        compareArticlesByNumericFieldAsc(a, b, "lead_section_size")
+      );
+    } else if (sortKey === "discussion-page-size-asc") {
+      next.sort((a, b) => compareArticlesByNumericFieldAsc(a, b, "talk_size"));
     } else {
       next.sort((a, b) => a.article.localeCompare(b.article));
     }
@@ -519,6 +542,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                   | "title-asc"
                   | "publication-date-asc"
                   | "linguistic-versions-asc"
+                  | "article-size-asc"
+                  | "lead-section-size-asc"
+                  | "discussion-page-size-asc"
               )
             }
           >
@@ -528,6 +554,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             </option>
             <option value="linguistic-versions-asc">
               Linguistic versions (Low-High)
+            </option>
+            <option value="article-size-asc">Article size (Small-Large)</option>
+            <option value="lead-section-size-asc">
+              Lead section size (Small-Large)
+            </option>
+            <option value="discussion-page-size-asc">
+              Discussion page size (Small-Large)
             </option>
           </select>
         </div>
