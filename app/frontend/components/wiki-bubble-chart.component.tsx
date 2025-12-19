@@ -14,6 +14,7 @@ type ArticleAnalytics = {
   prev_talk_size: number | null;
   lead_section_size: number;
   prev_average_daily_views: number | null;
+  linguistic_versions_count: number;
   assessment_grade: string | null;
   publication_date: string | null;
 };
@@ -361,6 +362,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 "Lead size": format(datum.lead_section_size, ','),
                 "Talk size": format(datum.talk_size, ','),
                 "Talk size (prev year)": isValid(datum.prev_talk_size) ? format(datum.prev_talk_size, ',') : 'n/a',
+                "Linguistic versions": format(datum.linguistic_versions_count, ','),
               }`,
             },
           },
