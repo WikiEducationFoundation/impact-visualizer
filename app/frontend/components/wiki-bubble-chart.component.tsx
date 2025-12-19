@@ -42,6 +42,22 @@ function compareArticlesByPublicationDateAsc(
   return firstArticle.article.localeCompare(secondArticle.article);
 }
 
+function compareArticlesByLinguisticVersionsAsc(
+  firstArticle: { linguistic_versions_count: number; article: string },
+  secondArticle: { linguistic_versions_count: number; article: string }
+): number {
+  if (
+    firstArticle.linguistic_versions_count !==
+    secondArticle.linguistic_versions_count
+  ) {
+    return (
+      firstArticle.linguistic_versions_count -
+      secondArticle.linguistic_versions_count
+    );
+  }
+  return firstArticle.article.localeCompare(secondArticle.article);
+}
+
 type Wiki = {
   language: string;
   project: string;
@@ -125,9 +141,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       List: true,
     }
   );
-  const [sortKey, setSortKey] = useState<"title-asc" | "publication-date-asc">(
-    "title-asc"
-  );
+  const [sortKey, setSortKey] = useState<
+    "title-asc" | "publication-date-asc" | "linguistic-versions-asc"
+  >("title-asc");
 
   const rows = useMemo(() => {
     if (data && typeof data === "object") {
@@ -147,6 +163,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
     if (sortKey === "publication-date-asc") {
       next.sort(compareArticlesByPublicationDateAsc);
+    } else if (sortKey === "linguistic-versions-asc") {
+      next.sort(compareArticlesByLinguisticVersionsAsc);
     } else {
       next.sort((a, b) => a.article.localeCompare(b.article));
     }
@@ -223,7 +241,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           ],
           encoding: {
-            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
           },
         },
@@ -235,7 +252,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             opacity: 0.6,
           },
           encoding: {
-            x: { field: "idx", type: "quantitative", axis: null },
             y: { field: "prev_average_daily_views", type: "quantitative" },
             y2: { field: "average_daily_views", type: "quantitative" },
           },
@@ -251,7 +267,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "talk_size",
@@ -281,7 +296,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "prev_article_size",
@@ -309,7 +323,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "lead_section_size",
@@ -367,7 +380,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           },
           encoding: {
-            x: { field: "idx", type: "quantitative" },
             y: { field: "average_daily_views", type: "quantitative" },
             size: {
               field: "article_size",
@@ -392,7 +404,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         x: {
           field: "idx",
           type: "quantitative",
-          axis: null,
+          axis: {
+            title: "Articles (sorted)",
+            labels: false,
+            ticks: false,
+            grid: false,
+          },
         },
         y: {
           field: "average_daily_views",
@@ -482,12 +499,20 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             className="WikiBubbleChartSortSelect"
             value={sortKey}
             onChange={(e) =>
-              setSortKey(e.target.value as "title-asc" | "publication-date-asc")
+              setSortKey(
+                e.target.value as
+                  | "title-asc"
+                  | "publication-date-asc"
+                  | "linguistic-versions-asc"
+              )
             }
           >
             <option value="title-asc">Article title (A-Z)</option>
             <option value="publication-date-asc">
               Publication date (Old-New)
+            </option>
+            <option value="linguistic-versions-asc">
+              Linguistic versions (Low-High)
             </option>
           </select>
         </div>
