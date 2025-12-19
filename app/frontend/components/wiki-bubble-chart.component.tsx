@@ -58,6 +58,21 @@ function compareArticlesByLinguisticVersionsAsc(
   return firstArticle.article.localeCompare(secondArticle.article);
 }
 
+function xAxisTitleForSortKey(
+  sortKey: "title-asc" | "publication-date-asc" | "linguistic-versions-asc"
+): string {
+  switch (sortKey) {
+    case "title-asc":
+      return "Articles from A-Z (sort by title)";
+    case "publication-date-asc":
+      return "Articles from oldest to newest (sort by publication date)";
+    case "linguistic-versions-asc":
+      return "Articles from least to most linguistic versions (sort by number of linguistic versions)";
+    default:
+      return "Articles";
+  }
+}
+
 type Wiki = {
   language: string;
   project: string;
@@ -405,7 +420,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           field: "idx",
           type: "quantitative",
           axis: {
-            title: "Articles (sorted)",
+            title: xAxisTitleForSortKey(sortKey),
             labels: false,
             ticks: false,
             grid: false,
@@ -452,7 +467,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       viewRef.current?.view.finalize();
       viewRef.current = null;
     };
-  }, [sortedRows, actions, wiki, selectedGrades, searchContainerId]);
+  }, [sortedRows, actions, wiki, selectedGrades, searchContainerId, sortKey]);
 
   const toggleGrades = (grades: string[], on: boolean) => {
     setSelectedGrades((prev) => {
