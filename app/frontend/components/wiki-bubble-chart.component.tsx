@@ -42,37 +42,43 @@ function compareArticlesByPublicationDateAsc(
   return firstArticle.article.localeCompare(secondArticle.article);
 }
 
-function compareArticlesByNumericFieldAsc<
-  T extends { article: string },
-  K extends keyof T
->(firstArticle: T, secondArticle: T, field: K): number {
-  const a = firstArticle[field] as unknown as number;
-  const b = secondArticle[field] as unknown as number;
+type NumericSortField =
+  | "linguistic_versions_count"
+  | "article_size"
+  | "lead_section_size"
+  | "talk_size";
+
+type NumericSortableArticle = { article: string } & Record<
+  NumericSortField,
+  number
+>;
+
+function compareArticlesByNumericFieldAsc(
+  firstArticle: NumericSortableArticle,
+  secondArticle: NumericSortableArticle,
+  field: NumericSortField
+): number {
+  const a = firstArticle[field];
+  const b = secondArticle[field];
   if (a !== b) return a - b;
   return firstArticle.article.localeCompare(secondArticle.article);
 }
 
 function xAxisTitleForSortKey(
-  sortKey:
-    | "title-asc"
-    | "publication-date-asc"
-    | "linguistic-versions-asc"
-    | "article-size-asc"
-    | "lead-section-size-asc"
-    | "discussion-page-size-asc"
+  sortKey: "title" | "publication_date" | NumericSortField
 ): string {
   switch (sortKey) {
-    case "title-asc":
+    case "title":
       return "Articles from A-Z (sort by title)";
-    case "publication-date-asc":
+    case "publication_date":
       return "Articles from oldest to newest (sort by publication date)";
-    case "linguistic-versions-asc":
+    case "linguistic_versions_count":
       return "Articles from least to most linguistic versions (sort by number of linguistic versions)";
-    case "article-size-asc":
+    case "article_size":
       return "Articles from smallest to largest (sort by article size)";
-    case "lead-section-size-asc":
+    case "lead_section_size":
       return "Articles from smallest to largest (sort by lead section size)";
-    case "discussion-page-size-asc":
+    case "talk_size":
       return "Articles from smallest to largest (sort by discussion page size)";
     default:
       return "Articles";
@@ -163,13 +169,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
   );
   const [sortKey, setSortKey] = useState<
-    | "title-asc"
-    | "publication-date-asc"
-    | "linguistic-versions-asc"
-    | "article-size-asc"
-    | "lead-section-size-asc"
-    | "discussion-page-size-asc"
-  >("title-asc");
+    "title" | "publication_date" | NumericSortField
+  >("title");
 
   const rows = useMemo(() => {
     if (data && typeof data === "object") {
@@ -187,25 +188,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
     const next = [...rows];
 
-    if (sortKey === "publication-date-asc") {
-      next.sort(compareArticlesByPublicationDateAsc);
-    } else if (sortKey === "linguistic-versions-asc") {
-      next.sort((a, b) =>
-        compareArticlesByNumericFieldAsc(a, b, "linguistic_versions_count")
-      );
-    } else if (sortKey === "article-size-asc") {
-      next.sort((a, b) =>
-        compareArticlesByNumericFieldAsc(a, b, "article_size")
-      );
-    } else if (sortKey === "lead-section-size-asc") {
-      next.sort((a, b) =>
-        compareArticlesByNumericFieldAsc(a, b, "lead_section_size")
-      );
-    } else if (sortKey === "discussion-page-size-asc") {
-      next.sort((a, b) => compareArticlesByNumericFieldAsc(a, b, "talk_size"));
-    } else {
-      next.sort((a, b) => a.article.localeCompare(b.article));
-    }
+    const comparator = (() => {
+      switch (sortKey) {
+        case "publication_date":
+          return compareArticlesByPublicationDateAsc;
+        case "title":
+          return (a: any, b: any) => a.article.localeCompare(b.article);
+        default:
+          return (a: any, b: any) =>
+            compareArticlesByNumericFieldAsc(a, b, sortKey);
+      }
+    })();
+
+    next.sort(comparator);
 
     return next;
   }, [rows, sortKey]);
@@ -539,27 +534,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             onChange={(e) =>
               setSortKey(
                 e.target.value as
-                  | "title-asc"
-                  | "publication-date-asc"
-                  | "linguistic-versions-asc"
-                  | "article-size-asc"
-                  | "lead-section-size-asc"
-                  | "discussion-page-size-asc"
+                  | "title"
+                  | "publication_date"
+                  | NumericSortField
               )
             }
           >
-            <option value="title-asc">Article title (A-Z)</option>
-            <option value="publication-date-asc">
-              Publication date (Old-New)
-            </option>
-            <option value="linguistic-versions-asc">
+            <option value="title">Article title (A-Z)</option>
+            <option value="publication_date">Publication date (Old-New)</option>
+            <option value="linguistic_versions_count">
               Linguistic versions (Low-High)
             </option>
-            <option value="article-size-asc">Article size (Small-Large)</option>
-            <option value="lead-section-size-asc">
+            <option value="article_size">Article size (Small-Large)</option>
+            <option value="lead_section_size">
               Lead section size (Small-Large)
             </option>
-            <option value="discussion-page-size-asc">
+            <option value="talk_size">
               Discussion page size (Small-Large)
             </option>
           </select>
