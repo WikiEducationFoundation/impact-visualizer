@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_12_18_000000) do
+ActiveRecord::Schema[7.0].define(version: 2025_12_18_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -146,6 +146,8 @@ ActiveRecord::Schema[7.0].define(version: 2025_12_18_000000) do
     t.string "assessment_grade"
     t.date "publication_date"
     t.integer "linguistic_versions_count", default: 0, null: false
+    t.integer "warning_tags_count", default: 0, null: false
+    t.integer "images_count", default: 0, null: false
     t.index ["topic_id", "article_id"], name: "index_topic_article_analytics_on_topic_id_and_article_id", unique: true
   end
 

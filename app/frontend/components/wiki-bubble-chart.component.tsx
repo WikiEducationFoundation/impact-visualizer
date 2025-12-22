@@ -15,6 +15,8 @@ type ArticleAnalytics = {
   lead_section_size: number;
   prev_average_daily_views: number | null;
   linguistic_versions_count: number;
+  warning_tags_count: number;
+  images_count: number;
   assessment_grade: string | null;
   publication_date: string | null;
 };
@@ -46,7 +48,9 @@ type NumericSortField =
   | "linguistic_versions_count"
   | "article_size"
   | "lead_section_size"
-  | "talk_size";
+  | "talk_size"
+  | "warning_tags_count"
+  | "images_count";
 
 type NumericSortableArticle = { article: string } & Record<
   NumericSortField,
@@ -80,6 +84,10 @@ function xAxisTitleForSortKey(
       return "Articles from smallest to largest (sort by lead section size)";
     case "talk_size":
       return "Articles from smallest to largest (sort by discussion page size)";
+    case "warning_tags_count":
+      return "Articles from least to most warning tags (sort by number of warning tags)";
+    case "images_count":
+      return "Articles from least to most images (sort by number of images)";
     default:
       return "Articles";
   }
@@ -409,6 +417,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 "Talk size": format(datum.talk_size, ','),
                 "Talk size (prev year)": isValid(datum.prev_talk_size) ? format(datum.prev_talk_size, ',') : 'n/a',
                 "Linguistic versions": format(datum.linguistic_versions_count, ','),
+                "Warning tags": format(datum.warning_tags_count, ','),
+                "Images": format(datum.images_count, ','),
               }`,
             },
           },
@@ -552,6 +562,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             <option value="talk_size">
               Discussion page size (Small-Large)
             </option>
+            <option value="warning_tags_count">Warning tags (Low-High)</option>
+            <option value="images_count">Images (Low-High)</option>
           </select>
         </div>
 

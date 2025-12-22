@@ -72,6 +72,8 @@ class GenerateArticleAnalyticsJob
         publication_date: article.first_revision_at&.to_date,
         linguistic_versions_count: fetch_linguistic_versions_count(article_stats_service:,
                                                                    article:),
+        images_count: fetch_images_count(article_stats_service:, article:),
+        warning_tags_count: fetch_warning_tags_count(article_stats_service:, article:),
         article_size: fetch_article_size(article_stats_service:, article:, date: end_date),
         prev_article_size: fetch_article_size(article_stats_service:, article:,
                                               date: prev_end_date),
@@ -133,6 +135,22 @@ class GenerateArticleAnalyticsJob
     article_stats_service.get_linguistic_versions_count(article:)
   rescue StandardError => e
     Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching linguistic versions count for #{article.title}: #{e.message}")
+    0
+  end
+
+  def fetch_images_count(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching images count for #{article.title}")
+    article_stats_service.get_images_count(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching images count for #{article.title}: #{e.message}")
+    0
+  end
+
+  def fetch_warning_tags_count(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching warning tags count for #{article.title}")
+    article_stats_service.get_warning_tags_count(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching warning tags count for #{article.title}: #{e.message}")
     0
   end
 end

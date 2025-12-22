@@ -222,6 +222,52 @@ class ArticleStatsService
     0
   end
 
+  def get_images_count(article:)
+    update_details_for_article(article:)
+    return 0 if article.missing
+
+    title = article.title
+    return 0 unless title.present?
+
+    @wiki_action_api.get_images_count(title:)
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching images count for #{article.id || article}: #{e.message}")
+    0
+  end
+
+  def get_warning_tags_count(article:)
+    update_details_for_article(article:)
+    return 0 if article.missing
+
+    title = article.title
+    return 0 unless title.present?
+
+    html = @wiki_action_api.get_lead_html(title:)
+    return 0 unless html.is_a?(String) && html.length.positive?
+
+    # count ambox tables in lead HTML
+    ambox_tables = html.scan(/<table\b[^>]*class="[^"]*\bambox\b[^"]*"/i).length
+    return 0 if ambox_tables.zero?
+
+    # if multiple issues appears, count the listed issues inside each table
+    multiple_issues_tables = html.scan(
+      %r{<table\b[^>]*class="[^"]*\bambox\b[^"]*\bmultiple_issues\b[^"]*"[\s\S]*?</table>}i
+    )
+
+    if multiple_issues_tables.any?
+      multiple_issues_count = multiple_issues_tables.sum do |tbl|
+        li_count = tbl.scan(/<li\b/i).length
+        li_count.positive? ? li_count : 1
+      end
+      (ambox_tables - multiple_issues_tables.length) + multiple_issues_count
+    else
+      ambox_tables
+    end
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching warning tags count for #{article.id || article}: #{e.message}")
+    0
+  end
+
   def self.best_assessment_class_from_pageassessments(assessments)
     return nil unless assessments.is_a?(Hash) && assessments.any?
     classes = assessments.values.filter_map { |a| a['class'] || a[:class] }

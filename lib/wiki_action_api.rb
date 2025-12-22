@@ -16,6 +16,26 @@ class WikiActionApi
     mediawiki('query', query_parameters)
   end
 
+  def parse(parse_parameters:)
+    total_tries = 3
+    tries ||= 0
+
+    @client.action :parse, parse_parameters
+  rescue StandardError => e
+    tries += 1
+    unless Rails.env.test?
+      sleep_time = 3**tries
+      puts '---'
+      puts "WikiActionApi / Error - Retrying after #{sleep_time} seconds (#{tries}/#{total_tries})"
+      puts "WikiActionApi / Error - query: #{parse_parameters}"
+      puts e
+      puts '---'
+      sleep sleep_time
+    end
+    retry unless tries == total_tries
+    log_error(e)
+  end
+
   def fetch_all(query_parameters:)
     data = {}
     query = query_parameters
@@ -256,6 +276,58 @@ class WikiActionApi
 
     langlinks = page['langlinks'] || []
     langlinks.is_a?(Array) ? langlinks.length : 0
+  end
+
+  def get_images_count(title:)
+    query_parameters = {
+      titles: [title],
+      prop: 'images',
+      imlimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    data = fetch_all(query_parameters:)
+    page = data.dig('pages', 0)
+    return 0 unless page
+    return 0 if page['missing']
+
+    images = page['images'] || []
+    images.is_a?(Array) ? images.length : 0
+  end
+
+  def get_templates(title:, namespace: 10)
+    query_parameters = {
+      titles: [title],
+      prop: 'templates',
+      tllimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+    query_parameters[:tlnamespace] = namespace if namespace
+
+    data = fetch_all(query_parameters:)
+    page = data.dig('pages', 0)
+    return [] unless page
+    return [] if page['missing']
+
+    templates = page['templates'] || []
+    templates.is_a?(Array) ? templates : []
+  end
+
+  def get_lead_html(title:)
+    parse_parameters = {
+      page: title,
+      prop: 'text',
+      section: 0,
+      redirects: true,
+      formatversion: '2'
+    }
+
+    response = parse(parse_parameters:)
+    return nil unless response&.status == 200
+
+    response.data.dig('parse', 'text')
   end
 
   private
