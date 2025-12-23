@@ -242,26 +242,32 @@ class ArticleStatsService
     title = article.title
     return 0 unless title.present?
 
-    html = @wiki_action_api.get_lead_html(title:)
-    return 0 unless html.is_a?(String) && html.length.positive?
+    templates = @wiki_action_api.get_templates(title:)
+    return 0 if templates.empty?
 
-    # count ambox tables in lead HTML
-    ambox_tables = html.scan(/<table\b[^>]*class="[^"]*\bambox\b[^"]*"/i).length
-    return 0 if ambox_tables.zero?
+    warning_template_patterns = [
+      /\AUnreferenced\z/i,
+      /\ARefimprove\z/i,
+      /\ARefimprove section\z/i,
+      /\AMore citations needed\z/i,
+      /\ACleanup\z/i,
+      /\APOV\z/i,
+      /\AAdvert\z/i,
+      /\ANotability\z/i,
+      /\ACopy edit\z/i,
+      /\ATone\z/i,
+      /\AUpdate\z/i,
+      /\ADisputed\z/i,
+      /\AMultiple issues\z/i,
+      /\ACitation needed\z/i,
+      /\ACn\z/i
+    ]
 
-    # if multiple issues appears, count the listed issues inside each table
-    multiple_issues_tables = html.scan(
-      %r{<table\b[^>]*class="[^"]*\bambox\b[^"]*\bmultiple_issues\b[^"]*"[\s\S]*?</table>}i
-    )
-
-    if multiple_issues_tables.any?
-      multiple_issues_count = multiple_issues_tables.sum do |tbl|
-        li_count = tbl.scan(/<li\b/i).length
-        li_count.positive? ? li_count : 1
-      end
-      (ambox_tables - multiple_issues_tables.length) + multiple_issues_count
-    else
-      ambox_tables
+    templates.count do |t|
+      raw_title = t['title'] || t[:title]
+      next false unless raw_title.is_a?(String)
+      name = raw_title.split(':', 2).last
+      warning_template_patterns.any? { |re| re.match?(name) }
     end
   rescue StandardError => e
     Rails.logger.error("[ArticleStatsService] Error fetching warning tags count for #{article.id || article}: #{e.message}")

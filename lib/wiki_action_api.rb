@@ -327,7 +327,11 @@ class WikiActionApi
     response = parse(parse_parameters:)
     return nil unless response&.status == 200
 
-    response.data.dig('parse', 'text')
+    text = response.data.dig('parse', 'text')
+    return text if text.is_a?(String)
+    return text['*'] if text.is_a?(Hash) && text['*'].is_a?(String)
+
+    nil
   end
 
   private
