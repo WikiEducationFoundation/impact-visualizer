@@ -52,6 +52,9 @@ type NumericSortField =
   | "warning_tags_count"
   | "images_count";
 
+type XAxisKey = "title" | "publication_date" | NumericSortField;
+type YAxisKey = "average_daily_views";
+
 type NumericSortableArticle = { article: string } & Record<
   NumericSortField,
   number
@@ -68,10 +71,8 @@ function compareArticlesByNumericFieldAsc(
   return firstArticle.article.localeCompare(secondArticle.article);
 }
 
-function xAxisTitleForSortKey(
-  sortKey: "title" | "publication_date" | NumericSortField
-): string {
-  switch (sortKey) {
+function xAxisTitleForKey(xAxisKey: XAxisKey): string {
+  switch (xAxisKey) {
     case "title":
       return "Articles from A-Z (sort by title)";
     case "publication_date":
@@ -176,9 +177,23 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       List: true,
     }
   );
-  const [sortKey, setSortKey] = useState<
-    "title" | "publication_date" | NumericSortField
-  >("title");
+  const [xAxisKey, setXAxisKey] = useState<XAxisKey>("title");
+  const [yAxisKey, setYAxisKey] = useState<YAxisKey>("average_daily_views");
+
+  const yAxisConfig = useMemo(() => {
+    switch (yAxisKey) {
+      case "average_daily_views":
+        return {
+          currentField: "average_daily_views" as const,
+          previousField: "prev_average_daily_views" as const,
+          axisTitle: "avg daily visits",
+        };
+      default: {
+        const _exhaustiveCheck: never = yAxisKey;
+        return _exhaustiveCheck;
+      }
+    }
+  }, [yAxisKey]);
 
   const rows = useMemo(() => {
     if (data && typeof data === "object") {
@@ -197,21 +212,21 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     const next = [...rows];
 
     const comparator = (() => {
-      switch (sortKey) {
+      switch (xAxisKey) {
         case "publication_date":
           return compareArticlesByPublicationDateAsc;
         case "title":
           return (a: any, b: any) => a.article.localeCompare(b.article);
         default:
           return (a: any, b: any) =>
-            compareArticlesByNumericFieldAsc(a, b, sortKey);
+            compareArticlesByNumericFieldAsc(a, b, xAxisKey);
       }
     })();
 
     next.sort(comparator);
 
     return next;
-  }, [rows, sortKey]);
+  }, [rows, xAxisKey]);
 
   useEffect(() => {
     if (!containerRef.current || sortedRows.length === 0) return;
@@ -282,7 +297,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           ],
           encoding: {
-            y: { field: "average_daily_views", type: "quantitative" },
+            y: { field: yAxisConfig.currentField, type: "quantitative" },
           },
         },
         {
@@ -293,8 +308,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             opacity: 0.6,
           },
           encoding: {
-            y: { field: "prev_average_daily_views", type: "quantitative" },
-            y2: { field: "average_daily_views", type: "quantitative" },
+            y: { field: yAxisConfig.previousField, type: "quantitative" },
+            y2: { field: yAxisConfig.currentField, type: "quantitative" },
           },
         },
 
@@ -308,7 +323,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            y: { field: "average_daily_views", type: "quantitative" },
+            y: { field: yAxisConfig.currentField, type: "quantitative" },
             size: {
               field: "talk_size",
               type: "quantitative",
@@ -337,7 +352,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            y: { field: "average_daily_views", type: "quantitative" },
+            y: { field: yAxisConfig.currentField, type: "quantitative" },
             size: {
               field: "prev_article_size",
               type: "quantitative",
@@ -364,7 +379,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            y: { field: "average_daily_views", type: "quantitative" },
+            y: { field: yAxisConfig.currentField, type: "quantitative" },
             size: {
               field: "lead_section_size",
               type: "quantitative",
@@ -423,7 +438,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           },
           encoding: {
-            y: { field: "average_daily_views", type: "quantitative" },
+            y: { field: yAxisConfig.currentField, type: "quantitative" },
             size: {
               field: "article_size",
               type: "quantitative",
@@ -448,16 +463,16 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           field: "idx",
           type: "quantitative",
           axis: {
-            title: xAxisTitleForSortKey(sortKey),
+            title: xAxisTitleForKey(xAxisKey),
             labels: false,
             ticks: false,
             grid: false,
           },
         },
         y: {
-          field: "average_daily_views",
+          field: yAxisConfig.currentField,
           type: "quantitative",
-          axis: { title: "avg daily visits" },
+          axis: { title: yAxisConfig.axisTitle },
         },
       },
 
@@ -495,7 +510,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       viewRef.current?.view.finalize();
       viewRef.current = null;
     };
-  }, [sortedRows, actions, wiki, selectedGrades, searchContainerId, sortKey]);
+  }, [
+    sortedRows,
+    actions,
+    wiki,
+    selectedGrades,
+    searchContainerId,
+    xAxisKey,
+    yAxisConfig,
+  ]);
 
   const toggleGrades = (grades: string[], on: boolean) => {
     setSelectedGrades((prev) => {
@@ -535,20 +558,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
         <div className="WikiBubbleChartHeaderBox">
           <label htmlFor="wiki-bubble-sort" className="BoxTitle">
-            Sort articles
+            Sort by
           </label>
           <select
             id="wiki-bubble-sort"
             className="WikiBubbleChartSortSelect"
-            value={sortKey}
-            onChange={(e) =>
-              setSortKey(
-                e.target.value as
-                  | "title"
-                  | "publication_date"
-                  | NumericSortField
-              )
-            }
+            value={xAxisKey}
+            onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
           >
             <option value="title">Article title (A-Z)</option>
             <option value="publication_date">Publication date (Old-New)</option>
@@ -568,7 +584,17 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
-          <div className="BoxTitle">Placeholder title</div>
+          <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
+            Sort by Y-axis
+          </label>
+          <select
+            id="wiki-bubble-y-axis"
+            className="WikiBubbleChartSortSelect"
+            value={yAxisKey}
+            onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
+          >
+            <option value="average_daily_views">Avg daily views</option>
+          </select>
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
