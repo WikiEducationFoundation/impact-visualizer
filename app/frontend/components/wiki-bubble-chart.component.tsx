@@ -54,7 +54,7 @@ type NumericSortField =
   | "images_count";
 
 type XAxisKey = "title" | "publication_date" | NumericSortField;
-type YAxisKey = "average_daily_views";
+type YAxisKey = "average_daily_views" | "number_of_editors";
 
 type NumericSortableArticle = { article: string } & Record<
   NumericSortField,
@@ -189,6 +189,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           previousField: "prev_average_daily_views" as const,
           axisTitle: "avg daily visits",
         };
+      case "number_of_editors":
+        return {
+          currentField: "number_of_editors" as const,
+          previousField: null,
+          axisTitle: "editors",
+        };
       default: {
         const _exhaustiveCheck: never = yAxisKey;
         return _exhaustiveCheck;
@@ -301,18 +307,28 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             y: { field: yAxisConfig.currentField, type: "quantitative" },
           },
         },
-        {
-          mark: {
-            type: "rule",
-            strokeDash: [2, 4],
-            strokeWidth: 1.2,
-            opacity: 0.6,
-          },
-          encoding: {
-            y: { field: yAxisConfig.previousField, type: "quantitative" },
-            y2: { field: yAxisConfig.currentField, type: "quantitative" },
-          },
-        },
+        ...(yAxisConfig.previousField
+          ? [
+              {
+                mark: {
+                  type: "rule" as const,
+                  strokeDash: [2, 4],
+                  strokeWidth: 1.2,
+                  opacity: 0.6,
+                },
+                encoding: {
+                  y: {
+                    field: yAxisConfig.previousField,
+                    type: "quantitative" as const,
+                  },
+                  y2: {
+                    field: yAxisConfig.currentField,
+                    type: "quantitative" as const,
+                  },
+                },
+              },
+            ]
+          : []),
 
         // Discussion size circle (talk_size)
         {
@@ -324,7 +340,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            y: { field: yAxisConfig.currentField, type: "quantitative" },
+            y: {
+              field: yAxisConfig.currentField,
+              type: "quantitative",
+            },
             size: {
               field: "talk_size",
               type: "quantitative",
@@ -353,7 +372,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            y: { field: yAxisConfig.currentField, type: "quantitative" },
+            y: {
+              field: yAxisConfig.currentField,
+              type: "quantitative",
+            },
             size: {
               field: "prev_article_size",
               type: "quantitative",
@@ -380,7 +402,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            y: { field: yAxisConfig.currentField, type: "quantitative" },
+            y: {
+              field: yAxisConfig.currentField,
+              type: "quantitative",
+            },
             size: {
               field: "lead_section_size",
               type: "quantitative",
@@ -440,7 +465,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           },
           encoding: {
-            y: { field: yAxisConfig.currentField, type: "quantitative" },
+            y: {
+              field: yAxisConfig.currentField,
+              type: "quantitative",
+            },
             size: {
               field: "article_size",
               type: "quantitative",
@@ -587,7 +615,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
         <div className="WikiBubbleChartHeaderBox">
           <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
-            Sort by Y-axis
+            Vertical axis
           </label>
           <select
             id="wiki-bubble-y-axis"
@@ -596,6 +624,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
           >
             <option value="average_daily_views">Avg daily views</option>
+            <option value="number_of_editors">Editors</option>
           </select>
         </div>
 
