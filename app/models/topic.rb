@@ -138,11 +138,12 @@ class Topic < ApplicationRecord
   def article_analytics_data
     topic_article_analytics
       .joins(:article)
-      .pluck('articles.title', :average_daily_views, :prev_average_daily_views, :article_size, :prev_article_size, :talk_size, :prev_talk_size, :lead_section_size, :assessment_grade, :publication_date, :linguistic_versions_count, :warning_tags_count, :images_count)
-      .map do |title, average_daily_views, prev_average_daily_views, article_size, prev_article_size, talk_size, prev_talk_size, lead_section_size, assessment_grade, publication_date, linguistic_versions_count, warning_tags_count, images_count|
+      .pluck('articles.title', :average_daily_views, :prev_average_daily_views, :article_size, :prev_article_size, :talk_size, :prev_talk_size, :lead_section_size, :assessment_grade, :publication_date, :linguistic_versions_count, :warning_tags_count, :images_count, :number_of_editors)
+      .map do |title, average_daily_views, prev_average_daily_views, article_size, prev_article_size, talk_size, prev_talk_size, lead_section_size, assessment_grade, publication_date, linguistic_versions_count, warning_tags_count, images_count, number_of_editors|
         [title,
          { average_daily_views:, prev_average_daily_views:, article_size:, prev_article_size:, talk_size:, prev_talk_size:,
-           lead_section_size:, assessment_grade:, publication_date:, linguistic_versions_count:, warning_tags_count:, images_count: }]
+          lead_section_size:, assessment_grade:, publication_date:, linguistic_versions_count:, warning_tags_count:,
+          images_count:, number_of_editors: }]
       end
       .to_h
   end

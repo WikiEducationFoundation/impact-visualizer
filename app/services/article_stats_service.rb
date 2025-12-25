@@ -274,6 +274,19 @@ class ArticleStatsService
     0
   end
 
+  def get_number_of_editors(article:)
+    update_details_for_article(article:)
+    return 0 if article.missing
+
+    pageid = article.pageid
+    return 0 unless pageid
+
+    @wiki_action_api.get_unique_editors_count(pageid:)
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching number_of_editors for #{article.id || article}: #{e.message}")
+    0
+  end
+
   def self.best_assessment_class_from_pageassessments(assessments)
     return nil unless assessments.is_a?(Hash) && assessments.any?
     classes = assessments.values.filter_map { |a| a['class'] || a[:class] }

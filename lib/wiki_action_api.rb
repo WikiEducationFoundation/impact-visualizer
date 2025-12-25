@@ -113,6 +113,25 @@ class WikiActionApi
     data.dig('pages', 0, 'revisions').to_hashugar
   end
 
+  def get_unique_editors_count(pageid:)
+    require 'set'
+
+    editors = Set.new
+
+    revisions = get_all_revisions(pageid:) || []
+    revisions.each do |rev|
+      userid = (rev['userid']).to_i
+      if userid.positive?
+        editors.add("id:#{userid}")
+      else
+        user = rev['user']
+        editors.add("user:#{user}") if user.present?
+      end
+    end
+
+    editors.size
+  end
+
   def get_all_revisions_in_range(pageid:, start_timestamp:, end_timestamp:)
     # Setup basic query parameters
     query_parameters = {

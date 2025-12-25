@@ -5,6 +5,7 @@ class TopicArticleAnalytic < ApplicationRecord
   belongs_to :article
 
   validates :average_daily_views, numericality: { greater_than_or_equal_to: 0, only_integer: true }
+  validates :number_of_editors, numericality: { greater_than_or_equal_to: 0, only_integer: true }
   validates :article_size, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
   validates :prev_article_size, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
   validates :topic_id, uniqueness: { scope: :article_id }
@@ -29,6 +30,7 @@ end
 #  images_count              :integer          default(0), not null
 #  lead_section_size         :integer
 #  linguistic_versions_count :integer          default(0), not null
+#  number_of_editors         :integer          default(0), not null
 #  prev_article_size         :integer
 #  prev_average_daily_views  :integer
 #  prev_talk_size            :integer

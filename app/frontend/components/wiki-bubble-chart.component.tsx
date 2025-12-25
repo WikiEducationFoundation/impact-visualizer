@@ -17,6 +17,7 @@ type ArticleAnalytics = {
   linguistic_versions_count: number;
   warning_tags_count: number;
   images_count: number;
+  number_of_editors: number;
   assessment_grade: string | null;
   publication_date: string | null;
 };
@@ -431,6 +432,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 "Lead size": format(datum.lead_section_size, ','),
                 "Talk size": format(datum.talk_size, ','),
                 "Talk size (prev year)": isValid(datum.prev_talk_size) ? format(datum.prev_talk_size, ',') : 'n/a',
+                "Editors": format(datum.number_of_editors, ','),
                 "Linguistic versions": format(datum.linguistic_versions_count, ','),
                 "Warning tags": format(datum.warning_tags_count, ','),
                 "Images": format(datum.images_count, ','),

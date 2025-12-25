@@ -74,6 +74,7 @@ class GenerateArticleAnalyticsJob
                                                                    article:),
         images_count: fetch_images_count(article_stats_service:, article:),
         warning_tags_count: fetch_warning_tags_count(article_stats_service:, article:),
+        number_of_editors: fetch_number_of_editors(article_stats_service:, article:),
         article_size: fetch_article_size(article_stats_service:, article:, date: end_date),
         prev_article_size: fetch_article_size(article_stats_service:, article:,
                                               date: prev_end_date),
@@ -151,6 +152,14 @@ class GenerateArticleAnalyticsJob
     article_stats_service.get_warning_tags_count(article:)
   rescue StandardError => e
     Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching warning tags count for #{article.title}: #{e.message}")
+    0
+  end
+
+  def fetch_number_of_editors(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching number of editors for #{article.title}")
+    article_stats_service.get_number_of_editors(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching number of editors for #{article.title}: #{e.message}")
     0
   end
 end
