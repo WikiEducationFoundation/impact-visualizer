@@ -180,6 +180,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>("title");
   const [yAxisKey, setYAxisKey] = useState<YAxisKey>("average_daily_views");
+  const [yAxisMinInput, setYAxisMinInput] = useState<string>("");
+  const [yAxisMaxInput, setYAxisMaxInput] = useState<string>("");
 
   const yAxisConfig = useMemo(() => {
     switch (yAxisKey) {
@@ -235,8 +237,57 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     return next;
   }, [rows, xAxisKey]);
 
+  const yAxisAutoDomain = useMemo(() => {
+    const values = rows
+      .map((row) => row[yAxisConfig.currentField])
+      .filter((value) => typeof value === "number" && Number.isFinite(value));
+
+    if (!values.length) return { min: null, max: null };
+    return { min: Math.min(...values), max: Math.max(...values) };
+  }, [rows, yAxisConfig.currentField]);
+
+  useEffect(() => {
+    setYAxisMinInput("");
+    setYAxisMaxInput("");
+  }, [yAxisKey]);
+
   useEffect(() => {
     if (!containerRef.current || sortedRows.length === 0) return;
+
+    const parsedMin =
+      yAxisMinInput.trim() === "" ? null : Number(yAxisMinInput);
+    const parsedMax =
+      yAxisMaxInput.trim() === "" ? null : Number(yAxisMaxInput);
+    let domainMin =
+      parsedMin !== null && Number.isFinite(parsedMin) ? parsedMin : null;
+    let domainMax =
+      parsedMax !== null && Number.isFinite(parsedMax) ? parsedMax : null;
+
+    if (domainMin !== null && domainMax !== null && domainMin > domainMax) {
+      const tmp = domainMin;
+      domainMin = domainMax;
+      domainMax = tmp;
+    }
+
+    const yScale: Record<string, number> = {};
+    if (domainMin !== null) yScale.domainMin = domainMin;
+    if (domainMax !== null) yScale.domainMax = domainMax;
+
+    const yFilterExprParts: string[] = [];
+    const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
+    if (domainMin !== null)
+      yFilterExprParts.push(`${yFieldExpr} >= ${domainMin}`);
+    if (domainMax !== null)
+      yFilterExprParts.push(`${yFieldExpr} <= ${domainMax}`);
+    const yFilterExpr = yFilterExprParts.length
+      ? yFilterExprParts.join(" && ")
+      : null;
+
+    const yEncoding: any = {
+      field: yAxisConfig.currentField,
+      type: "quantitative",
+      ...(Object.keys(yScale).length ? { scale: yScale } : {}),
+    };
 
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
@@ -244,7 +295,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       width: "container",
       background: "#ffffff",
       data: { values: sortedRows },
-      transform: [{ window: [{ op: "row_number", as: "idx" }] }],
+      transform: [
+        ...(yFilterExpr ? [{ filter: yFilterExpr }] : []),
+        { window: [{ op: "row_number", as: "idx" }] },
+      ],
       config: {
         legend: { disable: true },
         style: {
@@ -304,7 +358,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           ],
           encoding: {
-            y: { field: yAxisConfig.currentField, type: "quantitative" },
+            y: yEncoding,
           },
         },
         ...(yAxisConfig.previousField
@@ -340,10 +394,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            y: {
-              field: yAxisConfig.currentField,
-              type: "quantitative",
-            },
+            y: yEncoding,
             size: {
               field: "talk_size",
               type: "quantitative",
@@ -372,10 +423,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            y: {
-              field: yAxisConfig.currentField,
-              type: "quantitative",
-            },
+            y: yEncoding,
             size: {
               field: "prev_article_size",
               type: "quantitative",
@@ -402,10 +450,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             cursor: "pointer",
           },
           encoding: {
-            y: {
-              field: yAxisConfig.currentField,
-              type: "quantitative",
-            },
+            y: yEncoding,
             size: {
               field: "lead_section_size",
               type: "quantitative",
@@ -465,10 +510,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
           },
           encoding: {
-            y: {
-              field: yAxisConfig.currentField,
-              type: "quantitative",
-            },
+            y: yEncoding,
             size: {
               field: "article_size",
               type: "quantitative",
@@ -500,8 +542,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           },
         },
         y: {
-          field: yAxisConfig.currentField,
-          type: "quantitative",
+          ...yEncoding,
           axis: { title: yAxisConfig.axisTitle },
         },
       },
@@ -548,6 +589,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     searchContainerId,
     xAxisKey,
     yAxisConfig,
+    yAxisMinInput,
+    yAxisMaxInput,
   ]);
 
   const toggleGrades = (grades: string[], on: boolean) => {
@@ -629,7 +672,41 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
-          <div className="BoxTitle">Placeholder title</div>
+          <div className="BoxTitle">Y-axis range</div>
+          <div className="WikiBubbleChartRangeRow">
+            <label className="WikiBubbleChartRangeField">
+              <span className="WikiBubbleChartRangeLabel">min</span>
+              <input
+                className="WikiBubbleChartRangeInput"
+                type="number"
+                inputMode="numeric"
+                placeholder={
+                  yAxisAutoDomain.min === null
+                    ? ""
+                    : String(yAxisAutoDomain.min)
+                }
+                value={yAxisMinInput}
+                onChange={(e) => setYAxisMinInput(e.target.value)}
+                aria-label="Y-axis minimum"
+              />
+            </label>
+            <label className="WikiBubbleChartRangeField">
+              <span className="WikiBubbleChartRangeLabel">max</span>
+              <input
+                className="WikiBubbleChartRangeInput"
+                type="number"
+                inputMode="numeric"
+                placeholder={
+                  yAxisAutoDomain.max === null
+                    ? ""
+                    : String(yAxisAutoDomain.max)
+                }
+                value={yAxisMaxInput}
+                onChange={(e) => setYAxisMaxInput(e.target.value)}
+                aria-label="Y-axis maximum"
+              />
+            </label>
+          </div>
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
