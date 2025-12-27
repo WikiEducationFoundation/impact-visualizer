@@ -287,6 +287,20 @@ class ArticleStatsService
     0
   end
 
+  def get_article_protections(article:)
+    update_details_for_article(article:)
+    return [] if article.missing
+
+    pageid = article.pageid
+    title = article.title
+    return [] unless pageid || title
+
+    pageid ? @wiki_action_api.get_page_protections(pageid:) : @wiki_action_api.get_page_protections(title:)
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching article protections for #{article.id || article}: #{e.message}")
+    []
+  end
+
   def self.best_assessment_class_from_pageassessments(assessments)
     return nil unless assessments.is_a?(Hash) && assessments.any?
     classes = assessments.values.filter_map { |a| a['class'] || a[:class] }

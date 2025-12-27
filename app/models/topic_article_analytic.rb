@@ -24,6 +24,7 @@ end
 # Table name: topic_article_analytics
 #
 #  id                        :bigint           not null, primary key
+#  article_protections       :jsonb            not null
 #  article_size              :integer
 #  assessment_grade          :string
 #  average_daily_views       :integer          default(0)

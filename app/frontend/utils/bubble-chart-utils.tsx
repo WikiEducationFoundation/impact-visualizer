@@ -11,11 +11,12 @@ export function convertAnalyticsToCSV(
     talk_size: number;
     prev_talk_size: number | null;
     assessment_grade: string | null;
+    protection_summary?: string;
   }>
 ): string {
   let csvContent = "data:text/csv;charset=utf-8,";
   csvContent +=
-    "Article,Average Daily Views,Average Daily Views (prev year),Article Size,Article Size (prev year),Lead Section Size,Talk Size,Talk Size (prev year),Assessment Grade\n";
+    "Article,Average Daily Views,Average Daily Views (prev year),Article Size,Article Size (prev year),Lead Section Size,Talk Size,Talk Size (prev year),Assessment Grade,Protections\n";
   rows.forEach((row) => {
     csvContent +=
       [
@@ -28,6 +29,7 @@ export function convertAnalyticsToCSV(
         row.talk_size,
         row.prev_talk_size ?? "",
         row.assessment_grade ?? "",
+        escapeCSVSpecialCharacters(row.protection_summary ?? ""),
       ].join(",") + "\n";
   });
   return csvContent;

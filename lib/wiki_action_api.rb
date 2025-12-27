@@ -78,6 +78,30 @@ class WikiActionApi
     response.data.dig('pages', 0).to_hashugar if response&.status == 200
   end
 
+  def get_page_protections(pageid: nil, title: nil)
+    query_parameters = {
+      prop: 'info',
+      inprop: 'protection',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    if pageid
+      query_parameters['pageids'] = [pageid]
+    elsif title
+      query_parameters['titles'] = [title]
+    else
+      return []
+    end
+
+    response = query(query_parameters:)
+    page = response&.data&.dig('pages', 0)
+    return [] unless response&.status == 200 && page
+
+    protection = page['protection']
+    protection.is_a?(Array) ? protection : []
+  end
+
   def get_user_info(userid: nil, name: nil)
     # Setup basic query parameters
     query_parameters = {

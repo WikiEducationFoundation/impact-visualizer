@@ -82,7 +82,8 @@ class GenerateArticleAnalyticsJob
         prev_talk_size: fetch_talk_size(article_stats_service:, article:, date: prev_end_date),
         lead_section_size: fetch_lead_section_size(article_stats_service:, article:,
                                                    date: end_date),
-        assessment_grade: fetch_assessment_grade(article_stats_service:, article:)
+        assessment_grade: fetch_assessment_grade(article_stats_service:, article:),
+        article_protections: fetch_article_protections(article_stats_service:, article:)
       )
 
       Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, prev_average_views: #{prev_average_views&.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}, lead_section_size: #{topic_article_analytic.lead_section_size}")
@@ -161,5 +162,13 @@ class GenerateArticleAnalyticsJob
   rescue StandardError => e
     Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching number of editors for #{article.title}: #{e.message}")
     0
+  end
+
+  def fetch_article_protections(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching article protections for #{article.title}")
+    article_stats_service.get_article_protections(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching article protections for #{article.title}: #{e.message}")
+    []
   end
 end

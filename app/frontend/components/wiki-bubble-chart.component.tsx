@@ -6,6 +6,12 @@ import {
   getAssessmentColor,
 } from "../utils/bubble-chart-utils";
 
+type ArticleProtection = {
+  type: string;
+  level: string;
+  expiry: string;
+};
+
 type ArticleAnalytics = {
   average_daily_views: number;
   article_size: number;
@@ -20,6 +26,7 @@ type ArticleAnalytics = {
   number_of_editors: number;
   assessment_grade: string | null;
   publication_date: string | null;
+  article_protections: ArticleProtection[];
 };
 
 function compareArticlesByPublicationDateAsc(
@@ -70,6 +77,11 @@ function compareArticlesByNumericFieldAsc(
   const b = secondArticle[field];
   if (a !== b) return a - b;
   return firstArticle.article.localeCompare(secondArticle.article);
+}
+
+function formatProtectionSummary(protections: ArticleProtection[]): string {
+  if (!protections?.length) return "none";
+  return protections.map((p) => p.type).join(", ");
 }
 
 function xAxisTitleForKey(xAxisKey: XAxisKey): string {
@@ -210,6 +222,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         article,
         ...analytics,
         assessment_grade_color: getAssessmentColor(analytics?.assessment_grade),
+        protection_summary: formatProtectionSummary(
+          analytics?.article_protections ?? []
+        ),
       }));
     }
     return [];
@@ -506,6 +521,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 "Linguistic versions": format(datum.linguistic_versions_count, ','),
                 "Warning tags": format(datum.warning_tags_count, ','),
                 "Images": format(datum.images_count, ','),
+                "Protections": datum.protection_summary,
               }`,
             },
           },
