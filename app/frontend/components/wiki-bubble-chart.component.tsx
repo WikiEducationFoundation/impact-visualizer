@@ -1,111 +1,19 @@
 import React, { useEffect, useRef, useMemo, useState } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import CSVButton from "./CSV-button.component";
+import type {
+  ArticleAnalytics,
+  XAxisKey,
+  YAxisKey,
+} from "../types/bubble-chart.type";
 import {
   convertAnalyticsToCSV,
   getAssessmentColor,
+  compareArticlesByPublicationDateAsc,
+  compareArticlesByNumericFieldAsc,
+  formatProtectionSummary,
+  xAxisTitleForKey,
 } from "../utils/bubble-chart-utils";
-
-type ArticleProtection = {
-  type: string;
-  level: string;
-  expiry: string;
-};
-
-type ArticleAnalytics = {
-  average_daily_views: number;
-  article_size: number;
-  prev_article_size: number | null;
-  talk_size: number;
-  prev_talk_size: number | null;
-  lead_section_size: number;
-  prev_average_daily_views: number | null;
-  linguistic_versions_count: number;
-  warning_tags_count: number;
-  images_count: number;
-  number_of_editors: number;
-  assessment_grade: string | null;
-  publication_date: string | null;
-  article_protections: ArticleProtection[];
-};
-
-function compareArticlesByPublicationDateAsc(
-  firstArticle: { publication_date: string | null; article: string },
-  secondArticle: { publication_date: string | null; article: string }
-): number {
-  const firstPubDateParsed = firstArticle.publication_date
-    ? Date.parse(firstArticle.publication_date)
-    : NaN;
-  const secondPubDateParsed = secondArticle.publication_date
-    ? Date.parse(secondArticle.publication_date)
-    : NaN;
-
-  // If pub date is not valid, use positive infinity as sort key
-  const firstSortKey = Number.isFinite(firstPubDateParsed)
-    ? firstPubDateParsed
-    : Number.POSITIVE_INFINITY;
-  const secondSortKey = Number.isFinite(secondPubDateParsed)
-    ? secondPubDateParsed
-    : Number.POSITIVE_INFINITY;
-
-  if (firstSortKey !== secondSortKey) return firstSortKey - secondSortKey;
-  return firstArticle.article.localeCompare(secondArticle.article);
-}
-
-type NumericSortField =
-  | "linguistic_versions_count"
-  | "article_size"
-  | "lead_section_size"
-  | "talk_size"
-  | "warning_tags_count"
-  | "images_count";
-
-type XAxisKey = "title" | "publication_date" | NumericSortField;
-type YAxisKey = "average_daily_views" | "number_of_editors";
-
-type NumericSortableArticle = { article: string } & Record<
-  NumericSortField,
-  number
->;
-
-function compareArticlesByNumericFieldAsc(
-  firstArticle: NumericSortableArticle,
-  secondArticle: NumericSortableArticle,
-  field: NumericSortField
-): number {
-  const a = firstArticle[field];
-  const b = secondArticle[field];
-  if (a !== b) return a - b;
-  return firstArticle.article.localeCompare(secondArticle.article);
-}
-
-function formatProtectionSummary(protections: ArticleProtection[]): string {
-  if (!protections?.length) return "none";
-  return protections.map((p) => p.type).join(", ");
-}
-
-function xAxisTitleForKey(xAxisKey: XAxisKey): string {
-  switch (xAxisKey) {
-    case "title":
-      return "Articles from A-Z (sort by title)";
-    case "publication_date":
-      return "Articles from oldest to newest (sort by publication date)";
-    case "linguistic_versions_count":
-      return "Articles from least to most linguistic versions (sort by number of linguistic versions)";
-    case "article_size":
-      return "Articles from smallest to largest (sort by article size)";
-    case "lead_section_size":
-      return "Articles from smallest to largest (sort by lead section size)";
-    case "talk_size":
-      return "Articles from smallest to largest (sort by discussion page size)";
-    case "warning_tags_count":
-      return "Articles from least to most warning tags (sort by number of warning tags)";
-    case "images_count":
-      return "Articles from least to most images (sort by number of images)";
-    default:
-      return "Articles";
-  }
-}
 
 type Wiki = {
   language: string;
