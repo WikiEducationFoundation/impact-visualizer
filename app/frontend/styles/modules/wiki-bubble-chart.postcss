@@ -1,14 +1,6 @@
-.vega-bindings {
-  display: flex;
-  justify-content: flex-start;
-  margin-bottom: 4px;
-}
-
 .vega-bind-name {
-  display: block;
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 6px;
 }
 
 .BoxTitle {
@@ -24,10 +16,8 @@
   &Header {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1px;
+    gap: 0;
     align-items: stretch;
-    background-color: #d9d9d9;
-    border-bottom: 1px solid #d9d9d9;
 
     @media (min-width: 768px) {
       grid-template-columns: 1fr 1fr;
@@ -42,11 +32,67 @@
     }
   }
 
+  &HeaderFilters {
+    border-right: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    padding-right: 12px;
+  }
+
+  &HeaderSearch {
+    border-bottom: 1px solid #d9d9d9;
+    border-right: 1px solid #d9d9d9;
+  }
+
+  &HeaderSort {
+    border-bottom: 1px solid #d9d9d9;
+    border-right: 1px solid #d9d9d9;
+  }
+
+  &HeaderExtra {
+    border-bottom: 1px solid #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   &HeaderBox {
     padding: 12px;
-    background-color: white;
+    border-right: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    display: flex;
+    flex-direction: column;
+
     input[type="search"] {
       width: 100%;
+    }
+
+    &:has(> .BoxTitle) {
+      > *:not(.BoxTitle) {
+        margin-top: auto;
+        margin-bottom: auto;
+      }
+    }
+
+    > div[id^="search-container"] {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+
+      .vega-bind {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      label {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+
+        input {
+          margin-top: auto;
+          margin-bottom: auto;
+        }
+      }
     }
   }
 
@@ -207,10 +253,19 @@
 }
 
 .ProtectionFilter {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+
+  > .BoxTitle {
+    margin-bottom: 6px;
+  }
+
   &Checkboxes {
     display: flex;
     flex-direction: row;
     gap: 8px;
+    align-self: center;
   }
 
   &Label {
