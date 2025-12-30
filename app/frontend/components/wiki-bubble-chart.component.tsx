@@ -73,6 +73,42 @@ function QualityFilterButtons({
   );
 }
 
+function ProtectionFilterCheckboxes({
+  moveChecked,
+  editChecked,
+  onMoveChange,
+  onEditChange,
+}: {
+  moveChecked: boolean;
+  editChecked: boolean;
+  onMoveChange: (checked: boolean) => void;
+  onEditChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="ProtectionFilter">
+      <div className="BoxTitle">Protection filter</div>
+      <div className="ProtectionFilterCheckboxes">
+        <label className="ProtectionFilterLabel">
+          <input
+            type="checkbox"
+            checked={moveChecked}
+            onChange={(e) => onMoveChange(e.target.checked)}
+          />
+          <span>Move restriction</span>
+        </label>
+        <label className="ProtectionFilterLabel">
+          <input
+            type="checkbox"
+            checked={editChecked}
+            onChange={(e) => onEditChange(e.target.checked)}
+          />
+          <span>Edit restriction</span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
   actions = false,
@@ -102,6 +138,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [yAxisKey, setYAxisKey] = useState<YAxisKey>("average_daily_views");
   const [yAxisMinInput, setYAxisMinInput] = useState<string>("");
   const [yAxisMaxInput, setYAxisMaxInput] = useState<string>("");
+  const [filterMoveRestriction, setFilterMoveRestriction] =
+    useState<boolean>(false);
+  const [filterEditRestriction, setFilterEditRestriction] =
+    useState<boolean>(false);
 
   const yAxisConfig = useMemo(() => {
     switch (yAxisKey) {
@@ -126,14 +166,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   const rows = useMemo(() => {
     if (data && typeof data === "object") {
-      return Object.entries(data).map(([article, analytics]) => ({
-        article,
-        ...analytics,
-        assessment_grade_color: getAssessmentColor(analytics?.assessment_grade),
-        protection_summary: formatProtectionSummary(
-          analytics?.article_protections ?? []
-        ),
-      }));
+      return Object.entries(data).map(([article, analytics]) => {
+        const protections = analytics?.article_protections ?? [];
+        const hasMoveRestriction = protections.some((p) => p.type === "move");
+        const hasEditRestriction = protections.some((p) => p.type === "edit");
+
+        return {
+          article,
+          ...analytics,
+          assessment_grade_color: getAssessmentColor(
+            analytics?.assessment_grade
+          ),
+          protection_summary: formatProtectionSummary(protections),
+          has_move_restriction: hasMoveRestriction,
+          has_edit_restriction: hasEditRestriction,
+        };
+      });
     }
     return [];
   }, [data]);
@@ -248,6 +296,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         { name: "grade_Start", value: selectedGrades.Start },
         { name: "grade_Stub", value: selectedGrades.Stub },
         { name: "grade_List", value: selectedGrades.List },
+        { name: "filter_move_restriction", value: filterMoveRestriction },
+        { name: "filter_edit_restriction", value: filterEditRestriction },
       ],
 
       layer: [
@@ -327,7 +377,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 1 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List'))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List')) && ((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction && !datum.has_edit_restriction) || (!filter_move_restriction && filter_edit_restriction && !datum.has_move_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
                   value: 1,
                 },
               ],
@@ -356,7 +406,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 1 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List'))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List')) && ((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction && !datum.has_edit_restriction) || (!filter_move_restriction && filter_edit_restriction && !datum.has_move_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
                   value: 1,
                 },
               ],
@@ -383,7 +433,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 0.8 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List'))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List')) && ((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction && !datum.has_edit_restriction) || (!filter_move_restriction && filter_edit_restriction && !datum.has_move_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
                   value: 0.8,
                 },
               ],
@@ -444,7 +494,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               condition: [
                 { param: "highlight", empty: false, value: 0.5 },
                 {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List'))",
+                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List')) && ((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction && !datum.has_edit_restriction) || (!filter_move_restriction && filter_edit_restriction && !datum.has_move_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
                   value: 0.5,
                 },
               ],
@@ -515,6 +565,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     yAxisConfig,
     yAxisMinInput,
     yAxisMaxInput,
+    filterMoveRestriction,
+    filterEditRestriction,
   ]);
 
   const toggleGrades = (grades: string[], on: boolean) => {
@@ -529,6 +581,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       }
       return next;
     });
+  };
+
+  const handleMoveRestrictionChange = (checked: boolean) => {
+    setFilterMoveRestriction(checked);
+    if (viewRef.current) {
+      viewRef.current.view.signal("filter_move_restriction", checked);
+      viewRef.current.view.runAsync();
+    }
+  };
+
+  const handleEditRestrictionChange = (checked: boolean) => {
+    setFilterEditRestriction(checked);
+    if (viewRef.current) {
+      viewRef.current.view.signal("filter_edit_restriction", checked);
+      viewRef.current.view.runAsync();
+    }
   };
 
   return (
@@ -634,7 +702,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
-          <div className="BoxTitle">Placeholder title</div>
+          <ProtectionFilterCheckboxes
+            moveChecked={filterMoveRestriction}
+            editChecked={filterEditRestriction}
+            onMoveChange={handleMoveRestrictionChange}
+            onEditChange={handleEditRestrictionChange}
+          />
         </div>
       </div>
 
