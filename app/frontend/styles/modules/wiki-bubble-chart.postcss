@@ -16,7 +16,9 @@
   &Header {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 1px;
+    background: #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
     align-items: stretch;
 
     @media (min-width: 768px) {
@@ -33,31 +35,28 @@
   }
 
   &HeaderFilters {
-    border-right: 1px solid #d9d9d9;
-    border-bottom: 1px solid #d9d9d9;
+    background: white;
     padding-right: 12px;
   }
 
   &HeaderSearch {
-    border-bottom: 1px solid #d9d9d9;
-    border-right: 1px solid #d9d9d9;
+    background: white;
   }
 
   &HeaderSort {
-    border-bottom: 1px solid #d9d9d9;
-    border-right: 1px solid #d9d9d9;
+    background: white;
   }
 
   &HeaderExtra {
-    border-bottom: 1px solid #d9d9d9;
+    background: white;
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
   &HeaderBox {
+    background: white;
     padding: 12px;
-    border-right: 1px solid #d9d9d9;
-    border-bottom: 1px solid #d9d9d9;
     display: flex;
     flex-direction: column;
 
