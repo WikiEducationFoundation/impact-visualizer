@@ -2,7 +2,7 @@
 lock "~> 3.19.2"
 
 set :application, "impact-visualizer"
-set :repo_url, "https://github.com:WikiEducationFoundation/impact-visualizer.git"
+set :repo_url, "https://github.com/WikiEducationFoundation/impact-visualizer.git"
 
 set :deploy_to, "/var/www/impact-visualizer"
 
