@@ -16,6 +16,26 @@ class WikiActionApi
     mediawiki('query', query_parameters)
   end
 
+  def parse(parse_parameters:)
+    total_tries = 3
+    tries ||= 0
+
+    @client.action :parse, parse_parameters
+  rescue StandardError => e
+    tries += 1
+    unless Rails.env.test?
+      sleep_time = 3**tries
+      puts '---'
+      puts "WikiActionApi / Error - Retrying after #{sleep_time} seconds (#{tries}/#{total_tries})"
+      puts "WikiActionApi / Error - query: #{parse_parameters}"
+      puts e
+      puts '---'
+      sleep sleep_time
+    end
+    retry unless tries == total_tries
+    log_error(e)
+  end
+
   def fetch_all(query_parameters:)
     data = {}
     query = query_parameters
@@ -58,6 +78,30 @@ class WikiActionApi
     response.data.dig('pages', 0).to_hashugar if response&.status == 200
   end
 
+  def get_page_protections(pageid: nil, title: nil)
+    query_parameters = {
+      prop: 'info',
+      inprop: 'protection',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    if pageid
+      query_parameters['pageids'] = [pageid]
+    elsif title
+      query_parameters['titles'] = [title]
+    else
+      return []
+    end
+
+    response = query(query_parameters:)
+    page = response&.data&.dig('pages', 0)
+    return [] unless response&.status == 200 && page
+
+    protection = page['protection']
+    protection.is_a?(Array) ? protection : []
+  end
+
   def get_user_info(userid: nil, name: nil)
     # Setup basic query parameters
     query_parameters = {
@@ -91,6 +135,25 @@ class WikiActionApi
 
     # Return just the revisions
     data.dig('pages', 0, 'revisions').to_hashugar
+  end
+
+  def get_unique_editors_count(pageid:)
+    require 'set'
+
+    editors = Set.new
+
+    revisions = get_all_revisions(pageid:) || []
+    revisions.each do |rev|
+      userid = (rev['userid']).to_i
+      if userid.positive?
+        editors.add("id:#{userid}")
+      else
+        user = rev['user']
+        editors.add("user:#{user}") if user.present?
+      end
+    end
+
+    editors.size
   end
 
   def get_all_revisions_in_range(pageid:, start_timestamp:, end_timestamp:)
@@ -238,6 +301,80 @@ class WikiActionApi
     return nil unless response&.status == 200
 
     response.data.dig('pages', 0, 'pageassessments')
+  end
+
+  def get_langlinks_count(title:)
+    query_parameters = {
+      titles: [title],
+      prop: 'langlinks',
+      lllimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    data = fetch_all(query_parameters:)
+    page = data.dig('pages', 0)
+    return 0 unless page
+    return 0 if page['missing']
+
+    langlinks = page['langlinks'] || []
+    langlinks.is_a?(Array) ? langlinks.length : 0
+  end
+
+  def get_images_count(title:)
+    query_parameters = {
+      titles: [title],
+      prop: 'images',
+      imlimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    data = fetch_all(query_parameters:)
+    page = data.dig('pages', 0)
+    return 0 unless page
+    return 0 if page['missing']
+
+    images = page['images'] || []
+    images.is_a?(Array) ? images.length : 0
+  end
+
+  def get_templates(title:, namespace: 10)
+    query_parameters = {
+      titles: [title],
+      prop: 'templates',
+      tllimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+    query_parameters[:tlnamespace] = namespace if namespace
+
+    data = fetch_all(query_parameters:)
+    page = data.dig('pages', 0)
+    return [] unless page
+    return [] if page['missing']
+
+    templates = page['templates'] || []
+    templates.is_a?(Array) ? templates : []
+  end
+
+  def get_lead_html(title:)
+    parse_parameters = {
+      page: title,
+      prop: 'text',
+      section: 0,
+      redirects: true,
+      formatversion: '2'
+    }
+
+    response = parse(parse_parameters:)
+    return nil unless response&.status == 200
+
+    text = response.data.dig('parse', 'text')
+    return text if text.is_a?(String)
+    return text['*'] if text.is_a?(Hash) && text['*'].is_a?(String)
+
+    nil
   end
 
   private

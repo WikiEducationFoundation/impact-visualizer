@@ -207,6 +207,100 @@ class ArticleStatsService
     ArticleStatsService.project_independent_assessment_class(assessments)
   end
 
+  def get_linguistic_versions_count(article:)
+    update_details_for_article(article:)
+    return 0 if article.missing
+
+    title = article.title
+    return 0 unless title.present?
+
+    other_lang_count = @wiki_action_api.get_langlinks_count(title:)
+    # We add 1 here to include the current wiki edition itself
+    other_lang_count + 1
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching linguistic versions count for #{article.id || article}: #{e.message}")
+    0
+  end
+
+  def get_images_count(article:)
+    update_details_for_article(article:)
+    return 0 if article.missing
+
+    title = article.title
+    return 0 unless title.present?
+
+    @wiki_action_api.get_images_count(title:)
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching images count for #{article.id || article}: #{e.message}")
+    0
+  end
+
+  def get_warning_tags_count(article:)
+    update_details_for_article(article:)
+    return 0 if article.missing
+
+    title = article.title
+    return 0 unless title.present?
+
+    templates = @wiki_action_api.get_templates(title:)
+    return 0 if templates.empty?
+
+    warning_template_patterns = [
+      /\AUnreferenced\z/i,
+      /\ARefimprove\z/i,
+      /\ARefimprove section\z/i,
+      /\AMore citations needed\z/i,
+      /\ACleanup\z/i,
+      /\APOV\z/i,
+      /\AAdvert\z/i,
+      /\ANotability\z/i,
+      /\ACopy edit\z/i,
+      /\ATone\z/i,
+      /\AUpdate\z/i,
+      /\ADisputed\z/i,
+      /\AMultiple issues\z/i,
+      /\ACitation needed\z/i,
+      /\ACn\z/i
+    ]
+
+    templates.count do |t|
+      raw_title = t['title'] || t[:title]
+      next false unless raw_title.is_a?(String)
+      name = raw_title.split(':', 2).last
+      warning_template_patterns.any? { |re| re.match?(name) }
+    end
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching warning tags count for #{article.id || article}: #{e.message}")
+    0
+  end
+
+  def get_number_of_editors(article:)
+    update_details_for_article(article:)
+    return 0 if article.missing
+
+    pageid = article.pageid
+    return 0 unless pageid
+
+    @wiki_action_api.get_unique_editors_count(pageid:)
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching number_of_editors for #{article.id || article}: #{e.message}")
+    0
+  end
+
+  def get_article_protections(article:)
+    update_details_for_article(article:)
+    return [] if article.missing
+
+    pageid = article.pageid
+    title = article.title
+    return [] unless pageid || title
+
+    pageid ? @wiki_action_api.get_page_protections(pageid:) : @wiki_action_api.get_page_protections(title:)
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching article protections for #{article.id || article}: #{e.message}")
+    []
+  end
+
   def self.best_assessment_class_from_pageassessments(assessments)
     return nil unless assessments.is_a?(Hash) && assessments.any?
     classes = assessments.values.filter_map { |a| a['class'] || a[:class] }

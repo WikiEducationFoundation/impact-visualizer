@@ -144,7 +144,7 @@ If you would like to force existing analysis to be recomputed, you may force upd
 
 1. `rspec` (tests are located in _/spec_ directory)
 
-## Configuring React Environment
+## Configuring Project Environment
 
 ### Local setup
 

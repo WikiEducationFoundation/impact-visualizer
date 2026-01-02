@@ -69,6 +69,12 @@ class GenerateArticleAnalyticsJob
       topic_article_analytic.update!(
         average_daily_views: average_views.round,
         prev_average_daily_views: prev_average_views&.round,
+        publication_date: article.first_revision_at&.to_date,
+        linguistic_versions_count: fetch_linguistic_versions_count(article_stats_service:,
+                                                                   article:),
+        images_count: fetch_images_count(article_stats_service:, article:),
+        warning_tags_count: fetch_warning_tags_count(article_stats_service:, article:),
+        number_of_editors: fetch_number_of_editors(article_stats_service:, article:),
         article_size: fetch_article_size(article_stats_service:, article:, date: end_date),
         prev_article_size: fetch_article_size(article_stats_service:, article:,
                                               date: prev_end_date),
@@ -76,7 +82,8 @@ class GenerateArticleAnalyticsJob
         prev_talk_size: fetch_talk_size(article_stats_service:, article:, date: prev_end_date),
         lead_section_size: fetch_lead_section_size(article_stats_service:, article:,
                                                    date: end_date),
-        assessment_grade: fetch_assessment_grade(article_stats_service:, article:)
+        assessment_grade: fetch_assessment_grade(article_stats_service:, article:),
+        article_protections: fetch_article_protections(article_stats_service:, article:)
       )
 
       Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, prev_average_views: #{prev_average_views&.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}, lead_section_size: #{topic_article_analytic.lead_section_size}")
@@ -123,5 +130,45 @@ class GenerateArticleAnalyticsJob
   rescue StandardError => e
     Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching assessment for #{article.title}: #{e.message}")
     nil
+  end
+
+  def fetch_linguistic_versions_count(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching linguistic versions count for #{article.title}")
+    article_stats_service.get_linguistic_versions_count(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching linguistic versions count for #{article.title}: #{e.message}")
+    0
+  end
+
+  def fetch_images_count(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching images count for #{article.title}")
+    article_stats_service.get_images_count(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching images count for #{article.title}: #{e.message}")
+    0
+  end
+
+  def fetch_warning_tags_count(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching warning tags count for #{article.title}")
+    article_stats_service.get_warning_tags_count(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching warning tags count for #{article.title}: #{e.message}")
+    0
+  end
+
+  def fetch_number_of_editors(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching number of editors for #{article.title}")
+    article_stats_service.get_number_of_editors(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching number of editors for #{article.title}: #{e.message}")
+    0
+  end
+
+  def fetch_article_protections(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching article protections for #{article.title}")
+    article_stats_service.get_article_protections(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching article protections for #{article.title}: #{e.message}")
+    []
   end
 end

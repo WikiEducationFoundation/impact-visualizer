@@ -208,6 +208,8 @@ function TopicDetail() {
   }
   const hasTimepointStats = topic.has_stats && topicTimepoints;
   const hasArticleAnalytics = topic.has_analytics;
+  const showBubbleWithTimepoints = hasTimepointStats && activeStat === "bubble";
+  const showBubbleWithoutTimepoints = !hasTimepointStats && hasArticleAnalytics;
   return (
     <section className="Section">
       <div className="Container Container--padded">
@@ -228,15 +230,6 @@ function TopicDetail() {
                 editorLabel,
                 activeStat,
               })}
-              {activeStat === "bubble" && (
-                <div className="u-mt2">
-                  <WikiBubbleChart
-                    data={articleAnalytics}
-                    actions
-                    wiki={topic.wiki}
-                  />
-                </div>
-              )}
               {activeStat !== "bubble" && (
                 <>
                   <StatDetail
@@ -261,16 +254,6 @@ function TopicDetail() {
             </>
           )}
 
-          {!hasTimepointStats && hasArticleAnalytics && (
-            <div className="u-mt2">
-              <WikiBubbleChart
-                data={articleAnalytics}
-                actions
-                wiki={topic.wiki}
-              />
-            </div>
-          )}
-
           {!hasTimepointStats && !hasArticleAnalytics && (
             <div className="TopicDetail-noStats">
               This Topic has not yet been analyzed
@@ -278,6 +261,18 @@ function TopicDetail() {
           )}
         </div>
       </div>
+
+      {showBubbleWithTimepoints && (
+        <div className="TopicDetail-bubbleSection">
+          <WikiBubbleChart data={articleAnalytics} actions wiki={topic.wiki} />
+        </div>
+      )}
+
+      {showBubbleWithoutTimepoints && (
+        <div className="TopicDetail-bubbleSection">
+          <WikiBubbleChart data={articleAnalytics} actions wiki={topic.wiki} />
+        </div>
+      )}
     </section>
   );
 }
