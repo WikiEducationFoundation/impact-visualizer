@@ -9,6 +9,23 @@ class ImportService
     @wiki_action_api = WikiActionApi.new(@wiki)
   end
 
+  def normalize_csv_content(content)
+    lines = content.split("\n")
+    normalized_lines = lines.map do |line|
+      line = line.strip
+      next if line.empty?
+
+      unquoted = if line.start_with?('"') && line.end_with?('"')
+                   line[1..-2].gsub('""', '"')
+                 else
+                   line
+                 end
+
+      "\"#{unquoted.gsub('"', '""')}\""
+    end
+    normalized_lines.compact.join("\n")
+  end
+
   def reset_topic
     @topic.topic_timepoints.each do |topic_timepoint|
       topic_timepoint.topic_article_timepoints.destroy_all
@@ -29,7 +46,8 @@ class ImportService
 
   def import_articles(total: nil, at: nil)
     raise ImpactVisualizerErrors::CsvMissingForImport unless topic.articles_csv.attached?
-    article_titles = CSV.parse(topic.articles_csv.download, headers: false, skip_blanks: true)
+    csv_content = normalize_csv_content(topic.articles_csv.download)
+    article_titles = CSV.parse(csv_content, headers: false, skip_blanks: true)
     article_bag = @topic.active_article_bag ||
                   ArticleBag.create(topic:, name: "#{topic.slug.titleize} Articles")
     total&.call(article_titles.count)
@@ -55,7 +73,8 @@ class ImportService
 
   def import_users(total: nil, at: nil)
     raise ImpactVisualizerErrors::CsvMissingForImport unless topic.users_csv.attached?
-    user_names = CSV.parse(topic.users_csv.download, headers: false, skip_blanks: true)
+    csv_content = normalize_csv_content(topic.users_csv.download)
+    user_names = CSV.parse(csv_content, headers: false, skip_blanks: true)
     total&.call(user_names.count)
     count = 0
     Parallel.each(user_names, in_threads: 10) do |user_name|
