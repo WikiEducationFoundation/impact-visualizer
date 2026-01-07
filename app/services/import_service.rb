@@ -46,7 +46,7 @@ class ImportService
 
   def import_articles(total: nil, at: nil)
     raise ImpactVisualizerErrors::CsvMissingForImport unless topic.articles_csv.attached?
-    csv_content = normalize_csv_content(topic.articles_csv.download)
+    csv_content = normalize_csv_content(topic.articles_csv.download.force_encoding('UTF-8'))
     article_titles = CSV.parse(csv_content, headers: false, skip_blanks: true)
     article_bag = @topic.active_article_bag ||
                   ArticleBag.create(topic:, name: "#{topic.slug.titleize} Articles")
@@ -63,7 +63,7 @@ class ImportService
   end
 
   def import_article(article_title:, article_bag:)
-    page_info = @wiki_action_api.get_page_info(title: CGI.unescape(article_title[0]))
+    page_info = @wiki_action_api.get_page_info(title: URI::DEFAULT_PARSER.unescape(article_title[0]))
     return unless page_info
     title = page_info['title']
     article = Article.find_or_create_by(title:, wiki: @wiki)
@@ -73,7 +73,7 @@ class ImportService
 
   def import_users(total: nil, at: nil)
     raise ImpactVisualizerErrors::CsvMissingForImport unless topic.users_csv.attached?
-    csv_content = normalize_csv_content(topic.users_csv.download)
+    csv_content = normalize_csv_content(topic.users_csv.download.force_encoding('UTF-8'))
     user_names = CSV.parse(csv_content, headers: false, skip_blanks: true)
     total&.call(user_names.count)
     count = 0
