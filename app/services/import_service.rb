@@ -52,6 +52,8 @@ class ImportService
                   ArticleBag.create(topic:, name: "#{topic.slug.titleize} Articles")
     total&.call(article_titles.count)
     count = 0
+    @imported_titles_mutex = Mutex.new
+    @imported_titles = {}
     Parallel.each(article_titles, in_threads: 10) do |article_title|
       ActiveRecord::Base.connection_pool.with_connection do
         count += 1
@@ -63,9 +65,22 @@ class ImportService
   end
 
   def import_article(article_title:, article_bag:)
-    page_info = @wiki_action_api.get_page_info(title: URI::DEFAULT_PARSER.unescape(article_title[0]))
+    csv_title = article_title[0]
+    page_info = @wiki_action_api.get_page_info(title: URI::DEFAULT_PARSER.unescape(csv_title))
     return unless page_info
     title = page_info['title']
+
+    @imported_titles_mutex.synchronize do
+      if @imported_titles.key?(title)
+        Rails.logger.warn(
+          "DUPLICATE DETECTED: CSV entry '#{csv_title}' resolves to '#{title}', " \
+          "which was already imported from CSV entry '#{@imported_titles[title]}'"
+        )
+      else
+        @imported_titles[title] = csv_title
+      end
+    end
+
     article = Article.find_or_create_by(title:, wiki: @wiki)
     article.update_details
     ArticleBagArticle.find_or_create_by(article:, article_bag:)
