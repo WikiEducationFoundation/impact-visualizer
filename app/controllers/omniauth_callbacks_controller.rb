@@ -5,6 +5,9 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def mediawiki
     @topic_editor = TopicEditor.from_omniauth(request.env['omniauth.auth'])
-    sign_in_and_redirect(@topic_editor) if @topic_editor.persisted?
+    if @topic_editor.persisted?
+      sign_out(:admin_user) if admin_user_signed_in?
+      sign_in_and_redirect(@topic_editor)
+    end
   end
 end
