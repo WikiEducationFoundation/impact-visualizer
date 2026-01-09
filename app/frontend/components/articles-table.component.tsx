@@ -8,9 +8,11 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 export default function ArticlesTable({
   articles,
   filename,
+  headerTitle = "Article",
 }: {
   articles: string[];
   filename: string;
+  headerTitle?: string;
 }) {
   const {
     currentPageData,
@@ -32,7 +34,7 @@ export default function ArticlesTable({
         <thead>
           <tr>
             <th>
-              Article
+              {headerTitle}
               {hasArticles ? (
                 <div>
                   <button
