@@ -14,7 +14,7 @@ class TopicService
 
   def create_topic(topic_params:)
     @topic = Topic.create!(topic_params)
-    topic_editor.topics << @topic
+    topic_editor.topics << @topic unless topic_editor.is_a?(AdminUser)
     handle_auto_import(topic_params:)
     @topic
   end
