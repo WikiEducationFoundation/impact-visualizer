@@ -6,8 +6,8 @@ class TopicsController < ApiController
                                                     :incremental_topic_build, :generate_article_analytics]
 
   def index
-    if current_topic_editor && params[:owned]
-      @topics = current_topic_editor.topics
+    if current_editor && params[:owned]
+      @topics = current_editor.is_a?(AdminUser) ? Topic.all : current_editor.topics
       return
     end
 
@@ -16,48 +16,48 @@ class TopicsController < ApiController
 
   def show
     @topic = Topic.find(params[:id])
-    @enable_caching = !current_topic_editor&.can_edit_topic?(@topic)
+    @enable_caching = !current_editor&.can_edit_topic?(@topic)
   end
 
   def create
-    topic_service = TopicService.new(topic_editor: current_topic_editor, auto_import: true)
+    topic_service = TopicService.new(topic_editor: @topic_editor, auto_import: true)
     @topic = topic_service.create_topic(topic_params:)
     render :show
   end
 
   def update
-    topic = current_topic_editor.topics.find(params[:id])
-    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:, auto_import: true)
+    topic = find_editable_topic
+    topic_service = TopicService.new(topic_editor: @topic_editor, topic:, auto_import: true)
     @topic = topic_service.update_topic(topic_params:)
     render :show
   end
 
   def destroy
-    topic = current_topic_editor.topics.find(params[:id])
-    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    topic = find_editable_topic
+    topic_service = TopicService.new(topic_editor: @topic_editor, topic:)
     topic_service.delete_topic
     head :no_content
   end
 
   def import_users
-    topic = current_topic_editor.topics.find(params[:id])
-    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    topic = find_editable_topic
+    topic_service = TopicService.new(topic_editor: @topic_editor, topic:)
     topic_service.import_users
     @topic = topic.reload
     render :show
   end
 
   def import_articles
-    topic = current_topic_editor.topics.find(params[:id])
-    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    topic = find_editable_topic
+    topic_service = TopicService.new(topic_editor: @topic_editor, topic:)
     topic_service.import_articles
     @topic = topic.reload
     render :show
   end
 
   def generate_timepoints
-    topic = current_topic_editor.topics.find(params[:id])
-    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    topic = find_editable_topic
+    topic_service = TopicService.new(topic_editor: @topic_editor, topic:)
     force_updates = ActiveModel::Type::Boolean.new.cast(params[:force_updates]) || false
     topic_service.generate_timepoints(force_updates:)
     @topic = topic.reload
@@ -65,8 +65,8 @@ class TopicsController < ApiController
   end
 
   def generate_article_analytics
-    topic = current_topic_editor.topics.find(params[:id])
-    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    topic = find_editable_topic
+    topic_service = TopicService.new(topic_editor: @topic_editor, topic:)
     topic_service.generate_article_analytics
     @topic = topic.reload
     render :show
@@ -92,8 +92,8 @@ class TopicsController < ApiController
   end
 
   def incremental_topic_build
-    topic = current_topic_editor.topics.find(params[:id])
-    topic_service = TopicService.new(topic_editor: current_topic_editor, topic:)
+    topic = find_editable_topic
+    topic_service = TopicService.new(topic_editor: @topic_editor, topic:)
     force_updates = ActiveModel::Type::Boolean.new.cast(params[:force_updates]) || false
     topic_service.incremental_topic_build(force_updates:)
     @topic = topic.reload
@@ -101,6 +101,14 @@ class TopicsController < ApiController
   end
 
   protected
+
+  def find_editable_topic
+    if @topic_editor.is_a?(AdminUser)
+      Topic.find(params[:id])
+    else
+      @topic_editor.topics.find(params[:id])
+    end
+  end
 
   def topic_params
     the_params = params.require(:topic).permit(:name, :description, :wiki_id, :chart_time_unit,

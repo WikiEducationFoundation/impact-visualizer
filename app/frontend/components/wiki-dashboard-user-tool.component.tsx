@@ -47,10 +47,21 @@ export default function WikiDashboardUserTool() {
         `https://${dashboardDomain}/users/${encodedUser}/taught_courses_articles.json`
       );
       if (!response.ok) {
+        if (response.status === 404) {
+          toast.error("User not found");
+          return;
+        }
         throw new Error("Network response was not ok");
       }
       const data: DashboardUserToolResponse = await response.json();
       setQueryResult(data);
+
+      if (data.user_profiles.length === 0) {
+        toast.error("No courses or articles found for this user");
+        setArticleTitles([]);
+        setUsernames([]);
+        return;
+      }
 
       let queriedTitles: string[] = [];
       let queriedUsernames: string[] = [];
@@ -63,8 +74,8 @@ export default function WikiDashboardUserTool() {
       setArticleTitles(queriedTitles);
       setUsernames(queriedUsernames);
     } catch (error) {
+      toast.error("There was an issue fetching the data.");
       console.error("Fetch error:", error);
-      toast("There was an issue fetching the data.");
     } finally {
       setIsLoading(false);
     }

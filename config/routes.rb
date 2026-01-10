@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     get 'logout', to: 'devise/sessions#destroy'
   end
 
-  devise_for :admin_users, ActiveAdmin::Devise.config
+  devise_for :admin_users, ActiveAdmin::Devise.config.merge(controllers: { sessions: 'admin/sessions' })
   ActiveAdmin.routes(self)
 
   authenticate :admin_user, lambda { |u| u.present? } do

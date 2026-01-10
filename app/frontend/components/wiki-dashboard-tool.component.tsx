@@ -131,6 +131,7 @@ export default function WikiDashboardCourseTool() {
             <ArticlesTable
               articles={usernames}
               filename={`${courseSlug}-wikiusernames`}
+              headerTitle="Username"
             />
           )}
         </div>

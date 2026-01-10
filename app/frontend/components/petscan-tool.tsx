@@ -27,10 +27,16 @@ export default function PetScanTool() {
         throw new Error("Network response was not ok");
       }
       const data: PetscanResponse = await response.json();
-      setQueryResult(data);
-
       const titles = data["*"][0].a["*"].map((page) => page.title);
-      setArticleTitles(titles);
+
+      if (titles.length === 0) {
+        toast.error("No articles found for this PetScan ID.");
+        setQueryResult(undefined);
+        setArticleTitles([]);
+      } else {
+        setQueryResult(data);
+        setArticleTitles(titles);
+      }
     } catch (error) {
       console.error("Fetch error:", error);
       toast("There was an issue fetching the data.");
