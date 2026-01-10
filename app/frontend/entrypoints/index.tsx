@@ -33,6 +33,7 @@ declare global {
     app: {
       signedIn: boolean;
       username: string | undefined;
+      isAdmin: boolean;
     };
   }
 }
