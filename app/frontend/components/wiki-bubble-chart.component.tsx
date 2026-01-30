@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useMemo, useState } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import CSVButton from "./CSV-button.component";
+import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
+import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
 import type {
   ArticleAnalytics,
   XAxisKey,
@@ -116,11 +118,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
-  // Generating a unique random id for the search container to avoid re-rendering issues
-  const searchContainerId = useMemo(
-    () => `search-container-${Math.random().toString(36).slice(2)}`,
-    []
-  );
   const [selectedGrades, setSelectedGrades] = useState<Record<string, boolean>>(
     {
       FA: true,
@@ -132,7 +129,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       Start: true,
       Stub: true,
       List: true,
-    }
+    },
   );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>("title");
   const [yAxisKey, setYAxisKey] = useState<YAxisKey>("average_daily_views");
@@ -142,6 +139,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     useState<boolean>(false);
   const [filterEditRestriction, setFilterEditRestriction] =
     useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const yAxisConfig = useMemo(() => {
     switch (yAxisKey) {
@@ -175,7 +174,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           article,
           ...analytics,
           assessment_grade_color: getAssessmentColor(
-            analytics?.assessment_grade
+            analytics?.assessment_grade,
           ),
           protection_summary: formatProtectionSummary(protections),
           has_move_restriction: hasMoveRestriction,
@@ -208,6 +207,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     return next;
   }, [rows, xAxisKey]);
 
+  const articleTitles = useMemo(() => {
+    return sortedRows.map((row) => row.article);
+  }, [sortedRows]);
+
   const yAxisAutoDomain = useMemo(() => {
     const values = rows
       .map((row) => row[yAxisConfig.currentField])
@@ -217,14 +220,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     return { min: Math.min(...values), max: Math.max(...values) };
   }, [rows, yAxisConfig.currentField]);
 
-  useEffect(() => {
-    setYAxisMinInput("");
-    setYAxisMaxInput("");
-  }, [yAxisKey]);
-
-  useEffect(() => {
-    if (!containerRef.current || sortedRows.length === 0) return;
-
+  const parsedYAxisDomain = useMemo(() => {
     const parsedMin =
       yAxisMinInput.trim() === "" ? null : Number(yAxisMinInput);
     const parsedMax =
@@ -235,14 +231,74 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       parsedMax !== null && Number.isFinite(parsedMax) ? parsedMax : null;
 
     if (domainMin !== null && domainMax !== null && domainMin > domainMax) {
-      const tmp = domainMin;
-      domainMin = domainMax;
-      domainMax = tmp;
+      [domainMin, domainMax] = [domainMax, domainMin];
     }
+    return { domainMin, domainMax };
+  }, [yAxisMinInput, yAxisMaxInput]);
 
-    const yScale: Record<string, number> = {};
-    if (domainMin !== null) yScale.domainMin = domainMin;
-    if (domainMax !== null) yScale.domainMax = domainMax;
+  const filteredArticles = useMemo(() => {
+    const { domainMin, domainMax } = parsedYAxisDomain;
+    const lowerSearch = searchTerm.trim().toLowerCase();
+
+    return sortedRows.filter((row) => {
+      if (lowerSearch && !row.article.toLowerCase().includes(lowerSearch)) {
+        return false;
+      }
+
+      const grade = row.assessment_grade;
+      if (grade && !selectedGrades[grade]) {
+        return false;
+      }
+
+      if (filterMoveRestriction && !row.has_move_restriction) {
+        return false;
+      }
+      if (filterEditRestriction && !row.has_edit_restriction) {
+        return false;
+      }
+
+      const yValue = row[yAxisConfig.currentField];
+      if (domainMin !== null && yValue < domainMin) {
+        return false;
+      }
+      if (domainMax !== null && yValue > domainMax) {
+        return false;
+      }
+
+      return true;
+    });
+  }, [
+    sortedRows,
+    searchTerm,
+    selectedGrades,
+    filterMoveRestriction,
+    filterEditRestriction,
+    parsedYAxisDomain,
+    yAxisConfig.currentField,
+  ]);
+
+  useEffect(() => {
+    setYAxisMinInput("");
+    setYAxisMaxInput("");
+  }, [yAxisKey]);
+
+  useEffect(() => {
+    if (!containerRef.current || sortedRows.length === 0) return;
+
+    const { domainMin, domainMax } = parsedYAxisDomain;
+
+    // calculate padding based on maximum circle radius to prevent clipping
+    const maxCircleRadius = Math.sqrt(1500 / Math.PI); // this is how vega calculates the circle radius
+    const effectiveMin = domainMin !== null && domainMin > 0 ? domainMin : -25;
+    const effectiveMax =
+      domainMax !== null ? domainMax : yAxisAutoDomain.max || 1000;
+    const dataRange = effectiveMax - effectiveMin;
+    const paddingInDataUnits = maxCircleRadius * (dataRange / HEIGHT);
+
+    const yScale: Record<string, number | boolean> = {
+      domainMin: effectiveMin - paddingInDataUnits,
+      domainMax: effectiveMax + paddingInDataUnits,
+    };
 
     const yFilterExprParts: string[] = [];
     const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
@@ -259,6 +315,23 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       type: "quantitative",
       ...(Object.keys(yScale).length ? { scale: yScale } : {}),
     };
+
+    const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    const visibilityTestExpr = [
+      "(!highlight.article)",
+      "(!search_input || test(regexp(search_input,'i'), datum.article))",
+      "((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || !datum.assessment_grade)",
+      "((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction) || (!filter_move_restriction && filter_edit_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
+    ].join(" && ");
+
+    const makeOpacityEncoding = (activeOpacity: number) => ({
+      condition: [
+        { param: "highlight", empty: false, value: activeOpacity },
+        { test: visibilityTestExpr, value: activeOpacity },
+      ],
+      value: 0.06,
+    });
 
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
@@ -277,16 +350,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         },
       },
       params: [
-        {
-          name: "search_input",
-          bind: {
-            input: "search",
-            placeholder: "Article name",
-            name: "Search",
-            element: `#${searchContainerId}`,
-          },
-          value: "",
-        },
+        { name: "search_input", value: escapedSearchTerm },
         { name: "grade_FA", value: selectedGrades.FA },
         { name: "grade_GA", value: selectedGrades.GA },
         { name: "grade_A", value: selectedGrades.A },
@@ -318,7 +382,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             },
             {
               name: "grid",
-              select: { type: "interval", zoom: true },
+              select: { type: "interval", zoom: true, encodings: ["x"] },
               bind: "scales",
             },
             {
@@ -373,16 +437,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [50, 1500] },
             },
-            opacity: {
-              condition: [
-                { param: "highlight", empty: false, value: 1 },
-                {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || !datum.assessment_grade) && ((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction) || (!filter_move_restriction && filter_edit_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
-                  value: 1,
-                },
-              ],
-              value: 0.06,
-            },
+            opacity: makeOpacityEncoding(1),
           },
         },
         // Previous article size circle (prev_article_size)
@@ -402,16 +457,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [20, 600] },
             },
-            opacity: {
-              condition: [
-                { param: "highlight", empty: false, value: 1 },
-                {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || !datum.assessment_grade) && ((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction) || (!filter_move_restriction && filter_edit_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
-                  value: 1,
-                },
-              ],
-              value: 0.06,
-            },
+            opacity: makeOpacityEncoding(1),
           },
         },
         // Lead section size circle (lead_section_size)
@@ -429,16 +475,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [30, 800] },
             },
-            opacity: {
-              condition: [
-                { param: "highlight", empty: false, value: 0.8 },
-                {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || !datum.assessment_grade) && ((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction) || (!filter_move_restriction && filter_edit_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
-                  value: 0.8,
-                },
-              ],
-              value: 0.06,
-            },
+            opacity: makeOpacityEncoding(0.8),
           },
         },
         // Article size circle (article_size)
@@ -490,16 +527,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [20, 600] },
             },
-            opacity: {
-              condition: [
-                { param: "highlight", empty: false, value: 0.5 },
-                {
-                  test: "(!highlight.article) && (!search_input || test(regexp(search_input,'i'), datum.article)) && ((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || !datum.assessment_grade) && ((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction) || (!filter_move_restriction && filter_edit_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
-                  value: 0.5,
-                },
-              ],
-              value: 0.06,
-            },
+            opacity: makeOpacityEncoding(0.5),
           },
         },
       ],
@@ -543,7 +571,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             const language = wiki?.language || "en";
             const project = wiki?.project || "wikipedia";
             const wikiUrl = `https://${language}.${project}.org/wiki/${encodeURIComponent(
-              articleName.replace(/ /g, "_")
+              articleName.replace(/ /g, "_"),
             )}`;
             window.open(wikiUrl, "_blank");
           }
@@ -559,14 +587,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     sortedRows,
     actions,
     wiki,
-    selectedGrades,
-    searchContainerId,
     xAxisKey,
     yAxisConfig,
-    yAxisMinInput,
-    yAxisMaxInput,
-    filterMoveRestriction,
-    filterEditRestriction,
+    parsedYAxisDomain,
+    yAxisAutoDomain.max,
   ]);
 
   const toggleGrades = (grades: string[], on: boolean) => {
@@ -599,6 +623,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
   };
 
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    if (viewRef.current) {
+      const escapedSearchTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      viewRef.current.view.signal("search_input", escapedSearchTerm);
+      viewRef.current.view.runAsync();
+    }
+  };
+
   return (
     <div className="WikiBubbleChart">
       <div className="WikiBubbleChartTitleRow">
@@ -618,7 +651,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
-          <div id={searchContainerId} />
+          <ArticleSearchAutocomplete
+            searchTerm={searchTerm}
+            onSearchChange={handleSearchChange}
+            articleTitles={articleTitles}
+          />
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
@@ -711,8 +748,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
       </div>
 
-      <div>
+      <div className="WikiBubbleChartBody">
         <div className="WikiBubbleChartChartContainer" ref={containerRef} />
+        <FilteredArticlesSidebar
+          articles={filteredArticles}
+          wiki={wiki}
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen((prev) => !prev)}
+        />
       </div>
 
       {/* Legend */}

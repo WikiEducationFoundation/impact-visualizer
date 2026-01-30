@@ -3,7 +3,7 @@
 class TopicTimepoint < ApplicationRecord
   # Associations
   belongs_to :topic
-  has_many :topic_article_timepoints
+  has_many :topic_article_timepoints, dependent: :destroy
 
   # Scopes
   default_scope { order(timestamp: :asc) }

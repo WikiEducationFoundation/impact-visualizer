@@ -103,6 +103,6 @@ root.render(
       <RouterProvider router={router} />
       <ReactQueryDevtools />
     </QueryClientProvider>
-    <Toaster />
+    <Toaster toastOptions={{ duration: 6000 }} />
   </>
 );

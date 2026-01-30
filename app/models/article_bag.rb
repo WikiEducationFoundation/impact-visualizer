@@ -3,18 +3,18 @@
 class ArticleBag < ApplicationRecord
   # Associations
   belongs_to :topic
-  has_many :article_bag_articles
+  has_many :article_bag_articles, dependent: :destroy
   has_many :articles, through: :article_bag_articles
 
   default_scope { order(created_at: :asc) }
 
   # For ActiveAdmin
-  def self.ransackable_associations(auth_object = nil)
-    ["article_bag_articles", "articles", "topic"]
+  def self.ransackable_associations(_auth_object = nil)
+    %w[article_bag_articles articles topic]
   end
 
-  def self.ransackable_attributes(auth_object = nil)
-    ["created_at", "id", "name", "topic_id", "updated_at"]
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[created_at id name topic_id updated_at]
   end
 end
 
