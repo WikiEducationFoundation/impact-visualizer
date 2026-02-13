@@ -135,6 +135,7 @@ export default function WikiDashboardUserTool() {
             <ArticlesTable
               articles={usernames}
               filename={`${selectedUser}-dashboard-usernames`}
+              headerTitle="Username"
             />
           )}
         </div>
