@@ -146,7 +146,7 @@
     justify-content: flex-start;
   }
 
-  &ChartContainer {
+  &Container {
     overflow-y: hidden;
     width: 100%;
   }
@@ -358,17 +358,29 @@
   }
 }
 
+.WikiBubbleChartHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+}
+
+.WikiBubbleChartInfoLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.WikiBubbleChartHeading > .ArticleSearchAutocompleteWrapper {
+  width: 320px;
+}
+
 .WikiBubbleChartBody {
   position: relative;
   display: flex;
-}
-
-.WikiBubbleChartSearchOverlay {
-  position: absolute;
-  top: 24px;
-  right: 100px;
-  width: 220px;
-  z-index: 10;
 }
 
 .FilteredArticlesSidebar {

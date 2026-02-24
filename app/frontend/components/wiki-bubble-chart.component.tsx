@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useMemo, useState } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
+import { BsInfoCircle } from "react-icons/bs";
 import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
 import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
@@ -740,15 +741,20 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
       </div>
 
-      <div className="WikiBubbleChartBody">
-        <div className="WikiBubbleChartChartContainer" ref={containerRef} />
-        <div className="WikiBubbleChartSearchOverlay">
-          <ArticleSearchAutocomplete
-            searchTerm={searchTerm}
-            onSearchChange={handleSearchChange}
-            articleTitles={articleTitles}
-          />
+      <div className="WikiBubbleChartHeading">
+        <div className="WikiBubbleChartInfoLine">
+          <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
+          <span>See an overview of articles with their statistics</span>
         </div>
+        <ArticleSearchAutocomplete
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          articleTitles={articleTitles}
+        />
+      </div>
+
+      <div className="WikiBubbleChartBody">
+        <div className="WikiBubbleChartContainer" ref={containerRef} />
         <FilteredArticlesSidebar
           articles={filteredArticles}
           wiki={wiki}
