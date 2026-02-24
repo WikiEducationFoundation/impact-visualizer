@@ -90,7 +90,6 @@ const ArticleSearchAutocomplete: React.FC<ArticleSearchAutocompleteProps> = ({
 
   return (
     <>
-      <div className="BoxTitle">Search</div>
       <div
         className="ArticleSearchAutocompleteWrapper"
         ref={suggestionsRef as RefObject<HTMLDivElement>}

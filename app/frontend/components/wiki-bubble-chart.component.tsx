@@ -651,14 +651,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
-          <ArticleSearchAutocomplete
-            searchTerm={searchTerm}
-            onSearchChange={handleSearchChange}
-            articleTitles={articleTitles}
-          />
-        </div>
-
-        <div className="WikiBubbleChartHeaderBox">
           <label htmlFor="wiki-bubble-sort" className="BoxTitle">
             Sort by
           </label>
@@ -750,6 +742,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
       <div className="WikiBubbleChartBody">
         <div className="WikiBubbleChartChartContainer" ref={containerRef} />
+        <div className="WikiBubbleChartSearchOverlay">
+          <ArticleSearchAutocomplete
+            searchTerm={searchTerm}
+            onSearchChange={handleSearchChange}
+            articleTitles={articleTitles}
+          />
+        </div>
         <FilteredArticlesSidebar
           articles={filteredArticles}
           wiki={wiki}
