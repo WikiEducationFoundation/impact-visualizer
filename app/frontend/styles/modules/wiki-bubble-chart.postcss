@@ -302,10 +302,24 @@
 .ArticleSearchAutocomplete {
   &Wrapper {
     position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  &Icon {
+    position: absolute;
+    left: 8px;
+    color: black;
+    font-size: 16px;
   }
 
   &Input {
     width: 100%;
+    padding-left: 28px !important;
+
+    &::placeholder {
+      color: lightgray;
+    }
   }
 
   &List {

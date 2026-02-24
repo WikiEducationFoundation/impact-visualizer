@@ -6,6 +6,7 @@ import React, {
   KeyboardEvent,
   RefObject,
 } from "react";
+import { GoSearch } from "react-icons/go";
 import useOutsideClick from "../hooks/useOutsideClick";
 
 interface ArticleSearchAutocompleteProps {
@@ -94,10 +95,11 @@ const ArticleSearchAutocomplete: React.FC<ArticleSearchAutocompleteProps> = ({
         className="ArticleSearchAutocompleteWrapper"
         ref={suggestionsRef as RefObject<HTMLDivElement>}
       >
+        <GoSearch className="ArticleSearchAutocompleteIcon" />
         <input
           type="search"
           className="ArticleSearchAutocompleteInput"
-          placeholder="Type article name..."
+          placeholder="Search article"
           value={searchTerm}
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => searchTerm.trim() && setShowSuggestions(true)}
