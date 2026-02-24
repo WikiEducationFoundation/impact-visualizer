@@ -17,6 +17,7 @@ import {
   formatProtectionSummary,
   xAxisTitleForKey,
 } from "../utils/bubble-chart-utils";
+import { getWikiUrl } from "../utils/search-utils";
 
 type Wiki = {
   language: string;
@@ -568,12 +569,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
         result.view.addEventListener("click", (_event, item) => {
           if (item && item.datum && item.datum.article) {
-            const articleName = item.datum.article;
-            const language = wiki?.language || "en";
-            const project = wiki?.project || "wikipedia";
-            const wikiUrl = `https://${language}.${project}.org/wiki/${encodeURIComponent(
-              articleName.replace(/ /g, "_"),
-            )}`;
+            const wikiUrl = getWikiUrl(item.datum.article, {
+              language: wiki?.language,
+              project: wiki?.project,
+            });
             window.open(wikiUrl, "_blank");
           }
         });

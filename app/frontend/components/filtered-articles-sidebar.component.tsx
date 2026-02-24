@@ -1,5 +1,6 @@
 import React from "react";
 import { GoTriangleLeft, GoTriangleRight } from "react-icons/go";
+import { getWikiUrl } from "../utils/search-utils";
 
 interface FilteredArticlesSidebarProps {
   articles: { article: string }[];
@@ -14,14 +15,6 @@ const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> = ({
   isOpen,
   onToggle,
 }) => {
-  const language = wiki?.language || "en";
-  const project = wiki?.project || "wikipedia";
-
-  const getWikiUrl = (articleName: string) =>
-    `https://${language}.${project}.org/wiki/${encodeURIComponent(
-      articleName.replace(/ /g, "_"),
-    )}`;
-
   return (
     <div className={`FilteredArticlesSidebar ${isOpen ? "is-open" : ""}`}>
       <button
@@ -50,7 +43,10 @@ const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> = ({
           {articles.map(({ article }) => (
             <li key={article} className="FilteredArticlesSidebarItem">
               <a
-                href={getWikiUrl(article)}
+                href={getWikiUrl(article, {
+                  language: wiki?.language,
+                  project: wiki?.project,
+                })}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="FilteredArticlesSidebarLink"
