@@ -3,7 +3,6 @@ import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import { BsInfoCircle } from "react-icons/bs";
 import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
-import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
 import type {
   ArticleAnalytics,
   XAxisKey,
@@ -142,7 +141,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [filterEditRestriction, setFilterEditRestriction] =
     useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
 
   const yAxisConfig = useMemo(() => {
     switch (yAxisKey) {
@@ -238,7 +236,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     return { domainMin, domainMax };
   }, [yAxisMinInput, yAxisMaxInput]);
 
-  const filteredArticles = useMemo(() => {
+  const _filteredArticles = useMemo(() => {
     const { domainMin, domainMax } = parsedYAxisDomain;
     const lowerSearch = searchTerm.trim().toLowerCase();
 
@@ -754,12 +752,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
       <div className="WikiBubbleChartBody">
         <div className="WikiBubbleChartContainer" ref={containerRef} />
-        <FilteredArticlesSidebar
-          articles={filteredArticles}
-          wiki={wiki}
-          isOpen={sidebarOpen}
-          onToggle={() => setSidebarOpen((prev) => !prev)}
-        />
       </div>
 
       {/* Legend */}
