@@ -264,13 +264,25 @@ function TopicDetail() {
 
       {showBubbleWithTimepoints && (
         <div className="TopicDetail-bubbleSection">
-          <WikiBubbleChart data={articleAnalytics} actions wiki={topic.wiki} />
+          <WikiBubbleChart
+            data={articleAnalytics}
+            actions
+            wiki={topic.wiki}
+            topicStartDate={topic.start_date}
+            topicEndDate={topic.end_date}
+          />
         </div>
       )}
 
       {showBubbleWithoutTimepoints && (
         <div className="TopicDetail-bubbleSection">
-          <WikiBubbleChart data={articleAnalytics} actions wiki={topic.wiki} />
+          <WikiBubbleChart
+            data={articleAnalytics}
+            actions
+            wiki={topic.wiki}
+            topicStartDate={topic.start_date}
+            topicEndDate={topic.end_date}
+          />
         </div>
       )}
     </section>

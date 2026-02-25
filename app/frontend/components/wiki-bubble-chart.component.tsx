@@ -27,6 +27,8 @@ interface WikiBubbleChartProps {
   data?: Record<string, ArticleAnalytics>;
   actions?: boolean;
   wiki?: Wiki;
+  topicStartDate?: string;
+  topicEndDate?: string;
 }
 
 const HEIGHT = 650;
@@ -116,6 +118,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
   actions = false,
   wiki,
+  topicStartDate,
+  topicEndDate,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
@@ -235,6 +239,28 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
     return { domainMin, domainMax };
   }, [yAxisMinInput, yAxisMaxInput]);
+
+  const daysElapsed = topicStartDate
+    ? ((topicEndDate ? new Date(topicEndDate).getTime() : Date.now()) - new Date(topicStartDate).getTime()) / (1000 * 60 * 60 * 24)
+    : null;
+
+  const totalViews = daysElapsed !== null
+    ? rows.reduce((sum, row) => sum + row.average_daily_views * daysElapsed, 0)
+    : null;
+
+  const aggregateStats = {
+    totalArticles: rows.length,
+    millionVisits: totalViews !== null ? totalViews / 1_000_000 : null,
+    averageTotalViews: totalViews !== null && rows.length > 0
+      ? Math.round(totalViews / rows.length)
+      : null,
+    averageArticleSize: rows.length > 0
+      ? Math.round(rows.reduce((sum, r) => sum + r.article_size, 0) / rows.length)
+      : null,
+    startDateLabel: topicStartDate
+      ? new Date(topicStartDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+      : null,
+  };
 
   const _filteredArticles = useMemo(() => {
     const { domainMin, domainMax } = parsedYAxisDomain;
@@ -649,6 +675,33 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
+          <ProtectionFilterCheckboxes
+            moveChecked={filterMoveRestriction}
+            editChecked={filterEditRestriction}
+            onMoveChange={handleMoveRestrictionChange}
+            onEditChange={handleEditRestrictionChange}
+          />
+        </div>
+      </div>
+
+      <div className="WikiBubbleChartHeading">
+        <div className="WikiBubbleChartInfoLine">
+          <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
+          <span>See an overview of articles with their statistics</span>
+        </div>
+        <ArticleSearchAutocomplete
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          articleTitles={articleTitles}
+        />
+      </div>
+
+      <div className="WikiBubbleChartBody">
+        <div className="WikiBubbleChartContainer" ref={containerRef} />
+      </div>
+
+      <div className="WikiBubbleChartFooter">
+        <div className="WikiBubbleChartHeaderBox">
           <label htmlFor="wiki-bubble-sort" className="BoxTitle">
             Sort by
           </label>
@@ -727,31 +780,54 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             </label>
           </div>
         </div>
-
-        <div className="WikiBubbleChartHeaderBox">
-          <ProtectionFilterCheckboxes
-            moveChecked={filterMoveRestriction}
-            editChecked={filterEditRestriction}
-            onMoveChange={handleMoveRestrictionChange}
-            onEditChange={handleEditRestrictionChange}
-          />
-        </div>
       </div>
 
-      <div className="WikiBubbleChartHeading">
-        <div className="WikiBubbleChartInfoLine">
-          <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
-          <span>See an overview of articles with their statistics</span>
+      <div className="WikiBubbleChartStats">
+        <div className="WikiBubbleChartStatCell">
+          <span className="WikiBubbleChartStatValue">
+            {aggregateStats.totalArticles.toLocaleString()}
+          </span>
+          <span className="WikiBubbleChartStatLabel">Total articles</span>
         </div>
-        <ArticleSearchAutocomplete
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          articleTitles={articleTitles}
-        />
-      </div>
 
-      <div className="WikiBubbleChartBody">
-        <div className="WikiBubbleChartContainer" ref={containerRef} />
+        <div className="WikiBubbleChartStatCell">
+          <span className="WikiBubbleChartStatValue">
+            {aggregateStats.millionVisits !== null
+              ? aggregateStats.millionVisits.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              : "—"}
+          </span>
+          <span className="WikiBubbleChartStatLabel">
+            Million visits
+            {aggregateStats.startDateLabel
+              ? ` (since ${aggregateStats.startDateLabel})`
+              : ""}
+          </span>
+        </div>
+
+        <div className="WikiBubbleChartStatCell">
+          <span className="WikiBubbleChartStatValue">
+            {aggregateStats.averageTotalViews !== null
+              ? aggregateStats.averageTotalViews.toLocaleString()
+              : "—"}
+          </span>
+          <span className="WikiBubbleChartStatLabel">
+            Average total views per article
+          </span>
+        </div>
+
+        <div className="WikiBubbleChartStatCell">
+          <span className="WikiBubbleChartStatValue">
+            {aggregateStats.averageArticleSize !== null
+              ? aggregateStats.averageArticleSize.toLocaleString()
+              : "—"}
+          </span>
+          <span className="WikiBubbleChartStatLabel">
+            Average article size (bytes)
+          </span>
+        </div>
       </div>
 
       {/* Legend */}
