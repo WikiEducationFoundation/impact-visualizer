@@ -160,6 +160,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           previousField: null,
           axisTitle: "editors",
         };
+      case "incoming_links_count":
+        return {
+          currentField: "incoming_links_count" as const,
+          previousField: null,
+          axisTitle: "incoming links",
+        };
       default: {
         const _exhaustiveCheck: never = yAxisKey;
         return _exhaustiveCheck;
@@ -241,24 +247,37 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   }, [yAxisMinInput, yAxisMaxInput]);
 
   const daysElapsed = topicStartDate
-    ? ((topicEndDate ? new Date(topicEndDate).getTime() : Date.now()) - new Date(topicStartDate).getTime()) / (1000 * 60 * 60 * 24)
+    ? ((topicEndDate ? new Date(topicEndDate).getTime() : Date.now()) -
+        new Date(topicStartDate).getTime()) /
+      (1000 * 60 * 60 * 24)
     : null;
 
-  const totalViews = daysElapsed !== null
-    ? rows.reduce((sum, row) => sum + row.average_daily_views * daysElapsed, 0)
-    : null;
+  const totalViews =
+    daysElapsed !== null
+      ? rows.reduce(
+          (sum, row) => sum + row.average_daily_views * daysElapsed,
+          0,
+        )
+      : null;
 
   const aggregateStats = {
     totalArticles: rows.length,
     millionVisits: totalViews !== null ? totalViews / 1_000_000 : null,
-    averageTotalViews: totalViews !== null && rows.length > 0
-      ? Math.round(totalViews / rows.length)
-      : null,
-    averageArticleSize: rows.length > 0
-      ? Math.round(rows.reduce((sum, r) => sum + r.article_size, 0) / rows.length)
-      : null,
+    averageTotalViews:
+      totalViews !== null && rows.length > 0
+        ? Math.round(totalViews / rows.length)
+        : null,
+    averageArticleSize:
+      rows.length > 0
+        ? Math.round(
+            rows.reduce((sum, r) => sum + r.article_size, 0) / rows.length,
+          )
+        : null,
     startDateLabel: topicStartDate
-      ? new Date(topicStartDate).toLocaleDateString("en-US", { month: "short", year: "numeric" })
+      ? new Date(topicStartDate).toLocaleDateString("en-US", {
+          month: "short",
+          year: "numeric",
+        })
       : null,
   };
 
@@ -539,6 +558,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 "Talk size": format(datum.talk_size, ','),
                 "Talk size (prev year)": isValid(datum.prev_talk_size) ? format(datum.prev_talk_size, ',') : 'n/a',
                 "Editors": format(datum.number_of_editors, ','),
+                "Incoming links": format(datum.incoming_links_count, ','),
                 "Linguistic versions": format(datum.linguistic_versions_count, ','),
                 "Warning tags": format(datum.warning_tags_count, ','),
                 "Images": format(datum.images_count, ','),
@@ -740,6 +760,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           >
             <option value="average_daily_views">Avg daily views</option>
             <option value="number_of_editors">Editors</option>
+            <option value="incoming_links_count">Incoming links</option>
           </select>
         </div>
 
