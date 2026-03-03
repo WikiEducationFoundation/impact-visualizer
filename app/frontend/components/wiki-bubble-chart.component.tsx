@@ -722,33 +722,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
       <div className="WikiBubbleChartFooter">
         <div className="WikiBubbleChartHeaderBox">
-          <label htmlFor="wiki-bubble-sort" className="BoxTitle">
-            Sort by
-          </label>
-          <select
-            id="wiki-bubble-sort"
-            className="WikiBubbleChartSortSelect"
-            value={xAxisKey}
-            onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
-          >
-            <option value="title">Article title (A-Z)</option>
-            <option value="publication_date">Publication date (Old-New)</option>
-            <option value="linguistic_versions_count">
-              Linguistic versions (Low-High)
-            </option>
-            <option value="article_size">Article size (Small-Large)</option>
-            <option value="lead_section_size">
-              Lead section size (Small-Large)
-            </option>
-            <option value="talk_size">
-              Discussion page size (Small-Large)
-            </option>
-            <option value="warning_tags_count">Warning tags (Low-High)</option>
-            <option value="images_count">Images (Low-High)</option>
-          </select>
-        </div>
-
-        <div className="WikiBubbleChartHeaderBox">
           <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
             Vertical axis
           </label>
@@ -800,6 +773,33 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               />
             </label>
           </div>
+        </div>
+
+        <div className="WikiBubbleChartHeaderBox">
+          <label htmlFor="wiki-bubble-sort" className="BoxTitle">
+            Horizontal axis (sort by)
+          </label>
+          <select
+            id="wiki-bubble-sort"
+            className="WikiBubbleChartSortSelect"
+            value={xAxisKey}
+            onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
+          >
+            <option value="title">Article title (A-Z)</option>
+            <option value="publication_date">Publication date (Old-New)</option>
+            <option value="linguistic_versions_count">
+              Linguistic versions (Low-High)
+            </option>
+            <option value="article_size">Article size (Small-Large)</option>
+            <option value="lead_section_size">
+              Lead section size (Small-Large)
+            </option>
+            <option value="talk_size">
+              Discussion page size (Small-Large)
+            </option>
+            <option value="warning_tags_count">Warning tags (Low-High)</option>
+            <option value="images_count">Images (Low-High)</option>
+          </select>
         </div>
       </div>
 
