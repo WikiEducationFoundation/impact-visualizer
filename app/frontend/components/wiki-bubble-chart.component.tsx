@@ -54,7 +54,7 @@ function QualityFilterButtons({
 }) {
   return (
     <div className="QualityAssessment">
-      <div className="BoxTitle">Quality assessment</div>
+      <div className="BoxTitle">Quality assessment*</div>
       <div className="QualityFilterGrid">
         {gradeGroups.map((g) => {
           const isOn = g.grades.every((x) => selected[x] !== false);
@@ -868,34 +868,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
       {/* Legend */}
       <div className="WikiBubbleChartLegend">
-        {/* Article size */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendDotArticle" />
-          <span>Article size (bytes)</span>
+        <div className="WikiBubbleChartLegendText">
+          * Quality assessment is done by the Wikipedia community and it may be
+          inconsistent
         </div>
-
-        {/* Lead section size */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendDotLead" />
-          <span>Lead section size (bytes)</span>
-        </div>
-
-        {/* Discussion size */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendRingDiscussion" />
-          <span>Discussion size (bytes)</span>
-        </div>
-
-        {/* Previous article size */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendRingPrevArticle" />
-          <span>Prev. article size (bytes)</span>
-        </div>
-
-        {/* Daily views change (dotted line) */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendLineChange" />
-          <span>Change in daily views</span>
+        <div className="WikiBubbleChartLegendBox">
+          <div className="WikiBubbleChartLegendTitle">Legend</div>
+          <img src="/images/legend.png" />
         </div>
       </div>
     </div>
