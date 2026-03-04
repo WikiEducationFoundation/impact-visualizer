@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useMemo, useState } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import { BsInfoCircle } from "react-icons/bs";
+import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
 import type {
@@ -722,19 +723,24 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
       <div className="WikiBubbleChartFooter">
         <div className="WikiBubbleChartHeaderBox">
-          <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
-            Vertical axis
-          </label>
-          <select
-            id="wiki-bubble-y-axis"
-            className="WikiBubbleChartSortSelect"
-            value={yAxisKey}
-            onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
-          >
-            <option value="average_daily_views">Avg daily views</option>
-            <option value="number_of_editors">Editors</option>
-            <option value="incoming_links_count">Incoming links</option>
-          </select>
+          <div className="WikiBubbleChartAxisControl">
+            <FaArrowUp size={30} className="WikiBubbleChartAxisIcon" />
+            <div className="WikiBubbleChartAxisFields">
+              <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
+                Vertical axis
+              </label>
+              <select
+                id="wiki-bubble-y-axis"
+                className="WikiBubbleChartSortSelect"
+                value={yAxisKey}
+                onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
+              >
+                <option value="average_daily_views">Avg daily views</option>
+                <option value="number_of_editors">Editors</option>
+                <option value="incoming_links_count">Incoming links</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
@@ -776,30 +782,39 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
-          <label htmlFor="wiki-bubble-sort" className="BoxTitle">
-            Horizontal axis (sort by)
-          </label>
-          <select
-            id="wiki-bubble-sort"
-            className="WikiBubbleChartSortSelect"
-            value={xAxisKey}
-            onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
-          >
-            <option value="title">Article title (A-Z)</option>
-            <option value="publication_date">Publication date (Old-New)</option>
-            <option value="linguistic_versions_count">
-              Linguistic versions (Low-High)
-            </option>
-            <option value="article_size">Article size (Small-Large)</option>
-            <option value="lead_section_size">
-              Lead section size (Small-Large)
-            </option>
-            <option value="talk_size">
-              Discussion page size (Small-Large)
-            </option>
-            <option value="warning_tags_count">Warning tags (Low-High)</option>
-            <option value="images_count">Images (Low-High)</option>
-          </select>
+          <div className="WikiBubbleChartAxisControl">
+            <FaArrowRight size={30} className="WikiBubbleChartAxisIcon" />
+            <div className="WikiBubbleChartAxisFields">
+              <label htmlFor="wiki-bubble-sort" className="BoxTitle">
+                Horizontal axis (sort by)
+              </label>
+              <select
+                id="wiki-bubble-sort"
+                className="WikiBubbleChartSortSelect"
+                value={xAxisKey}
+                onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
+              >
+                <option value="title">Article title (A-Z)</option>
+                <option value="publication_date">
+                  Publication date (Old-New)
+                </option>
+                <option value="linguistic_versions_count">
+                  Linguistic versions (Low-High)
+                </option>
+                <option value="article_size">Article size (Small-Large)</option>
+                <option value="lead_section_size">
+                  Lead section size (Small-Large)
+                </option>
+                <option value="talk_size">
+                  Discussion page size (Small-Large)
+                </option>
+                <option value="warning_tags_count">
+                  Warning tags (Low-High)
+                </option>
+                <option value="images_count">Images (Low-High)</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
