@@ -472,3 +472,282 @@
   font-style: italic;
   align-self: flex-start;
 }
+
+.ArticleDetailPanelBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ArticleDetailPanel {
+  background: white;
+  width: 90vw;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ArticleDetailPanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ArticleDetailPanelTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ArticleDetailPanelTitleLink {
+  color: inherit;
+  display: flex;
+  align-items: center;
+  transition: color 120ms ease;
+
+  &:hover {
+    color: #1565c0;
+  }
+}
+
+.ArticleDetailPanelClose {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
+
+  &:hover {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+}
+
+.ArticleDetailPanelBody {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr 1.4fr;
+  flex: 1;
+  overflow: hidden;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+}
+
+.ArticleDetailInfo {
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ArticleDetailInfoHeader {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ArticleDetailColBody {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.ArticleDetailInfoSection {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.ArticleDetailInfoSectionTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #424242;
+  margin-bottom: 8px;
+}
+
+.ArticleDetailInfoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #f5f5f5;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.ArticleDetailInfoLabel {
+  color: #757575;
+  flex-shrink: 0;
+}
+
+.ArticleDetailInfoValue {
+  font-weight: 500;
+  text-align: right;
+}
+
+.ArticleDetailContent {
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ArticleDetailContentHeader {
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ArticleDetailContentTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ArticleDetailContentSubtitle {
+  font-size: 13px;
+  color: #757575;
+  margin-left: 4px;
+}
+
+.ArticleDetailContentTabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ArticleDetailContentTab {
+  flex: 1;
+  padding: 8px 20px;
+  font-size: 13px;
+  background: #f0f0f0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  color: #757575;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease;
+
+  &:first-child {
+    border-right: 1px solid #e0e0e0;
+  }
+
+  &:hover:not(.is-active) {
+    background-color: #e8e8e8;
+  }
+
+  &.is-active {
+    font-weight: 600;
+    color: #000;
+    background: white;
+    border-bottom-color: #1565c0;
+  }
+}
+
+.ArticleDetailWordCloud {
+  padding: 20px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  align-items: baseline;
+  line-height: 1.4;
+}
+
+.ArticleDetailWordCloudWord {
+  color: #1a237e;
+  cursor: default;
+  transition: color 100ms ease;
+
+  &:hover {
+    color: #1565c0;
+  }
+}
+
+.ArticleDetailWordCloudSpinner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 32px;
+}
+
+.ArticleDetailWordCloudMessage {
+  font-size: 13px;
+  color: #9e9e9e;
+  font-style: italic;
+}
+
+.ArticleDetailContrib {
+  background: #c8f5c2;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ArticleDetailContribSectionHeader {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.ArticleDetailContribHeader {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.ArticleDetailContribList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ArticleDetailContribItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.ArticleDetailContribArrow {
+  margin-top: 2px;
+  color: #2e7d32;
+}

@@ -4,6 +4,8 @@ import { BsInfoCircle } from "react-icons/bs";
 import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
+import ArticleDetailPanel from "./article-detail-panel.component";
+import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
   XAxisKey,
@@ -17,7 +19,6 @@ import {
   formatProtectionSummary,
   xAxisTitleForKey,
 } from "../utils/bubble-chart-utils";
-import { getWikiUrl } from "../utils/search-utils";
 
 type Wiki = {
   language: string;
@@ -146,6 +147,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [filterEditRestriction, setFilterEditRestriction] =
     useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedArticle, setSelectedArticle] = useState<ArticleRow | null>(
+    null,
+  );
 
   const yAxisConfig = useMemo(() => {
     switch (yAxisKey) {
@@ -614,11 +618,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
         result.view.addEventListener("click", (_event, item) => {
           if (item && item.datum && item.datum.article) {
-            const wikiUrl = getWikiUrl(item.datum.article, {
-              language: wiki?.language,
-              project: wiki?.project,
-            });
-            window.open(wikiUrl, "_blank");
+            setSelectedArticle(item.datum as ArticleRow);
           }
         });
       })
@@ -877,6 +877,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           <img src="/images/legend.png" />
         </div>
       </div>
+
+      {selectedArticle && (
+        <ArticleDetailPanel
+          article={selectedArticle}
+          wiki={wiki}
+          onClose={() => setSelectedArticle(null)}
+        />
+      )}
     </div>
   );
 };
