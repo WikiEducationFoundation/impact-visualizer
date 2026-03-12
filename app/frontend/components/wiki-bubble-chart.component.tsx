@@ -5,6 +5,7 @@ import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
 import ArticleDetailPanel from "./article-detail-panel.component";
+import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
@@ -147,6 +148,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [filterEditRestriction, setFilterEditRestriction] =
     useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [selectedArticle, setSelectedArticle] = useState<ArticleRow | null>(
     null,
   );
@@ -286,7 +288,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       : null,
   };
 
-  const _filteredArticles = useMemo(() => {
+  const filteredArticles = useMemo(() => {
     const { domainMin, domainMax } = parsedYAxisDomain;
     const lowerSearch = searchTerm.trim().toLowerCase();
 
@@ -719,6 +721,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
       <div className="WikiBubbleChartBody">
         <div className="WikiBubbleChartContainer" ref={containerRef} />
+        <FilteredArticlesSidebar
+          articles={filteredArticles}
+          wiki={wiki}
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen((prev) => !prev)}
+        />
       </div>
 
       <div className="WikiBubbleChartFooter">
