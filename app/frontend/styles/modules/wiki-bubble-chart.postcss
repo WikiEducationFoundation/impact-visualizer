@@ -870,28 +870,54 @@
   }
 
   &Item {
+    display: flex;
+    align-items: center;
     border-bottom: 1px solid #eee;
 
     &:last-child {
       border-bottom: none;
     }
+
+    &:hover {
+      background-color: #f0f4ff;
+
+      .FilteredArticlesSidebarExternalLink {
+        opacity: 1;
+      }
+    }
   }
 
   &Link {
-    display: block;
-    padding: 12px 16px;
+    flex: 1;
+    padding: 12px 8px 12px 16px;
     font-size: 13px;
     color: #333;
-    text-decoration: none;
-    transition:
-      background-color 100ms ease,
-      color 100ms ease;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 100ms ease;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
     &:hover {
-      background-color: #f0f4ff;
+      color: #676eb4;
+    }
+  }
+
+  &ExternalLink {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 8px 12px 8px 4px;
+    color: #999;
+    opacity: 0;
+    transition:
+      opacity 100ms ease,
+      color 100ms ease;
+
+    &:hover {
       color: #676eb4;
     }
   }

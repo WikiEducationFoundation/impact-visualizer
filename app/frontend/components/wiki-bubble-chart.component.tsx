@@ -726,6 +726,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           wiki={wiki}
           isOpen={sidebarOpen}
           onToggle={() => setSidebarOpen((prev) => !prev)}
+          onArticleClick={setSelectedArticle}
         />
       </div>
 
