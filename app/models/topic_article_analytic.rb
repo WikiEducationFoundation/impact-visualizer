@@ -14,6 +14,7 @@ class TopicArticleAnalytic < ApplicationRecord
   validates :lead_section_size, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
   validates :prev_average_daily_views,
             numericality: { greater_than_or_equal_to: 0, allow_nil: true }
+  validates :incoming_links_count, numericality: { greater_than_or_equal_to: 0, only_integer: true }
 
   scope :with_pageviews, -> { where.not(average_daily_views: 0) }
   scope :with_size, -> { where.not(article_size: nil) }
@@ -29,6 +30,7 @@ end
 #  assessment_grade          :string
 #  average_daily_views       :integer          default(0)
 #  images_count              :integer          default(0), not null
+#  incoming_links_count      :integer          default(0), not null
 #  lead_section_size         :integer
 #  linguistic_versions_count :integer          default(0), not null
 #  number_of_editors         :integer          default(0), not null

@@ -1,8 +1,12 @@
 import React, { useEffect, useRef, useMemo, useState } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
+import { BsInfoCircle } from "react-icons/bs";
+import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
+import ArticleDetailPanel from "./article-detail-panel.component";
 import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
+import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
   XAxisKey,
@@ -26,6 +30,8 @@ interface WikiBubbleChartProps {
   data?: Record<string, ArticleAnalytics>;
   actions?: boolean;
   wiki?: Wiki;
+  topicStartDate?: string;
+  topicEndDate?: string;
 }
 
 const HEIGHT = 650;
@@ -50,7 +56,7 @@ function QualityFilterButtons({
 }) {
   return (
     <div className="QualityAssessment">
-      <div className="BoxTitle">Quality assessment</div>
+      <div className="BoxTitle">Quality assessment*</div>
       <div className="QualityFilterGrid">
         {gradeGroups.map((g) => {
           const isOn = g.grades.every((x) => selected[x] !== false);
@@ -115,6 +121,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
   actions = false,
   wiki,
+  topicStartDate,
+  topicEndDate,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
@@ -141,6 +149,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [selectedArticle, setSelectedArticle] = useState<ArticleRow | null>(
+    null,
+  );
 
   const yAxisConfig = useMemo(() => {
     switch (yAxisKey) {
@@ -155,6 +166,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           currentField: "number_of_editors" as const,
           previousField: null,
           axisTitle: "editors",
+        };
+      case "incoming_links_count":
+        return {
+          currentField: "incoming_links_count" as const,
+          previousField: null,
+          axisTitle: "incoming links",
         };
       default: {
         const _exhaustiveCheck: never = yAxisKey;
@@ -235,6 +252,41 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
     return { domainMin, domainMax };
   }, [yAxisMinInput, yAxisMaxInput]);
+
+  const daysElapsed = topicStartDate
+    ? ((topicEndDate ? new Date(topicEndDate).getTime() : Date.now()) -
+        new Date(topicStartDate).getTime()) /
+      (1000 * 60 * 60 * 24)
+    : null;
+
+  const totalViews =
+    daysElapsed !== null
+      ? rows.reduce(
+          (sum, row) => sum + row.average_daily_views * daysElapsed,
+          0,
+        )
+      : null;
+
+  const aggregateStats = {
+    totalArticles: rows.length,
+    millionVisits: totalViews !== null ? totalViews / 1_000_000 : null,
+    averageTotalViews:
+      totalViews !== null && rows.length > 0
+        ? Math.round(totalViews / rows.length)
+        : null,
+    averageArticleSize:
+      rows.length > 0
+        ? Math.round(
+            rows.reduce((sum, r) => sum + r.article_size, 0) / rows.length,
+          )
+        : null,
+    startDateLabel: topicStartDate
+      ? new Date(topicStartDate).toLocaleDateString("en-US", {
+          month: "short",
+          year: "numeric",
+        })
+      : null,
+  };
 
   const filteredArticles = useMemo(() => {
     const { domainMin, domainMax } = parsedYAxisDomain;
@@ -513,6 +565,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 "Talk size": format(datum.talk_size, ','),
                 "Talk size (prev year)": isValid(datum.prev_talk_size) ? format(datum.prev_talk_size, ',') : 'n/a',
                 "Editors": format(datum.number_of_editors, ','),
+                "Incoming links": format(datum.incoming_links_count, ','),
                 "Linguistic versions": format(datum.linguistic_versions_count, ','),
                 "Warning tags": format(datum.warning_tags_count, ','),
                 "Images": format(datum.images_count, ','),
@@ -567,13 +620,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
         result.view.addEventListener("click", (_event, item) => {
           if (item && item.datum && item.datum.article) {
-            const articleName = item.datum.article;
-            const language = wiki?.language || "en";
-            const project = wiki?.project || "wikipedia";
-            const wikiUrl = `https://${language}.${project}.org/wiki/${encodeURIComponent(
-              articleName.replace(/ /g, "_"),
-            )}`;
-            window.open(wikiUrl, "_blank");
+            setSelectedArticle(item.datum as ArticleRow);
           }
         });
       })
@@ -651,53 +698,58 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
-          <ArticleSearchAutocomplete
-            searchTerm={searchTerm}
-            onSearchChange={handleSearchChange}
-            articleTitles={articleTitles}
+          <ProtectionFilterCheckboxes
+            moveChecked={filterMoveRestriction}
+            editChecked={filterEditRestriction}
+            onMoveChange={handleMoveRestrictionChange}
+            onEditChange={handleEditRestrictionChange}
           />
         </div>
+      </div>
 
-        <div className="WikiBubbleChartHeaderBox">
-          <label htmlFor="wiki-bubble-sort" className="BoxTitle">
-            Sort by
-          </label>
-          <select
-            id="wiki-bubble-sort"
-            className="WikiBubbleChartSortSelect"
-            value={xAxisKey}
-            onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
-          >
-            <option value="title">Article title (A-Z)</option>
-            <option value="publication_date">Publication date (Old-New)</option>
-            <option value="linguistic_versions_count">
-              Linguistic versions (Low-High)
-            </option>
-            <option value="article_size">Article size (Small-Large)</option>
-            <option value="lead_section_size">
-              Lead section size (Small-Large)
-            </option>
-            <option value="talk_size">
-              Discussion page size (Small-Large)
-            </option>
-            <option value="warning_tags_count">Warning tags (Low-High)</option>
-            <option value="images_count">Images (Low-High)</option>
-          </select>
+      <div className="WikiBubbleChartHeading">
+        <div className="WikiBubbleChartInfoLine">
+          <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
+          <span>See an overview of articles with their statistics</span>
         </div>
+        <ArticleSearchAutocomplete
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          articleTitles={articleTitles}
+        />
+      </div>
 
+      <div className="WikiBubbleChartBody">
+        <div className="WikiBubbleChartContainer" ref={containerRef} />
+        <FilteredArticlesSidebar
+          articles={filteredArticles}
+          wiki={wiki}
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen((prev) => !prev)}
+          onArticleClick={setSelectedArticle}
+        />
+      </div>
+
+      <div className="WikiBubbleChartFooter">
         <div className="WikiBubbleChartHeaderBox">
-          <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
-            Vertical axis
-          </label>
-          <select
-            id="wiki-bubble-y-axis"
-            className="WikiBubbleChartSortSelect"
-            value={yAxisKey}
-            onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
-          >
-            <option value="average_daily_views">Avg daily views</option>
-            <option value="number_of_editors">Editors</option>
-          </select>
+          <div className="WikiBubbleChartAxisControl">
+            <FaArrowUp size={30} className="WikiBubbleChartAxisIcon" />
+            <div className="WikiBubbleChartAxisFields">
+              <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
+                Vertical axis
+              </label>
+              <select
+                id="wiki-bubble-y-axis"
+                className="WikiBubbleChartSortSelect"
+                value={yAxisKey}
+                onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
+              >
+                <option value="average_daily_views">Avg daily views</option>
+                <option value="number_of_editors">Editors</option>
+                <option value="incoming_links_count">Incoming links</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
@@ -739,57 +791,109 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
 
         <div className="WikiBubbleChartHeaderBox">
-          <ProtectionFilterCheckboxes
-            moveChecked={filterMoveRestriction}
-            editChecked={filterEditRestriction}
-            onMoveChange={handleMoveRestrictionChange}
-            onEditChange={handleEditRestrictionChange}
-          />
+          <div className="WikiBubbleChartAxisControl">
+            <FaArrowRight size={30} className="WikiBubbleChartAxisIcon" />
+            <div className="WikiBubbleChartAxisFields">
+              <label htmlFor="wiki-bubble-sort" className="BoxTitle">
+                Horizontal axis (sort by)
+              </label>
+              <select
+                id="wiki-bubble-sort"
+                className="WikiBubbleChartSortSelect"
+                value={xAxisKey}
+                onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
+              >
+                <option value="title">Article title (A-Z)</option>
+                <option value="publication_date">
+                  Publication date (Old-New)
+                </option>
+                <option value="linguistic_versions_count">
+                  Linguistic versions (Low-High)
+                </option>
+                <option value="article_size">Article size (Small-Large)</option>
+                <option value="lead_section_size">
+                  Lead section size (Small-Large)
+                </option>
+                <option value="talk_size">
+                  Discussion page size (Small-Large)
+                </option>
+                <option value="warning_tags_count">
+                  Warning tags (Low-High)
+                </option>
+                <option value="images_count">Images (Low-High)</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="WikiBubbleChartBody">
-        <div className="WikiBubbleChartChartContainer" ref={containerRef} />
-        <FilteredArticlesSidebar
-          articles={filteredArticles}
-          wiki={wiki}
-          isOpen={sidebarOpen}
-          onToggle={() => setSidebarOpen((prev) => !prev)}
-        />
+      <div className="WikiBubbleChartStats">
+        <div className="WikiBubbleChartStatCell">
+          <span className="WikiBubbleChartStatValue">
+            {aggregateStats.totalArticles.toLocaleString()}
+          </span>
+          <span className="WikiBubbleChartStatLabel">Total articles</span>
+        </div>
+
+        <div className="WikiBubbleChartStatCell">
+          <span className="WikiBubbleChartStatValue">
+            {aggregateStats.millionVisits !== null
+              ? aggregateStats.millionVisits.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })
+              : "—"}
+          </span>
+          <span className="WikiBubbleChartStatLabel">
+            Million visits
+            {aggregateStats.startDateLabel
+              ? ` (since ${aggregateStats.startDateLabel})`
+              : ""}
+          </span>
+        </div>
+
+        <div className="WikiBubbleChartStatCell">
+          <span className="WikiBubbleChartStatValue">
+            {aggregateStats.averageTotalViews !== null
+              ? aggregateStats.averageTotalViews.toLocaleString()
+              : "—"}
+          </span>
+          <span className="WikiBubbleChartStatLabel">
+            Average total views per article
+          </span>
+        </div>
+
+        <div className="WikiBubbleChartStatCell">
+          <span className="WikiBubbleChartStatValue">
+            {aggregateStats.averageArticleSize !== null
+              ? aggregateStats.averageArticleSize.toLocaleString()
+              : "—"}
+          </span>
+          <span className="WikiBubbleChartStatLabel">
+            Average article size (bytes)
+          </span>
+        </div>
       </div>
 
       {/* Legend */}
       <div className="WikiBubbleChartLegend">
-        {/* Article size */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendDotArticle" />
-          <span>Article size (bytes)</span>
+        <div className="WikiBubbleChartLegendText">
+          * Quality assessment is done by the Wikipedia community and it may be
+          inconsistent
         </div>
-
-        {/* Lead section size */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendDotLead" />
-          <span>Lead section size (bytes)</span>
-        </div>
-
-        {/* Discussion size */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendRingDiscussion" />
-          <span>Discussion size (bytes)</span>
-        </div>
-
-        {/* Previous article size */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendRingPrevArticle" />
-          <span>Prev. article size (bytes)</span>
-        </div>
-
-        {/* Daily views change (dotted line) */}
-        <div className="WikiBubbleChartLegendItem">
-          <span className="WikiBubbleChartLegendLineChange" />
-          <span>Change in daily views</span>
+        <div className="WikiBubbleChartLegendBox">
+          <div className="WikiBubbleChartLegendTitle">Legend</div>
+          <img src="/images/legend.png" />
         </div>
       </div>
+
+      {selectedArticle && (
+        <ArticleDetailPanel
+          article={selectedArticle}
+          wiki={wiki}
+          onClose={() => setSelectedArticle(null)}
+        />
+      )}
     </div>
   );
 };

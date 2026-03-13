@@ -1,11 +1,15 @@
 import React from "react";
 import { GoTriangleLeft, GoTriangleRight } from "react-icons/go";
+import { FiExternalLink } from "react-icons/fi";
+import { getWikiUrl } from "../utils/search-utils";
+import type { ArticleRow } from "./article-detail-panel.component";
 
 interface FilteredArticlesSidebarProps {
-  articles: { article: string }[];
+  articles: ArticleRow[];
   wiki?: { language: string; project: string };
   isOpen: boolean;
   onToggle: () => void;
+  onArticleClick?: (article: ArticleRow) => void;
 }
 
 const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> = ({
@@ -13,15 +17,8 @@ const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> = ({
   wiki,
   isOpen,
   onToggle,
+  onArticleClick,
 }) => {
-  const language = wiki?.language || "en";
-  const project = wiki?.project || "wikipedia";
-
-  const getWikiUrl = (articleName: string) =>
-    `https://${language}.${project}.org/wiki/${encodeURIComponent(
-      articleName.replace(/ /g, "_"),
-    )}`;
-
   return (
     <div className={`FilteredArticlesSidebar ${isOpen ? "is-open" : ""}`}>
       <button
@@ -47,15 +44,29 @@ const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> = ({
           </span>
         </div>
         <ul className="FilteredArticlesSidebarList">
-          {articles.map(({ article }) => (
-            <li key={article} className="FilteredArticlesSidebarItem">
+          {articles.map((articleRow) => (
+            <li
+              key={articleRow.article}
+              className="FilteredArticlesSidebarItem"
+            >
+              <button
+                type="button"
+                className="FilteredArticlesSidebarLink"
+                onClick={() => onArticleClick?.(articleRow)}
+              >
+                {articleRow.article}
+              </button>
               <a
-                href={getWikiUrl(article)}
+                href={getWikiUrl(articleRow.article, {
+                  language: wiki?.language,
+                  project: wiki?.project,
+                })}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="FilteredArticlesSidebarLink"
+                className="FilteredArticlesSidebarExternalLink"
+                onClick={(e) => e.stopPropagation()}
               >
-                {article}
+                <FiExternalLink />
               </a>
             </li>
           ))}

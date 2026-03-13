@@ -339,6 +339,36 @@ class WikiActionApi
     images.is_a?(Array) ? images.length : 0
   end
 
+  def get_backlinks_count(title:)
+    count = 0
+    query_parameters = {
+      list: 'backlinks',
+      bltitle: title,
+      bllimit: 'max',
+      blnamespace: 0,
+      redirects: true,
+      formatversion: '2'
+    }
+
+    loop do
+      response = query(query_parameters:)
+      break unless response&.status == 200
+
+      backlinks = response.data['backlinks'] || []
+      count += backlinks.length
+
+      continue_token = response['continue']&.dig('blcontinue')
+      break unless continue_token
+
+      query_parameters = query_parameters.merge('blcontinue' => continue_token)
+    end
+
+    count
+  rescue StandardError => e
+    Rails.logger.error("[WikiActionApi] Error fetching backlinks count for #{title}: #{e.message}")
+    0
+  end
+
   def get_templates(title:, namespace: 10)
     query_parameters = {
       titles: [title],

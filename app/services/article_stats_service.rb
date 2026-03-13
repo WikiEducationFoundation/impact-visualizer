@@ -287,6 +287,19 @@ class ArticleStatsService
     0
   end
 
+  def get_incoming_links_count(article:)
+    update_details_for_article(article:)
+    return 0 if article.missing
+
+    title = article.title
+    return 0 unless title.present?
+
+    @wiki_action_api.get_backlinks_count(title:)
+  rescue StandardError => e
+    Rails.logger.error("[ArticleStatsService] Error fetching incoming links count for #{article.id || article}: #{e.message}")
+    0
+  end
+
   def get_article_protections(article:)
     update_details_for_article(article:)
     return [] if article.missing

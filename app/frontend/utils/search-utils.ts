@@ -11,12 +11,23 @@ const removeCategoryPrefix = (categoryString: string): string => {
   return categoryString.substring(categoryString.indexOf(":") + 1);
 };
 
+export function getWikiUrl(
+  articleName: string,
+  options?: { language?: string; project?: string },
+): string {
+  const language = options?.language ?? "en";
+  const project = options?.project ?? "wikipedia";
+  return `https://${language}.${project}.org/wiki/${encodeURIComponent(
+    articleName.replace(/ /g, "_"),
+  )}`;
+}
+
 function buildWikidataQuery(
   occupationIDs: string[],
   genderID: string,
   ethnicityID: string,
   languageCode: string,
-  options?: { requireWikipediaArticle?: boolean }
+  options?: { requireWikipediaArticle?: boolean },
 ): string {
   const properties = {
     instanceOf: "P31",
@@ -67,7 +78,7 @@ function buildWikidataQuery(
 }
 
 function convertSPARQLArticlesToCSV(
-  articles: SPARQLResponse["results"]["bindings"]
+  articles: SPARQLResponse["results"]["bindings"],
 ): string {
   let csvContent = "data:text/csv;charset=utf-8,";
 
@@ -111,7 +122,7 @@ const convertInitialResponseToTree = (
   response: MediaWikiResponse,
   existingIDs: INode<IFlatMetadata>[],
   elementId: number,
-  parentName: string
+  parentName: string,
 ): CategoryNode => {
   let articleCount = 0;
   const pages = response.query.pages;
@@ -173,7 +184,7 @@ const convertInitialResponseToTree = (
 
 const convertResponseToTree = (
   response: MediaWikiResponse,
-  parent: INode<IFlatMetadata>
+  parent: INode<IFlatMetadata>,
 ): INode<IFlatMetadata>[] => {
   const pages = response.query.pages;
 
@@ -204,7 +215,7 @@ const removeDuplicateArticles = (
   selectedArticles: {
     articleId: string;
     articleTitle: string;
-  }[]
+  }[],
 ) => {
   const uniqueIds = new Set();
   return selectedArticles.filter((article) => {
@@ -257,7 +268,7 @@ function extractDashboardURLInfo(url: string): {
 
   if (parts.length < maxPartsLength) {
     throw new Error(
-      "Invalid URL: does not contain enough parts after the domain"
+      "Invalid URL: does not contain enough parts after the domain",
     );
   }
 

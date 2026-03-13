@@ -83,7 +83,8 @@ class GenerateArticleAnalyticsJob
         lead_section_size: fetch_lead_section_size(article_stats_service:, article:,
                                                    date: end_date),
         assessment_grade: fetch_assessment_grade(article_stats_service:, article:),
-        article_protections: fetch_article_protections(article_stats_service:, article:)
+        article_protections: fetch_article_protections(article_stats_service:, article:),
+        incoming_links_count: fetch_incoming_links_count(article_stats_service:, article:)
       )
 
       Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, prev_average_views: #{prev_average_views&.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}, lead_section_size: #{topic_article_analytic.lead_section_size}")
@@ -170,5 +171,13 @@ class GenerateArticleAnalyticsJob
   rescue StandardError => e
     Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching article protections for #{article.title}: #{e.message}")
     []
+  end
+
+  def fetch_incoming_links_count(article_stats_service:, article:)
+    Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching incoming links count for #{article.title}")
+    article_stats_service.get_incoming_links_count(article:)
+  rescue StandardError => e
+    Rails.logger.error("[GenerateArticleAnalyticsJob] Error fetching incoming links count for #{article.title}: #{e.message}")
+    0
   end
 end
