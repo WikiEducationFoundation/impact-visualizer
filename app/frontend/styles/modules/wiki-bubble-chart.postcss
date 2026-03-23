@@ -10,20 +10,7 @@
   border: 1px solid #e0e0e0;
   width: 100%;
 
-  &Header {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1px;
-    background: #d9d9d9;
-    border-bottom: 1px solid #d9d9d9;
-    align-items: stretch;
-
-    @media (min-width: 768px) {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
-  &Footer {
+  &QualityFilters {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1px;
@@ -34,11 +21,24 @@
     @media (min-width: 768px) {
       grid-template-columns: 1fr 1fr;
     }
+  }
+
+  &AxisControls {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    align-items: stretch;
+
+    @media (min-width: 768px) {
+      grid-template-columns: 1fr 1fr;
+    }
 
     @media (min-width: 1024px) {
       grid-template-columns: repeat(3, 1fr);
 
-      .WikiBubbleChartHeaderBox:nth-child(2) {
+      .WikiBubbleChartFilterBox:nth-child(2) {
         margin-left: -1px;
         padding-left: 13px;
       }
@@ -62,7 +62,7 @@
     justify-content: center;
   }
 
-  &HeaderBox {
+  &FilterBox {
     background: white;
     padding: 12px;
     display: flex;

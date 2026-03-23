@@ -689,49 +689,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           filename="article-analytics"
         />
       </div>
-      <div className="WikiBubbleChartHeader">
-        <div className="WikiBubbleChartHeaderBox">
-          <QualityFilterButtons
-            onToggle={toggleGrades}
-            selected={selectedGrades}
-          />
-        </div>
-
-        <div className="WikiBubbleChartHeaderBox">
-          <ProtectionFilterCheckboxes
-            moveChecked={filterMoveRestriction}
-            editChecked={filterEditRestriction}
-            onMoveChange={handleMoveRestrictionChange}
-            onEditChange={handleEditRestrictionChange}
-          />
-        </div>
-      </div>
-
-      <div className="WikiBubbleChartHeading">
-        <div className="WikiBubbleChartInfoLine">
-          <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
-          <span>See an overview of articles with their statistics</span>
-        </div>
-        <ArticleSearchAutocomplete
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          articleTitles={articleTitles}
-        />
-      </div>
-
-      <div className="WikiBubbleChartBody">
-        <div className="WikiBubbleChartContainer" ref={containerRef} />
-        <FilteredArticlesSidebar
-          articles={filteredArticles}
-          wiki={wiki}
-          isOpen={sidebarOpen}
-          onToggle={() => setSidebarOpen((prev) => !prev)}
-          onArticleClick={setSelectedArticle}
-        />
-      </div>
-
-      <div className="WikiBubbleChartFooter">
-        <div className="WikiBubbleChartHeaderBox">
+      <div className="WikiBubbleChartAxisControls">
+        <div className="WikiBubbleChartFilterBox">
           <div className="WikiBubbleChartAxisControl">
             <FaArrowUp size={30} className="WikiBubbleChartAxisIcon" />
             <div className="WikiBubbleChartAxisFields">
@@ -752,7 +711,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        <div className="WikiBubbleChartHeaderBox">
+        <div className="WikiBubbleChartFilterBox">
           <div className="BoxTitle">Y-axis range</div>
           <div className="WikiBubbleChartRangeRow">
             <label className="WikiBubbleChartRangeField">
@@ -790,7 +749,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        <div className="WikiBubbleChartHeaderBox">
+        <div className="WikiBubbleChartFilterBox">
           <div className="WikiBubbleChartAxisControl">
             <FaArrowRight size={30} className="WikiBubbleChartAxisIcon" />
             <div className="WikiBubbleChartAxisFields">
@@ -824,6 +783,47 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               </select>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="WikiBubbleChartHeading">
+        <div className="WikiBubbleChartInfoLine">
+          <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
+          <span>See an overview of articles with their statistics</span>
+        </div>
+        <ArticleSearchAutocomplete
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          articleTitles={articleTitles}
+        />
+      </div>
+
+      <div className="WikiBubbleChartBody">
+        <div className="WikiBubbleChartContainer" ref={containerRef} />
+        <FilteredArticlesSidebar
+          articles={filteredArticles}
+          wiki={wiki}
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen((prev) => !prev)}
+          onArticleClick={setSelectedArticle}
+        />
+      </div>
+
+      <div className="WikiBubbleChartQualityFilters">
+        <div className="WikiBubbleChartFilterBox">
+          <QualityFilterButtons
+            onToggle={toggleGrades}
+            selected={selectedGrades}
+          />
+        </div>
+
+        <div className="WikiBubbleChartFilterBox">
+          <ProtectionFilterCheckboxes
+            moveChecked={filterMoveRestriction}
+            editChecked={filterEditRestriction}
+            onMoveChange={handleMoveRestrictionChange}
+            onEditChange={handleEditRestrictionChange}
+          />
         </div>
       </div>
 
