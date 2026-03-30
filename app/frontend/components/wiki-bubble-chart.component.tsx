@@ -141,6 +141,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>("title");
   const [yAxisKey, setYAxisKey] = useState<YAxisKey>("average_daily_views");
+  const [yAxisScaleType, setYAxisScaleType] = useState<"linear" | "log">(
+    "linear",
+  );
   const [yAxisMinInput, setYAxisMinInput] = useState<string>("");
   const [yAxisMaxInput, setYAxisMaxInput] = useState<string>("");
   const [filterMoveRestriction, setFilterMoveRestriction] =
@@ -338,23 +341,45 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     if (!containerRef.current || sortedRows.length === 0) return;
 
     const { domainMin, domainMax } = parsedYAxisDomain;
+    const isLogScale = yAxisScaleType === "log";
 
     // calculate padding based on maximum circle radius to prevent clipping
     const maxCircleRadius = Math.sqrt(1500 / Math.PI); // this is how vega calculates the circle radius
-    const effectiveMin = domainMin !== null && domainMin > 0 ? domainMin : -25;
-    const effectiveMax =
-      domainMax !== null ? domainMax : yAxisAutoDomain.max || 1000;
-    const dataRange = effectiveMax - effectiveMin;
-    const paddingInDataUnits = maxCircleRadius * (dataRange / HEIGHT);
 
-    const yScale: Record<string, number | boolean> = {
-      domainMin: effectiveMin - paddingInDataUnits,
-      domainMax: effectiveMax + paddingInDataUnits,
-    };
+    let yScaleSpec: Record<string, any>;
+    if (isLogScale) {
+      const logEffectiveMin = Math.max(
+        1,
+        domainMin !== null && domainMin > 0
+          ? domainMin
+          : yAxisAutoDomain.min !== null && yAxisAutoDomain.min > 0
+            ? yAxisAutoDomain.min
+            : 1,
+      );
+      const logEffectiveMax =
+        domainMax !== null ? domainMax : yAxisAutoDomain.max || 1000;
+      yScaleSpec = {
+        type: "log",
+        domainMin: logEffectiveMin * 0.6,
+        domainMax: logEffectiveMax * 1.8,
+      };
+    } else {
+      const effectiveMin =
+        domainMin !== null && domainMin > 0 ? domainMin : -25;
+      const effectiveMax =
+        domainMax !== null ? domainMax : yAxisAutoDomain.max || 1000;
+      const dataRange = effectiveMax - effectiveMin;
+      const paddingInDataUnits = maxCircleRadius * (dataRange / HEIGHT);
+      yScaleSpec = {
+        domainMin: effectiveMin - paddingInDataUnits,
+        domainMax: effectiveMax + paddingInDataUnits,
+      };
+    }
 
-    const yFilterExprParts: string[] = [];
     const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
-    if (domainMin !== null)
+    const yFilterExprParts: string[] = [];
+    if (isLogScale) yFilterExprParts.push(`${yFieldExpr} > 0`);
+    if (domainMin !== null && (!isLogScale || domainMin > 0))
       yFilterExprParts.push(`${yFieldExpr} >= ${domainMin}`);
     if (domainMax !== null)
       yFilterExprParts.push(`${yFieldExpr} <= ${domainMax}`);
@@ -365,7 +390,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     const yEncoding: any = {
       field: yAxisConfig.currentField,
       type: "quantitative",
-      ...(Object.keys(yScale).length ? { scale: yScale } : {}),
+      scale: yScaleSpec,
     };
 
     const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -459,6 +484,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                   strokeWidth: 1.2,
                   opacity: 0.6,
                 },
+                ...(isLogScale
+                  ? {
+                      transform: [
+                        {
+                          filter: `datum[${JSON.stringify(yAxisConfig.previousField)}] > 0`,
+                        },
+                      ],
+                    }
+                  : {}),
                 encoding: {
                   y: {
                     field: yAxisConfig.previousField,
@@ -636,7 +670,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     wiki,
     xAxisKey,
     yAxisConfig,
+    yAxisScaleType,
     parsedYAxisDomain,
+    yAxisAutoDomain.min,
     yAxisAutoDomain.max,
   ]);
 
@@ -694,9 +730,27 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           <div className="WikiBubbleChartAxisControl">
             <FaArrowUp size={30} className="WikiBubbleChartAxisIcon" />
             <div className="WikiBubbleChartAxisFields">
-              <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
-                Vertical axis
-              </label>
+              <div className="WikiBubbleChartAxisLabelRow">
+                <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
+                  Vertical axis
+                </label>
+                <div className="WikiBubbleChartScaleToggle">
+                  <button
+                    type="button"
+                    className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "linear" ? "is-active" : ""}`}
+                    onClick={() => setYAxisScaleType("linear")}
+                  >
+                    Linear
+                  </button>
+                  <button
+                    type="button"
+                    className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "log" ? "is-active" : ""}`}
+                    onClick={() => setYAxisScaleType("log")}
+                  >
+                    Log
+                  </button>
+                </div>
+              </div>
               <select
                 id="wiki-bubble-y-axis"
                 className="WikiBubbleChartSortSelect"
