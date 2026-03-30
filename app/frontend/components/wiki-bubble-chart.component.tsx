@@ -140,6 +140,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     },
   );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>("title");
+  const [xAxisMode, setXAxisMode] = useState<"ranked" | "scaled">("ranked");
   const [yAxisKey, setYAxisKey] = useState<YAxisKey>("average_daily_views");
   const [yAxisScaleType, setYAxisScaleType] = useState<"linear" | "log">(
     "linear",
@@ -338,6 +339,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   }, [yAxisKey]);
 
   useEffect(() => {
+    if (xAxisKey === "title") {
+      setXAxisMode("ranked");
+    }
+  }, [xAxisKey]);
+
+  useEffect(() => {
     if (!containerRef.current || sortedRows.length === 0) return;
 
     const { domainMin, domainMax } = parsedYAxisDomain;
@@ -375,6 +382,41 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         domainMax: effectiveMax + paddingInDataUnits,
       };
     }
+
+    const isScaledMode = xAxisMode === "scaled" && xAxisKey !== "title";
+
+    const xEncoding: any = isScaledMode
+      ? xAxisKey === "publication_date"
+        ? {
+            field: "publication_date",
+            type: "temporal",
+            axis: {
+              title: xAxisTitleForKey(xAxisKey).scaled,
+              labels: true,
+              ticks: true,
+              grid: true,
+            },
+          }
+        : {
+            field: xAxisKey,
+            type: "quantitative",
+            axis: {
+              title: xAxisTitleForKey(xAxisKey).scaled,
+              labels: true,
+              ticks: true,
+              grid: true,
+            },
+          }
+      : {
+          field: "idx",
+          type: "quantitative",
+          axis: {
+            title: xAxisTitleForKey(xAxisKey).ranked,
+            labels: false,
+            ticks: false,
+            grid: false,
+          },
+        };
 
     const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
     const yFilterExprParts: string[] = [];
@@ -620,16 +662,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       ],
 
       encoding: {
-        x: {
-          field: "idx",
-          type: "quantitative",
-          axis: {
-            title: xAxisTitleForKey(xAxisKey),
-            labels: false,
-            ticks: false,
-            grid: false,
-          },
-        },
+        x: xEncoding,
         y: {
           ...yEncoding,
           axis: { title: yAxisConfig.axisTitle },
@@ -669,6 +702,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     actions,
     wiki,
     xAxisKey,
+    xAxisMode,
     yAxisConfig,
     yAxisScaleType,
     parsedYAxisDomain,
@@ -807,9 +841,35 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           <div className="WikiBubbleChartAxisControl">
             <FaArrowRight size={30} className="WikiBubbleChartAxisIcon" />
             <div className="WikiBubbleChartAxisFields">
-              <label htmlFor="wiki-bubble-sort" className="BoxTitle">
-                Horizontal axis (sort by)
-              </label>
+              <div className="WikiBubbleChartAxisLabelRow">
+                <label htmlFor="wiki-bubble-sort" className="BoxTitle">
+                  Horizontal axis
+                </label>
+                <div className="WikiBubbleChartScaleToggle">
+                  <button
+                    type="button"
+                    className={`WikiBubbleChartScaleBtn ${xAxisMode === "ranked" ? "is-active" : ""}`}
+                    onClick={() => setXAxisMode("ranked")}
+                  >
+                    Ranked
+                  </button>
+                  <button
+                    type="button"
+                    className={`WikiBubbleChartScaleBtn ${xAxisMode === "scaled" ? "is-active" : ""}`}
+                    onClick={() =>
+                      xAxisKey !== "title" && setXAxisMode("scaled")
+                    }
+                    disabled={xAxisKey === "title"}
+                    title={
+                      xAxisKey === "title"
+                        ? "Not available for article title"
+                        : undefined
+                    }
+                  >
+                    Scaled
+                  </button>
+                </div>
+              </div>
               <select
                 id="wiki-bubble-sort"
                 className="WikiBubbleChartSortSelect"
