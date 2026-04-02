@@ -878,7 +878,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               >
                 <option value="title">Article title (A-Z)</option>
                 <option value="publication_date">
-                  Publication date (Old-New)
+                  Creation date (Old-New)
                 </option>
                 <option value="linguistic_versions_count">
                   Linguistic versions (Low-High)

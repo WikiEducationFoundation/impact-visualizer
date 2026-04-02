@@ -57,8 +57,8 @@ function xAxisTitleForKey(xAxisKey: XAxisKey): {
       };
     case "publication_date":
       return {
-        ranked: "Articles from oldest to newest (sort by publication date)",
-        scaled: "Publication date",
+        ranked: "Articles from oldest to newest (sort by creation date)",
+        scaled: "Creation date",
       };
     case "linguistic_versions_count":
       return {
@@ -120,7 +120,7 @@ function convertAnalyticsToCSV(
 ): string {
   let csvContent = "data:text/csv;charset=utf-8,";
   csvContent +=
-    "Article,Publication Date,Average Daily Views,Average Daily Views (prev year),Article Size,Article Size (prev year),Lead Section Size,Talk Size,Talk Size (prev year),Number of Editors,Incoming Links,Linguistic Versions,Warning Tags,Images,Assessment Grade,Protections\n";
+    "Article,Creation Date,Average Daily Views,Average Daily Views (prev year),Article Size,Article Size (prev year),Lead Section Size,Talk Size,Talk Size (prev year),Number of Editors,Incoming Links,Linguistic Versions,Warning Tags,Images,Assessment Grade,Protections\n";
   rows.forEach((row) => {
     csvContent +=
       [
