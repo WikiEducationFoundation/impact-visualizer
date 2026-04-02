@@ -8,7 +8,7 @@ import type {
 
 function compareArticlesByPublicationDateAsc(
   firstArticle: { publication_date: string | null; article: string },
-  secondArticle: { publication_date: string | null; article: string }
+  secondArticle: { publication_date: string | null; article: string },
 ): number {
   const firstPubDateParsed = firstArticle.publication_date
     ? Date.parse(firstArticle.publication_date)
@@ -32,7 +32,7 @@ function compareArticlesByPublicationDateAsc(
 function compareArticlesByNumericFieldAsc(
   firstArticle: NumericSortableArticle,
   secondArticle: NumericSortableArticle,
-  field: NumericSortField
+  field: NumericSortField,
 ): number {
   const a = firstArticle[field];
   const b = secondArticle[field];
@@ -45,26 +45,56 @@ function formatProtectionSummary(protections: ArticleProtection[]): string {
   return protections.map((p) => p.type).join(", ");
 }
 
-function xAxisTitleForKey(xAxisKey: XAxisKey): string {
+function xAxisTitleForKey(xAxisKey: XAxisKey): {
+  ranked: string;
+  scaled: string;
+} {
   switch (xAxisKey) {
     case "title":
-      return "Articles from A-Z (sort by title)";
+      return {
+        ranked: "Articles from A-Z (sort by title)",
+        scaled: "Article title",
+      };
     case "publication_date":
-      return "Articles from oldest to newest (sort by publication date)";
+      return {
+        ranked: "Articles from oldest to newest (sort by creation date)",
+        scaled: "Creation date",
+      };
     case "linguistic_versions_count":
-      return "Articles from least to most linguistic versions (sort by number of linguistic versions)";
+      return {
+        ranked:
+          "Articles from least to most linguistic versions (sort by number of linguistic versions)",
+        scaled: "Linguistic versions",
+      };
     case "article_size":
-      return "Articles from smallest to largest (sort by article size)";
+      return {
+        ranked: "Articles from smallest to largest (sort by article size)",
+        scaled: "Article size (bytes)",
+      };
     case "lead_section_size":
-      return "Articles from smallest to largest (sort by lead section size)";
+      return {
+        ranked: "Articles from smallest to largest (sort by lead section size)",
+        scaled: "Lead section size (bytes)",
+      };
     case "talk_size":
-      return "Articles from smallest to largest (sort by discussion page size)";
+      return {
+        ranked:
+          "Articles from smallest to largest (sort by discussion page size)",
+        scaled: "Discussion page size (bytes)",
+      };
     case "warning_tags_count":
-      return "Articles from least to most warning tags (sort by number of warning tags)";
+      return {
+        ranked:
+          "Articles from least to most warning tags (sort by number of warning tags)",
+        scaled: "Warning tags",
+      };
     case "images_count":
-      return "Articles from least to most images (sort by number of images)";
+      return {
+        ranked: "Articles from least to most images (sort by number of images)",
+        scaled: "Images",
+      };
     default:
-      return "Articles";
+      return { ranked: "Articles", scaled: "Value" };
   }
 }
 
@@ -86,11 +116,11 @@ function convertAnalyticsToCSV(
     assessment_grade: string | null;
     publication_date: string | null;
     protection_summary?: string;
-  }>
+  }>,
 ): string {
   let csvContent = "data:text/csv;charset=utf-8,";
   csvContent +=
-    "Article,Publication Date,Average Daily Views,Average Daily Views (prev year),Article Size,Article Size (prev year),Lead Section Size,Talk Size,Talk Size (prev year),Number of Editors,Incoming Links,Linguistic Versions,Warning Tags,Images,Assessment Grade,Protections\n";
+    "Article,Creation Date,Average Daily Views,Average Daily Views (prev year),Article Size,Article Size (prev year),Lead Section Size,Talk Size,Talk Size (prev year),Number of Editors,Incoming Links,Linguistic Versions,Warning Tags,Images,Assessment Grade,Protections\n";
   rows.forEach((row) => {
     csvContent +=
       [

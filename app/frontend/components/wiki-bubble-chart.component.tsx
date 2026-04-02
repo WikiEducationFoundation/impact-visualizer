@@ -140,7 +140,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     },
   );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>("title");
+  const [xAxisMode, setXAxisMode] = useState<"ranked" | "scaled">("ranked");
   const [yAxisKey, setYAxisKey] = useState<YAxisKey>("average_daily_views");
+  const [yAxisScaleType, setYAxisScaleType] = useState<"linear" | "log">(
+    "linear",
+  );
   const [yAxisMinInput, setYAxisMinInput] = useState<string>("");
   const [yAxisMaxInput, setYAxisMaxInput] = useState<string>("");
   const [filterMoveRestriction, setFilterMoveRestriction] =
@@ -335,26 +339,89 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   }, [yAxisKey]);
 
   useEffect(() => {
+    if (xAxisKey === "title") {
+      setXAxisMode("ranked");
+    }
+  }, [xAxisKey]);
+
+  useEffect(() => {
     if (!containerRef.current || sortedRows.length === 0) return;
 
     const { domainMin, domainMax } = parsedYAxisDomain;
+    const isLogScale = yAxisScaleType === "log";
 
     // calculate padding based on maximum circle radius to prevent clipping
     const maxCircleRadius = Math.sqrt(1500 / Math.PI); // this is how vega calculates the circle radius
-    const effectiveMin = domainMin !== null && domainMin > 0 ? domainMin : -25;
-    const effectiveMax =
-      domainMax !== null ? domainMax : yAxisAutoDomain.max || 1000;
-    const dataRange = effectiveMax - effectiveMin;
-    const paddingInDataUnits = maxCircleRadius * (dataRange / HEIGHT);
 
-    const yScale: Record<string, number | boolean> = {
-      domainMin: effectiveMin - paddingInDataUnits,
-      domainMax: effectiveMax + paddingInDataUnits,
-    };
+    let yScaleSpec: Record<string, any>;
+    if (isLogScale) {
+      const logEffectiveMin = Math.max(
+        1,
+        domainMin !== null && domainMin > 0
+          ? domainMin
+          : yAxisAutoDomain.min !== null && yAxisAutoDomain.min > 0
+            ? yAxisAutoDomain.min
+            : 1,
+      );
+      const logEffectiveMax =
+        domainMax !== null ? domainMax : yAxisAutoDomain.max || 1000;
+      yScaleSpec = {
+        type: "log",
+        domainMin: logEffectiveMin * 0.6,
+        domainMax: logEffectiveMax * 1.8,
+      };
+    } else {
+      const effectiveMin =
+        domainMin !== null && domainMin > 0 ? domainMin : -25;
+      const effectiveMax =
+        domainMax !== null ? domainMax : yAxisAutoDomain.max || 1000;
+      const dataRange = effectiveMax - effectiveMin;
+      const paddingInDataUnits = maxCircleRadius * (dataRange / HEIGHT);
+      yScaleSpec = {
+        domainMin: effectiveMin - paddingInDataUnits,
+        domainMax: effectiveMax + paddingInDataUnits,
+      };
+    }
 
-    const yFilterExprParts: string[] = [];
+    const isScaledMode = xAxisMode === "scaled" && xAxisKey !== "title";
+
+    const xEncoding: any = isScaledMode
+      ? xAxisKey === "publication_date"
+        ? {
+            field: "publication_date",
+            type: "temporal",
+            axis: {
+              title: xAxisTitleForKey(xAxisKey).scaled,
+              labels: true,
+              ticks: true,
+              grid: true,
+            },
+          }
+        : {
+            field: xAxisKey,
+            type: "quantitative",
+            axis: {
+              title: xAxisTitleForKey(xAxisKey).scaled,
+              labels: true,
+              ticks: true,
+              grid: true,
+            },
+          }
+      : {
+          field: "idx",
+          type: "quantitative",
+          axis: {
+            title: xAxisTitleForKey(xAxisKey).ranked,
+            labels: false,
+            ticks: false,
+            grid: false,
+          },
+        };
+
     const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
-    if (domainMin !== null)
+    const yFilterExprParts: string[] = [];
+    if (isLogScale) yFilterExprParts.push(`${yFieldExpr} > 0`);
+    if (domainMin !== null && (!isLogScale || domainMin > 0))
       yFilterExprParts.push(`${yFieldExpr} >= ${domainMin}`);
     if (domainMax !== null)
       yFilterExprParts.push(`${yFieldExpr} <= ${domainMax}`);
@@ -365,7 +432,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     const yEncoding: any = {
       field: yAxisConfig.currentField,
       type: "quantitative",
-      ...(Object.keys(yScale).length ? { scale: yScale } : {}),
+      scale: yScaleSpec,
     };
 
     const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -459,6 +526,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                   strokeWidth: 1.2,
                   opacity: 0.6,
                 },
+                ...(isLogScale
+                  ? {
+                      transform: [
+                        {
+                          filter: `datum[${JSON.stringify(yAxisConfig.previousField)}] > 0`,
+                        },
+                      ],
+                    }
+                  : {}),
                 encoding: {
                   y: {
                     field: yAxisConfig.previousField,
@@ -586,16 +662,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       ],
 
       encoding: {
-        x: {
-          field: "idx",
-          type: "quantitative",
-          axis: {
-            title: xAxisTitleForKey(xAxisKey),
-            labels: false,
-            ticks: false,
-            grid: false,
-          },
-        },
+        x: xEncoding,
         y: {
           ...yEncoding,
           axis: { title: yAxisConfig.axisTitle },
@@ -635,8 +702,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     actions,
     wiki,
     xAxisKey,
+    xAxisMode,
     yAxisConfig,
+    yAxisScaleType,
     parsedYAxisDomain,
+    yAxisAutoDomain.min,
     yAxisAutoDomain.max,
   ]);
 
@@ -689,55 +759,32 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           filename="article-analytics"
         />
       </div>
-      <div className="WikiBubbleChartHeader">
-        <div className="WikiBubbleChartHeaderBox">
-          <QualityFilterButtons
-            onToggle={toggleGrades}
-            selected={selectedGrades}
-          />
-        </div>
-
-        <div className="WikiBubbleChartHeaderBox">
-          <ProtectionFilterCheckboxes
-            moveChecked={filterMoveRestriction}
-            editChecked={filterEditRestriction}
-            onMoveChange={handleMoveRestrictionChange}
-            onEditChange={handleEditRestrictionChange}
-          />
-        </div>
-      </div>
-
-      <div className="WikiBubbleChartHeading">
-        <div className="WikiBubbleChartInfoLine">
-          <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
-          <span>See an overview of articles with their statistics</span>
-        </div>
-        <ArticleSearchAutocomplete
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          articleTitles={articleTitles}
-        />
-      </div>
-
-      <div className="WikiBubbleChartBody">
-        <div className="WikiBubbleChartContainer" ref={containerRef} />
-        <FilteredArticlesSidebar
-          articles={filteredArticles}
-          wiki={wiki}
-          isOpen={sidebarOpen}
-          onToggle={() => setSidebarOpen((prev) => !prev)}
-          onArticleClick={setSelectedArticle}
-        />
-      </div>
-
-      <div className="WikiBubbleChartFooter">
-        <div className="WikiBubbleChartHeaderBox">
+      <div className="WikiBubbleChartAxisControls">
+        <div className="WikiBubbleChartFilterBox">
           <div className="WikiBubbleChartAxisControl">
             <FaArrowUp size={30} className="WikiBubbleChartAxisIcon" />
             <div className="WikiBubbleChartAxisFields">
-              <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
-                Vertical axis
-              </label>
+              <div className="WikiBubbleChartAxisLabelRow">
+                <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
+                  Vertical axis
+                </label>
+                <div className="WikiBubbleChartScaleToggle">
+                  <button
+                    type="button"
+                    className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "linear" ? "is-active" : ""}`}
+                    onClick={() => setYAxisScaleType("linear")}
+                  >
+                    Linear
+                  </button>
+                  <button
+                    type="button"
+                    className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "log" ? "is-active" : ""}`}
+                    onClick={() => setYAxisScaleType("log")}
+                  >
+                    Log
+                  </button>
+                </div>
+              </div>
               <select
                 id="wiki-bubble-y-axis"
                 className="WikiBubbleChartSortSelect"
@@ -752,7 +799,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        <div className="WikiBubbleChartHeaderBox">
+        <div className="WikiBubbleChartFilterBox">
           <div className="BoxTitle">Y-axis range</div>
           <div className="WikiBubbleChartRangeRow">
             <label className="WikiBubbleChartRangeField">
@@ -790,13 +837,39 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        <div className="WikiBubbleChartHeaderBox">
+        <div className="WikiBubbleChartFilterBox">
           <div className="WikiBubbleChartAxisControl">
             <FaArrowRight size={30} className="WikiBubbleChartAxisIcon" />
             <div className="WikiBubbleChartAxisFields">
-              <label htmlFor="wiki-bubble-sort" className="BoxTitle">
-                Horizontal axis (sort by)
-              </label>
+              <div className="WikiBubbleChartAxisLabelRow">
+                <label htmlFor="wiki-bubble-sort" className="BoxTitle">
+                  Horizontal axis
+                </label>
+                <div className="WikiBubbleChartScaleToggle">
+                  <button
+                    type="button"
+                    className={`WikiBubbleChartScaleBtn ${xAxisMode === "ranked" ? "is-active" : ""}`}
+                    onClick={() => setXAxisMode("ranked")}
+                  >
+                    Ranked
+                  </button>
+                  <button
+                    type="button"
+                    className={`WikiBubbleChartScaleBtn ${xAxisMode === "scaled" ? "is-active" : ""}`}
+                    onClick={() =>
+                      xAxisKey !== "title" && setXAxisMode("scaled")
+                    }
+                    disabled={xAxisKey === "title"}
+                    title={
+                      xAxisKey === "title"
+                        ? "Not available for article title"
+                        : undefined
+                    }
+                  >
+                    Scaled
+                  </button>
+                </div>
+              </div>
               <select
                 id="wiki-bubble-sort"
                 className="WikiBubbleChartSortSelect"
@@ -805,7 +878,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               >
                 <option value="title">Article title (A-Z)</option>
                 <option value="publication_date">
-                  Publication date (Old-New)
+                  Creation date (Old-New)
                 </option>
                 <option value="linguistic_versions_count">
                   Linguistic versions (Low-High)
@@ -824,6 +897,47 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               </select>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="WikiBubbleChartHeading">
+        <div className="WikiBubbleChartInfoLine">
+          <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
+          <span>See an overview of articles with their statistics</span>
+        </div>
+        <ArticleSearchAutocomplete
+          searchTerm={searchTerm}
+          onSearchChange={handleSearchChange}
+          articleTitles={articleTitles}
+        />
+      </div>
+
+      <div className="WikiBubbleChartBody">
+        <div className="WikiBubbleChartContainer" ref={containerRef} />
+        <FilteredArticlesSidebar
+          articles={filteredArticles}
+          wiki={wiki}
+          isOpen={sidebarOpen}
+          onToggle={() => setSidebarOpen((prev) => !prev)}
+          onArticleClick={setSelectedArticle}
+        />
+      </div>
+
+      <div className="WikiBubbleChartQualityFilters">
+        <div className="WikiBubbleChartFilterBox">
+          <QualityFilterButtons
+            onToggle={toggleGrades}
+            selected={selectedGrades}
+          />
+        </div>
+
+        <div className="WikiBubbleChartFilterBox">
+          <ProtectionFilterCheckboxes
+            moveChecked={filterMoveRestriction}
+            editChecked={filterEditRestriction}
+            onMoveChange={handleMoveRestrictionChange}
+            onEditChange={handleEditRestrictionChange}
+          />
         </div>
       </div>
 
