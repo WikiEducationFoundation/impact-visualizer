@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo, useState } from "react";
+import React, { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import { BsInfoCircle } from "react-icons/bs";
 import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
@@ -6,6 +6,7 @@ import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
 import ArticleDetailPanel from "./article-detail-panel.component";
 import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
+import ArticleLanguagesGrid from "./article-languages-grid.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
@@ -20,6 +21,10 @@ import {
   formatProtectionSummary,
   xAxisTitleForKey,
 } from "../utils/bubble-chart-utils";
+import {
+  fetchLanguageLinks,
+  TARGET_LANGUAGES,
+} from "../utils/language-links";
 
 type Wiki = {
   language: string;
@@ -30,6 +35,7 @@ interface WikiBubbleChartProps {
   data?: Record<string, ArticleAnalytics>;
   actions?: boolean;
   wiki?: Wiki;
+  topicId?: string | number;
   topicStartDate?: string;
   topicEndDate?: string;
 }
@@ -121,6 +127,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
   actions = false,
   wiki,
+  topicId,
   topicStartDate,
   topicEndDate,
 }) => {
@@ -156,6 +163,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [selectedArticle, setSelectedArticle] = useState<ArticleRow | null>(
     null,
   );
+  const [activeTab, setActiveTab] = useState<"overview" | "languages">(
+    "overview",
+  );
+  const [languageLinks, setLanguageLinks] = useState<Map<string, Set<string>>>(
+    new Map(),
+  );
+  const [langLinksLoading, setLangLinksLoading] = useState(false);
+  const [langLinksError, setLangLinksError] = useState<string | null>(null);
+  const langLinksFetchedRef = useRef(false);
 
   const yAxisConfig = useMemo(() => {
     switch (yAxisKey) {
@@ -749,6 +765,32 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
   };
 
+  const handleTabChange = useCallback(
+    (tab: "overview" | "languages") => {
+      setActiveTab(tab);
+      if (
+        tab === "languages" &&
+        !langLinksFetchedRef.current &&
+        topicId
+      ) {
+        langLinksFetchedRef.current = true;
+        setLangLinksLoading(true);
+        setLangLinksError(null);
+        fetchLanguageLinks(topicId)
+          .then(setLanguageLinks)
+          .catch((err) => {
+            langLinksFetchedRef.current = false;
+            setLangLinksError(
+              "Failed to fetch language data. Please try again later.",
+            );
+            console.error(err);
+          })
+          .finally(() => setLangLinksLoading(false));
+      }
+    },
+    [topicId],
+  );
+
   return (
     <div className="WikiBubbleChart">
       <div className="WikiBubbleChartTitleRow">
@@ -759,6 +801,26 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           filename="article-analytics"
         />
       </div>
+
+      <div className="WikiBubbleChartTabBar">
+        <button
+          type="button"
+          className={`WikiBubbleChartTab ${activeTab === "overview" ? "is-active" : ""}`}
+          onClick={() => handleTabChange("overview")}
+        >
+          Articles overview
+        </button>
+        <button
+          type="button"
+          className={`WikiBubbleChartTab ${activeTab === "languages" ? "is-active" : ""}`}
+          onClick={() => handleTabChange("languages")}
+        >
+          Languages
+        </button>
+      </div>
+
+      {activeTab === "overview" && (
+        <>
       <div className="WikiBubbleChartAxisControls">
         <div className="WikiBubbleChartFilterBox">
           <div className="WikiBubbleChartAxisControl">
@@ -1000,6 +1062,43 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           <img src="/images/legend.png" />
         </div>
       </div>
+        </>
+      )}
+
+      {activeTab === "languages" && (
+        <>
+          <div className="WikiBubbleChartQualityFilters">
+            <div className="WikiBubbleChartFilterBox">
+              <QualityFilterButtons
+                onToggle={toggleGrades}
+                selected={selectedGrades}
+              />
+            </div>
+            <div className="WikiBubbleChartFilterBox">
+              <ProtectionFilterCheckboxes
+                moveChecked={filterMoveRestriction}
+                editChecked={filterEditRestriction}
+                onMoveChange={handleMoveRestrictionChange}
+                onEditChange={handleEditRestrictionChange}
+              />
+            </div>
+          </div>
+
+          <ArticleLanguagesGrid
+            articles={filteredArticles}
+            languageLinks={languageLinks}
+            wiki={wiki}
+            loading={langLinksLoading}
+            error={langLinksError}
+            languages={TARGET_LANGUAGES}
+          />
+
+          <div className="ArticleLangDisclaimer">
+            * Quality assessment is done by the Wikipedia community and it may be
+            inconsistent
+          </div>
+        </>
+      )}
 
       {selectedArticle && (
         <ArticleDetailPanel

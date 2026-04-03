@@ -14,6 +14,11 @@ Rails.application.configure do
   # Show full error reports.
   config.consider_all_requests_local = true
 
+  logger = ActiveSupport::Logger.new(Rails.root.join('log', 'development.log'))
+  logger.extend(ActiveSupport::Logger.broadcast(ActiveSupport::Logger.new($stdout)))
+  config.logger = ActiveSupport::TaggedLogging.new(logger)
+  config.log_level = :debug
+
   # Enable server timing
   config.server_timing = true
 

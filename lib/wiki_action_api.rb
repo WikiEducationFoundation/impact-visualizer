@@ -303,6 +303,55 @@ class WikiActionApi
     response.data.dig('pages', 0, 'pageassessments')
   end
 
+  def get_langlinks(titles:)
+    query_parameters = {
+      titles:,
+      prop: 'langlinks',
+      lllimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    Rails.logger.info("[WikiActionApi#get_langlinks] Request: #{titles.size} titles to #{@api_url} — #{titles.first(5).inspect}#{if titles.size > 5
+                                                                                                                                   '...'
+                                                                                                                                 end}")
+
+    result = {}
+    continue_params = nil
+    iteration = 0
+
+    loop do
+      iteration += 1
+      params = query_parameters.dup
+      params.merge!(continue_params) if continue_params
+
+      response = query(query_parameters: params)
+      break unless response
+
+      pages = response.data['pages'] || []
+      Rails.logger.info("[WikiActionApi#get_langlinks] Continuation ##{iteration}: #{pages.count do |p|
+                                                                                       p['langlinks']
+                                                                                     end} pages with langlinks")
+
+      pages.each do |page|
+        next if page['missing']
+        title = page['title']
+        langs = (page['langlinks'] || []).map { |ll| ll['lang'] }
+        result[title] = if result.key?(title)
+                          (result[title] + langs).uniq
+                        else
+                          langs
+                        end
+      end
+
+      continue_params = response['continue']
+      break unless continue_params
+    end
+
+    Rails.logger.info("[WikiActionApi#get_langlinks] Parsed result after #{iteration} API calls (#{result.size} articles): #{result.inspect}")
+    result
+  end
+
   def get_langlinks_count(title:)
     query_parameters = {
       titles: [title],

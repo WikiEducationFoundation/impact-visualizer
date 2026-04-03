@@ -959,3 +959,240 @@
     }
   }
 }
+
+.WikiBubbleChartTabBar {
+  display: flex;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+.WikiBubbleChartTab {
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #757575;
+  background: #f5f5f5;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease;
+
+  &:hover:not(.is-active) {
+    background: #eeeeee;
+    color: #333;
+  }
+
+  &.is-active {
+    font-weight: 600;
+    color: #000;
+    background: white;
+    border-bottom-color: #1565c0;
+  }
+}
+
+.ArticleLangGrid {
+  display: flex;
+  flex-direction: column;
+}
+
+.ArticleLangGridLoading,
+.ArticleLangGridEmpty,
+.ArticleLangGridError {
+  padding: 48px 24px;
+  text-align: center;
+  color: #757575;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.ArticleLangGridError {
+  color: #c62828;
+}
+
+.ArticleLangTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  thead {
+    background: #fafafa;
+  }
+
+  th {
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #424242;
+    text-align: center;
+    border-bottom: 2px solid #e0e0e0;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.ArticleLangTableHeaderArticle {
+  text-align: left !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-style: italic;
+  font-weight: 500 !important;
+  color: #616161 !important;
+}
+
+.ArticleLangTableHeaderLang {
+  width: 1fr;
+}
+
+.ArticleLangRow {
+  &:hover {
+    background: #f9f9f9;
+  }
+}
+
+.ArticleLangRowTitle {
+  padding: 14px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.ArticleLangCell {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px 8px;
+  position: relative;
+
+  &--present {
+    background: white;
+  }
+
+  &--missing {
+    background: #ffcdd2;
+
+    .ArticleLangCellTranslate {
+      display: none;
+    }
+
+    &:hover .ArticleLangCellTranslate {
+      display: flex;
+    }
+
+    &:hover .ArticleLangCellMissing {
+      display: none;
+    }
+  }
+}
+
+.ArticleLangCellDot {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #64b5f6;
+  border: 2px solid #42a5f5;
+}
+
+.ArticleLangCellMissing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #c62828;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.ArticleLangCellTranslate {
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  margin: 0 auto;
+  width: fit-content;
+  background: #e0f2f1;
+  border: 1px solid #80cbc4;
+  border-radius: 4px;
+  color: #00695c;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+
+  &:hover {
+    background: #b2dfdb;
+    border-color: #4db6ac;
+    text-decoration: none;
+    color: #00695c;
+  }
+}
+
+.ArticleLangPagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 12px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.ArticleLangPaginationBtn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  background: white;
+  color: #333;
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    background-color 100ms ease,
+    border-color 100ms ease;
+
+  &:hover:not(.is-active):not(:disabled) {
+    background: #f0f0f0;
+    border-color: #bdbdbd;
+  }
+
+  &.is-active {
+    background: #1976d2;
+    border-color: #1976d2;
+    color: white;
+    font-weight: 600;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.ArticleLangPaginationEllipsis {
+  min-width: 24px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+.ArticleLangDisclaimer {
+  padding: 12px 16px;
+  font-size: 13px;
+  font-style: italic;
+  color: #757575;
+}

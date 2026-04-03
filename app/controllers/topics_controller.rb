@@ -91,6 +91,75 @@ class TopicsController < ApiController
     end
   end
 
+  LANGUAGE_LINKS_TARGETS = %w[en it fr es de].freeze
+  LANGUAGE_LINKS_BATCH_SIZE = 50
+  LANGUAGE_LINKS_MAX_CONCURRENT = 3
+
+  def language_links
+    topic = Topic.find(params[:id])
+    wiki = topic.wiki
+    return render json: { error: 'Wiki not found' }, status: :not_found unless wiki
+
+    article_titles = topic.active_article_bag.articles.pluck(:title)
+    Rails.logger.info("[language_links] Topic #{topic.id} (#{topic.name}): #{article_titles.size} articles, wiki=#{wiki.language}")
+    return render json: {}, status: :ok if article_titles.empty?
+
+    batches = article_titles.each_slice(LANGUAGE_LINKS_BATCH_SIZE).to_a
+    wiki_lang = wiki.language
+    include_own_lang = LANGUAGE_LINKS_TARGETS.include?(wiki_lang)
+
+    Rails.logger.info("[language_links] Split into #{batches.size} batches of up to #{LANGUAGE_LINKS_BATCH_SIZE}, targets=#{LANGUAGE_LINKS_TARGETS.inspect}")
+
+    result = {}
+    semaphore = Mutex.new
+    errors = []
+
+    batches.each_slice(LANGUAGE_LINKS_MAX_CONCURRENT) do |concurrent_group|
+      threads = concurrent_group.map do |batch|
+        Thread.new(batch) do |titles|
+          Rails.logger.info("[language_links] Fetching langlinks for batch (#{titles.size} titles): #{titles.first(5).inspect}#{'...' if titles.size > 5}")
+          api = WikiActionApi.new(wiki)
+          batch_result = api.get_langlinks(titles: titles)
+          Rails.logger.info("[language_links] Batch response data: #{batch_result.inspect}")
+          batch_result
+        end
+      end
+
+      threads.each do |t|
+        begin
+          batch_links = t.value
+          next unless batch_links
+
+          semaphore.synchronize do
+            batch_links.each do |title, langs|
+              filtered = langs.select { |l| LANGUAGE_LINKS_TARGETS.include?(l) }
+              filtered << wiki_lang if include_own_lang
+              result[title] = filtered.uniq
+            end
+          end
+        rescue MediawikiApi::HttpError => e
+          semaphore.synchronize { errors << e }
+        rescue StandardError => e
+          Rails.logger.error("[language_links] Batch failed: #{e.class} - #{e.message}")
+          semaphore.synchronize { errors << e }
+        end
+      end
+    end
+
+    if result.empty? && errors.any?
+      status = errors.any? { |e| e.is_a?(MediawikiApi::HttpError) && e.status == 429 } ? :too_many_requests : :bad_gateway
+      return render json: { error: 'Failed to fetch language links from Wikipedia. Please try again later.' }, status: status
+    end
+
+    article_titles.each do |title|
+      next if result.key?(title)
+      result[title] = include_own_lang ? [wiki_lang] : []
+    end
+
+    Rails.logger.info("[language_links] Final result (#{result.size} articles): #{result.inspect}")
+    render json: result
+  end
+
   def incremental_topic_build
     topic = find_editable_topic
     topic_service = TopicService.new(topic_editor: @topic_editor, topic:)
