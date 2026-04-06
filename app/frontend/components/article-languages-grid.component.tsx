@@ -164,11 +164,7 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
   }
 
   if (error) {
-    return (
-      <div className="ArticleLangGridError">
-        {error}
-      </div>
-    );
+    return <div className="ArticleLangGridError">{error}</div>;
   }
 
   if (articles.length === 0) {
@@ -185,8 +181,12 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
         <thead>
           <tr>
             <th className="ArticleLangTableHeaderArticle">
-              <BsInfoCircle size={16} />
-              <span>Compare different linguistic versions of the article</span>
+              <div className="ArticleLangTableHeaderArticle__inner">
+                <BsInfoCircle size={24} />
+                <span>
+                  Compare different linguistic versions of the article
+                </span>
+              </div>
             </th>
             {languages.map((lang) => (
               <th key={lang} className="ArticleLangTableHeaderLang">
