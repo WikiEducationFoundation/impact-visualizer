@@ -724,6 +724,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     parsedYAxisDomain,
     yAxisAutoDomain.min,
     yAxisAutoDomain.max,
+    activeTab,
   ]);
 
   const toggleGrades = (grades: string[], on: boolean) => {
