@@ -24,13 +24,9 @@ function usePagination<T>({
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  if (currentPage > totalPages) {
-    setCurrentPage(totalPages);
-  } else if (currentPage < 1) {
-    setCurrentPage(1);
-  }
+  const safePage = Math.max(1, Math.min(currentPage, totalPages || 1));
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
+  const startIndex = (safePage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentPageData = data.slice(startIndex, endIndex);
 
@@ -58,7 +54,7 @@ function usePagination<T>({
 
   return {
     currentPageData,
-    currentPage,
+    currentPage: safePage,
     totalPages,
     nextPage,
     prevPage,
