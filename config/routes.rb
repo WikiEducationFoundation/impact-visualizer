@@ -27,7 +27,8 @@ Rails.application.routes.draw do
       get :incremental_topic_build, on: :member
       get :topic_article_analytics, on: :member
       get :language_links, on: :member
-      resources :topic_timepoints, only: [:index]
+      get :article_language_comparison, on: :member
+      resources :topic_timepoints, only: [:index] 
     end
     resources :classifications, only: [:index]
   end

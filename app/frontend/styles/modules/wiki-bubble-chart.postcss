@@ -1194,3 +1194,199 @@
   font-style: italic;
   color: #757575;
 }
+
+.ArticleLangRow--clickable {
+  cursor: pointer;
+}
+
+.ArticleLangComparisonBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ArticleLangComparisonPanel {
+  background: white;
+  width: 90vw;
+  max-width: 1100px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ArticleLangComparisonHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ArticleLangComparisonTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.ArticleLangComparisonClose {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
+
+  &:hover {
+    background-color: #f0f0f0;
+    color: #000;
+  }
+}
+
+.ArticleLangComparisonLoading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+}
+
+.ArticleLangComparisonError {
+  padding: 48px 24px;
+  text-align: center;
+  color: #c62828;
+  font-size: 14px;
+}
+
+.ArticleLangComparisonTable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.ArticleLangComparisonMetricHeader {
+  width: 200px;
+  background: white;
+  border: 1px solid #eee;
+}
+
+.ArticleLangComparisonLangHeader {
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #424242;
+  text-align: center;
+  background: white;
+  border: 1px solid #eee;
+
+  span {
+    margin-right: 4px;
+  }
+
+  &--missing {
+    background: #ffcdd2;
+    color: #c62828;
+  }
+}
+
+.ArticleLangComparisonHeaderLink {
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+
+  &:hover {
+    color: #1565c0;
+  }
+}
+
+.ArticleLangComparisonMetricLabel {
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  border: 1px solid #eee;
+  background: #fafafa;
+  white-space: nowrap;
+}
+
+.ArticleLangComparisonCell {
+  padding: 10px 12px;
+  border: 1px solid #eee;
+
+  &--missing {
+    background: #ffcdd2;
+    text-align: center;
+  }
+
+  &--translate {
+    padding: 8px 12px;
+  }
+}
+
+.ArticleLangComparisonMissingIcon {
+  color: #c62828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ArticleLangComparisonCellInner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ArticleLangComparisonValue {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  min-width: 64px;
+  text-align: right;
+}
+
+.ArticleLangComparisonBarTrack {
+  flex: 1;
+  height: 16px;
+  background: #f0f0f0;
+  border-radius: 2px;
+}
+
+.ArticleLangComparisonBar {
+  height: 100%;
+  background: #90caf9;
+  border-radius: 2px;
+}
+
+.ArticleLangComparisonTranslateLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #e0f2f1;
+  border: 1px solid #80cbc4;
+  border-radius: 4px;
+  color: #00695c;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+
+  &:hover {
+    background: #b2dfdb;
+    border-color: #4db6ac;
+    color: #00695c;
+  }
+}

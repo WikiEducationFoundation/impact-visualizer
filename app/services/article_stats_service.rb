@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class ArticleStatsService
+  LANGUAGE_LINK_TARGETS = %w[en it fr es de].freeze
+  LANGUAGE_LINK_BATCH_SIZE = 50
+  LANGUAGE_LINK_MAX_CONCURRENT = 3
+
+  class RateLimitError < StandardError; end
+  class FetchError < StandardError; end
+
   def initialize(wiki)
     @wiki = wiki
     @wiki_action_api = WikiActionApi.new(wiki)
@@ -314,6 +321,22 @@ class ArticleStatsService
     []
   end
 
+  def language_links_for_topic(topic)
+    article_titles = topic.active_article_bag.articles.pluck(:title)
+    Rails.logger.info("[language_links] Topic #{topic.id} (#{topic.name}): #{article_titles.size} articles, wiki=#{@wiki.language}")
+    return {} if article_titles.empty?
+
+    result = fetch_language_links_batched(article_titles)
+    backfill_missing_articles(result, article_titles)
+    result
+  end
+
+  def article_comparison(article_title)
+    langlinks = @wiki_action_api.get_langlinks_with_titles(title: article_title)
+    title_by_lang = resolve_titles_by_language(article_title, langlinks)
+    fetch_comparison_stats(title_by_lang)
+  end
+
   def self.best_assessment_class_from_pageassessments(assessments)
     return nil unless assessments.is_a?(Hash) && assessments.any?
     classes = assessments.values.filter_map { |a| a['class'] || a[:class] }
@@ -339,6 +362,145 @@ class ArticleStatsService
       return cls if cls
     end
 
+    nil
+  end
+
+  private
+
+  def fetch_language_links_batched(article_titles)
+    wiki_lang = @wiki.language
+    batches = article_titles.each_slice(LANGUAGE_LINK_BATCH_SIZE).to_a
+    include_own_lang = LANGUAGE_LINK_TARGETS.include?(wiki_lang)
+
+    Rails.logger.info("[language_links] Split into #{batches.size} batches of up to #{LANGUAGE_LINK_BATCH_SIZE}, targets=#{LANGUAGE_LINK_TARGETS.inspect}")
+
+    result = {}
+    semaphore = Mutex.new
+    errors = []
+
+    batches.each_slice(LANGUAGE_LINK_MAX_CONCURRENT) do |concurrent_group|
+      threads = concurrent_group.map do |batch|
+        Thread.new(batch) do |titles|
+          Rails.logger.info("[language_links] Fetching langlinks for batch (#{titles.size} titles): #{titles.first(5).inspect}#{'...' if titles.size > 5}")
+          api = WikiActionApi.new(@wiki)
+          batch_result = api.get_langlinks(titles: titles)
+          Rails.logger.info("[language_links] Batch response data: #{batch_result.inspect}")
+          batch_result
+        end
+      end
+
+      threads.each do |t|
+        begin
+          batch_links = t.value
+          next unless batch_links
+
+          semaphore.synchronize do
+            batch_links.each do |title, langs|
+              filtered = langs.select { |l| LANGUAGE_LINK_TARGETS.include?(l) }
+              filtered << wiki_lang if include_own_lang
+              result[title] = filtered.uniq
+            end
+          end
+        rescue MediawikiApi::HttpError => e
+          semaphore.synchronize { errors << e }
+        rescue StandardError => e
+          Rails.logger.error("[language_links] Batch failed: #{e.class} - #{e.message}")
+          semaphore.synchronize { errors << e }
+        end
+      end
+    end
+
+    if result.empty? && errors.any?
+      raise RateLimitError if errors.any? { |e| e.is_a?(MediawikiApi::HttpError) && e.status == 429 }
+
+      raise FetchError, 'Failed to fetch language links from Wikipedia. Please try again later.'
+    end
+
+    result
+  end
+
+  def backfill_missing_articles(result, article_titles)
+    include_own_lang = LANGUAGE_LINK_TARGETS.include?(@wiki.language)
+    article_titles.each do |title|
+      next if result.key?(title)
+
+      result[title] = include_own_lang ? [@wiki.language] : []
+    end
+  end
+
+  def resolve_titles_by_language(article_title, langlinks)
+    wiki_lang = @wiki.language
+    title_by_lang = {}
+    LANGUAGE_LINK_TARGETS.each do |lang|
+      if lang == wiki_lang
+        title_by_lang[lang] = article_title
+      elsif langlinks[lang]
+        title_by_lang[lang] = langlinks[lang]
+      end
+    end
+    title_by_lang
+  end
+
+  def fetch_comparison_stats(title_by_lang)
+    result = {}
+    semaphore = Mutex.new
+
+    threads = LANGUAGE_LINK_TARGETS.map do |lang|
+      Thread.new(lang) do |l|
+        foreign_title = title_by_lang[l]
+        unless foreign_title
+          semaphore.synchronize { result[l] = nil }
+          next
+        end
+
+        stats = fetch_single_language_stats(l, foreign_title)
+        semaphore.synchronize { result[l] = stats }
+      end
+    end
+
+    threads.each(&:join)
+    result
+  end
+
+  def fetch_single_language_stats(lang, foreign_title)
+    lang_wiki = Wiki.find_or_create_by(language: lang, project: 'wikipedia')
+    api = WikiActionApi.new(lang_wiki)
+
+    page_info = api.get_page_info(title: foreign_title)
+    return nil unless page_info && !page_info['missing']
+
+    pageid = page_info['pageid']
+    revision = api.get_page_revision_at_timestamp(pageid: pageid, timestamp: Date.current)
+    article_size = revision ? revision['size'] : 0
+
+    lead_wikitext = revision ? api.get_lead_section_wikitext(pageid: pageid, revision_id: revision['revid']) : nil
+    lead_section_size = lead_wikitext ? lead_wikitext.bytesize : 0
+
+    talk_title = "Talk:#{foreign_title}"
+    talk_info = api.get_page_info(title: talk_title)
+    talk_size = 0
+    if talk_info && !talk_info['missing']
+      talk_rev = api.get_page_revision_at_timestamp(pageid: talk_info['pageid'], timestamp: Date.current)
+      talk_size = talk_rev ? talk_rev['size'] : 0
+    end
+
+    images_count = api.get_images_count(title: foreign_title)
+    revisions_count = (api.get_all_revisions(pageid: pageid) || []).length
+    number_of_editors = api.get_unique_editors_count(pageid: pageid)
+    lang_count = api.get_langlinks_count(title: foreign_title)
+
+    {
+      title: foreign_title,
+      article_size: article_size || 0,
+      lead_section_size: lead_section_size,
+      talk_size: talk_size,
+      images_count: images_count,
+      number_of_editors: number_of_editors,
+      revisions_count: revisions_count,
+      linguistic_versions_count: lang_count + 1
+    }
+  rescue StandardError => e
+    Rails.logger.error("[article_language_comparison] Error fetching stats for #{lang}: #{e.class} - #{e.message}")
     nil
   end
 end

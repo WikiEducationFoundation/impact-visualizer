@@ -352,6 +352,39 @@ class WikiActionApi
     result
   end
 
+  def get_langlinks_with_titles(title:)
+    query_parameters = {
+      titles: [title],
+      prop: 'langlinks',
+      lllimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    result = {}
+    continue_params = nil
+
+    loop do
+      params = query_parameters.dup
+      params.merge!(continue_params) if continue_params
+
+      response = query(query_parameters: params)
+      break unless response
+
+      page = response.data.dig('pages', 0)
+      break unless page && !page['missing']
+
+      (page['langlinks'] || []).each do |ll|
+        result[ll['lang']] = ll['title']
+      end
+
+      continue_params = response['continue']
+      break unless continue_params
+    end
+
+    result
+  end
+
   def get_langlinks_count(title:)
     query_parameters = {
       titles: [title],

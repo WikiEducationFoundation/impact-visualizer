@@ -3,6 +3,7 @@ import { BsInfoCircle } from "react-icons/bs";
 import { FiEdit2 } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
 import usePagination from "../hooks/usePagination";
+import { LANGUAGE_LABELS, getTranslateUrl } from "../utils/language-links";
 import type { TargetLanguage } from "../utils/language-links";
 
 type Wiki = {
@@ -17,26 +18,10 @@ interface ArticleLanguagesGridProps {
   loading: boolean;
   error?: string | null;
   languages: readonly TargetLanguage[];
+  onArticleClick?: (articleTitle: string) => void;
 }
 
 const ITEMS_PER_PAGE = 10;
-
-const LANGUAGE_LABELS: Record<string, string> = {
-  en: "English",
-  it: "Italian",
-  fr: "French",
-  es: "Spanish",
-  de: "German",
-};
-
-function getTranslateUrl(
-  articleTitle: string,
-  sourceLang: string,
-  targetLang: string,
-): string {
-  const encoded = encodeURIComponent(articleTitle.replace(/ /g, "_"));
-  return `https://${targetLang}.wikipedia.org/wiki/Special:ContentTranslation?page=${encoded}&from=${sourceLang}&to=${targetLang}`;
-}
 
 function LanguageCell({
   articleTitle,
@@ -151,6 +136,7 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
   loading,
   error,
   languages,
+  onArticleClick,
 }) => {
   const { currentPageData, currentPage, totalPages, goToPage } = usePagination({
     data: articles,
@@ -203,7 +189,11 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
           {currentPageData.map((row) => {
             const langs = languageLinks.get(row.article) ?? new Set<string>();
             return (
-              <tr key={row.article} className="ArticleLangRow">
+              <tr
+                key={row.article}
+                className={`ArticleLangRow${onArticleClick ? " ArticleLangRow--clickable" : ""}`}
+                onClick={() => onArticleClick?.(row.article)}
+              >
                 <td className="ArticleLangRowTitle">{row.article}</td>
                 {languages.map((lang) => (
                   <LanguageCell
