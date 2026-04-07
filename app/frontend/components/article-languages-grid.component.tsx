@@ -52,7 +52,11 @@ function LanguageCell({
   if (exists) {
     return (
       <td className="ArticleLangCell ArticleLangCell--present">
-        <span className="ArticleLangCellDot" />
+        <img
+          className="ArticleLangCellDot"
+          src="/images/chartdot.png"
+          alt="Available"
+        />
       </td>
     );
   }
