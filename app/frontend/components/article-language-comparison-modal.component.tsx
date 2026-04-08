@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FiEdit2, FiExternalLink } from "react-icons/fi";
 import { IoClose, IoCloseCircle } from "react-icons/io5";
+import { useQuery } from "@tanstack/react-query";
 import Spinner from "./spinner.component";
 import TopicService from "../services/topic.service";
 import type { LangComparisonData } from "../services/topic.service";
@@ -41,25 +42,16 @@ function ArticleLanguageComparisonModal({
   languages,
   onClose,
 }: ArticleLanguageComparisonModalProps) {
-  const [data, setData] = useState<Record<
-    string,
-    LangComparisonData | null
-  > | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const sourceLang = wiki?.language ?? "en";
 
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
-    setData(null);
+  const { data, status, error } = useQuery({
+    queryKey: ["articleLanguageComparison", topicId, articleTitle],
+    queryFn: () =>
+      TopicService.getArticleLanguageComparison(topicId, articleTitle),
+    staleTime: 5 * 60 * 1000,
+  });
 
-    TopicService.getArticleLanguageComparison(topicId, articleTitle)
-      .then((result) => setData(result))
-      .catch(() => setError("Failed to load language comparison data."))
-      .finally(() => setLoading(false));
-  }, [topicId, articleTitle]);
+  const loading = status === "pending";
 
   const maxValues: Record<string, number> = {};
   if (data) {
@@ -102,7 +94,11 @@ function ArticleLanguageComparisonModal({
             </div>
           )}
 
-          {error && <div className="ArticleLangComparisonError">{error}</div>}
+          {error && (
+            <div className="ArticleLangComparisonError">
+              Failed to load language comparison data.
+            </div>
+          )}
 
           {!loading && !error && data && (
             <table className="ArticleLangComparisonTable">
