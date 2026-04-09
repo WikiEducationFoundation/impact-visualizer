@@ -160,9 +160,14 @@ class TopicService {
       });
   }
 
-  getLanguageLinks(id: number | string): Promise<Record<string, string[]>> {
+  getLanguageLinks(
+    id: number | string,
+    articles?: string[],
+  ): Promise<Record<string, string[]>> {
     return http
-      .get(`/topics/${id}/language_links`)
+      .get(`/topics/${id}/language_links`, {
+        params: articles ? { articles } : undefined,
+      })
       .then((response: AxiosResponse) => {
         return _.get(response, "data");
       });

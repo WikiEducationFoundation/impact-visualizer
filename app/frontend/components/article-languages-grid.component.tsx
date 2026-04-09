@@ -2,9 +2,11 @@ import React from "react";
 import { BsInfoCircle } from "react-icons/bs";
 import { FiEdit2 } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
+import Spinner from "./spinner.component";
 import usePagination from "../hooks/usePagination";
 import { LANGUAGE_LABELS, getTranslateUrl } from "../utils/language-links";
 import type { TargetLanguage } from "../utils/language-links";
+import type { LangLinksProgress } from "../utils/language-links";
 
 type Wiki = {
   language: string;
@@ -19,6 +21,7 @@ interface ArticleLanguagesGridProps {
   error?: string | null;
   languages: readonly TargetLanguage[];
   onArticleClick?: (articleTitle: string) => void;
+  progress?: LangLinksProgress;
 }
 
 const ITEMS_PER_PAGE = 10;
@@ -137,6 +140,7 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
   error,
   languages,
   onArticleClick,
+  progress,
 }) => {
   const { currentPageData, currentPage, totalPages, goToPage } = usePagination({
     data: articles,
@@ -146,9 +150,30 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
   const sourceLang = wiki?.language ?? "en";
 
   if (loading) {
+    const pct =
+      progress && progress.total > 0
+        ? Math.round((progress.done / progress.total) * 100)
+        : 0;
+
     return (
       <div className="ArticleLangGridLoading">
-        Loading language data&hellip;
+        <Spinner size="large" />
+        <div className="ArticleLangGridLoadingText">
+          Fetching language data&hellip;{" "}
+          {progress && progress.total > 0 && (
+            <span>
+              {progress.done} / {progress.total} articles
+            </span>
+          )}
+        </div>
+        {progress && progress.total > 0 && (
+          <div className="ArticleLangProgressTrack">
+            <div
+              className="ArticleLangProgressBar"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        )}
       </div>
     );
   }

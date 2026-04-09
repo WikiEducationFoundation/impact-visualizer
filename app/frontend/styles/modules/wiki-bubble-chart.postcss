@@ -1007,6 +1007,34 @@
   font-style: italic;
 }
 
+.ArticleLangGridLoading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.ArticleLangGridLoadingText {
+  font-size: 14px;
+  color: #616161;
+}
+
+.ArticleLangProgressTrack {
+  width: 100%;
+  max-width: 360px;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ArticleLangProgressBar {
+  height: 100%;
+  background: #1976d2;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
 .ArticleLangGridError {
   color: #c62828;
 }

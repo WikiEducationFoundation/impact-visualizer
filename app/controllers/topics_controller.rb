@@ -96,7 +96,12 @@ class TopicsController < ApiController
     return render json: { error: 'Wiki not found' }, status: :not_found unless topic.wiki
 
     service = ArticleStatsService.new(topic.wiki)
-    result = service.language_links_for_topic(topic)
+
+    result = if params[:articles].present?
+               service.language_links_for_articles(Array(params[:articles]))
+             else
+               service.language_links_for_topic(topic)
+             end
 
     Rails.logger.info("[language_links] Final result (#{result.size} articles): #{result.inspect}")
     render json: result

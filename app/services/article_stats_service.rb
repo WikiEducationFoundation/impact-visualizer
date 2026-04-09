@@ -324,6 +324,10 @@ class ArticleStatsService
   def language_links_for_topic(topic)
     article_titles = topic.active_article_bag.articles.pluck(:title)
     Rails.logger.info("[language_links] Topic #{topic.id} (#{topic.name}): #{article_titles.size} articles, wiki=#{@wiki.language}")
+    language_links_for_articles(article_titles)
+  end
+
+  def language_links_for_articles(article_titles)
     return {} if article_titles.empty?
 
     result = fetch_language_links_batched(article_titles)

@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useRef,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import { useQuery } from "@tanstack/react-query";
 import { BsInfoCircle } from "react-icons/bs";
@@ -29,6 +24,7 @@ import {
   xAxisTitleForKey,
 } from "../utils/bubble-chart-utils";
 import { fetchLanguageLinks, TARGET_LANGUAGES } from "../utils/language-links";
+import type { LangLinksProgress } from "../utils/language-links";
 
 type Wiki = {
   language: string;
@@ -170,17 +166,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [activeTab, setActiveTab] = useState<"overview" | "languages">(
     "overview",
   );
-  const {
-    data: languageLinks = new Map<string, Set<string>>(),
-    isPending: langLinksLoading,
-    error: langLinksError,
-  } = useQuery({
-    queryKey: ["languageLinks", topicId],
-    queryFn: () => fetchLanguageLinks(topicId!),
-    enabled: activeTab === "languages" && !!topicId,
-    staleTime: 5 * 60 * 1000,
-  });
-
   const [langCompareArticle, setLangCompareArticle] = useState<string | null>(
     null,
   );
@@ -255,6 +240,24 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
     return next;
   }, [rows, xAxisKey]);
+
+  const [langLinksProgress, setLangLinksProgress] = useState<LangLinksProgress>(
+    { done: 0, total: 0 },
+  );
+
+  const {
+    data: languageLinks = new Map<string, Set<string>>(),
+    isPending: langLinksLoading,
+    error: langLinksError,
+  } = useQuery({
+    queryKey: ["languageLinks", topicId],
+    queryFn: () => {
+      const articles = sortedRows.map((r) => r.article);
+      return fetchLanguageLinks(topicId!, articles, setLangLinksProgress);
+    },
+    enabled: activeTab === "languages" && !!topicId && sortedRows.length > 0,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const articleTitles = useMemo(() => {
     return sortedRows.map((row) => row.article);
@@ -1082,9 +1085,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             languageLinks={languageLinks}
             wiki={wiki}
             loading={langLinksLoading}
-            error={langLinksError ? "Failed to fetch language data. Please try again later." : null}
+            error={
+              langLinksError
+                ? "Failed to fetch language data. Please try again later."
+                : null
+            }
             languages={TARGET_LANGUAGES}
             onArticleClick={setLangCompareArticle}
+            progress={langLinksProgress}
           />
 
           <div className="ArticleLangDisclaimer">
