@@ -3,9 +3,9 @@ import React, {
   useRef,
   useMemo,
   useState,
-  useCallback,
 } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
+import { useQuery } from "@tanstack/react-query";
 import { BsInfoCircle } from "react-icons/bs";
 import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
@@ -170,12 +170,17 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [activeTab, setActiveTab] = useState<"overview" | "languages">(
     "overview",
   );
-  const [languageLinks, setLanguageLinks] = useState<Map<string, Set<string>>>(
-    new Map(),
-  );
-  const [langLinksLoading, setLangLinksLoading] = useState(false);
-  const [langLinksError, setLangLinksError] = useState<string | null>(null);
-  const langLinksFetchedRef = useRef(false);
+  const {
+    data: languageLinks = new Map<string, Set<string>>(),
+    isPending: langLinksLoading,
+    error: langLinksError,
+  } = useQuery({
+    queryKey: ["languageLinks", topicId],
+    queryFn: () => fetchLanguageLinks(topicId!),
+    enabled: activeTab === "languages" && !!topicId,
+    staleTime: 5 * 60 * 1000,
+  });
+
   const [langCompareArticle, setLangCompareArticle] = useState<string | null>(
     null,
   );
@@ -773,27 +778,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
   };
 
-  const handleTabChange = useCallback(
-    (tab: "overview" | "languages") => {
-      setActiveTab(tab);
-      if (tab === "languages" && !langLinksFetchedRef.current && topicId) {
-        langLinksFetchedRef.current = true;
-        setLangLinksLoading(true);
-        setLangLinksError(null);
-        fetchLanguageLinks(topicId)
-          .then(setLanguageLinks)
-          .catch((err) => {
-            langLinksFetchedRef.current = false;
-            setLangLinksError(
-              "Failed to fetch language data. Please try again later.",
-            );
-            console.error(err);
-          })
-          .finally(() => setLangLinksLoading(false));
-      }
-    },
-    [topicId],
-  );
+  const handleTabChange = (tab: "overview" | "languages") => {
+    setActiveTab(tab);
+  };
 
   return (
     <div className="WikiBubbleChart">
@@ -1095,7 +1082,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             languageLinks={languageLinks}
             wiki={wiki}
             loading={langLinksLoading}
-            error={langLinksError}
+            error={langLinksError ? "Failed to fetch language data. Please try again later." : null}
             languages={TARGET_LANGUAGES}
             onArticleClick={setLangCompareArticle}
           />
