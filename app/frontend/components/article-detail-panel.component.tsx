@@ -170,7 +170,9 @@ function ArticleDetailPanel({
                 <div className="ArticleDetailInfoRow">
                   <span className="ArticleDetailInfoLabel">Warning tags</span>
                   <span className="ArticleDetailInfoValue">
-                    {article.warning_tags_count.toLocaleString()}
+                    {article.warning_tags_count != null
+                      ? article.warning_tags_count.toLocaleString()
+                      : "—"}
                   </span>
                 </div>
               </div>
@@ -184,7 +186,9 @@ function ArticleDetailPanel({
                     Article size (in byte)
                   </span>
                   <span className="ArticleDetailInfoValue">
-                    {article.article_size.toLocaleString()}
+                    {article.article_size != null
+                      ? article.article_size.toLocaleString()
+                      : "—"}
                   </span>
                 </div>
                 <div className="ArticleDetailInfoRow">
@@ -192,7 +196,9 @@ function ArticleDetailPanel({
                     Lead section size (in byte)
                   </span>
                   <span className="ArticleDetailInfoValue">
-                    {article.lead_section_size.toLocaleString()}
+                    {article.lead_section_size != null
+                      ? article.lead_section_size.toLocaleString()
+                      : "—"}
                   </span>
                 </div>
                 <div className="ArticleDetailInfoRow">
@@ -200,13 +206,17 @@ function ArticleDetailPanel({
                     Discussion size (in byte)
                   </span>
                   <span className="ArticleDetailInfoValue">
-                    {article.talk_size.toLocaleString()}
+                    {article.talk_size != null
+                      ? article.talk_size.toLocaleString()
+                      : "—"}
                   </span>
                 </div>
                 <div className="ArticleDetailInfoRow">
                   <span className="ArticleDetailInfoLabel">Images</span>
                   <span className="ArticleDetailInfoValue">
-                    {article.images_count.toLocaleString()}
+                    {article.images_count != null
+                      ? article.images_count.toLocaleString()
+                      : "—"}
                   </span>
                 </div>
                 <div className="ArticleDetailInfoRow">
@@ -214,7 +224,9 @@ function ArticleDetailPanel({
                     Linguistic versions
                   </span>
                   <span className="ArticleDetailInfoValue">
-                    {article.linguistic_versions_count.toLocaleString()}
+                    {article.linguistic_versions_count != null
+                      ? article.linguistic_versions_count.toLocaleString()
+                      : "—"}
                   </span>
                 </div>
               </div>
@@ -228,7 +240,9 @@ function ArticleDetailPanel({
                     Avg daily views
                   </span>
                   <span className="ArticleDetailInfoValue">
-                    {article.average_daily_views.toLocaleString()}
+                    {article.average_daily_views != null
+                      ? article.average_daily_views.toLocaleString()
+                      : "—"}
                   </span>
                 </div>
                 <div className="ArticleDetailInfoRow">
@@ -244,13 +258,17 @@ function ArticleDetailPanel({
                 <div className="ArticleDetailInfoRow">
                   <span className="ArticleDetailInfoLabel">Editors</span>
                   <span className="ArticleDetailInfoValue">
-                    {article.number_of_editors.toLocaleString()}
+                    {article.number_of_editors != null
+                      ? article.number_of_editors.toLocaleString()
+                      : "—"}
                   </span>
                 </div>
                 <div className="ArticleDetailInfoRow">
                   <span className="ArticleDetailInfoLabel">Incoming links</span>
                   <span className="ArticleDetailInfoValue">
-                    {article.incoming_links_count.toLocaleString()}
+                    {article.incoming_links_count != null
+                      ? article.incoming_links_count.toLocaleString()
+                      : "—"}
                   </span>
                 </div>
               </div>

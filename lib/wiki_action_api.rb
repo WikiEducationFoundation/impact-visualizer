@@ -515,7 +515,9 @@ class WikiActionApi
     tries += 1
     unless Rails.env.test?
       if too_many_requests?(e)
-        retry_after = e.response && (e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After'])
+        retry_after = if e.respond_to?(:response) && e.response
+                        e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After']
+                      end
         wait_seconds = retry_after.to_i if retry_after
         wait_seconds = [wait_seconds || 0, 1].max
         wait_seconds = [wait_seconds, 60].min

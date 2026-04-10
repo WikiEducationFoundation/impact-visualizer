@@ -385,37 +385,39 @@ class ArticleStatsService
     batches.each_slice(LANGUAGE_LINK_MAX_CONCURRENT) do |concurrent_group|
       threads = concurrent_group.map do |batch|
         Thread.new(batch) do |titles|
-          Rails.logger.info("[language_links] Fetching langlinks for batch (#{titles.size} titles): #{titles.first(5).inspect}#{'...' if titles.size > 5}")
+          Rails.logger.info("[language_links] Fetching langlinks for batch (#{titles.size} titles): #{titles.first(5).inspect}#{if titles.size > 5
+                                                                                                                                  '...'
+                                                                                                                                end}")
           api = WikiActionApi.new(@wiki)
-          batch_result = api.get_langlinks(titles: titles)
+          batch_result = api.get_langlinks(titles:)
           Rails.logger.info("[language_links] Batch response data: #{batch_result.inspect}")
           batch_result
         end
       end
 
       threads.each do |t|
-        begin
-          batch_links = t.value
-          next unless batch_links
+        batch_links = t.value
+        next unless batch_links
 
-          semaphore.synchronize do
-            batch_links.each do |title, langs|
-              filtered = langs.select { |l| LANGUAGE_LINK_TARGETS.include?(l) }
-              filtered << wiki_lang if include_own_lang
-              result[title] = filtered.uniq
-            end
+        semaphore.synchronize do
+          batch_links.each do |title, langs|
+            filtered = langs.select { |l| LANGUAGE_LINK_TARGETS.include?(l) }
+            filtered << wiki_lang if include_own_lang
+            result[title] = filtered.uniq
           end
-        rescue MediawikiApi::HttpError => e
-          semaphore.synchronize { errors << e }
-        rescue StandardError => e
-          Rails.logger.error("[language_links] Batch failed: #{e.class} - #{e.message}")
-          semaphore.synchronize { errors << e }
         end
+      rescue MediawikiApi::HttpError => e
+        semaphore.synchronize { errors << e }
+      rescue StandardError => e
+        Rails.logger.error("[language_links] Batch failed: #{e.class} - #{e.message}")
+        semaphore.synchronize { errors << e }
       end
     end
 
     if result.empty? && errors.any?
-      raise RateLimitError if errors.any? { |e| e.is_a?(MediawikiApi::HttpError) && e.status == 429 }
+      raise RateLimitError if errors.any? do |e|
+                                e.is_a?(MediawikiApi::HttpError) && e.status == 429
+                              end
 
       raise FetchError, 'Failed to fetch language links from Wikipedia. Please try again later.'
     end
@@ -474,33 +476,37 @@ class ArticleStatsService
     return nil unless page_info && !page_info['missing']
 
     pageid = page_info['pageid']
-    revision = api.get_page_revision_at_timestamp(pageid: pageid, timestamp: Date.current)
+    revision = api.get_page_revision_at_timestamp(pageid:, timestamp: Date.current)
     article_size = revision ? revision['size'] : 0
 
-    lead_wikitext = revision ? api.get_lead_section_wikitext(pageid: pageid, revision_id: revision['revid']) : nil
+    lead_wikitext = if revision
+                      api.get_lead_section_wikitext(pageid:,
+                                                    revision_id: revision['revid'])
+                    end
     lead_section_size = lead_wikitext ? lead_wikitext.bytesize : 0
 
     talk_title = "Talk:#{foreign_title}"
     talk_info = api.get_page_info(title: talk_title)
     talk_size = 0
     if talk_info && !talk_info['missing']
-      talk_rev = api.get_page_revision_at_timestamp(pageid: talk_info['pageid'], timestamp: Date.current)
+      talk_rev = api.get_page_revision_at_timestamp(pageid: talk_info['pageid'],
+                                                    timestamp: Date.current)
       talk_size = talk_rev ? talk_rev['size'] : 0
     end
 
     images_count = api.get_images_count(title: foreign_title)
-    revisions_count = (api.get_all_revisions(pageid: pageid) || []).length
-    number_of_editors = api.get_unique_editors_count(pageid: pageid)
+    revisions_count = (api.get_all_revisions(pageid:) || []).length
+    number_of_editors = api.get_unique_editors_count(pageid:)
     lang_count = api.get_langlinks_count(title: foreign_title)
 
     {
       title: foreign_title,
       article_size: article_size || 0,
-      lead_section_size: lead_section_size,
-      talk_size: talk_size,
-      images_count: images_count,
-      number_of_editors: number_of_editors,
-      revisions_count: revisions_count,
+      lead_section_size:,
+      talk_size:,
+      images_count:,
+      number_of_editors:,
+      revisions_count:,
       linguistic_versions_count: lang_count + 1
     }
   rescue StandardError => e
