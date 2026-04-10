@@ -514,13 +514,23 @@ class WikiActionApi
   rescue StandardError => e
     tries += 1
     unless Rails.env.test?
-      sleep_time = 3**tries
-      puts '---'
-      puts "WikiActionApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries})"
-      puts "WikiActionApi / Error – query: #{query}"
-      puts e
-      puts '---'
-      sleep sleep_time
+      if too_many_requests?(e)
+        retry_after = e.response && (e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After'])
+        wait_seconds = retry_after.to_i if retry_after
+        wait_seconds = [wait_seconds || 0, 1].max
+        wait_seconds = [wait_seconds, 60].min
+        wait_seconds += rand(0.0..0.5)
+        puts "WikiActionApi / 429 Too Many Requests - waiting #{wait_seconds.round(2)}s (attempt #{tries}/#{total_tries})"
+        sleep wait_seconds
+      else
+        sleep_time = 3**tries
+        puts '---'
+        puts "WikiActionApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries})"
+        puts "WikiActionApi / Error – query: #{query}"
+        puts e
+        puts '---'
+        sleep sleep_time
+      end
     end
     retry unless tries == total_tries
     log_error(e)
