@@ -303,6 +303,88 @@ class WikiActionApi
     response.data.dig('pages', 0, 'pageassessments')
   end
 
+  def get_langlinks(titles:)
+    query_parameters = {
+      titles:,
+      prop: 'langlinks',
+      lllimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    Rails.logger.info("[WikiActionApi#get_langlinks] Request: #{titles.size} titles to #{@api_url} — #{titles.first(5).inspect}#{if titles.size > 5
+                                                                                                                                   '...'
+                                                                                                                                 end}")
+
+    result = {}
+    continue_params = nil
+    iteration = 0
+
+    loop do
+      iteration += 1
+      params = query_parameters.dup
+      params.merge!(continue_params) if continue_params
+
+      response = query(query_parameters: params)
+      break unless response
+
+      pages = response.data['pages'] || []
+      Rails.logger.info("[WikiActionApi#get_langlinks] Continuation ##{iteration}: #{pages.count do |p|
+                                                                                       p['langlinks']
+                                                                                     end} pages with langlinks")
+
+      pages.each do |page|
+        next if page['missing']
+        title = page['title']
+        langs = (page['langlinks'] || []).map { |ll| ll['lang'] }
+        result[title] = if result.key?(title)
+                          (result[title] + langs).uniq
+                        else
+                          langs
+                        end
+      end
+
+      continue_params = response['continue']
+      break unless continue_params
+    end
+
+    Rails.logger.info("[WikiActionApi#get_langlinks] Parsed result after #{iteration} API calls (#{result.size} articles): #{result.inspect}")
+    result
+  end
+
+  def get_langlinks_with_titles(title:)
+    query_parameters = {
+      titles: [title],
+      prop: 'langlinks',
+      lllimit: 'max',
+      redirects: true,
+      formatversion: '2'
+    }
+
+    result = {}
+    continue_params = nil
+
+    loop do
+      params = query_parameters.dup
+      params.merge!(continue_params) if continue_params
+
+      response = query(query_parameters: params)
+      break unless response
+
+      page = response.data.dig('pages', 0)
+      break unless page && !page['missing']
+
+      (page['langlinks'] || []).each do |ll|
+        result[ll['lang']] = ll['title']
+      end
+
+      continue_params = response['continue']
+      break unless continue_params
+    end
+
+    result
+  end
+
   def get_langlinks_count(title:)
     query_parameters = {
       titles: [title],
@@ -432,13 +514,25 @@ class WikiActionApi
   rescue StandardError => e
     tries += 1
     unless Rails.env.test?
-      sleep_time = 3**tries
-      puts '---'
-      puts "WikiActionApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries})"
-      puts "WikiActionApi / Error – query: #{query}"
-      puts e
-      puts '---'
-      sleep sleep_time
+      if too_many_requests?(e)
+        retry_after = if e.respond_to?(:response) && e.response
+                        e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After']
+                      end
+        wait_seconds = retry_after.to_i if retry_after
+        wait_seconds = [wait_seconds || 0, 1].max
+        wait_seconds = [wait_seconds, 60].min
+        wait_seconds += rand(0.0..0.5)
+        puts "WikiActionApi / 429 Too Many Requests - waiting #{wait_seconds.round(2)}s (attempt #{tries}/#{total_tries})"
+        sleep wait_seconds
+      else
+        sleep_time = 3**tries
+        puts '---'
+        puts "WikiActionApi / Error – Retrying after #{sleep_time} seconds (#{tries}/#{total_tries})"
+        puts "WikiActionApi / Error – query: #{query}"
+        puts e
+        puts '---'
+        sleep sleep_time
+      end
     end
     retry unless tries == total_tries
     log_error(e)

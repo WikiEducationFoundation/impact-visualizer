@@ -268,6 +268,7 @@ function TopicDetail() {
             data={articleAnalytics}
             actions
             wiki={topic.wiki}
+            topicId={id}
             topicStartDate={topic.start_date}
             topicEndDate={topic.end_date}
           />
@@ -280,6 +281,7 @@ function TopicDetail() {
             data={articleAnalytics}
             actions
             wiki={topic.wiki}
+            topicId={id}
             topicStartDate={topic.start_date}
             topicEndDate={topic.end_date}
           />

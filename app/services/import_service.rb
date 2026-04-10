@@ -54,7 +54,7 @@ class ImportService
     count = 0
     @imported_titles_mutex = Mutex.new
     @imported_titles = {}
-    Parallel.each(article_titles, in_threads: 10) do |article_title|
+    Parallel.each(article_titles, in_threads: 3) do |article_title|
       ActiveRecord::Base.connection_pool.with_connection do
         count += 1
         at&.call(count)

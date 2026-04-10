@@ -91,6 +91,42 @@ class TopicsController < ApiController
     end
   end
 
+  def language_links
+    topic = Topic.find(params[:id])
+    return render json: { error: 'Wiki not found' }, status: :not_found unless topic.wiki
+
+    service = ArticleStatsService.new(topic.wiki)
+
+    result = if params[:articles].present?
+               service.language_links_for_articles(Array(params[:articles]))
+             else
+               service.language_links_for_topic(topic)
+             end
+
+    Rails.logger.info("[language_links] Final result (#{result.size} articles): #{result.inspect}")
+    render json: result
+  rescue ArticleStatsService::RateLimitError
+    render json: { error: 'Failed to fetch language links from Wikipedia. Please try again later.' },
+           status: :too_many_requests
+  rescue ArticleStatsService::FetchError => e
+    render json: { error: e.message }, status: :bad_gateway
+  end
+
+  def article_language_comparison
+    topic = Topic.find(params[:id])
+    return render json: { error: 'Wiki not found' }, status: :not_found unless topic.wiki
+
+    article_title = params[:article]
+    unless article_title.present?
+      return render json: { error: 'Article title is required' },
+                    status: :bad_request
+    end
+
+    service = ArticleStatsService.new(topic.wiki)
+    result = service.article_comparison(article_title)
+    render json: result
+  end
+
   def incremental_topic_build
     topic = find_editable_topic
     topic_service = TopicService.new(topic_editor: @topic_editor, topic:)

@@ -3,7 +3,7 @@
 class VisualizerToolsApi
   include ApiErrorHandling
 
-  AVAILABLE_WIKIPEDIAS = %w[en de eu fa fr gl nl pt ru sv tr uk].freeze
+  AVAILABLE_WIKIPEDIAS = %w[en de es eu fa fr gl it nl pt ru sv tr uk].freeze
 
   def initialize(wiki)
     @wiki = wiki

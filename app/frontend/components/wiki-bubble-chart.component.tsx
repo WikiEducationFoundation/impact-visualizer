@@ -1,11 +1,14 @@
 import React, { useEffect, useRef, useMemo, useState } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
+import { useQuery } from "@tanstack/react-query";
 import { BsInfoCircle } from "react-icons/bs";
 import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
 import ArticleDetailPanel from "./article-detail-panel.component";
 import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
+import ArticleLanguagesGrid from "./article-languages-grid.component";
+import ArticleLanguageComparisonModal from "./article-language-comparison-modal.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
@@ -20,6 +23,8 @@ import {
   formatProtectionSummary,
   xAxisTitleForKey,
 } from "../utils/bubble-chart-utils";
+import { fetchLanguageLinks, TARGET_LANGUAGES } from "../utils/language-links";
+import type { LangLinksProgress } from "../utils/language-links";
 
 type Wiki = {
   language: string;
@@ -30,6 +35,7 @@ interface WikiBubbleChartProps {
   data?: Record<string, ArticleAnalytics>;
   actions?: boolean;
   wiki?: Wiki;
+  topicId?: string | number;
   topicStartDate?: string;
   topicEndDate?: string;
 }
@@ -121,6 +127,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
   actions = false,
   wiki,
+  topicId,
   topicStartDate,
   topicEndDate,
 }) => {
@@ -154,6 +161,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [selectedArticle, setSelectedArticle] = useState<ArticleRow | null>(
+    null,
+  );
+  const [activeTab, setActiveTab] = useState<"overview" | "languages">(
+    "overview",
+  );
+  const [langCompareArticle, setLangCompareArticle] = useState<string | null>(
     null,
   );
 
@@ -227,6 +240,24 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
     return next;
   }, [rows, xAxisKey]);
+
+  const [langLinksProgress, setLangLinksProgress] = useState<LangLinksProgress>(
+    { done: 0, total: 0 },
+  );
+
+  const {
+    data: languageLinks = new Map<string, Set<string>>(),
+    isPending: langLinksLoading,
+    error: langLinksError,
+  } = useQuery({
+    queryKey: ["languageLinks", topicId],
+    queryFn: () => {
+      const articles = sortedRows.map((r) => r.article);
+      return fetchLanguageLinks(topicId!, articles, setLangLinksProgress);
+    },
+    enabled: activeTab === "languages" && !!topicId && sortedRows.length > 0,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const articleTitles = useMemo(() => {
     return sortedRows.map((row) => row.article);
@@ -708,6 +739,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     parsedYAxisDomain,
     yAxisAutoDomain.min,
     yAxisAutoDomain.max,
+    activeTab,
   ]);
 
   const toggleGrades = (grades: string[], on: boolean) => {
@@ -749,6 +781,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
   };
 
+  const handleTabChange = (tab: "overview" | "languages") => {
+    setActiveTab(tab);
+  };
+
   return (
     <div className="WikiBubbleChart">
       <div className="WikiBubbleChartTitleRow">
@@ -759,253 +795,328 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           filename="article-analytics"
         />
       </div>
-      <div className="WikiBubbleChartAxisControls">
-        <div className="WikiBubbleChartFilterBox">
-          <div className="WikiBubbleChartAxisControl">
-            <FaArrowUp size={30} className="WikiBubbleChartAxisIcon" />
-            <div className="WikiBubbleChartAxisFields">
-              <div className="WikiBubbleChartAxisLabelRow">
-                <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
-                  Vertical axis
-                </label>
-                <div className="WikiBubbleChartScaleToggle">
-                  <button
-                    type="button"
-                    className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "linear" ? "is-active" : ""}`}
-                    onClick={() => setYAxisScaleType("linear")}
+
+      <div className="WikiBubbleChartTabBar">
+        <button
+          type="button"
+          className={`WikiBubbleChartTab ${activeTab === "overview" ? "is-active" : ""}`}
+          onClick={() => handleTabChange("overview")}
+        >
+          Articles overview
+        </button>
+        <button
+          type="button"
+          className={`WikiBubbleChartTab ${activeTab === "languages" ? "is-active" : ""}`}
+          onClick={() => handleTabChange("languages")}
+        >
+          Languages
+        </button>
+      </div>
+
+      {activeTab === "overview" && (
+        <>
+          <div className="WikiBubbleChartAxisControls">
+            <div className="WikiBubbleChartFilterBox">
+              <div className="WikiBubbleChartAxisControl">
+                <FaArrowUp size={30} className="WikiBubbleChartAxisIcon" />
+                <div className="WikiBubbleChartAxisFields">
+                  <div className="WikiBubbleChartAxisLabelRow">
+                    <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
+                      Vertical axis
+                    </label>
+                    <div className="WikiBubbleChartScaleToggle">
+                      <button
+                        type="button"
+                        className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "linear" ? "is-active" : ""}`}
+                        onClick={() => setYAxisScaleType("linear")}
+                      >
+                        Linear
+                      </button>
+                      <button
+                        type="button"
+                        className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "log" ? "is-active" : ""}`}
+                        onClick={() => setYAxisScaleType("log")}
+                      >
+                        Log
+                      </button>
+                    </div>
+                  </div>
+                  <select
+                    id="wiki-bubble-y-axis"
+                    className="WikiBubbleChartSortSelect"
+                    value={yAxisKey}
+                    onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
                   >
-                    Linear
-                  </button>
-                  <button
-                    type="button"
-                    className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "log" ? "is-active" : ""}`}
-                    onClick={() => setYAxisScaleType("log")}
-                  >
-                    Log
-                  </button>
+                    <option value="average_daily_views">Avg daily views</option>
+                    <option value="number_of_editors">Editors</option>
+                    <option value="incoming_links_count">Incoming links</option>
+                  </select>
                 </div>
               </div>
-              <select
-                id="wiki-bubble-y-axis"
-                className="WikiBubbleChartSortSelect"
-                value={yAxisKey}
-                onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
-              >
-                <option value="average_daily_views">Avg daily views</option>
-                <option value="number_of_editors">Editors</option>
-                <option value="incoming_links_count">Incoming links</option>
-              </select>
             </div>
-          </div>
-        </div>
 
-        <div className="WikiBubbleChartFilterBox">
-          <div className="BoxTitle">Y-axis range</div>
-          <div className="WikiBubbleChartRangeRow">
-            <label className="WikiBubbleChartRangeField">
-              <span className="WikiBubbleChartRangeLabel">min</span>
-              <input
-                className="WikiBubbleChartRangeInput"
-                type="number"
-                inputMode="numeric"
-                placeholder={
-                  yAxisAutoDomain.min === null
-                    ? ""
-                    : String(yAxisAutoDomain.min)
-                }
-                value={yAxisMinInput}
-                onChange={(e) => setYAxisMinInput(e.target.value)}
-                aria-label="Y-axis minimum"
-              />
-            </label>
-            <label className="WikiBubbleChartRangeField">
-              <span className="WikiBubbleChartRangeLabel">max</span>
-              <input
-                className="WikiBubbleChartRangeInput"
-                type="number"
-                inputMode="numeric"
-                placeholder={
-                  yAxisAutoDomain.max === null
-                    ? ""
-                    : String(yAxisAutoDomain.max)
-                }
-                value={yAxisMaxInput}
-                onChange={(e) => setYAxisMaxInput(e.target.value)}
-                aria-label="Y-axis maximum"
-              />
-            </label>
-          </div>
-        </div>
-
-        <div className="WikiBubbleChartFilterBox">
-          <div className="WikiBubbleChartAxisControl">
-            <FaArrowRight size={30} className="WikiBubbleChartAxisIcon" />
-            <div className="WikiBubbleChartAxisFields">
-              <div className="WikiBubbleChartAxisLabelRow">
-                <label htmlFor="wiki-bubble-sort" className="BoxTitle">
-                  Horizontal axis
+            <div className="WikiBubbleChartFilterBox">
+              <div className="BoxTitle">Y-axis range</div>
+              <div className="WikiBubbleChartRangeRow">
+                <label className="WikiBubbleChartRangeField">
+                  <span className="WikiBubbleChartRangeLabel">min</span>
+                  <input
+                    className="WikiBubbleChartRangeInput"
+                    type="number"
+                    inputMode="numeric"
+                    placeholder={
+                      yAxisAutoDomain.min === null
+                        ? ""
+                        : String(yAxisAutoDomain.min)
+                    }
+                    value={yAxisMinInput}
+                    onChange={(e) => setYAxisMinInput(e.target.value)}
+                    aria-label="Y-axis minimum"
+                  />
                 </label>
-                <div className="WikiBubbleChartScaleToggle">
-                  <button
-                    type="button"
-                    className={`WikiBubbleChartScaleBtn ${xAxisMode === "ranked" ? "is-active" : ""}`}
-                    onClick={() => setXAxisMode("ranked")}
-                  >
-                    Ranked
-                  </button>
-                  <button
-                    type="button"
-                    className={`WikiBubbleChartScaleBtn ${xAxisMode === "scaled" ? "is-active" : ""}`}
-                    onClick={() =>
-                      xAxisKey !== "title" && setXAxisMode("scaled")
+                <label className="WikiBubbleChartRangeField">
+                  <span className="WikiBubbleChartRangeLabel">max</span>
+                  <input
+                    className="WikiBubbleChartRangeInput"
+                    type="number"
+                    inputMode="numeric"
+                    placeholder={
+                      yAxisAutoDomain.max === null
+                        ? ""
+                        : String(yAxisAutoDomain.max)
                     }
-                    disabled={xAxisKey === "title"}
-                    title={
-                      xAxisKey === "title"
-                        ? "Not available for article title"
-                        : undefined
-                    }
+                    value={yAxisMaxInput}
+                    onChange={(e) => setYAxisMaxInput(e.target.value)}
+                    aria-label="Y-axis maximum"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="WikiBubbleChartFilterBox">
+              <div className="WikiBubbleChartAxisControl">
+                <FaArrowRight size={30} className="WikiBubbleChartAxisIcon" />
+                <div className="WikiBubbleChartAxisFields">
+                  <div className="WikiBubbleChartAxisLabelRow">
+                    <label htmlFor="wiki-bubble-sort" className="BoxTitle">
+                      Horizontal axis
+                    </label>
+                    <div className="WikiBubbleChartScaleToggle">
+                      <button
+                        type="button"
+                        className={`WikiBubbleChartScaleBtn ${xAxisMode === "ranked" ? "is-active" : ""}`}
+                        onClick={() => setXAxisMode("ranked")}
+                      >
+                        Ranked
+                      </button>
+                      <button
+                        type="button"
+                        className={`WikiBubbleChartScaleBtn ${xAxisMode === "scaled" ? "is-active" : ""}`}
+                        onClick={() =>
+                          xAxisKey !== "title" && setXAxisMode("scaled")
+                        }
+                        disabled={xAxisKey === "title"}
+                        title={
+                          xAxisKey === "title"
+                            ? "Not available for article title"
+                            : undefined
+                        }
+                      >
+                        Scaled
+                      </button>
+                    </div>
+                  </div>
+                  <select
+                    id="wiki-bubble-sort"
+                    className="WikiBubbleChartSortSelect"
+                    value={xAxisKey}
+                    onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
                   >
-                    Scaled
-                  </button>
+                    <option value="title">Article title (A-Z)</option>
+                    <option value="publication_date">
+                      Creation date (Old-New)
+                    </option>
+                    <option value="linguistic_versions_count">
+                      Linguistic versions (Low-High)
+                    </option>
+                    <option value="article_size">
+                      Article size (Small-Large)
+                    </option>
+                    <option value="lead_section_size">
+                      Lead section size (Small-Large)
+                    </option>
+                    <option value="talk_size">
+                      Discussion page size (Small-Large)
+                    </option>
+                    <option value="warning_tags_count">
+                      Warning tags (Low-High)
+                    </option>
+                    <option value="images_count">Images (Low-High)</option>
+                  </select>
                 </div>
               </div>
-              <select
-                id="wiki-bubble-sort"
-                className="WikiBubbleChartSortSelect"
-                value={xAxisKey}
-                onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
-              >
-                <option value="title">Article title (A-Z)</option>
-                <option value="publication_date">
-                  Creation date (Old-New)
-                </option>
-                <option value="linguistic_versions_count">
-                  Linguistic versions (Low-High)
-                </option>
-                <option value="article_size">Article size (Small-Large)</option>
-                <option value="lead_section_size">
-                  Lead section size (Small-Large)
-                </option>
-                <option value="talk_size">
-                  Discussion page size (Small-Large)
-                </option>
-                <option value="warning_tags_count">
-                  Warning tags (Low-High)
-                </option>
-                <option value="images_count">Images (Low-High)</option>
-              </select>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="WikiBubbleChartHeading">
-        <div className="WikiBubbleChartInfoLine">
-          <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
-          <span>See an overview of articles with their statistics</span>
-        </div>
-        <ArticleSearchAutocomplete
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          articleTitles={articleTitles}
-        />
-      </div>
+          <div className="WikiBubbleChartHeading">
+            <div className="WikiBubbleChartInfoLine">
+              <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
+              <span>See an overview of articles with their statistics</span>
+            </div>
+            <ArticleSearchAutocomplete
+              searchTerm={searchTerm}
+              onSearchChange={handleSearchChange}
+              articleTitles={articleTitles}
+            />
+          </div>
 
-      <div className="WikiBubbleChartBody">
-        <div className="WikiBubbleChartContainer" ref={containerRef} />
-        <FilteredArticlesSidebar
-          articles={filteredArticles}
-          wiki={wiki}
-          isOpen={sidebarOpen}
-          onToggle={() => setSidebarOpen((prev) => !prev)}
-          onArticleClick={setSelectedArticle}
-        />
-      </div>
+          <div className="WikiBubbleChartBody">
+            <div className="WikiBubbleChartContainer" ref={containerRef} />
+            <FilteredArticlesSidebar
+              articles={filteredArticles}
+              wiki={wiki}
+              isOpen={sidebarOpen}
+              onToggle={() => setSidebarOpen((prev) => !prev)}
+              onArticleClick={setSelectedArticle}
+            />
+          </div>
 
-      <div className="WikiBubbleChartQualityFilters">
-        <div className="WikiBubbleChartFilterBox">
-          <QualityFilterButtons
-            onToggle={toggleGrades}
-            selected={selectedGrades}
+          <div className="WikiBubbleChartQualityFilters">
+            <div className="WikiBubbleChartFilterBox">
+              <QualityFilterButtons
+                onToggle={toggleGrades}
+                selected={selectedGrades}
+              />
+            </div>
+
+            <div className="WikiBubbleChartFilterBox">
+              <ProtectionFilterCheckboxes
+                moveChecked={filterMoveRestriction}
+                editChecked={filterEditRestriction}
+                onMoveChange={handleMoveRestrictionChange}
+                onEditChange={handleEditRestrictionChange}
+              />
+            </div>
+          </div>
+
+          <div className="WikiBubbleChartStats">
+            <div className="WikiBubbleChartStatCell">
+              <span className="WikiBubbleChartStatValue">
+                {aggregateStats.totalArticles.toLocaleString()}
+              </span>
+              <span className="WikiBubbleChartStatLabel">Total articles</span>
+            </div>
+
+            <div className="WikiBubbleChartStatCell">
+              <span className="WikiBubbleChartStatValue">
+                {aggregateStats.millionVisits !== null
+                  ? aggregateStats.millionVisits.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  : "—"}
+              </span>
+              <span className="WikiBubbleChartStatLabel">
+                Million visits
+                {aggregateStats.startDateLabel
+                  ? ` (since ${aggregateStats.startDateLabel})`
+                  : ""}
+              </span>
+            </div>
+
+            <div className="WikiBubbleChartStatCell">
+              <span className="WikiBubbleChartStatValue">
+                {aggregateStats.averageTotalViews !== null
+                  ? aggregateStats.averageTotalViews.toLocaleString()
+                  : "—"}
+              </span>
+              <span className="WikiBubbleChartStatLabel">
+                Average total views per article
+              </span>
+            </div>
+
+            <div className="WikiBubbleChartStatCell">
+              <span className="WikiBubbleChartStatValue">
+                {aggregateStats.averageArticleSize !== null
+                  ? aggregateStats.averageArticleSize.toLocaleString()
+                  : "—"}
+              </span>
+              <span className="WikiBubbleChartStatLabel">
+                Average article size (bytes)
+              </span>
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="WikiBubbleChartLegend">
+            <div className="WikiBubbleChartLegendText">
+              * Quality assessment is done by the Wikipedia community and it may
+              be inconsistent
+            </div>
+            <div className="WikiBubbleChartLegendBox">
+              <div className="WikiBubbleChartLegendTitle">Legend</div>
+              <img src="/images/legend.png" />
+            </div>
+          </div>
+        </>
+      )}
+
+      {activeTab === "languages" && (
+        <>
+          <div className="WikiBubbleChartQualityFilters">
+            <div className="WikiBubbleChartFilterBox">
+              <QualityFilterButtons
+                onToggle={toggleGrades}
+                selected={selectedGrades}
+              />
+            </div>
+            <div className="WikiBubbleChartFilterBox">
+              <ProtectionFilterCheckboxes
+                moveChecked={filterMoveRestriction}
+                editChecked={filterEditRestriction}
+                onMoveChange={handleMoveRestrictionChange}
+                onEditChange={handleEditRestrictionChange}
+              />
+            </div>
+          </div>
+
+          <ArticleLanguagesGrid
+            articles={filteredArticles}
+            languageLinks={languageLinks}
+            wiki={wiki}
+            loading={langLinksLoading}
+            error={
+              langLinksError
+                ? "Failed to fetch language data. Please try again later."
+                : null
+            }
+            languages={TARGET_LANGUAGES}
+            onArticleClick={setLangCompareArticle}
+            progress={langLinksProgress}
           />
-        </div>
 
-        <div className="WikiBubbleChartFilterBox">
-          <ProtectionFilterCheckboxes
-            moveChecked={filterMoveRestriction}
-            editChecked={filterEditRestriction}
-            onMoveChange={handleMoveRestrictionChange}
-            onEditChange={handleEditRestrictionChange}
-          />
-        </div>
-      </div>
-
-      <div className="WikiBubbleChartStats">
-        <div className="WikiBubbleChartStatCell">
-          <span className="WikiBubbleChartStatValue">
-            {aggregateStats.totalArticles.toLocaleString()}
-          </span>
-          <span className="WikiBubbleChartStatLabel">Total articles</span>
-        </div>
-
-        <div className="WikiBubbleChartStatCell">
-          <span className="WikiBubbleChartStatValue">
-            {aggregateStats.millionVisits !== null
-              ? aggregateStats.millionVisits.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })
-              : "—"}
-          </span>
-          <span className="WikiBubbleChartStatLabel">
-            Million visits
-            {aggregateStats.startDateLabel
-              ? ` (since ${aggregateStats.startDateLabel})`
-              : ""}
-          </span>
-        </div>
-
-        <div className="WikiBubbleChartStatCell">
-          <span className="WikiBubbleChartStatValue">
-            {aggregateStats.averageTotalViews !== null
-              ? aggregateStats.averageTotalViews.toLocaleString()
-              : "—"}
-          </span>
-          <span className="WikiBubbleChartStatLabel">
-            Average total views per article
-          </span>
-        </div>
-
-        <div className="WikiBubbleChartStatCell">
-          <span className="WikiBubbleChartStatValue">
-            {aggregateStats.averageArticleSize !== null
-              ? aggregateStats.averageArticleSize.toLocaleString()
-              : "—"}
-          </span>
-          <span className="WikiBubbleChartStatLabel">
-            Average article size (bytes)
-          </span>
-        </div>
-      </div>
-
-      {/* Legend */}
-      <div className="WikiBubbleChartLegend">
-        <div className="WikiBubbleChartLegendText">
-          * Quality assessment is done by the Wikipedia community and it may be
-          inconsistent
-        </div>
-        <div className="WikiBubbleChartLegendBox">
-          <div className="WikiBubbleChartLegendTitle">Legend</div>
-          <img src="/images/legend.png" />
-        </div>
-      </div>
+          <div className="ArticleLangDisclaimer">
+            * Quality assessment is done by the Wikipedia community and it may
+            be inconsistent
+          </div>
+        </>
+      )}
 
       {selectedArticle && (
         <ArticleDetailPanel
           article={selectedArticle}
           wiki={wiki}
           onClose={() => setSelectedArticle(null)}
+        />
+      )}
+
+      {langCompareArticle && topicId && (
+        <ArticleLanguageComparisonModal
+          articleTitle={langCompareArticle}
+          topicId={topicId}
+          wiki={wiki}
+          languages={TARGET_LANGUAGES}
+          onClose={() => setLangCompareArticle(null)}
         />
       )}
     </div>
