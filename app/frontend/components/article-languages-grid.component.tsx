@@ -216,10 +216,14 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
             return (
               <tr
                 key={row.article}
-                className={`ArticleLangRow${onArticleClick ? " ArticleLangRow--clickable" : ""}`}
-                onClick={() => onArticleClick?.(row.article)}
+                className="ArticleLangRow"
               >
-                <td className="ArticleLangRowTitle">{row.article}</td>
+                <td
+                  className={`ArticleLangRowTitle${onArticleClick ? " ArticleLangRowTitle--clickable" : ""}`}
+                  onClick={() => onArticleClick?.(row.article)}
+                >
+                  {row.article}
+                </td>
                 {languages.map((lang) => (
                   <LanguageCell
                     key={lang}
