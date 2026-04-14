@@ -41,6 +41,7 @@ interface WikiBubbleChartProps {
 }
 
 const HEIGHT = 650;
+const LARGE_DATASET_THRESHOLD = 10000;
 
 const gradeGroups = [
   { id: "fa", label: "Featured", grades: ["FA", "FL"], dot: "#9CBDFF" },
@@ -167,6 +168,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     "overview",
   );
   const [langCompareArticle, setLangCompareArticle] = useState<string | null>(
+    null,
+  );
+  const searchSignalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
 
@@ -466,22 +470,30 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       scale: yScaleSpec,
     };
 
-    const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-    const visibilityTestExpr = [
-      "(!highlight.article)",
-      "(!search_input || test(regexp(search_input,'i'), datum.article))",
+    const visibilityCalcExpr = [
+      "(!search_input || indexof(lower(datum.article), search_input) >= 0)",
       "((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || !datum.assessment_grade)",
-      "((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction) || (!filter_move_restriction && filter_edit_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
+      "((!filter_move_restriction || datum.has_move_restriction) && (!filter_edit_restriction || datum.has_edit_restriction))",
     ].join(" && ");
 
-    const makeOpacityEncoding = (activeOpacity: number) => ({
-      condition: [
-        { param: "highlight", empty: false, value: activeOpacity },
-        { test: visibilityTestExpr, value: activeOpacity },
-      ],
-      value: 0.06,
-    });
+    const isLargeDataset = sortedRows.length > LARGE_DATASET_THRESHOLD;
+
+    const makeOpacityEncoding = (activeOpacity: number) =>
+      isLargeDataset
+        ? {
+            condition: [{ test: "datum.__visible", value: activeOpacity }],
+            value: 0.06,
+          }
+        : {
+            condition: [
+              { param: "highlight", empty: false, value: activeOpacity },
+              {
+                test: "!highlight.article && datum.__visible",
+                value: activeOpacity,
+              },
+            ],
+            value: 0.06,
+          };
 
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
@@ -492,6 +504,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       transform: [
         ...(yFilterExpr ? [{ filter: yFilterExpr }] : []),
         { window: [{ op: "row_number", as: "idx" }] },
+        { calculate: visibilityCalcExpr, as: "__visible" },
       ],
       config: {
         legend: { disable: true },
@@ -500,7 +513,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         },
       },
       params: [
-        { name: "search_input", value: escapedSearchTerm },
+        { name: "search_input", value: searchTerm.trim().toLowerCase() },
         { name: "grade_FA", value: selectedGrades.FA },
         { name: "grade_GA", value: selectedGrades.GA },
         { name: "grade_A", value: selectedGrades.A },
@@ -526,8 +539,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               select: {
                 type: "point",
                 fields: ["article"],
-                on: "mouseover",
-                clear: "mouseout",
+                on: "pointerover",
+                clear: "pointerout",
               },
             },
             {
@@ -688,6 +701,27 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             opacity: makeOpacityEncoding(0.5),
+
+            ...(isLargeDataset
+              ? {
+                  stroke: {
+                    condition: {
+                      param: "highlight",
+                      empty: false,
+                      value: "#ff6600",
+                    },
+                    value: "white",
+                  },
+                  strokeWidth: {
+                    condition: {
+                      param: "highlight",
+                      empty: false,
+                      value: 3,
+                    },
+                    value: 1,
+                  },
+                }
+              : {}),
           },
         },
       ],
@@ -742,6 +776,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     activeTab,
   ]);
 
+  useEffect(() => {
+    return () => {
+      if (searchSignalTimerRef.current) {
+        clearTimeout(searchSignalTimerRef.current);
+      }
+    };
+  }, []);
+
   const toggleGrades = (grades: string[], on: boolean) => {
     setSelectedGrades((prev) => {
       const next = { ...prev };
@@ -774,11 +816,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
-    if (viewRef.current) {
-      const escapedSearchTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      viewRef.current.view.signal("search_input", escapedSearchTerm);
-      viewRef.current.view.runAsync();
+    if (searchSignalTimerRef.current) {
+      clearTimeout(searchSignalTimerRef.current);
     }
+    searchSignalTimerRef.current = setTimeout(() => {
+      if (viewRef.current) {
+        viewRef.current.view.signal("search_input", term.trim().toLowerCase());
+        viewRef.current.view.runAsync();
+      }
+    }, 150);
   };
 
   const handleTabChange = (tab: "overview" | "languages") => {
