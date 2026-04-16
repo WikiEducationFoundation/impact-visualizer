@@ -52,6 +52,12 @@ const gradeGroups = [
   { id: "start", label: "Start", grades: ["Start"], dot: "#FFAA66" },
   { id: "stub", label: "Stub", grades: ["Stub"], dot: "#FFA4A4" },
   { id: "list", label: "List", grades: ["List"], dot: "#C7B1FF" },
+  {
+    id: "unassessed",
+    label: "Unassessed",
+    grades: ["Unassessed"],
+    dot: "#9E9E9E",
+  },
 ];
 
 function QualityFilterButtons({
@@ -145,6 +151,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       Start: true,
       Stub: true,
       List: true,
+      Unassessed: true,
     },
   );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>("title");
@@ -337,8 +344,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       }
 
       const grade = row.assessment_grade;
-      if (grade && !selectedGrades[grade]) {
-        return false;
+      if (grade) {
+        if (!selectedGrades[grade]) return false;
+      } else {
+        if (!selectedGrades.Unassessed) return false;
       }
 
       if (filterMoveRestriction && !row.has_move_restriction) {
@@ -472,7 +481,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
     const visibilityCalcExpr = [
       "(!search_input || indexof(lower(datum.article), search_input) >= 0)",
-      "((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || !datum.assessment_grade)",
+      "((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || (grade_Unassessed && !datum.assessment_grade))",
       "((!filter_move_restriction || datum.has_move_restriction) && (!filter_edit_restriction || datum.has_edit_restriction))",
     ].join(" && ");
 
@@ -523,6 +532,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         { name: "grade_Start", value: selectedGrades.Start },
         { name: "grade_Stub", value: selectedGrades.Stub },
         { name: "grade_List", value: selectedGrades.List },
+        { name: "grade_Unassessed", value: selectedGrades.Unassessed },
         { name: "filter_move_restriction", value: filterMoveRestriction },
         { name: "filter_edit_restriction", value: filterEditRestriction },
       ],
