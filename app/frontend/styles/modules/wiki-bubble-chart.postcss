@@ -357,8 +357,16 @@
 
 .QualityFilterGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(20, minmax(0, 1fr));
   gap: 8px 12px;
+
+  .QualityFilterBtn:nth-child(-n+5) {
+    grid-column: span 4;
+  }
+
+  .QualityFilterBtn:nth-child(n+6) {
+    grid-column: span 5;
+  }
 }
 
 .QualityFilterBtn {
