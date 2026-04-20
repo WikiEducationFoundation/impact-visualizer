@@ -1138,6 +1138,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
           <ArticleLanguagesGrid
             articles={filteredArticles}
+            allArticles={sortedRows}
             languageLinks={languageLinks}
             wiki={wiki}
             loading={langLinksLoading}

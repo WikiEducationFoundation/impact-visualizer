@@ -38,6 +38,22 @@ type NumericSortableArticle = { article: string } & Record<
   number
 >;
 
+type BubbleSizeFields = {
+  article_size?: number;
+  prev_article_size?: number | null;
+  lead_section_size?: number;
+  talk_size?: number;
+};
+
+type RadiusScale = (v: number | null | undefined) => number;
+
+type RadiusScales = {
+  talk: RadiusScale;
+  prevArticle: RadiusScale;
+  lead: RadiusScale;
+  article: RadiusScale;
+};
+
 export type {
   ArticleProtection,
   ArticleAnalytics,
@@ -45,4 +61,7 @@ export type {
   XAxisKey,
   YAxisKey,
   NumericSortableArticle,
+  BubbleSizeFields,
+  RadiusScale,
+  RadiusScales,
 };

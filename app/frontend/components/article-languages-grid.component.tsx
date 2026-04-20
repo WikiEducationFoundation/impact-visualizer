@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { BsInfoCircle } from "react-icons/bs";
 import { FiEdit2 } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
 import Spinner from "./spinner.component";
 import usePagination from "../hooks/usePagination";
 import { LANGUAGE_LABELS, getTranslateUrl } from "../utils/language-links";
+import { makeSqrtAreaScale } from "../utils/bubble-chart-utils";
+import BubbleCell from "./bubble-cell.component";
+import type {
+  BubbleSizeFields,
+  RadiusScale,
+  RadiusScales,
+} from "../types/bubble-chart.type";
 import type { TargetLanguage } from "../utils/language-links";
 import type { LangLinksProgress } from "../utils/language-links";
 
@@ -13,8 +20,13 @@ type Wiki = {
   project: string;
 };
 
-interface ArticleLanguagesGridProps {
-  articles: { article: string }[];
+type ArticleRowForGrid = BubbleSizeFields & {
+  article: string;
+};
+
+type ArticleLanguagesGridProps = {
+  articles: ArticleRowForGrid[];
+  allArticles?: ArticleRowForGrid[];
   languageLinks: Map<string, Set<string>>;
   wiki?: Wiki;
   loading: boolean;
@@ -22,7 +34,7 @@ interface ArticleLanguagesGridProps {
   languages: readonly TargetLanguage[];
   onArticleClick?: (articleTitle: string) => void;
   progress?: LangLinksProgress;
-}
+};
 
 const ITEMS_PER_PAGE = 10;
 
@@ -31,22 +43,18 @@ function LanguageCell({
   lang,
   exists,
   sourceLang,
+  row,
+  scales,
 }: {
   articleTitle: string;
   lang: string;
   exists: boolean;
   sourceLang: string;
+  row: ArticleRowForGrid;
+  scales: RadiusScales;
 }) {
   if (exists) {
-    return (
-      <td className="ArticleLangCell ArticleLangCell--present">
-        <img
-          className="ArticleLangCellDot"
-          src="/images/chartdot.png"
-          alt="Available"
-        />
-      </td>
-    );
+    return <BubbleCell row={row} scales={scales} />;
   }
 
   return (
@@ -134,6 +142,7 @@ function PaginationBar({
 
 const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
   articles,
+  allArticles,
   languageLinks,
   wiki,
   loading,
@@ -148,6 +157,26 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
   });
 
   const sourceLang = wiki?.language ?? "en";
+
+  const scaleSource = allArticles ?? articles;
+
+  const radiusScales = useMemo<RadiusScales>(() => {
+    const areaToRadius = (area: number) => Math.sqrt(area / Math.PI);
+    const build = (
+      field: keyof BubbleSizeFields,
+      range: [number, number],
+    ): RadiusScale => {
+      const values = scaleSource.map((a) => a[field] ?? 0);
+      const areaScale = makeSqrtAreaScale(values, range);
+      return (v) => areaToRadius(areaScale(v ?? 0));
+    };
+    return {
+      talk: build("talk_size", [50, 1500]),
+      prevArticle: build("prev_article_size", [20, 600]),
+      lead: build("lead_section_size", [30, 800]),
+      article: build("article_size", [20, 600]),
+    };
+  }, [scaleSource]);
 
   if (loading) {
     const pct =
@@ -228,6 +257,8 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
                     lang={lang}
                     exists={langs.has(lang)}
                     sourceLang={sourceLang}
+                    row={row}
+                    scales={radiusScales}
                   />
                 ))}
               </tr>
