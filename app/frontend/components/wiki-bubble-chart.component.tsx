@@ -1049,11 +1049,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               <span>See an overview of articles with their statistics</span>
             </div>
             <div className="WikiBubbleChartHeadingControls">
-              <ArticleSearchAutocomplete
-                searchTerm={searchTerm}
-                onSearchChange={handleSearchChange}
-                articleTitles={articleTitles}
-              />
               <label className="WikiBubbleChartShowLabels">
                 <input
                   type="checkbox"
@@ -1062,6 +1057,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 />
                 <span>Show labels</span>
               </label>
+              <ArticleSearchAutocomplete
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchChange}
+                articleTitles={articleTitles}
+              />
             </div>
           </div>
 
