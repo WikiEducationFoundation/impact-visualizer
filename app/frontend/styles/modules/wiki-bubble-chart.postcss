@@ -224,9 +224,42 @@
     justify-content: space-between;
     gap: 12px;
     padding: 8px 12px;
+  }
 
-    > .ArticleSearchAutocompleteWrapper {
+  &HeadingControls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .ArticleSearchAutocompleteWrapper {
       width: 320px;
+    }
+  }
+
+  &ShowLabels {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    white-space: nowrap;
+    margin-bottom: 0;
+    padding: 2px 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
+    background: #fff;
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease;
+
+    &:hover {
+      border-color: #bdbdbd;
+      background-color: #f5f5f5;
+    }
+
+    input[type="checkbox"] {
+      cursor: pointer;
     }
   }
 
@@ -360,11 +393,11 @@
   grid-template-columns: repeat(20, minmax(0, 1fr));
   gap: 8px 12px;
 
-  .QualityFilterBtn:nth-child(-n+5) {
+  .QualityFilterBtn:nth-child(-n + 5) {
     grid-column: span 4;
   }
 
-  .QualityFilterBtn:nth-child(n+6) {
+  .QualityFilterBtn:nth-child(n + 6) {
     grid-column: span 5;
   }
 }

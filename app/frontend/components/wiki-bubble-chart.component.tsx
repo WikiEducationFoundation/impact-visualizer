@@ -177,6 +177,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [langCompareArticle, setLangCompareArticle] = useState<string | null>(
     null,
   );
+  const [showLabels, setShowLabels] = useState<boolean>(false);
   const searchSignalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
@@ -535,6 +536,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         { name: "grade_Unassessed", value: selectedGrades.Unassessed },
         { name: "filter_move_restriction", value: filterMoveRestriction },
         { name: "filter_edit_restriction", value: filterEditRestriction },
+        { name: "show_labels", value: showLabels },
       ],
 
       layer: [
@@ -734,6 +736,25 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               : {}),
           },
         },
+        {
+          mark: {
+            type: "text",
+            align: "center",
+            baseline: "bottom",
+            dy: -10,
+            angle: 0,
+            fontSize: 9,
+            limit: 120,
+            clip: true,
+          },
+          encoding: {
+            text: { field: "article", type: "nominal" as const },
+            opacity: {
+              condition: [{ test: "show_labels && datum.__visible", value: 1 }],
+              value: 0,
+            },
+          },
+        },
       ],
 
       encoding: {
@@ -820,6 +841,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     setFilterEditRestriction(checked);
     if (viewRef.current) {
       viewRef.current.view.signal("filter_edit_restriction", checked);
+      viewRef.current.view.runAsync();
+    }
+  };
+
+  const handleShowLabelsChange = (checked: boolean) => {
+    setShowLabels(checked);
+    if (viewRef.current) {
+      viewRef.current.view.signal("show_labels", checked);
       viewRef.current.view.runAsync();
     }
   };
@@ -1019,11 +1048,21 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
               <span>See an overview of articles with their statistics</span>
             </div>
-            <ArticleSearchAutocomplete
-              searchTerm={searchTerm}
-              onSearchChange={handleSearchChange}
-              articleTitles={articleTitles}
-            />
+            <div className="WikiBubbleChartHeadingControls">
+              <ArticleSearchAutocomplete
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchChange}
+                articleTitles={articleTitles}
+              />
+              <label className="WikiBubbleChartShowLabels">
+                <input
+                  type="checkbox"
+                  checked={showLabels}
+                  onChange={(e) => handleShowLabelsChange(e.target.checked)}
+                />
+                <span>Show labels</span>
+              </label>
+            </div>
           </div>
 
           <div className="WikiBubbleChartBody">
