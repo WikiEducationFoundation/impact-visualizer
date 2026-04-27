@@ -41,6 +41,7 @@ interface WikiBubbleChartProps {
 }
 
 const HEIGHT = 650;
+const LARGE_DATASET_THRESHOLD = 10000;
 
 const gradeGroups = [
   { id: "fa", label: "Featured", grades: ["FA", "FL"], dot: "#9CBDFF" },
@@ -51,6 +52,12 @@ const gradeGroups = [
   { id: "start", label: "Start", grades: ["Start"], dot: "#FFAA66" },
   { id: "stub", label: "Stub", grades: ["Stub"], dot: "#FFA4A4" },
   { id: "list", label: "List", grades: ["List"], dot: "#C7B1FF" },
+  {
+    id: "unassessed",
+    label: "Unassessed",
+    grades: ["Unassessed"],
+    dot: "#9E9E9E",
+  },
 ];
 
 function QualityFilterButtons({
@@ -144,6 +151,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       Start: true,
       Stub: true,
       List: true,
+      Unassessed: true,
     },
   );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>("title");
@@ -167,6 +175,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     "overview",
   );
   const [langCompareArticle, setLangCompareArticle] = useState<string | null>(
+    null,
+  );
+  const [showLabels, setShowLabels] = useState<boolean>(false);
+  const searchSignalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
 
@@ -333,8 +345,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       }
 
       const grade = row.assessment_grade;
-      if (grade && !selectedGrades[grade]) {
-        return false;
+      if (grade) {
+        if (!selectedGrades[grade]) return false;
+      } else {
+        if (!selectedGrades.Unassessed) return false;
       }
 
       if (filterMoveRestriction && !row.has_move_restriction) {
@@ -466,22 +480,30 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       scale: yScaleSpec,
     };
 
-    const escapedSearchTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-    const visibilityTestExpr = [
-      "(!highlight.article)",
-      "(!search_input || test(regexp(search_input,'i'), datum.article))",
-      "((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || !datum.assessment_grade)",
-      "((!filter_move_restriction && !filter_edit_restriction) || (filter_move_restriction && !filter_edit_restriction && datum.has_move_restriction) || (!filter_move_restriction && filter_edit_restriction && datum.has_edit_restriction) || (filter_move_restriction && filter_edit_restriction && datum.has_move_restriction && datum.has_edit_restriction))",
+    const visibilityCalcExpr = [
+      "(!search_input || indexof(lower(datum.article), search_input) >= 0)",
+      "((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || (grade_Unassessed && !datum.assessment_grade))",
+      "((!filter_move_restriction || datum.has_move_restriction) && (!filter_edit_restriction || datum.has_edit_restriction))",
     ].join(" && ");
 
-    const makeOpacityEncoding = (activeOpacity: number) => ({
-      condition: [
-        { param: "highlight", empty: false, value: activeOpacity },
-        { test: visibilityTestExpr, value: activeOpacity },
-      ],
-      value: 0.06,
-    });
+    const isLargeDataset = sortedRows.length > LARGE_DATASET_THRESHOLD;
+
+    const makeOpacityEncoding = (activeOpacity: number) =>
+      isLargeDataset
+        ? {
+            condition: [{ test: "datum.__visible", value: activeOpacity }],
+            value: 0.06,
+          }
+        : {
+            condition: [
+              { param: "highlight", empty: false, value: activeOpacity },
+              {
+                test: "!highlight.article && datum.__visible",
+                value: activeOpacity,
+              },
+            ],
+            value: 0.06,
+          };
 
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
@@ -492,6 +514,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       transform: [
         ...(yFilterExpr ? [{ filter: yFilterExpr }] : []),
         { window: [{ op: "row_number", as: "idx" }] },
+        { calculate: visibilityCalcExpr, as: "__visible" },
       ],
       config: {
         legend: { disable: true },
@@ -500,7 +523,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         },
       },
       params: [
-        { name: "search_input", value: escapedSearchTerm },
+        { name: "search_input", value: searchTerm.trim().toLowerCase() },
         { name: "grade_FA", value: selectedGrades.FA },
         { name: "grade_GA", value: selectedGrades.GA },
         { name: "grade_A", value: selectedGrades.A },
@@ -510,8 +533,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         { name: "grade_Start", value: selectedGrades.Start },
         { name: "grade_Stub", value: selectedGrades.Stub },
         { name: "grade_List", value: selectedGrades.List },
+        { name: "grade_Unassessed", value: selectedGrades.Unassessed },
         { name: "filter_move_restriction", value: filterMoveRestriction },
         { name: "filter_edit_restriction", value: filterEditRestriction },
+        { name: "show_labels", value: showLabels },
       ],
 
       layer: [
@@ -526,8 +551,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               select: {
                 type: "point",
                 fields: ["article"],
-                on: "mouseover",
-                clear: "mouseout",
+                on: "pointerover",
+                clear: "pointerout",
               },
             },
             {
@@ -688,6 +713,46 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             opacity: makeOpacityEncoding(0.5),
+
+            ...(isLargeDataset
+              ? {
+                  stroke: {
+                    condition: {
+                      param: "highlight",
+                      empty: false,
+                      value: "#ff6600",
+                    },
+                    value: "white",
+                  },
+                  strokeWidth: {
+                    condition: {
+                      param: "highlight",
+                      empty: false,
+                      value: 3,
+                    },
+                    value: 1,
+                  },
+                }
+              : {}),
+          },
+        },
+        {
+          mark: {
+            type: "text",
+            align: "center",
+            baseline: "bottom",
+            dy: -10,
+            angle: 0,
+            fontSize: 9,
+            limit: 120,
+            clip: true,
+          },
+          encoding: {
+            text: { field: "article", type: "nominal" as const },
+            opacity: {
+              condition: [{ test: "show_labels && datum.__visible", value: 1 }],
+              value: 0,
+            },
           },
         },
       ],
@@ -742,6 +807,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     activeTab,
   ]);
 
+  useEffect(() => {
+    return () => {
+      if (searchSignalTimerRef.current) {
+        clearTimeout(searchSignalTimerRef.current);
+      }
+    };
+  }, []);
+
   const toggleGrades = (grades: string[], on: boolean) => {
     setSelectedGrades((prev) => {
       const next = { ...prev };
@@ -772,13 +845,25 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
   };
 
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term);
+  const handleShowLabelsChange = (checked: boolean) => {
+    setShowLabels(checked);
     if (viewRef.current) {
-      const escapedSearchTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      viewRef.current.view.signal("search_input", escapedSearchTerm);
+      viewRef.current.view.signal("show_labels", checked);
       viewRef.current.view.runAsync();
     }
+  };
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+    if (searchSignalTimerRef.current) {
+      clearTimeout(searchSignalTimerRef.current);
+    }
+    searchSignalTimerRef.current = setTimeout(() => {
+      if (viewRef.current) {
+        viewRef.current.view.signal("search_input", term.trim().toLowerCase());
+        viewRef.current.view.runAsync();
+      }
+    }, 150);
   };
 
   const handleTabChange = (tab: "overview" | "languages") => {
@@ -963,11 +1048,21 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
               <span>See an overview of articles with their statistics</span>
             </div>
-            <ArticleSearchAutocomplete
-              searchTerm={searchTerm}
-              onSearchChange={handleSearchChange}
-              articleTitles={articleTitles}
-            />
+            <div className="WikiBubbleChartHeadingControls">
+              <label className="WikiBubbleChartShowLabels">
+                <input
+                  type="checkbox"
+                  checked={showLabels}
+                  onChange={(e) => handleShowLabelsChange(e.target.checked)}
+                />
+                <span>Show labels</span>
+              </label>
+              <ArticleSearchAutocomplete
+                searchTerm={searchTerm}
+                onSearchChange={handleSearchChange}
+                articleTitles={articleTitles}
+              />
+            </div>
           </div>
 
           <div className="WikiBubbleChartBody">
@@ -1082,6 +1177,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
           <ArticleLanguagesGrid
             articles={filteredArticles}
+            allArticles={sortedRows}
             languageLinks={languageLinks}
             wiki={wiki}
             loading={langLinksLoading}

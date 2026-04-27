@@ -224,9 +224,30 @@
     justify-content: space-between;
     gap: 12px;
     padding: 8px 12px;
+  }
 
-    > .ArticleSearchAutocompleteWrapper {
+  &HeadingControls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .ArticleSearchAutocompleteWrapper {
       width: 320px;
+    }
+  }
+
+  &ShowLabels {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    white-space: nowrap;
+    margin-bottom: 0;
+
+    input[type="checkbox"] {
+      cursor: pointer;
     }
   }
 
@@ -357,8 +378,16 @@
 
 .QualityFilterGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(20, minmax(0, 1fr));
   gap: 8px 12px;
+
+  .QualityFilterBtn:nth-child(-n + 5) {
+    grid-column: span 4;
+  }
+
+  .QualityFilterBtn:nth-child(n + 6) {
+    grid-column: span 5;
+  }
 }
 
 .QualityFilterBtn {
@@ -909,6 +938,8 @@
   &Item {
     display: flex;
     align-items: center;
+    height: 42px;
+    box-sizing: border-box;
     border-bottom: 1px solid #eee;
 
     &:last-child {
@@ -1129,6 +1160,11 @@
   display: inline-block;
   width: 42px;
   height: 42px;
+}
+
+.ArticleLangCellBubble {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .ArticleLangCellMissing {
