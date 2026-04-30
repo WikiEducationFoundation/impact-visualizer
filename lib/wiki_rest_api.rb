@@ -49,19 +49,24 @@ class WikiRestApi
     connection
   end
 
+  # Default backoff when the server doesn't send a Retry-After header.
+  # Per Wikimedia's rate-limits policy, ≥5s is the floor expected of
+  # well-behaved clients.
+  DEFAULT_RETRY_AFTER_SECONDS = 5
+  MAX_RETRY_AFTER_SECONDS = 60
+
   def make_request(action, url, params)
-    tries ||= 3
+    tries ||= 5
     response = @client.send(action, url, params)
     response
   rescue StandardError => e
     tries -= 1
-    # Continue for typical errors so that the request can be retried, but wait
-    # a short bit in the case of 429 — too many request — errors.
     if too_many_requests?(e)
-      retry_after = (e.response && (e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After']))
+      retry_after = e.response && e.response[:headers] &&
+                    (e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After'])
       wait_seconds = retry_after.to_i if retry_after
-      wait_seconds = [wait_seconds || 0, 1].max
-      wait_seconds = [wait_seconds, 30].min
+      wait_seconds = [wait_seconds || 0, DEFAULT_RETRY_AFTER_SECONDS].max
+      wait_seconds = [wait_seconds, MAX_RETRY_AFTER_SECONDS].min
       wait_seconds += rand(0.0..0.5)
       unless Rails.env.test?
         ap "WikiRestApi / 429 Too Many Requests - waiting #{wait_seconds.round(2)}s, tries remaining: #{tries}"
@@ -79,8 +84,13 @@ class WikiRestApi
     raise e
   end
 
+  # Faraday 2 raises Faraday::TooManyRequestsError (a ClientError
+  # subclass) for 429s, so the previous `instance_of?(ClientError)`
+  # check missed them. Match on the specific subclass when available
+  # and fall back to the status-code check for older Faraday.
   def too_many_requests?(e)
-    return false unless e.instance_of?(Faraday::ClientError)
-    e.response[:status] == 429
+    return true if defined?(Faraday::TooManyRequestsError) && e.is_a?(Faraday::TooManyRequestsError)
+    return false unless e.is_a?(Faraday::ClientError)
+    e.response.is_a?(Hash) && e.response[:status] == 429
   end
 end
