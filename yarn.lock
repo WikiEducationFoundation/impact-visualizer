@@ -1186,6 +1186,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-window@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@types/react-window@npm:2.0.0"
+  dependencies:
+    react-window: "npm:*"
+  checksum: 10/4c11d4e1e6b95ab482b79a6aaff87a8cd2978a08925c6b0fff7e856716608ccb50162e5cbf9ad02bff892681c7795cc9f3e376ede994ebfbcc55161fe8ab0517
+  languageName: node
+  linkType: hard
+
 "@types/react@npm:*, @types/react@npm:^18.2.20":
   version: 18.2.75
   resolution: "@types/react@npm:18.2.75"
@@ -3005,6 +3014,7 @@ __metadata:
     "@types/qs": "npm:^6"
     "@types/react": "npm:^18.2.20"
     "@types/react-dom": "npm:^18.2.7"
+    "@types/react-window": "npm:^2.0.0"
     "@vitejs/plugin-react": "npm:^4.0.4"
     autoprefixer: "npm:^10.4.15"
     axios: "npm:^1.7.7"
@@ -3037,6 +3047,7 @@ __metadata:
     react-loader-spinner: "npm:^6.1.6"
     react-router-dom: "npm:^6.15.0"
     react-select: "npm:^5.8.0"
+    react-window: "npm:^2.2.7"
     rucksack-css: "npm:^1.0.2"
     uuid: "npm:^10.0.0"
     vega: "npm:^5.25.0"
@@ -5015,6 +5026,16 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 10/ca32d3fd2168c976c5d90a317f25d5f5cd723608b415fb3b9006f9d793c8965c619562d0884503a3e44e4b06efbca4fdd1520f30e58ca3e00a0890e637d55419
+  languageName: node
+  linkType: hard
+
+"react-window@npm:*, react-window@npm:^2.2.7":
+  version: 2.2.7
+  resolution: "react-window@npm:2.2.7"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  checksum: 10/94fc2aad2702d66a778c41e3caa6c47281b92cd4f3c04bfc8ee733581e08e9310697d00d86c50121f3328911492fcba272ab28e4d3cd399d95d0b15ce0d840e9
   languageName: node
   linkType: hard
 

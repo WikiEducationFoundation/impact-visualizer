@@ -145,6 +145,19 @@ function convertAnalyticsToCSV(
   return csvContent;
 }
 
+function makeSqrtAreaScale(
+  values: number[],
+  [rangeMin, rangeMax]: [number, number],
+): (v: number) => number {
+  const sMin = Math.sqrt(Math.min(...values));
+  const sMax = Math.sqrt(Math.max(...values));
+  if (sMax === sMin) return () => (rangeMin + rangeMax) / 2;
+  return (v) => {
+    const t = (Math.sqrt(v) - sMin) / (sMax - sMin);
+    return rangeMin + t * (rangeMax - rangeMin);
+  };
+}
+
 function getAssessmentColor(grade?: string | null): string {
   if (!grade) return "#9e9e9e";
   switch (grade) {
@@ -178,4 +191,5 @@ export {
   xAxisTitleForKey,
   convertAnalyticsToCSV,
   getAssessmentColor,
+  makeSqrtAreaScale,
 };
