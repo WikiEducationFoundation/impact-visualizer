@@ -491,16 +491,25 @@ class WikiActionApi
 
   private
 
-  def api_client
-    client = MediawikiApi::Client.new @api_url
-    client.connection.headers[:user_agent] = Features.user_agent if client.respond_to?(:connection)
+  # MediawikiApi::Client 0.9.0 stores its Faraday connection as `@conn`
+  # and does not expose a public `connection` accessor — the previous
+  # `client.respond_to?(:connection)` check silently returned false, so
+  # outbound requests went out with `User-Agent: Faraday v#.#.#`,
+  # filing us in Wikimedia's "unidentified" tier (10 req/min) instead
+  # of the compliant tier (200 req/min). Set the UA via the private
+  # ivar until the gem exposes a public accessor.
+  def set_user_agent(client)
+    conn = client.instance_variable_get(:@conn)
+    conn.headers[:user_agent] = Features.user_agent if conn
     client
   end
 
+  def api_client
+    set_user_agent(MediawikiApi::Client.new(@api_url))
+  end
+
   def wikidata_api_client
-    client = MediawikiApi::Client.new 'https://www.wikidata.org/w/api.php'
-    client.connection.headers[:user_agent] = Features.user_agent if client.respond_to?(:connection)
-    client
+    set_user_agent(MediawikiApi::Client.new('https://www.wikidata.org/w/api.php'))
   end
 
   # Default backoff when the server doesn't send a Retry-After header.
@@ -522,8 +531,11 @@ class WikiActionApi
     tries += 1
     unless Rails.env.test?
       if too_many_requests?(e)
-        retry_after = if e.respond_to?(:response) && e.response
-                        e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After']
+        # Faraday 2 exposes headers via a method (case-insensitive
+        # CaseInsensitiveHash), not via `response[:headers]`. The
+        # previous code returned nil and crashed.
+        retry_after = if e.respond_to?(:response) && e.response.respond_to?(:headers)
+                        e.response.headers['Retry-After']
                       end
         wait_seconds = retry_after.to_i if retry_after
         wait_seconds = [wait_seconds || 0, DEFAULT_RETRY_AFTER_SECONDS].max
