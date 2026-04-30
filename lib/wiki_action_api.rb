@@ -503,8 +503,15 @@ class WikiActionApi
     client
   end
 
+  # Default backoff when the server doesn't send a Retry-After header.
+  # Per Wikimedia's rate-limits policy, ≥5s is the floor expected of
+  # well-behaved clients. The Varnish bot-throttle typically asks for
+  # ~11s when it does send the header.
+  DEFAULT_RETRY_AFTER_SECONDS = 5
+  MAX_RETRY_AFTER_SECONDS = 60
+
   def mediawiki(action, query, wikidata = false)
-    total_tries = 3
+    total_tries = 5
     tries ||= 0
     if wikidata
       @wikidata_client.action :wbgetentities, query
@@ -519,8 +526,8 @@ class WikiActionApi
                         e.response[:headers]['retry-after'] || e.response[:headers]['Retry-After']
                       end
         wait_seconds = retry_after.to_i if retry_after
-        wait_seconds = [wait_seconds || 0, 1].max
-        wait_seconds = [wait_seconds, 60].min
+        wait_seconds = [wait_seconds || 0, DEFAULT_RETRY_AFTER_SECONDS].max
+        wait_seconds = [wait_seconds, MAX_RETRY_AFTER_SECONDS].min
         wait_seconds += rand(0.0..0.5)
         puts "WikiActionApi / 429 Too Many Requests - waiting #{wait_seconds.round(2)}s (attempt #{tries}/#{total_tries})"
         sleep wait_seconds

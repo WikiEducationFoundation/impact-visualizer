@@ -17,7 +17,13 @@ gem 'dotenv'
 gem 'hashugar'
 gem 'jbuilder'
 gem 'json-schema'
-gem 'mediawiki_api'
+# Pinned to the Wiki Education fork until the upstream gem exposes
+# `error.response` (and thus `Retry-After`) on `MediawikiApi::HttpError`.
+# Without this, our 429-handler in wiki_action_api.rb falls back to a
+# 1s default and retries inside Wikipedia's cooldown window.
+gem 'mediawiki_api',
+    git: 'https://github.com/WikiEducationFoundation/mediawiki-ruby-api',
+    branch: 'expose-response-on-http-error'
 gem 'oauth2'
 gem 'oj'
 gem 'omniauth-mediawiki', git: 'https://github.com/ragesoss/omniauth-mediawiki.git'
