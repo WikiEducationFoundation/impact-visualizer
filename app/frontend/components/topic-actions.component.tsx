@@ -20,21 +20,21 @@ function renderActions({ topic, setCanEditTopic }) {
   // users, a TB topic just runs with 0 users — the backend allows it.
   const isTbTopic = !!topic.tb_handle;
 
-  const importsSettled =
-    (!topic.users_import_status ||
-      topic.users_import_status === "idle" ||
-      topic.users_import_status === "complete") &&
-    (!topic.articles_import_status ||
-      topic.articles_import_status === "idle" ||
-      topic.articles_import_status === "complete");
+  const isSettled = (status: string) =>
+    !status || status === "idle" || status === "complete";
 
   // Backend (TopicService#incremental_topic_build) only requires articles,
   // not users. CSV-driven topics historically gated on user_count > 0 too;
-  // keep that for non-TB topics so the prior UX is preserved.
+  // keep that for non-TB topics so the prior UX is preserved. TB topics
+  // also skip the users_import_status check — they never run a user
+  // import, so a stale users_import_job_id from a different code path
+  // shouldn't keep blocking timepoint generation.
   if (
     topic.articles_count > 0 &&
-    importsSettled &&
-    (isTbTopic || topic.user_count > 0)
+    isSettled(topic.articles_import_status) &&
+    (isTbTopic
+      ? true
+      : topic.user_count > 0 && isSettled(topic.users_import_status))
   ) {
     actions.push("incremental_topic_build");
   }
