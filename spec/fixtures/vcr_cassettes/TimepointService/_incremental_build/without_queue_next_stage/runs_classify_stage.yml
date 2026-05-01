@@ -58,7 +58,7 @@ http_interactions:
       - WMF-Last-Access=09-Apr-2025;Path=/;HttpOnly;secure;Expires=Sun, 11 May 2025
         12:00:00 GMT
       X-Client-Ip:
-      - 98.247.215.91
+      - <CLIENT_IP>
       Content-Length:
       - '59'
     body:
@@ -121,7 +121,7 @@ http_interactions:
       - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
         0.0}'
       X-Client-Ip:
-      - 98.247.215.91
+      - <CLIENT_IP>
       Content-Length:
       - '137'
     body:
@@ -184,7 +184,7 @@ http_interactions:
       - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
         0.0}'
       X-Client-Ip:
-      - 98.247.215.91
+      - <CLIENT_IP>
       Content-Length:
       - '137'
     body:
@@ -247,7 +247,7 @@ http_interactions:
       - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
         0.0}'
       X-Client-Ip:
-      - 98.247.215.91
+      - <CLIENT_IP>
       Content-Length:
       - '140'
     body:
@@ -310,7 +310,7 @@ http_interactions:
       - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
         0.0}'
       X-Client-Ip:
-      - 98.247.215.91
+      - <CLIENT_IP>
       Content-Length:
       - '139'
     body:

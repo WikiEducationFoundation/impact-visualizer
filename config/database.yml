@@ -1,13 +1,15 @@
 development:
   adapter: postgresql
   database: impact-visualizer-development
-  host: localhost
+  host: <%= ENV.fetch('PGHOST', 'localhost') %>
+  port: <%= ENV.fetch('PGPORT', 5432) %>
   pool: 100
 
 test:
   adapter: postgresql
   database: impact-visualizer-test
-  host: localhost
+  host: <%= ENV.fetch('PGHOST', 'localhost') %>
+  port: <%= ENV.fetch('PGPORT', 5432) %>
 
 production:
   adapter: postgresql

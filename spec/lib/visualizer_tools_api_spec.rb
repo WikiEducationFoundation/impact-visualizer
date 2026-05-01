@@ -10,7 +10,7 @@ describe VisualizerToolsApi do
 
     it 'handles API errors gracefully' do
       stub_visualizer_tools_503_error
-      expect { subject }.to raise_error(Faraday::ClientError)
+      expect { subject }.to raise_error(Faraday::ServerError)
     end
 
     it 'handles 429 errors gracefully' do

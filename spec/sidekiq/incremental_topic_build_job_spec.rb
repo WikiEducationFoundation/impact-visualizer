@@ -11,7 +11,8 @@ RSpec.describe IncrementalTopicBuildJob, type: :job do
       force_updates: false,
       logging_enabled: false,
       total: kind_of(Method),
-      at: kind_of(Method)
+      at: kind_of(Method),
+      message: kind_of(Proc)
     ).and_call_original
     expect_any_instance_of(TimepointService).to receive(:incremental_build)
       .with(:classify, queue_next_stage: false)
@@ -25,7 +26,8 @@ RSpec.describe IncrementalTopicBuildJob, type: :job do
       force_updates: false,
       logging_enabled: false,
       total: kind_of(Method),
-      at: kind_of(Method)
+      at: kind_of(Method),
+      message: kind_of(Proc)
     ).and_call_original
     expect_any_instance_of(TimepointService).to receive(:incremental_build)
       .with(:classify, queue_next_stage: true)
@@ -39,7 +41,8 @@ RSpec.describe IncrementalTopicBuildJob, type: :job do
       force_updates: true,
       logging_enabled: false,
       total: kind_of(Method),
-      at: kind_of(Method)
+      at: kind_of(Method),
+      message: kind_of(Proc)
     ).and_call_original
     expect_any_instance_of(TimepointService).to receive(:incremental_build)
       .with(:article_timepoints, queue_next_stage: true)

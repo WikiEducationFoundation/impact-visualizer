@@ -50,7 +50,7 @@ http_interactions:
       - WMF-Last-Access=02-Jul-2024;Path=/;HttpOnly;secure;Expires=Sat, 03 Aug 2024
         12:00:00 GMT
       X-Client-Ip:
-      - 67.170.51.150
+      - <CLIENT_IP>
       Accept-Ranges:
       - bytes
       Transfer-Encoding:

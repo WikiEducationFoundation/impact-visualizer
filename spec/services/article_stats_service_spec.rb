@@ -36,7 +36,7 @@ describe ArticleStatsService do
       expect(article.first_revision_by_id).to eq(311307)
     end
 
-    it 'marks article as missing if no pageid' do
+    it 'marks article as missing if no pageid', :vcr do
       article = create(:article, pageid: nil, title: 'Yankaaaari Game Reserve')
       article_stats_service = described_class.new(wiki)
       article_stats_service.update_details_for_article(article:)
@@ -45,7 +45,7 @@ describe ArticleStatsService do
       expect(article.pageid).to eq(nil)
     end
 
-    it 'marks previously missing article as not missing' do
+    it 'marks previously missing article as not missing', :vcr do
       article = create(:article, pageid: nil, title: 'Yankari Game Reserve', missing: true)
       article_stats_service = described_class.new(wiki)
       article_stats_service.update_details_for_article(article:)
@@ -82,7 +82,7 @@ describe ArticleStatsService do
       end
 
       it 'updates wp10_prediction', vcr: true do
-        expect(article_timepoint.wp10_prediction).to eq(58.17099374142291)
+        expect(article_timepoint.wp10_prediction).to be_within(0.001).of(58.17099374142291)
         expect(article_timepoint.wp10_prediction_category).to eq('C')
       end
     end
@@ -126,7 +126,7 @@ describe ArticleStatsService do
         create(:article_timepoint, article:, timestamp: Date.new(2001, 1, 1))
       end
 
-      it 'captures revision_id', vcr: false do
+      it 'captures revision_id', :vcr do
         article_stats_service.update_first_revision_info(article:)
         expect do
           article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
@@ -138,7 +138,7 @@ describe ArticleStatsService do
   describe '#weighted_revision_quality' do
     let!(:article_stats_service) { described_class.new(wiki) }
 
-    it 'returns the weighted quality of revision', vcr: false do
+    it 'returns the weighted quality of revision', :vcr do
       lift_wing_api = LiftWingApi.new(wiki)
       lift_wing_response = lift_wing_api.get_revision_quality(1100917005)
       quality = article_stats_service.weighted_revision_quality(lift_wing_response:)

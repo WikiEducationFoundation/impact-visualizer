@@ -48,14 +48,15 @@ class LiftWingApi
   end
 
   def lift_wing_client
+    # Lift Wing's articlequality endpoint accepts anonymous requests.
+    # Only attach a Bearer token when one is configured — sending an
+    # empty/malformed Authorization header gets a 401 from the gateway
+    # ("Jwt is not in the form of Header.Payload.Signature ...") even
+    # when the underlying call would have succeeded anonymously.
     token = Rails.application.credentials.dig(:wiki, :token)
-    options = {
-      url: LIFT_WING_SERVER_URL,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: "Authorization: Bearer #{token}"
-      }
-    }
+    headers = { 'Content-Type': 'application/json' }
+    headers['Authorization'] = "Bearer #{token}" if token.present?
+    options = { url: LIFT_WING_SERVER_URL, headers: headers }
     connection = Faraday.new(options) do |faraday|
       faraday.response :raise_error
       faraday.adapter Faraday.default_adapter

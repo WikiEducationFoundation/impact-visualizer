@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class Features
+  DEFAULT_USER_AGENT = 'impact-visualizer (https://impact.wikiedu.org; sage@wikiedu.org)'
+
   def self.user_agent
-    base = ENV['VISUALIZER_USER_AGENT']
-    return base unless base.present?
+    base = ENV['VISUALIZER_USER_AGENT'].presence || DEFAULT_USER_AGENT
     "#{base} #{Rails.env}"
   end
 

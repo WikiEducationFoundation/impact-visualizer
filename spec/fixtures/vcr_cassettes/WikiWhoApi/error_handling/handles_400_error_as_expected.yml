@@ -1,0 +1,105 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://wikiwho-api.wmcloud.org/en/api/v1.0.0-beta/rev_content/rev_id/853329422/?editor=true&o_rev_id=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Server:
+      - nginx/1.22.1
+      Date:
+      - Thu, 30 Apr 2026 19:13:51 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '73'
+      Connection:
+      - keep-alive
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Frame-Options:
+      - SAMEORIGIN
+      Vary:
+      - Origin, Cookie
+      Content-Language:
+      - en
+      Strict-Transport-Security:
+      - max-age=31622400
+      X-Clacks-Overhead:
+      - GNU Terry Pratchett
+      Permissions-Policy:
+      - browsing-topics=()
+      Report-To:
+      - '{"group": "wm_nel", "max_age": 604800, "endpoints": [{"url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"}]}'
+      Nel:
+      - '{"report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+    body:
+      encoding: UTF-8
+      string: '{"Error":"Revision ID (853329422) does not exist or is spam or deleted!"}'
+  recorded_at: Thu, 30 Apr 2026 19:13:51 GMT
+- request:
+    method: get
+    uri: https://wikiwho-api.wmcloud.org/en/api/v1.0.0-beta/rev_content/rev_id/853329422/?editor=true&o_rev_id=true
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Server:
+      - nginx/1.22.1
+      Date:
+      - Thu, 30 Apr 2026 19:13:52 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '73'
+      Connection:
+      - keep-alive
+      Allow:
+      - GET, HEAD, OPTIONS
+      X-Frame-Options:
+      - SAMEORIGIN
+      Vary:
+      - Origin, Cookie
+      Content-Language:
+      - en
+      Strict-Transport-Security:
+      - max-age=31622400
+      X-Clacks-Overhead:
+      - GNU Terry Pratchett
+      Permissions-Policy:
+      - browsing-topics=()
+      Report-To:
+      - '{"group": "wm_nel", "max_age": 604800, "endpoints": [{"url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"}]}'
+      Nel:
+      - '{"report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+    body:
+      encoding: UTF-8
+      string: '{"Error":"Revision ID (853329422) does not exist or is spam or deleted!"}'
+  recorded_at: Thu, 30 Apr 2026 19:13:52 GMT
+recorded_with: VCR 6.1.0

@@ -54,7 +54,7 @@ describe TimepointService do
         timepoint_service.incremental_build(:classify)
       end
 
-      it 'runs article_timepoints stage' do
+      it 'runs article_timepoints stage', :vcr do
         # 4 articles
         # 6 timestamps
         # build_timepoints_for_timestamp = 4 * 6 = 24
@@ -105,7 +105,7 @@ describe TimepointService do
     end
 
     context 'with queue_next_stage=true' do
-      it 'runs classify stage' do
+      it 'runs classify stage', :vcr do
         timepoint_service = described_class.new(topic:)
         expect_any_instance_of(ClassificationService).to receive(:classify_all_articles).and_call_original
         expect(IncrementalTopicBuildJob).to receive(:perform_async).with(
@@ -117,7 +117,7 @@ describe TimepointService do
         timepoint_service.incremental_build(:classify, queue_next_stage: true)
       end
 
-      it 'runs article_timepoints stage' do
+      it 'runs article_timepoints stage', :vcr do
         timepoint_service = described_class.new(topic:)
         expect_any_instance_of(described_class).to receive(:build_timepoints_for_all_timestamps).and_call_original
         expect(IncrementalTopicBuildJob).to receive(:perform_async).with(
@@ -208,7 +208,7 @@ describe TimepointService do
       )
     end
 
-    it 'builds all timepoints for Topic' do
+    it 'builds all timepoints for Topic', :vcr do
       article_bag = create(:small_article_bag, topic:)
 
       topic_timepoints_count = topic.timestamps.count
@@ -260,7 +260,7 @@ describe TimepointService do
       expect(ArticleTimepoint.count).to eq(article_timepoint_count)
     end
 
-    it 'uses all existing timepoints for Topic' do
+    it 'uses all existing timepoints for Topic', :vcr do
       article_bag = create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
       timepoint_service.full_timepoint_build
@@ -277,7 +277,7 @@ describe TimepointService do
       expect(ArticleTimepoint.count).to eq(article_timepoint_count)
     end
 
-    it 'uses both existing and new timepoints for Topic' do
+    it 'uses both existing and new timepoints for Topic', :vcr do
       article_bag = create(:small_article_bag, topic:)
 
       timepoint_service = described_class.new(topic:)
@@ -296,7 +296,7 @@ describe TimepointService do
       expect(ArticleTimepoint.count).to eq(article_timepoint_count + article_count + 4)
     end
 
-    it 'skips articles that were created after timepoint' do
+    it 'skips articles that were created after timepoint', :vcr do
       article_bag = create(:small_article_bag, topic:)
 
       # Make one Article newer than the others
@@ -319,7 +319,7 @@ describe TimepointService do
       expect(TopicArticleTimepoint.count).to eq(topic_article_timepoint_count)
     end
 
-    it 'does NOT update details for Article, force_updates=false' do
+    it 'does NOT update details for Article, force_updates=false', :vcr do
       article_bag = create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
 
@@ -334,7 +334,7 @@ describe TimepointService do
       timepoint_service.full_timepoint_build
     end
 
-    it 'updates details for Article, force_updates=TRUE' do
+    it 'updates details for Article, force_updates=TRUE', :vcr do
       article_bag = create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:, force_updates: true)
 
@@ -353,14 +353,14 @@ describe TimepointService do
       timepoint_service.full_timepoint_build
     end
 
-    it 'calls update_token_stats for each Article' do
+    it 'calls update_token_stats for each Article', :vcr do
       create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
       expect(timepoint_service).to receive(:update_token_stats).once
       timepoint_service.full_timepoint_build
     end
 
-    it 'updates stats for ArticleTimepoints/TopicArticleTimepoints, force_updates=TRUE' do
+    it 'updates stats for ArticleTimepoints/TopicArticleTimepoints, force_updates=TRUE', :vcr do
       article_bag = create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
 
@@ -394,7 +394,8 @@ describe TimepointService do
       expect(call_count).to eq(article_timepoint_count)
     end
 
-    it 'does not update stats for ArticleTimepoints/TopicArticleTimepoints, force_updates=FALSE' do
+    it 'does not update stats for ArticleTimepoints/TopicArticleTimepoints, ' \
+       'force_updates=FALSE', :vcr do
       article_bag = create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
 

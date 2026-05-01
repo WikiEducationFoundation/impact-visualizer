@@ -7,6 +7,8 @@ class ImportService
     @topic = topic
     @wiki = topic.wiki
     @wiki_action_api = WikiActionApi.new(@wiki)
+    @imported_titles_mutex = Mutex.new
+    @imported_titles = {}
   end
 
   def normalize_csv_content(content)
@@ -52,8 +54,6 @@ class ImportService
                   ArticleBag.create(topic:, name: "#{topic.slug.titleize} Articles")
     total&.call(article_titles.count)
     count = 0
-    @imported_titles_mutex = Mutex.new
-    @imported_titles = {}
     Parallel.each(article_titles, in_threads: 3) do |article_title|
       ActiveRecord::Base.connection_pool.with_connection do
         count += 1

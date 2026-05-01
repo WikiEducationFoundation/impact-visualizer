@@ -10,7 +10,7 @@ http_interactions:
       Content-Type:
       - application/json
       Authorization:
-      - 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJlN2JjYTYzZmJjMjBjMWJjNzdhNWQxZDM0N2JhNmQ1NiIsImp0aSI6Ijk5ODEyYTNlZDMwNzExYjQ4NTRmZTgzYWVjYWRhZjVlNGNhZjY5ZWMxNzQ5NmU3MWM5ODE2MTIwYjk2ZTQ5NmY3MjMzZmIyY2NlZmM1NWNhIiwiaWF0IjoxNjkzNTEyNTgzLjA4NDUzNiwibmJmIjoxNjkzNTEyNTgzLjA4NDU0LCJleHAiOjMzMjUwNDIxMzgzLjA3OTc1OCwic3ViIjoiMzE4NzgwNTkiLCJpc3MiOiJodHRwczovL21ldGEud2lraW1lZGlhLm9yZyIsInJhdGVsaW1pdCI6eyJyZXF1ZXN0c19wZXJfdW5pdCI6NTAwMCwidW5pdCI6IkhPVVIifSwic2NvcGVzIjpbImJhc2ljIiwiaGlnaHZvbHVtZSJdfQ.EfKPoTAveABId5iQ3j0THM2ZX-t8TAgrfQ-h0UQ4-LqrqTW_EKpw4-tMl7kWPpL_OyZmVExfpxJ3TRbuhDe1bswbWaEidE-TN5KdPdaki5ydSiXEdG2nixmFeE1Qt8oIzwa-tJs9_ZNJKw-zgO4jeKKY4BoPGKZBh3cwRqWHRljaLedFXGN2ZUJwC0EAVAnOY_9phkgKJ6gQnD2sG9t1D1J2Bh2nptuHpKML55z7aTj9RY1OzViUW7dZyqf1Wj4MSAVZNMxmIrW8ckUYTml0tYzlh8ae6EjEmi2PL6ALLyWvSkCoepNoy_9BLIKeaFCPuaAfaWqYLLNciqAmjX5hdzQ2hMJvmRXTnDat_lFdRG8iP43tQhELr1XxoS_RlfmEZRGUYU6Usbd4gOYDXxU5JYNmueE0Mz1T6pdVbKDmdi2Ub9eiHdwBDqtiZJ1Dhlxs1XdYr6LoQo54mnec7gfx4aayffYklL6qpXOlVEaIVYZyuSIPAZu8i20rPcyMqoZnKHR9dcn6QP3K80AjgC7jwed7tOi2e5JV5RvAQzP0uDgRsSCcLsq3QctDXkN6HO3_LgOlzKXlOkra2cMh_098UssO8FG7nBMnSR7ABC5blEgSta5_6zLE9fXKCKVXmQmWBVr1IyyUFgqXlO0h4I-cLaKjzx2kiEwYNgS2TE3Ogoc'
+      - 'Authorization: Bearer <LIFTWING_TOKEN>'
       User-Agent:
       - Faraday v0.17.6
       Accept-Encoding:
@@ -55,7 +55,7 @@ http_interactions:
       - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
         0.0}'
       X-Client-Ip:
-      - 67.170.51.150
+      - <CLIENT_IP>
       Accept-Ranges:
       - bytes
     body:

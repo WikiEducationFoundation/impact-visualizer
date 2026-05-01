@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.17.6
+      - impact-visualizer (https://impact.wikiedu.org; sage@wikiedu.org) test
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -19,80 +19,17 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 02 Jul 2024 22:43:48 GMT
+      - Thu, 30 Apr 2026 21:55:21 GMT
       Server:
-      - mw-api-ext.codfw.main-68d8749ff4-cdhvt
+      - mw-api-ext.codfw.main-77bf6c594d-98jl6
       X-Content-Type-Options:
       - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
       X-Frame-Options:
       - DENY
       Content-Disposition:
       - inline; filename=api-result.json
-      Vary:
-      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
-      Cache-Control:
-      - private, must-revalidate, max-age=0
-      Content-Type:
-      - application/json; charset=utf-8
-      Age:
-      - '2'
-      X-Cache:
-      - cp4041 miss, cp4041 pass
-      X-Cache-Status:
-      - pass
-      Server-Timing:
-      - cache;desc="pass", host;desc="cp4041"
-      Set-Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
-      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
-      - WMF-Last-Access-Global=02-Jul-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sat,
-        03 Aug 2024 12:00:00 GMT
-      - WMF-Last-Access=02-Jul-2024;Path=/;HttpOnly;secure;Expires=Sat, 03 Aug 2024
-        12:00:00 GMT
-      X-Client-Ip:
-      - 67.170.51.150
-      Accept-Ranges:
-      - bytes
-      Content-Length:
-      - '273'
-    body:
-      encoding: ASCII-8BIT
-      string: '{"continue":{"rvcontinue":"20050915122639|23281131","continue":"||"},"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
-        Game Reserve","revisions":[{"revid":20142847,"parentid":0,"user":"Jamie7687","userid":311307,"timestamp":"2005-08-02T21:43:23Z","size":371}]}]}}'
-  recorded_at: Tue, 02 Jul 2024 22:43:48 GMT
-- request:
-    method: get
-    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=2364730&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids&rvstart=2023-01-01T00:00:00Z
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      User-Agent:
-      - Faraday v0.17.6
-      Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=02-Jul-2024;
-        WMF-Last-Access-Global=02-Jul-2024
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Date:
-      - Tue, 02 Jul 2024 22:43:49 GMT
-      Server:
-      - mw-api-ext.codfw.main-68d8749ff4-4tmcr
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-      Content-Disposition:
-      - inline; filename=api-result.json
-      Vary:
-      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
       Cache-Control:
       - private, must-revalidate, max-age=0
       Content-Type:
@@ -100,25 +37,115 @@ http_interactions:
       Age:
       - '0'
       X-Cache:
-      - cp4041 miss, cp4041 pass
+      - cp4042 miss, cp4042 pass
       X-Cache-Status:
       - pass
       Server-Timing:
-      - cache;desc="pass", host;desc="cp4041"
-      X-Client-Ip:
-      - 67.170.51.150
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
       Set-Cookie:
-      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
-      Accept-Ranges:
-      - bytes
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=None;Max-Age=3600
+      - WMF-Last-Access-Global=30-Apr-2026;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
+        01 Jun 2026 12:00:00 GMT
+      - WMF-Last-Access=30-Apr-2026;Path=/;HttpOnly;secure;Expires=Mon, 01 Jun 2026
+        12:00:00 GMT
+      - WMF-Uniq=tzy0QU3NGWH4XnPf6bUh7ANSAAAAAFvdVWgRM2lE3C7AhWJ7p7tIMzyjY6t-NG8N;Domain=.wikipedia.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
+      X-Client-Ip:
+      - "<CLIENT_IP>"
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
       Content-Length:
-      - '294'
+      - '273'
+      X-Request-Id:
+      - e6f00546-78de-4319-b772-3df0a5e43358
+      X-Analytics:
+      - ''
+    body:
+      encoding: ASCII-8BIT
+      string: '{"continue":{"rvcontinue":"20050915122639|23281131","continue":"||"},"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
+        Game Reserve","revisions":[{"revid":20142847,"parentid":0,"user":"Jamie7687","userid":311307,"timestamp":"2005-08-02T21:43:23Z","size":371}]}]}}'
+  recorded_at: Thu, 30 Apr 2026 21:55:21 GMT
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=2364730&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids%7Cslotsha1&rvstart=2023-01-01T00:00:00Z
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - impact-visualizer (https://impact.wikiedu.org; sage@wikiedu.org) test
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=30-Apr-2026;
+        WMF-Last-Access-Global=30-Apr-2026; WMF-Uniq=tzy0QU3NGWH4XnPf6bUh7ANSAAAAAFvdVWgRM2lE3C7AhWJ7p7tIMzyjY6t-NG8N
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 30 Apr 2026 21:55:21 GMT
+      Server:
+      - mw-api-ext.codfw.main-77bf6c594d-grhqf
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - "<CLIENT_IP>"
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
+      Set-Cookie:
+      - WMF-Uniq=tzy0QU3NGWH4XnPf6bUh7ANSAAEBAFvdEW4oaS48InXwukmVWcrJt2Drl71t17ex;Domain=.wikipedia.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
+      Content-Length:
+      - '344'
+      X-Request-Id:
+      - b68e7f52-4a3f-4a73-a4fe-8bb3f1ad309a
+      X-Analytics:
+      - ''
     body:
       encoding: ASCII-8BIT
       string: '{"continue":{"rvcontinue":"20220519171123|1088700858","continue":"||"},"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
         Game Reserve","revisions":[{"revid":1100917005,"parentid":1088700858,"user":"Uncle
-        Bash007","userid":37714525,"timestamp":"2022-07-28T09:46:48Z","size":13079}]}]}}'
-  recorded_at: Tue, 02 Jul 2024 22:43:49 GMT
+        Bash007","userid":37714525,"timestamp":"2022-07-28T09:46:48Z","size":13079,"sha1":"6e90a6449cec148279e48ee4aa98a32ab9cc4cbb"}]}]}}'
+  recorded_at: Thu, 30 Apr 2026 21:55:21 GMT
 - request:
     method: get
     uri: https://impact-visualizer-tools.wmcloud.org/count_revisions.php?from_rev_id=20142847&lang=en&page_id=2364730&project=wikipedia&to_rev_id=1100917005
@@ -129,7 +156,7 @@ http_interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - Faraday v0.17.6
+      - impact-visualizer (https://impact.wikiedu.org; sage@wikiedu.org) test
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -140,9 +167,9 @@ http_interactions:
       message: OK
     headers:
       Server:
-      - nginx/1.18.0
+      - nginx/1.22.1
       Date:
-      - Tue, 02 Jul 2024 22:43:49 GMT
+      - Thu, 30 Apr 2026 21:55:22 GMT
       Content-Type:
       - text/html; charset=UTF-8
       Content-Length:
@@ -157,10 +184,15 @@ http_interactions:
       - GNU Terry Pratchett
       Permissions-Policy:
       - browsing-topics=()
+      Report-To:
+      - '{"group": "wm_nel", "max_age": 604800, "endpoints": [{"url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"}]}'
+      Nel:
+      - '{"report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
     body:
       encoding: ASCII-8BIT
       string: '{ "success": true, "data": [{"count":"261"}] }'
-  recorded_at: Tue, 02 Jul 2024 22:43:49 GMT
+  recorded_at: Thu, 30 Apr 2026 21:55:22 GMT
 - request:
     method: post
     uri: https://api.wikimedia.org/service/lw/inference/v1/models/enwiki-articlequality:predict
@@ -170,10 +202,8 @@ http_interactions:
     headers:
       Content-Type:
       - application/json
-      Authorization:
-      - 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJlN2JjYTYzZmJjMjBjMWJjNzdhNWQxZDM0N2JhNmQ1NiIsImp0aSI6IjdhZDU5MWYxNDJiOTdhNzhkNzk0MjdlNDY2NTQwYTkxMGQ2MzU3YmNkM2Y5MWVmMDNhOTVkNmRjNWM3M2IwODQ5NGJiZWViN2RjYmQxNTgyIiwiaWF0IjoxNjkzOTM4MTE4LjE3NzI4NSwibmJmIjoxNjkzOTM4MTE4LjE3NzI4OCwiZXhwIjozMzI1MDg0NjkxOC4xNzIwNiwic3ViIjoiMzE4NzgwNTkiLCJpc3MiOiJodHRwczovL21ldGEud2lraW1lZGlhLm9yZyIsInJhdGVsaW1pdCI6eyJyZXF1ZXN0c19wZXJfdW5pdCI6MTUwMDAwLCJ1bml0IjoiSE9VUiJ9LCJzY29wZXMiOlsiYmFzaWMiLCJoaWdodm9sdW1lIl19.Qc8kk05WHufF8Xg6ZEIk87E5cqMjFcSEGcEfhAPQT31Uaiv067f0x0jW78l6xAV3cjNqqUdear83L1l3uGmkiJX0_uPEWMgG3gwpsqq4P14F4kAmMrDvHxxjXoXZ1IZOpaVpHJWxQ-9AlzBK35e9kcwVsTlo98laCb4xUuUkYRxuiCPKOxRMMKMwRzuz5uGo18mGCNfLe36eQVYkdP_t3WmBuP_1425jxYYuhyMpXDoGKHJqbHeUdFzDd4FpJyWa_77hYqYSBtf_f_UJ9S94BP3teErDSiqFr2AH_pWJXKinI5zZYZAjysS2vrPfePHJnyamm9RFp8QV_xBZQX1yKHzsb79s5ICz8YmZF_edTkYPxe9HE0RQNeOXAAZDPDsRzbDJqIdrR-vFP00muSPuE1jgjBI5d5uAEGM2wJ10ZVflmhrZOO7gfmSg7IpFZHuOpf9POgeMzQdAZCvJPY_kO5FKAoxQuV-ljgTljb-7hl078Qp7qtfZAPx66RLStTXKTBYvabCQg4epWPZ-7JGCdiVlypdiv858tRcy_VDTWxcHhYWkdrD5cGrmApuDRFek5eW_YA4oloB_6nZX35nrppfs6cKkomlVC_NQI1LEmgVZuKpg1GrsWs-Uy-6ao9HkjZAqcXvMMXOs7zVXhSe55RBnUGKwrx96UDeFIVCbncQ'
       User-Agent:
-      - Faraday v0.17.6
+      - impact-visualizer (https://impact.wikiedu.org; sage@wikiedu.org) test
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -184,35 +214,48 @@ http_interactions:
       message: OK
     headers:
       Content-Length:
-      - '301'
+      - '299'
       Content-Type:
       - application/json
       Date:
-      - Tue, 02 Jul 2024 22:43:49 GMT
+      - Thu, 30 Apr 2026 21:55:22 GMT
       Server:
-      - envoy
+      - istio-envoy
       Cache-Control:
       - no-cache
       X-Ratelimit-Limit:
-      - 150000, 150000;w=3600
+      - 50000, 50000;w=3600
       X-Ratelimit-Remaining:
-      - '149985'
+      - '49972'
       X-Ratelimit-Reset:
-      - '971'
+      - '278'
       Age:
       - '0'
       X-Cache:
-      - cp4041 pass, cp4041 pass
+      - cp4042 miss, cp4042 pass
       X-Cache-Status:
       - pass
       Server-Timing:
-      - cache;desc="pass", host;desc="cp4041"
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
       X-Client-Ip:
-      - 67.170.51.150
-      Accept-Ranges:
-      - bytes
+      - "<CLIENT_IP>"
+      Set-Cookie:
+      - WMF-Uniq=YHa8RWhf9MphXtZizEqbcQNSAAAAAFvd6NX-vkEzfwSW0z0vzp_mTXkPA9eJCmso;Domain=api.wikimedia.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
+      X-Request-Id:
+      - 18d27dfc-553b-45ed-a5c3-1fb5ce17cc52
+      X-Analytics:
+      - ''
     body:
       encoding: UTF-8
-      string: '{"enwiki":{"models":{"articlequality":{"version":"0.9.2"}},"scores":{"1100917005":{"articlequality":{"score":{"prediction":"C","probability":{"B":0.28299015396401506,"C":0.3573328702796922,"FA":0.01692526038760883,"GA":0.3075854796998168,"Start":0.029945263882405374,"Stub":0.005220971786461749}}}}}}}'
-  recorded_at: Tue, 02 Jul 2024 22:43:49 GMT
+      string: '{"enwiki":{"models":{"articlequality":{"version":"0.9.2"}},"scores":{"1100917005":{"articlequality":{"score":{"prediction":"C","probability":{"B":0.282990153964015,"C":0.35733287027969207,"FA":0.01692526038760883,"GA":0.3075854796998168,"Start":0.02994526388240537,"Stub":0.005220971786461749}}}}}}}'
+  recorded_at: Thu, 30 Apr 2026 21:55:22 GMT
 recorded_with: VCR 6.1.0
