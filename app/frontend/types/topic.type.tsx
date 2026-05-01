@@ -54,4 +54,5 @@ export default interface Topic {
   classifications: Array<Classification>;
   convert_tokens_to_words: boolean;
   tokens_per_word: number;
+  tb_handle: string | null;
 }

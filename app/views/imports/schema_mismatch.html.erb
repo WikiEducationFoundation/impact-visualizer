@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Topic Builder handoff: schema mismatch</title>
+  <%= render 'layout_head' %>
+</head>
+<body>
+  <h1>Schema version mismatch</h1>
+  <div class="error">
+    <p>This handoff was minted for an unknown schema version
+    (<code><%= @schema_version.inspect %></code>).</p>
+    <p>Update Impact Visualizer or ask Topic Builder to mint a fresh handle.</p>
+  </div>
+  <p class="meta">Handle: <code><%= @handle %></code></p>
+</body>
+</html>

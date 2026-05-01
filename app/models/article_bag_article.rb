@@ -5,9 +5,13 @@ class ArticleBagArticle < ApplicationRecord
   belongs_to :article_bag
   belongs_to :article
 
+  # Validations
+  validates :centrality, numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 10 },
+                         allow_nil: true
+
   # For ActiveAdmin
   def self.ransackable_attributes(auth_object = nil)
-    ["article_bag_id", "article_id", "created_at", "id", "updated_at"]
+    ["article_bag_id", "article_id", "centrality", "created_at", "id", "updated_at"]
   end
 
 end
@@ -17,6 +21,7 @@ end
 # Table name: article_bag_articles
 #
 #  id             :bigint           not null, primary key
+#  centrality     :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  article_bag_id :bigint           not null

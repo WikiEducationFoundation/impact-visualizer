@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_03_02_000000) do
+ActiveRecord::Schema[7.0].define(version: 2026_05_01_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -73,6 +73,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_02_000000) do
     t.bigint "article_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "centrality"
     t.index ["article_bag_id"], name: "index_article_bag_articles_on_article_bag_id"
     t.index ["article_id"], name: "index_article_bag_articles_on_article_id"
   end
@@ -275,6 +276,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_02_000000) do
     t.float "tokens_per_word", default: 3.25
     t.string "incremental_topic_build_job_id"
     t.string "generate_article_analytics_job_id"
+    t.string "tb_handle"
   end
 
   create_table "users", force: :cascade do |t|

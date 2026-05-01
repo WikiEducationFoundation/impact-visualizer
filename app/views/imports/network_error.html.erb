@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Topic Builder unreachable</title>
+  <%= render 'layout_head' %>
+</head>
+<body>
+  <h1>Couldn't reach Topic Builder</h1>
+  <div class="error">
+    <p>Topic Builder might be down — try again in a minute.</p>
+    <p class="meta">Details: <code><%= @network_error %></code></p>
+  </div>
+  <p><a href="<%= import_path(handle: @handle) %>">Try again</a></p>
+</body>
+</html>

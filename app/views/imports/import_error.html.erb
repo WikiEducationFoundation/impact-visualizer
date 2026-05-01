@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Import failed</title>
+  <%= render 'layout_head' %>
+</head>
+<body>
+  <h1>Import failed</h1>
+  <div class="error">
+    <p><%= @import_error %></p>
+  </div>
+
+  <p>You can copy the message below and share it with the AI to ask for a fix:</p>
+  <textarea class="copy-box" rows="3" readonly><%= "handle=#{@handle}\nerror: #{@import_error}" %></textarea>
+
+  <p class="actions">
+    <a href="<%= import_path(handle: @handle) %>">Back to handoff preview</a>
+  </p>
+</body>
+</html>

@@ -19,7 +19,15 @@ const actions = {
     label: "Articles",
     buttonLabel: "Import Articles from CSV",
     isReady: (topic: Topic) => {
-      return !!topic.articles_csv_filename;
+      // TB-imported topics never need a CSV — articles arrive via the
+      // Topic Builder package (and may still be ingesting in the
+      // background, in which case articles_count is 0 but the action
+      // panel should show progress, not a CSV upload form).
+      return (
+        !!topic.articles_csv_filename ||
+        topic.articles_count > 0 ||
+        !!topic.tb_handle
+      );
     },
     isBusy: (topic: Topic) => {
       return topic.articles_import_status !== "idle";

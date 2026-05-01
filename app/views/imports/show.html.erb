@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Import from Topic Builder</title>
+  <%= render 'layout_head' %>
+</head>
+<body>
+  <h1>Import from Topic Builder</h1>
+
+  <p>You're about to import a topic curated in
+  <a href="https://topic-builder.wikiedu.org/">Topic Builder</a>.
+  Review the details below, then click <strong>Import topic</strong>.</p>
+
+  <h2><%= @package.dig('config', 'name') %></h2>
+
+  <dl class="meta">
+    <div><dt>Slug:</dt> <dd><code><%= @package.dig('config', 'slug') %></code></dd></div>
+    <div><dt>Wiki:</dt> <dd><%= @package.dig('config', 'wiki') %>.wikipedia.org</dd></div>
+    <div><dt>Editor label:</dt> <dd><%= @package.dig('config', 'editor_label') %></dd></div>
+    <div><dt>Date range:</dt> <dd><%= @package.dig('config', 'start_date') %> &mdash; <%= @package.dig('config', 'end_date') %></dd></div>
+    <div><dt>Timepoint interval:</dt> <dd>every <%= @package.dig('config', 'timepoint_day_interval') %> days</dd></div>
+    <div><dt>Article count:</dt> <dd><%= @package['article_count'] %></dd></div>
+    <div><dt>Source topic:</dt> <dd><%= @package['source_topic'] %></dd></div>
+    <div><dt>Schema version:</dt> <dd><%= @package['schema_version'] %></dd></div>
+    <div><dt>Handle:</dt> <dd><code><%= @package['handle'] %></code></dd></div>
+  </dl>
+
+  <% if @package.dig('config', 'description').present? %>
+    <h3>Description</h3>
+    <p><%= @package.dig('config', 'description') %></p>
+  <% end %>
+
+  <h3>First <%= @first_articles.size %> articles</h3>
+  <table>
+    <thead>
+      <tr><th>Title</th><th class="centrality">Centrality</th></tr>
+    </thead>
+    <tbody>
+      <% @first_articles.each do |a| %>
+        <tr>
+          <td><%= a['title'] %></td>
+          <td class="centrality"><%= a['centrality'].nil? ? '—' : a['centrality'] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= form_with url: import_path(handle: @handle), method: :post, local: true, class: 'actions' do %>
+    <button type="submit" class="primary">Import topic</button>
+  <% end %>
+</body>
+</html>

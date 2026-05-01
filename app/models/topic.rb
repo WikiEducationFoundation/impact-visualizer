@@ -288,7 +288,7 @@ class Topic < ApplicationRecord
   # For ActiveAdmin
   def self.ransackable_attributes(_auth_object = nil)
     %w[chart_time_unit created_at description display editor_label end_date id name
-       slug start_date timepoint_day_interval updated_at words_per_token
+       slug start_date tb_handle timepoint_day_interval updated_at words_per_token
        convert_tokens_to_words wiki_id]
   end
 end
@@ -314,6 +314,7 @@ end
 #  article_import_job_id             :string
 #  generate_article_analytics_job_id :string
 #  incremental_topic_build_job_id    :string
+#  tb_handle                         :string
 #  timepoint_generate_job_id         :string
 #  users_import_job_id               :string
 #  wiki_id                           :integer
