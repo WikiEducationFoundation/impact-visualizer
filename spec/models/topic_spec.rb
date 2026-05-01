@@ -341,6 +341,7 @@ end
 #  name                              :string
 #  slug                              :string
 #  start_date                        :datetime
+#  tb_handle                         :string
 #  timepoint_day_interval            :integer          default(7)
 #  tokens_per_word                   :float            default(3.25)
 #  created_at                        :datetime         not null

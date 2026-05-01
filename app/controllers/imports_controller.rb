@@ -36,9 +36,12 @@ class ImportsController < ApplicationController
     importer = TopicBuilderImportService.new(package: package, topic_editor: current_admin_user)
     topic = importer.import!
 
-    redirect_to "/topics/#{topic.slug}",
-                allow_other_host: false,
-                notice: "Imported '#{topic.name}' with #{topic.articles_count} articles from Topic Builder."
+    job_id = ImportTopicBuilderArticlesJob.perform_async(topic.id, @handle)
+    topic.update(article_import_job_id: job_id)
+
+    article_count = package['article_count'] || package.fetch('articles', []).size
+    redirect_to "/topics/#{topic.id}",
+                notice: "Imported '#{topic.name}'. Ingesting #{article_count} articles in the background."
   rescue TopicBuilderPackageService::NotFound
     render :not_found, status: :not_found
   rescue TopicBuilderPackageService::SchemaVersionError => e

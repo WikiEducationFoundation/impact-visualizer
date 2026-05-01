@@ -28,13 +28,13 @@ describe TopicBuilderImportService do
   end
 
   describe '#import!' do
-    it 'creates a Topic, ArticleBag, and ArticleBagArticles atomically' do
+    it 'creates a Topic and an empty ArticleBag atomically (articles are imported async)' do
       expect {
         described_class.new(package: package).import!
       }.to change(Topic, :count).by(1)
         .and change(ArticleBag, :count).by(1)
-        .and change(Article, :count).by(2)
-        .and change(ArticleBagArticle, :count).by(2)
+        .and change(Article, :count).by(0)
+        .and change(ArticleBagArticle, :count).by(0)
     end
 
     it 'sets topic fields from the package config' do
@@ -53,30 +53,11 @@ describe TopicBuilderImportService do
       expect(topic.end_date.to_date).to eq(Date.new(2026, 5, 30))
     end
 
-    it 'persists centrality scores per article' do
-      topic = described_class.new(package: package).import!
-      bag = topic.article_bags.first
-      bagged = bag.article_bag_articles.includes(:article).index_by { |aba| aba.article.title }
-      expect(bagged.fetch('Achievement gap').centrality).to eq(8)
-      expect(bagged.fetch('Active learning').centrality).to be_nil
-    end
-
     it 'raises UnknownWikiError when IV has no row for the language' do
       package['config']['wiki'] = 'klingon'
       expect {
         described_class.new(package: package).import!
       }.to raise_error(TopicBuilderImportService::UnknownWikiError, /klingon/)
-    end
-
-    it 'raises ValidationError and rolls back when a centrality is out of range' do
-      package['articles'] << { 'title' => 'Bogus', 'centrality' => 99 }
-      expect {
-        expect {
-          described_class.new(package: package).import!
-        }.to raise_error(TopicBuilderImportService::ValidationError)
-      }.to change(Topic, :count).by(0)
-        .and change(ArticleBag, :count).by(0)
-        .and change(ArticleBagArticle, :count).by(0)
     end
 
     it 'associates the topic with a non-admin topic_editor' do

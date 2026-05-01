@@ -89,30 +89,25 @@ describe ImportsController do
     context 'when signed in as admin' do
       before { sign_in admin }
 
-      it 'creates the topic and redirects to its show page' do
+      it 'creates the topic, enqueues the article-ingestion job, and redirects by id' do
         stub_request(:get, url).to_return(
           status: 200, body: package.to_json,
           headers: { 'Content-Type' => 'application/json' }
         )
 
-        expect { post "/imports/#{handle}" }
-          .to change(Topic, :count).by(1)
+        expect {
+          post "/imports/#{handle}"
+        }.to change(Topic, :count).by(1)
+          .and change(ImportTopicBuilderArticlesJob.jobs, :size).by(1)
 
         topic = Topic.last
         expect(topic.tb_handle).to eq(handle)
-        expect(topic.articles.pluck(:title)).to match_array(['Achievement gap', 'Active learning'])
-        expect(response).to redirect_to("/topics/#{topic.slug}")
-      end
+        expect(topic.article_import_job_id).to be_present
+        expect(topic.articles).to be_empty # ingestion is async
+        expect(response).to redirect_to("/topics/#{topic.id}")
 
-      it 'persists centrality on the article_bag_articles' do
-        stub_request(:get, url).to_return(
-          status: 200, body: package.to_json
-        )
-        post "/imports/#{handle}"
-        topic = Topic.last
-        bag = topic.article_bags.first
-        scores = bag.article_bag_articles.includes(:article).map { |a| [a.article.title, a.centrality] }.to_h
-        expect(scores).to eq('Achievement gap' => 8, 'Active learning' => nil)
+        enqueued = ImportTopicBuilderArticlesJob.jobs.last
+        expect(enqueued['args']).to eq([topic.id, handle])
       end
 
       it 'shows the unknown-wiki error if IV has no row for the language' do

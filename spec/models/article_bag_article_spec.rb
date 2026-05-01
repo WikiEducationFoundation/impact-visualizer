@@ -12,6 +12,7 @@ end
 # Table name: article_bag_articles
 #
 #  id             :bigint           not null, primary key
+#  centrality     :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #  article_bag_id :bigint           not null

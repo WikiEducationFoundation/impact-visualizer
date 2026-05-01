@@ -50,8 +50,7 @@ class TopicBuilderImportService
         tb_handle: handle
       )
 
-      bag = ArticleBag.create!(topic: topic, name: "#{topic.slug.titleize} Articles")
-      attach_articles!(bag, wiki)
+      ArticleBag.create!(topic: topic, name: "#{topic.slug.titleize} Articles")
 
       if topic_editor && !topic_editor.is_a?(AdminUser)
         topic_editor.topics << topic
@@ -69,18 +68,5 @@ class TopicBuilderImportService
     wiki = Wiki.find_by(language: language, project: 'wikipedia')
     raise UnknownWikiError.new(language) unless wiki
     wiki
-  end
-
-  def attach_articles!(bag, wiki)
-    package.fetch('articles', []).each do |entry|
-      title = entry['title'].to_s
-      next if title.empty?
-      article = Article.find_or_create_by!(title: title, wiki: wiki)
-      ArticleBagArticle.create!(
-        article_bag: bag,
-        article: article,
-        centrality: entry['centrality']
-      )
-    end
   end
 end
