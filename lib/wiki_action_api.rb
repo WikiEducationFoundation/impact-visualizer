@@ -504,12 +504,25 @@ class WikiActionApi
     client
   end
 
+  # Wikimedia OAuth 2 owner-only consumer token (scopes: basic +
+  # highvolume). With this set, requests count against the
+  # consumer's per-account quota (150k req/hr at time of writing) and
+  # get apihighlimits-equivalent paging — vs anonymous's per-IP
+  # bucket that throttles to ~5k req/hr. No-op when the credential
+  # isn't set (e.g. local dev without the credential file decrypted)
+  # so requests fall back to anonymous.
+  def authenticate(client)
+    token = Rails.application.credentials.dig(:wiki, :token)
+    client.oauth_access_token(token) if token
+    client
+  end
+
   def api_client
-    set_user_agent(MediawikiApi::Client.new(@api_url))
+    authenticate(set_user_agent(MediawikiApi::Client.new(@api_url)))
   end
 
   def wikidata_api_client
-    set_user_agent(MediawikiApi::Client.new('https://www.wikidata.org/w/api.php'))
+    authenticate(set_user_agent(MediawikiApi::Client.new('https://www.wikidata.org/w/api.php')))
   end
 
   # Default backoff when the server doesn't send a Retry-After header.

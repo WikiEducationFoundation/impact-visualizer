@@ -46,6 +46,9 @@ class WikiRestApi
       faraday.adapter Faraday.default_adapter
     end
     connection.headers['User-Agent'] = Features.user_agent
+    if (token = Rails.application.credentials.dig(:wiki, :token))
+      connection.headers['Authorization'] = "Bearer #{token}"
+    end
     connection
   end
 
