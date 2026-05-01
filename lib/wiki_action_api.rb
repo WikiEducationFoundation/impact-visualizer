@@ -540,7 +540,12 @@ class WikiActionApi
         wait_seconds = retry_after.to_i if retry_after
         wait_seconds = [wait_seconds || 0, DEFAULT_RETRY_AFTER_SECONDS].max
         wait_seconds = [wait_seconds, MAX_RETRY_AFTER_SECONDS].min
-        wait_seconds += rand(0.0..0.5)
+        # 0–3 s of jitter, not 0–0.5: under high concurrency (analytics
+        # is now multi-threaded) all retrying threads tend to wake up
+        # near the same Retry-After deadline. With 0–0.5 s jitter on a
+        # 5–30 s wait they re-burst as a near-synchronous herd; 0–3 s
+        # is enough to spread the wave across a few seconds.
+        wait_seconds += rand(0.0..3.0)
         puts "WikiActionApi / 429 Too Many Requests - waiting #{wait_seconds.round(2)}s (attempt #{tries}/#{total_tries})"
         sleep wait_seconds
       else
