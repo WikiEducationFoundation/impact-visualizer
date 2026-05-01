@@ -10,7 +10,7 @@ describe WikiWhoApi do
     let(:missing_revision_id) { 853329422 }
     let(:broken_revision_id) { 1255983861 }
 
-    it 'handles 400 error as expected', vcr: false do
+    it 'handles 400 error as expected', :vcr do
       expect do
         subject.get_revision_tokens(missing_revision_id)
       end.not_to raise_error(WikiWhoApi::RevisionTokenError)
@@ -18,7 +18,7 @@ describe WikiWhoApi do
       expect(subject.get_revision_tokens(missing_revision_id)).to eq(nil)
     end
 
-    it 'handles 408 error as expected', vcr: false do
+    it 'handles 408 error as expected', :vcr do
       expect do
         subject.get_revision_tokens(broken_revision_id)
       end.not_to raise_error(WikiWhoApi::RevisionTokenError)
@@ -50,7 +50,7 @@ describe WikiWhoApi do
     let(:subject) { described_class.new(wiki:) }
     let(:revision_id) { 641962088 }
 
-    it 'fetches tokens and attributed editor ID for a given revision', vcr: false do
+    it 'fetches tokens and attributed editor ID for a given revision', :vcr do
       tokens = subject.get_revision_tokens(revision_id)
       expect(tokens.count).to eq(177)
       expect(tokens.first['str']).to be_a(String)

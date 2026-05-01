@@ -2,13 +2,13 @@
 http_interactions:
 - request:
     method: get
-    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=58170849&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids&rvstart=2023-01-01T00:00:00Z
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=58170849&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids%7Cslotsha1&rvstart=2023-01-01T00:00:00Z
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.17.6
+      - impact-visualizer (https://impact.wikiedu.org; sage@wikiedu.org) test
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -19,31 +19,31 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Wed, 09 Aug 2023 20:40:05 GMT
+      - Thu, 30 Apr 2026 22:15:05 GMT
       Server:
-      - mw2402.codfw.wmnet
+      - mw-api-ext.codfw.canary-f7cbbfdc4-v2bvv
       X-Content-Type-Options:
       - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
       X-Frame-Options:
-      - SAMEORIGIN
+      - DENY
       Content-Disposition:
       - inline; filename=api-result.json
-      Vary:
-      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
       Cache-Control:
       - private, must-revalidate, max-age=0
-      Content-Length:
-      - '303'
       Content-Type:
       - application/json; charset=utf-8
       Age:
       - '0'
+      Accept-Ranges:
+      - bytes
       X-Cache:
-      - cp4041 miss, cp4041 pass
+      - cp4042 miss, cp4042 pass
       X-Cache-Status:
       - pass
       Server-Timing:
-      - cache;desc="pass", host;desc="cp4041"
+      - cache;desc="pass", host;desc="cp4042"
       Strict-Transport-Security:
       - max-age=106384710; includeSubDomains; preload
       Report-To:
@@ -53,19 +53,27 @@ http_interactions:
       - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
         0.0}'
       Set-Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
-      - NetworkProbeLimit=0.001;Path=/;Secure;Max-Age=3600
-      - WMF-Last-Access-Global=09-Aug-2023;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sun,
-        10 Sep 2023 12:00:00 GMT
-      - WMF-Last-Access=09-Aug-2023;Path=/;HttpOnly;secure;Expires=Sun, 10 Sep 2023
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=None;Max-Age=3600
+      - WMF-Last-Access-Global=30-Apr-2026;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
+        01 Jun 2026 12:00:00 GMT
+      - WMF-Last-Access=30-Apr-2026;Path=/;HttpOnly;secure;Expires=Mon, 01 Jun 2026
         12:00:00 GMT
+      - WMF-Uniq=TXX1mwwzqEalhzHV_jNoFANSAAAAAFvdrbmla8Y3QDlR94uE_CnxMk1TlrBYgcQL;Domain=.wikipedia.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
       X-Client-Ip:
-      - 67.170.51.150
-      Accept-Ranges:
-      - bytes
+      - "<CLIENT_IP>"
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
+      Content-Length:
+      - '353'
+      X-Request-Id:
+      - 12a3c621-85cd-42ee-aa2a-9f3f770bd052
+      X-Analytics:
+      - ''
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJjb250aW51ZSI6eyJydmNvbnRpbnVlIjoiMjAyMTA2MDUxODI0MTh8MTAyNzAzNTM5NCIsImNvbnRpbnVlIjoifHwifSwicXVlcnkiOnsicGFnZXMiOlt7InBhZ2VpZCI6NTgxNzA4NDksIm5zIjowLCJ0aXRsZSI6IkJhdHRsZSBvZiBCb3VyZ3Row6lyb3VsZGUiLCJyZXZpc2lvbnMiOlt7InJldmlkIjoxMDg0NTgxNTEyLCJwYXJlbnRpZCI6MTAyNzAzNTM5NCwidXNlciI6IlRoZSBNaWdodHkgRm9yZXN0IiwidXNlcmlkIjo0MjQyODMxMSwidGltZXN0YW1wIjoiMjAyMi0wNC0yNVQxMDoyMTo0NloiLCJzaXplIjo4NTUyfV19XX19
-  recorded_at: Wed, 09 Aug 2023 20:40:05 GMT
+        eyJjb250aW51ZSI6eyJydmNvbnRpbnVlIjoiMjAyMTA2MDUxODI0MTh8MTAyNzAzNTM5NCIsImNvbnRpbnVlIjoifHwifSwicXVlcnkiOnsicGFnZXMiOlt7InBhZ2VpZCI6NTgxNzA4NDksIm5zIjowLCJ0aXRsZSI6IkJhdHRsZSBvZiBCb3VyZ3Row6lyb3VsZGUiLCJyZXZpc2lvbnMiOlt7InJldmlkIjoxMDg0NTgxNTEyLCJwYXJlbnRpZCI6MTAyNzAzNTM5NCwidXNlciI6IlRoZSBNaWdodHkgRm9yZXN0IiwidXNlcmlkIjo0MjQyODMxMSwidGltZXN0YW1wIjoiMjAyMi0wNC0yNVQxMDoyMTo0NloiLCJzaXplIjo4NTUyLCJzaGExIjoiOTMzMmNlNGNjOWFmMGU3YjA1MTg0YjQ1NGEyOTlhZWQyMzM3OTgxZSJ9XX1dfX0=
+  recorded_at: Thu, 30 Apr 2026 22:15:05 GMT
 recorded_with: VCR 6.1.0

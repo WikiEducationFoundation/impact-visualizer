@@ -1,0 +1,79 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&prop=info&redirects=true&titles=Yankari%20Game%20Reserve
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 30 Apr 2026 19:13:54 GMT
+      Server:
+      - mw-api-ext.codfw.main-64c44cd949-bjp5w
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      Accept-Ranges:
+      - bytes
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=None;Max-Age=3600
+      - WMF-Last-Access-Global=30-Apr-2026;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
+        01 Jun 2026 12:00:00 GMT
+      - WMF-Last-Access=30-Apr-2026;Path=/;HttpOnly;secure;Expires=Mon, 01 Jun 2026
+        12:00:00 GMT
+      - WMF-Uniq=ffKQLMQaVGIDTOcelECynwNSAAAAAFvdp9ACTwkU16EJmZDoabjpDKM1lhIN0YZL;Domain=.wikipedia.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
+      X-Client-Ip:
+      - <CLIENT_IP>
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
+      Content-Length:
+      - '267'
+      X-Request-Id:
+      - 1b6c905f-2ab1-4c59-bdb4-0634d20101d7
+      X-Analytics:
+      - ''
+    body:
+      encoding: ASCII-8BIT
+      string: '{"batchcomplete":true,"query":{"pages":[{"pageid":2364730,"ns":0,"title":"Yankari
+        Game Reserve","contentmodel":"wikitext","pagelanguage":"en","pagelanguagehtmlcode":"en","pagelanguagedir":"ltr","touched":"2026-04-20T13:43:30Z","lastrevid":1340340122,"length":9677}]}}'
+  recorded_at: Thu, 30 Apr 2026 19:13:54 GMT
+recorded_with: VCR 6.1.0

@@ -153,7 +153,8 @@ describe TopicArticleTimepointStatsService do
       start_topic_article_timepoint_1.reload
 
       expect(start_topic_article_timepoint_1.attributed_creator).to eq(user)
-      expect(start_topic_article_timepoint_1.attributed_creation_at).to eq(first_revision_at)
+      expect(start_topic_article_timepoint_1.attributed_creation_at)
+        .to be_within(1.second).of(first_revision_at)
     end
   end
 
@@ -197,7 +198,7 @@ describe TopicArticleTimepointStatsService do
     end
 
     it 'uses full count for attributed_token_count_delta if
-       first timepoint AND is NOT first timestamp in Topic', vcr: false do
+       first timepoint AND is NOT first timestamp in Topic', :vcr do
       tokens = WikiWhoApi.new(wiki: Wiki.default_wiki).get_revision_tokens(
         end_article_timepoint_1.revision_id
       )

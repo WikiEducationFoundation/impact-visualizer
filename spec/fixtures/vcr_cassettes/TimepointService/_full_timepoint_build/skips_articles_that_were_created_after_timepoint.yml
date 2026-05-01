@@ -1,0 +1,421 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://www.wikidata.org/w/api.php?action=query&format=json&meta=tokens&type=csrf
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 30 Apr 2026 19:42:03 GMT
+      Server:
+      - mw-api-ext.codfw.main-64c44cd949-bvbwn
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      Set-Cookie:
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; Path=/; secure; Domain=.wikidata.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=None;Max-Age=3600
+      - WMF-Last-Access-Global=30-Apr-2026;Path=/;Domain=.wikidata.org;HttpOnly;secure;Expires=Mon,
+        01 Jun 2026 12:00:00 GMT
+      - WMF-Last-Access=30-Apr-2026;Path=/;HttpOnly;secure;Expires=Mon, 01 Jun 2026
+        12:00:00 GMT
+      - WMF-Uniq=DnGvDUCBcmBneMCfr2bCMANSAAAAAFvdVU9H7qOT4MpavuEKzzhcQ481uIz2MfPw;Domain=.wikidata.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
+      X-Client-Ip:
+      - <CLIENT_IP>
+      Vary:
+      - Accept-Encoding,User-Agent
+      Content-Length:
+      - '59'
+      X-Request-Id:
+      - e87bb772-a0b0-4650-ab1b-d774c6d6bea3
+      X-Analytics:
+      - ''
+    body:
+      encoding: ASCII-8BIT
+      string: '{"batchcomplete":"","query":{"tokens":{"csrftoken":"+\\"}}}'
+  recorded_at: Thu, 30 Apr 2026 19:42:03 GMT
+- request:
+    method: post
+    uri: https://www.wikidata.org/w/api.php
+    body:
+      encoding: UTF-8
+      string: action=wbgetentities&format=json&sites=enwiki&titles=15613&token=%2B%5C
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=30-Apr-2026;
+        WMF-Last-Access-Global=30-Apr-2026; WMF-Uniq=DnGvDUCBcmBneMCfr2bCMANSAAAAAFvdVU9H7qOT4MpavuEKzzhcQ481uIz2MfPw
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 429
+      message: Too Many Requests
+    headers:
+      X-Envoy-Ratelimited:
+      - 'true'
+      Content-Length:
+      - '228'
+      Retry-After:
+      - '57'
+      Content-Type:
+      - text/plain
+      Date:
+      - Thu, 30 Apr 2026 19:42:03 GMT
+      Server:
+      - envoy
+      Age:
+      - '0'
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - <CLIENT_IP>
+      Vary:
+      - User-Agent
+      Set-Cookie:
+      - WMF-Uniq=DnGvDUCBcmBneMCfr2bCMANSAAEBAFvdkazwQL2cDUMB-HKXSg5ISEGZ5LvaKoPr;Domain=.wikidata.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
+      X-Request-Id:
+      - 6119ee7b-4394-4f81-b711-425d71692ec0
+      X-Analytics:
+      - ''
+    body:
+      encoding: UTF-8
+      string: |-
+        You are making too many requests to the API.
+        Please follow the best practices at <https://www.mediawiki.org/wiki/Wikimedia_APIs/Rate_limits>.
+        If you are unsure how to get the access you need, contact <bot-traffic@wikimedia.org>.
+  recorded_at: Thu, 30 Apr 2026 19:42:03 GMT
+- request:
+    method: post
+    uri: https://www.wikidata.org/w/api.php
+    body:
+      encoding: UTF-8
+      string: action=wbgetentities&format=json&sites=enwiki&titles=15613&token=%2B%5C
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=30-Apr-2026;
+        WMF-Last-Access-Global=30-Apr-2026; WMF-Uniq=DnGvDUCBcmBneMCfr2bCMANSAAEBAFvdkazwQL2cDUMB-HKXSg5ISEGZ5LvaKoPr
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 30 Apr 2026 19:43:01 GMT
+      Server:
+      - mw-api-ext.eqiad.main-5d4f7bdd76-7g9dv
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - <CLIENT_IP>
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
+      Content-Length:
+      - '137'
+      X-Request-Id:
+      - 233687d1-d1da-49d0-a96f-a6081926cc4a
+      X-Analytics:
+      - ''
+    body:
+      encoding: ASCII-8BIT
+      string: '{"warnings":{"main":{"*":"Unrecognized parameter: token."}},"entities":{"-1":{"site":"enwiki","title":"15613","missing":""}},"success":1}'
+  recorded_at: Thu, 30 Apr 2026 19:43:01 GMT
+- request:
+    method: post
+    uri: https://www.wikidata.org/w/api.php
+    body:
+      encoding: UTF-8
+      string: action=wbgetentities&format=json&sites=enwiki&titles=11846&token=%2B%5C
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=30-Apr-2026;
+        WMF-Last-Access-Global=30-Apr-2026; WMF-Uniq=DnGvDUCBcmBneMCfr2bCMANSAAEBAFvdkazwQL2cDUMB-HKXSg5ISEGZ5LvaKoPr
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 30 Apr 2026 19:43:01 GMT
+      Server:
+      - mw-api-ext.eqiad.main-5d4f7bdd76-swrz5
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - <CLIENT_IP>
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
+      Content-Length:
+      - '137'
+      X-Request-Id:
+      - 0e509923-e0dd-4b97-ad52-0425500026f3
+      X-Analytics:
+      - ''
+    body:
+      encoding: ASCII-8BIT
+      string: '{"warnings":{"main":{"*":"Unrecognized parameter: token."}},"entities":{"-1":{"site":"enwiki","title":"11846","missing":""}},"success":1}'
+  recorded_at: Thu, 30 Apr 2026 19:43:01 GMT
+- request:
+    method: post
+    uri: https://www.wikidata.org/w/api.php
+    body:
+      encoding: UTF-8
+      string: action=wbgetentities&format=json&sites=enwiki&titles=22418955&token=%2B%5C
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=30-Apr-2026;
+        WMF-Last-Access-Global=30-Apr-2026; WMF-Uniq=DnGvDUCBcmBneMCfr2bCMANSAAEBAFvdkazwQL2cDUMB-HKXSg5ISEGZ5LvaKoPr
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 30 Apr 2026 19:43:01 GMT
+      Server:
+      - mw-api-ext.eqiad.main-5d4f7bdd76-f9d5r
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - <CLIENT_IP>
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
+      Content-Length:
+      - '140'
+      X-Request-Id:
+      - a13b848f-d52f-4001-a6e5-a61a60973696
+      X-Analytics:
+      - ''
+    body:
+      encoding: ASCII-8BIT
+      string: '{"warnings":{"main":{"*":"Unrecognized parameter: token."}},"entities":{"-1":{"site":"enwiki","title":"22418955","missing":""}},"success":1}'
+  recorded_at: Thu, 30 Apr 2026 19:43:01 GMT
+- request:
+    method: post
+    uri: https://www.wikidata.org/w/api.php
+    body:
+      encoding: UTF-8
+      string: action=wbgetentities&format=json&sites=enwiki&titles=2364730&token=%2B%5C
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+      Cookie:
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=30-Apr-2026;
+        WMF-Last-Access-Global=30-Apr-2026; WMF-Uniq=DnGvDUCBcmBneMCfr2bCMANSAAEBAFvdkazwQL2cDUMB-HKXSg5ISEGZ5LvaKoPr
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 30 Apr 2026 19:43:01 GMT
+      Server:
+      - mw-api-ext.eqiad.main-5d4f7bdd76-k8ckz
+      X-Content-Type-Options:
+      - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
+      X-Frame-Options:
+      - DENY
+      Content-Disposition:
+      - inline; filename=api-result.json
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      Content-Type:
+      - application/json; charset=utf-8
+      Age:
+      - '0'
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - <CLIENT_IP>
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
+      Content-Length:
+      - '139'
+      X-Request-Id:
+      - 05b47445-802a-4bcf-ba48-eb78c7af55ea
+      X-Analytics:
+      - ''
+    body:
+      encoding: ASCII-8BIT
+      string: '{"warnings":{"main":{"*":"Unrecognized parameter: token."}},"entities":{"-1":{"site":"enwiki","title":"2364730","missing":""}},"success":1}'
+  recorded_at: Thu, 30 Apr 2026 19:43:01 GMT
+recorded_with: VCR 6.1.0

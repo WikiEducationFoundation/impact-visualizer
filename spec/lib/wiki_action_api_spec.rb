@@ -71,7 +71,7 @@ describe WikiActionApi do
   end
 
   describe '#get_page_info' do
-    it 'returns page info given pageid' do
+    it 'returns page info given pageid', :vcr do
       wiki_api = described_class.new(wiki)
       data = wiki_api.get_page_info(pageid: 58170849)
       expect(data).to be_a(Hashugar)
@@ -81,7 +81,7 @@ describe WikiActionApi do
       expect(data['length']).to be_a(Integer)
     end
 
-    it 'returns page info given title' do
+    it 'returns page info given title', :vcr do
       wiki_api = described_class.new(wiki)
       data = wiki_api.get_page_info(title: 'Battle of Bourgthéroulde')
       expect(data).to be_a(Hashugar)

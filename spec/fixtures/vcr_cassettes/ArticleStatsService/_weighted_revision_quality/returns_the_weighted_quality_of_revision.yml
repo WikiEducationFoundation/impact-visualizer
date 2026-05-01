@@ -1,0 +1,68 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.wikimedia.org/service/lw/inference/v1/models/enwiki-articlequality:predict
+    body:
+      encoding: UTF-8
+      string: '{"rev_id":1100917005}'
+    headers:
+      Content-Type:
+      - application/json
+      User-Agent:
+      - impact-visualizer (https://impact.wikiedu.org) test
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Length:
+      - '299'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 30 Apr 2026 20:57:21 GMT
+      Server:
+      - istio-envoy
+      Cache-Control:
+      - no-cache
+      X-Ratelimit-Limit:
+      - 50000, 50000;w=3600
+      X-Ratelimit-Remaining:
+      - '49973'
+      X-Ratelimit-Reset:
+      - '159'
+      Age:
+      - '2'
+      X-Cache:
+      - cp4042 miss, cp4042 pass
+      X-Cache-Status:
+      - pass
+      Server-Timing:
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
+      X-Client-Ip:
+      - <CLIENT_IP>
+      Set-Cookie:
+      - WMF-Uniq=vkvaHY0HbNKXdXbsz20EoQNSAAAAAFvdan2uoqnQhMCWroWWZkoSV_wOjmunFUAQ;Domain=api.wikimedia.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
+      X-Request-Id:
+      - 22f888cd-7ccc-44a8-997a-935f01fc045e
+      X-Analytics:
+      - ''
+    body:
+      encoding: UTF-8
+      string: '{"enwiki":{"models":{"articlequality":{"version":"0.9.2"}},"scores":{"1100917005":{"articlequality":{"score":{"prediction":"C","probability":{"B":0.282990153964015,"C":0.35733287027969207,"FA":0.01692526038760883,"GA":0.3075854796998168,"Start":0.02994526388240537,"Stub":0.005220971786461749}}}}}}}'
+  recorded_at: Thu, 30 Apr 2026 20:57:22 GMT
+recorded_with: VCR 6.1.0

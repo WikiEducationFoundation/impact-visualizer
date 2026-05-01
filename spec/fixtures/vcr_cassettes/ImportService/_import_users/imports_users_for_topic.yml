@@ -58,7 +58,7 @@ http_interactions:
       - WMF-Last-Access=07-Nov-2024;Path=/;HttpOnly;secure;Expires=Mon, 09 Dec 2024
         12:00:00 GMT
       X-Client-Ip:
-      - 73.35.177.235
+      - <CLIENT_IP>
       Accept-Ranges:
       - bytes
       Content-Length:
@@ -125,7 +125,7 @@ http_interactions:
       - WMF-Last-Access=07-Nov-2024;Path=/;HttpOnly;secure;Expires=Mon, 09 Dec 2024
         12:00:00 GMT
       X-Client-Ip:
-      - 73.35.177.235
+      - <CLIENT_IP>
       Accept-Ranges:
       - bytes
       Content-Length:
@@ -192,7 +192,7 @@ http_interactions:
       - WMF-Last-Access=07-Nov-2024;Path=/;HttpOnly;secure;Expires=Mon, 09 Dec 2024
         12:00:00 GMT
       X-Client-Ip:
-      - 73.35.177.235
+      - <CLIENT_IP>
       Accept-Ranges:
       - bytes
       Content-Length:
@@ -259,7 +259,7 @@ http_interactions:
       - WMF-Last-Access=07-Nov-2024;Path=/;HttpOnly;secure;Expires=Mon, 09 Dec 2024
         12:00:00 GMT
       X-Client-Ip:
-      - 73.35.177.235
+      - <CLIENT_IP>
       Accept-Ranges:
       - bytes
       Content-Length:
@@ -327,7 +327,7 @@ http_interactions:
       - WMF-Last-Access=07-Nov-2024;Path=/;HttpOnly;secure;Expires=Mon, 09 Dec 2024
         12:00:00 GMT
       X-Client-Ip:
-      - 73.35.177.235
+      - <CLIENT_IP>
       Accept-Ranges:
       - bytes
       Content-Length:

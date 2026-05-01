@@ -529,7 +529,7 @@ class WikiActionApi
     end
   rescue StandardError => e
     tries += 1
-    unless Rails.env.test?
+    if !Rails.env.test? || ENV['VCR_RECORD']
       if too_many_requests?(e)
         # Faraday 2 exposes headers via a method (case-insensitive
         # CaseInsensitiveHash), not via `response[:headers]`. The

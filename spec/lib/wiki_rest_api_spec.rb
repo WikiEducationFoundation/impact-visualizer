@@ -10,7 +10,7 @@ describe WikiRestApi do
 
     it 'handles mediawiki 503 errors gracefully' do
       stub_wikipedia_503_error
-      expect { subject }.to raise_error(Faraday::ClientError)
+      expect { subject }.to raise_error(Faraday::ServerError)
     end
 
     it 'handles mediawiki 429 errors gracefully' do
@@ -21,7 +21,7 @@ describe WikiRestApi do
     it 'handles timeout errors gracefully' do
       allow_any_instance_of(Faraday::Connection).to receive(:get)
         .and_raise(Faraday::TimeoutError)
-      expect { subject }.to raise_error(Faraday::ClientError)
+      expect { subject }.to raise_error(Faraday::TimeoutError)
     end
   end
 

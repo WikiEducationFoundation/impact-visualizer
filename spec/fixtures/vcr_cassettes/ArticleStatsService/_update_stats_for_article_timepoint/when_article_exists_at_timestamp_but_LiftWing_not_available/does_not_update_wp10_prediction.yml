@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.17.6
+      - impact-visualizer (https://impact.wikiedu.org; sage@wikiedu.org) test
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -19,17 +19,17 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 02 Jul 2024 22:43:24 GMT
+      - Thu, 30 Apr 2026 21:55:24 GMT
       Server:
-      - mw-api-ext.codfw.main-68d8749ff4-8qqjz
+      - mw-api-ext.codfw.main-77bf6c594d-rsfmq
       X-Content-Type-Options:
       - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
       X-Frame-Options:
       - DENY
       Content-Disposition:
       - inline; filename=api-result.json
-      Vary:
-      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
       Cache-Control:
       - private, must-revalidate, max-age=0
       Content-Type:
@@ -37,40 +37,54 @@ http_interactions:
       Age:
       - '0'
       X-Cache:
-      - cp4041 miss, cp4041 pass
+      - cp4042 miss, cp4042 pass
       X-Cache-Status:
       - pass
       Server-Timing:
-      - cache;desc="pass", host;desc="cp4041"
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
       Set-Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
-      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
-      - WMF-Last-Access-Global=02-Jul-2024;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Sat,
-        03 Aug 2024 12:00:00 GMT
-      - WMF-Last-Access=02-Jul-2024;Path=/;HttpOnly;secure;Expires=Sat, 03 Aug 2024
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; Path=/; secure; Domain=.wikipedia.org
+      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=None;Max-Age=3600
+      - WMF-Last-Access-Global=30-Apr-2026;Path=/;Domain=.wikipedia.org;HttpOnly;secure;Expires=Mon,
+        01 Jun 2026 12:00:00 GMT
+      - WMF-Last-Access=30-Apr-2026;Path=/;HttpOnly;secure;Expires=Mon, 01 Jun 2026
         12:00:00 GMT
+      - WMF-Uniq=-U0LZ8BWlohG_LndG-jQSwNSAAAAAFvd_ALI967R0Dnt9I7kaBrT01NBrtqS7t09;Domain=.wikipedia.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
       X-Client-Ip:
-      - 67.170.51.150
-      Accept-Ranges:
-      - bytes
+      - "<CLIENT_IP>"
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
       Content-Length:
       - '243'
+      X-Request-Id:
+      - d644ed54-141a-4a6d-a320-c86a1b5e4b63
+      X-Analytics:
+      - ''
     body:
       encoding: ASCII-8BIT
       string: '{"continue":{"rvcontinue":"20030127171522|102738","continue":"||"},"query":{"pages":[{"pageid":19129,"ns":0,"title":"MACHO","revisions":[{"revid":70514,"parentid":0,"user":"Wing","userid":550,"timestamp":"2003-01-27T15:23:10Z","size":448}]}]}}'
-  recorded_at: Tue, 02 Jul 2024 22:43:24 GMT
+  recorded_at: Thu, 30 Apr 2026 21:55:24 GMT
 - request:
     method: get
-    uri: https://de.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=19129&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids&rvstart=2024-06-01T00:00:00Z
+    uri: https://de.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&pageids=19129&prop=revisions&redirects=true&rvdir=older&rvlimit=1&rvprop=size%7Cuser%7Cuserid%7Ctimestamp%7Cids%7Cslotsha1&rvstart=2024-06-01T00:00:00Z
     body:
       encoding: US-ASCII
       string: ''
     headers:
       User-Agent:
-      - Faraday v0.17.6
+      - impact-visualizer (https://impact.wikiedu.org; sage@wikiedu.org) test
       Cookie:
-      - GeoIP=US:WA:Seattle:47.75:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=02-Jul-2024;
-        WMF-Last-Access-Global=02-Jul-2024
+      - GeoIP=US:WA:Seattle:47.54:-122.30:v4; NetworkProbeLimit=0.001; WMF-Last-Access=30-Apr-2026;
+        WMF-Last-Access-Global=30-Apr-2026; WMF-Uniq=-U0LZ8BWlohG_LndG-jQSwNSAAAAAFvd_ALI967R0Dnt9I7kaBrT01NBrtqS7t09
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -81,41 +95,54 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Tue, 02 Jul 2024 22:43:24 GMT
+      - Thu, 30 Apr 2026 21:55:24 GMT
       Server:
-      - mw-api-ext.codfw.main-68d8749ff4-5plsn
+      - mw-api-ext.codfw.main-77bf6c594d-b2zsr
       X-Content-Type-Options:
       - nosniff
+      Content-Security-Policy:
+      - default-src 'self'; script-src 'none'; object-src 'none'
       X-Frame-Options:
       - DENY
       Content-Disposition:
       - inline; filename=api-result.json
-      Vary:
-      - Accept-Encoding,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization
       Cache-Control:
       - private, must-revalidate, max-age=0
       Content-Type:
       - application/json; charset=utf-8
       Age:
-      - '0'
+      - '2'
       X-Cache:
-      - cp4041 miss, cp4041 pass
+      - cp4042 miss, cp4042 pass
       X-Cache-Status:
       - pass
       Server-Timing:
-      - cache;desc="pass", host;desc="cp4041"
+      - cache;desc="pass", host;desc="cp4042"
+      Strict-Transport-Security:
+      - max-age=106384710; includeSubDomains; preload
+      Report-To:
+      - '{ "group": "wm_nel", "max_age": 604800, "endpoints": [{ "url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"
+        }] }'
+      Nel:
+      - '{ "report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
       X-Client-Ip:
-      - 67.170.51.150
+      - "<CLIENT_IP>"
+      Vary:
+      - Accept-Encoding,X-Subdomain,Treat-as-Untrusted,X-Forwarded-Proto,Cookie,Authorization,User-Agent
       Set-Cookie:
-      - NetworkProbeLimit=0.001;Path=/;Secure;SameSite=Lax;Max-Age=3600
-      Accept-Ranges:
-      - bytes
+      - WMF-Uniq=-U0LZ8BWlohG_LndG-jQSwNSAAEBAFvddOI8v2UlTBscmOHlIhZ1RrzHwAzz3hNM;Domain=.wikipedia.org;Path=/;HttpOnly;secure;SameSite=None;Expires=Fri,
+        30 Apr 2027 00:00:00 GMT
       Content-Length:
-      - '270'
+      - '320'
+      X-Request-Id:
+      - c7c53f83-b13c-40ac-acee-b3125a416fe8
+      X-Analytics:
+      - ''
     body:
       encoding: ASCII-8BIT
-      string: '{"continue":{"rvcontinue":"20231105190914|238828604","continue":"||"},"query":{"pages":[{"pageid":19129,"ns":0,"title":"MACHO","revisions":[{"revid":243145509,"parentid":238828604,"user":"Jonntek2012","userid":4363350,"timestamp":"2024-03-15T20:44:16Z","size":3531}]}]}}'
-  recorded_at: Tue, 02 Jul 2024 22:43:24 GMT
+      string: '{"continue":{"rvcontinue":"20231105190914|238828604","continue":"||"},"query":{"pages":[{"pageid":19129,"ns":0,"title":"MACHO","revisions":[{"revid":243145509,"parentid":238828604,"user":"Jonntek2012","userid":4363350,"timestamp":"2024-03-15T20:44:16Z","size":3531,"sha1":"5e05d8619d85a3721b744f1bba60da86be0ff680"}]}]}}'
+  recorded_at: Thu, 30 Apr 2026 21:55:25 GMT
 - request:
     method: get
     uri: https://impact-visualizer-tools.wmcloud.org/count_revisions.php?from_rev_id=70514&lang=de&page_id=19129&project=wikipedia&to_rev_id=243145509
@@ -126,7 +153,7 @@ http_interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - Faraday v0.17.6
+      - impact-visualizer (https://impact.wikiedu.org; sage@wikiedu.org) test
       Accept-Encoding:
       - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
       Accept:
@@ -137,9 +164,9 @@ http_interactions:
       message: OK
     headers:
       Server:
-      - nginx/1.18.0
+      - nginx/1.22.1
       Date:
-      - Tue, 02 Jul 2024 22:43:24 GMT
+      - Thu, 30 Apr 2026 21:55:25 GMT
       Content-Type:
       - text/html; charset=UTF-8
       Content-Length:
@@ -154,8 +181,13 @@ http_interactions:
       - GNU Terry Pratchett
       Permissions-Policy:
       - browsing-topics=()
+      Report-To:
+      - '{"group": "wm_nel", "max_age": 604800, "endpoints": [{"url": "https://intake-logging.wikimedia.org/v1/events?stream=w3c.reportingapi.network_error&schema_uri=/w3c/reportingapi/network_error/1.0.0"}]}'
+      Nel:
+      - '{"report_to": "wm_nel", "max_age": 604800, "failure_fraction": 0.05, "success_fraction":
+        0.0}'
     body:
       encoding: ASCII-8BIT
       string: '{ "success": true, "data": [{"count":"102"}] }'
-  recorded_at: Tue, 02 Jul 2024 22:43:24 GMT
+  recorded_at: Thu, 30 Apr 2026 21:55:25 GMT
 recorded_with: VCR 6.1.0

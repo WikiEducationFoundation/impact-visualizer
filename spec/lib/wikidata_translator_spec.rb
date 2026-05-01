@@ -6,7 +6,7 @@ describe WikidataTranslator do
   let!(:wiki) { Wiki.default_wiki }
   let!(:subject) { described_class.new(wiki:) }
 
-  it 'preloads ID translations' do
+  it 'preloads ID translations', :vcr do
     ids = %w[Q6581097 Q6581072]
     subject.preload(ids:)
     expect(subject.labels).to eq({
@@ -15,14 +15,14 @@ describe WikidataTranslator do
     })
   end
 
-  it 'translates an ID' do
+  it 'translates an ID', :vcr do
     ids = %w[Q6581097 Q6581072]
     subject.preload(ids:)
     expect(subject.translate('Q6581097')).to eq('male')
     expect(subject.translate('Q6581072')).to eq('female')
   end
 
-  it 'returns ID for missing translation' do
+  it 'returns ID for missing translation', :vcr do
     ids = %w[Q6581097 Q6581072]
     subject.preload(ids:)
     expect(subject.translate('Q123')).to eq('Q123')

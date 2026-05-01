@@ -29,7 +29,7 @@ describe ImportService do
       expect(topic.articles.pluck(:missing)).to eq([false, false, false, false])
     end
 
-    it 'marks non-existent articles as missing', vcr: false do
+    it 'marks non-existent articles as missing', :vcr do
       topic.articles_csv.attach(
         io: File.open('spec/fixtures/csv/topic-articles-missing-test.csv'),
         filename: 'topic-articles-missing-test.csv'

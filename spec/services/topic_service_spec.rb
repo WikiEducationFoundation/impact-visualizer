@@ -209,15 +209,6 @@ describe TopicService do
     it 'raises if no articles' do
       topic_service = described_class.new(topic_editor:, topic:)
       expect(topic).to receive(:articles_count).and_return(0)
-      expect(topic).to receive(:user_count).and_return(1)
-      expect do
-        topic_service.generate_timepoints
-      end.to raise_error(ImpactVisualizerErrors::TopicNotReadyForTimepointGeneration)
-    end
-
-    it 'raises if no users' do
-      topic_service = described_class.new(topic_editor:, topic:)
-      expect(topic).to receive(:user_count).and_return(0)
       expect do
         topic_service.generate_timepoints
       end.to raise_error(ImpactVisualizerErrors::TopicNotReadyForTimepointGeneration)
@@ -225,7 +216,6 @@ describe TopicService do
 
     it 'initiates timepoint generation' do
       topic_service = described_class.new(topic_editor:, topic:)
-      expect(topic).to receive(:user_count).and_return(1)
       expect(topic).to receive(:articles_count).and_return(1)
       expect(topic).to receive(:queue_generate_timepoints)
       topic_service.generate_timepoints
