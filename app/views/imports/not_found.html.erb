@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Topic Builder handoff not found</title>
+  <%= render 'layout_head' %>
+</head>
+<body>
+  <h1>Handoff not found</h1>
+  <div class="error">
+    <p>This Topic Builder handoff is unknown or has expired.</p>
+    <p>Ask the AI to call <code>publish_topic</code> again to mint a fresh handle, then open the new link.</p>
+  </div>
+  <p class="meta">Handle: <code><%= @handle %></code></p>
+</body>
+</html>

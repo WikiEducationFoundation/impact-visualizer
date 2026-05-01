@@ -33,6 +33,9 @@ Rails.application.routes.draw do
     resources :classifications, only: [:index]
   end
 
+  get '/imports/:handle', to: 'imports#show', as: :import, constraints: { handle: %r{[^/]+} }
+  post '/imports/:handle', to: 'imports#create', constraints: { handle: %r{[^/]+} }
+
   get '/topics/:slug', to: 'pages#index'
   get '/my-topics', to: 'pages#index'
   get '/my-topics/new', to: 'pages#index'
