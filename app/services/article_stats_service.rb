@@ -182,9 +182,10 @@ class ArticleStatsService
 
     pageid = page_info['pageid']
     revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp: date)
-    Rails.logger.info("[ArticleStatsService] Final talk page size: #{revision['size']}")
+    return nil unless revision
 
-    revision ? revision['size'] : nil
+    Rails.logger.info("[ArticleStatsService] Final talk page size: #{revision['size']}")
+    revision['size']
   rescue StandardError => e
     Rails.logger.error("[ArticleStatsService] Error fetching talk page size for #{talk_title}: #{e.message}")
     nil

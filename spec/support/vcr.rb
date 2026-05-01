@@ -10,9 +10,11 @@ VCR.configure do |config|
   record_mode = ENV['VCR_RECORD']&.to_sym || :once
   config.default_cassette_options = { allow_playback_repeats: true, record: record_mode }
 
-  # Strip the Lift Wing JWT from any request that carries one, so cassettes
-  # never commit a real bearer token.
-  config.filter_sensitive_data('<LIFTWING_TOKEN>') do |interaction|
+  # Strip any Bearer token from outbound requests so cassettes never
+  # commit real credentials. Originally added for the Lift Wing JWT,
+  # now also redacts the Wikimedia OAuth 2 token (Rails creds
+  # wiki.token) used on Action API and REST API requests.
+  config.filter_sensitive_data('<BEARER_TOKEN>') do |interaction|
     interaction.request.headers['Authorization']&.first&.[](/Bearer (\S+)/, 1)
   end
 

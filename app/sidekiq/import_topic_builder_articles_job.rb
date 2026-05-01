@@ -30,6 +30,18 @@ class ImportTopicBuilderArticlesJob
     end
 
     topic.reload.update(article_import_job_id: nil)
+
+    # The TB handoff is meant to be a one-click flow: after the user
+    # clicks Import, they should land on the topic page and watch all
+    # the data populate without further intervention. Kick off article
+    # analytics; that job, on completion, will queue the timepoint
+    # build pipeline. The two used to run in parallel, but the
+    # combined burst (5 analytics threads + 10 timepoint threads
+    # against enwiki) caused enough 429s that downstream threads
+    # exhausted retries and silently lost data. Sequential keeps the
+    # peak concurrent thread count at 10, matching what's been
+    # production-stable.
+    topic.queue_generate_article_analytics
   end
 
   def expiration

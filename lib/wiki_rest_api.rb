@@ -46,6 +46,9 @@ class WikiRestApi
       faraday.adapter Faraday.default_adapter
     end
     connection.headers['User-Agent'] = Features.user_agent
+    if (token = Rails.application.credentials.dig(:wiki, :token))
+      connection.headers['Authorization'] = "Bearer #{token}"
+    end
     connection
   end
 
@@ -67,7 +70,9 @@ class WikiRestApi
       wait_seconds = retry_after.to_i if retry_after
       wait_seconds = [wait_seconds || 0, DEFAULT_RETRY_AFTER_SECONDS].max
       wait_seconds = [wait_seconds, MAX_RETRY_AFTER_SECONDS].min
-      wait_seconds += rand(0.0..0.5)
+      # 0–3 s of jitter to de-correlate the retry herd; see
+      # wiki_action_api.rb for the full rationale.
+      wait_seconds += rand(0.0..3.0)
       unless Rails.env.test?
         ap "WikiRestApi / 429 Too Many Requests - waiting #{wait_seconds.round(2)}s, tries remaining: #{tries}"
         sleep wait_seconds

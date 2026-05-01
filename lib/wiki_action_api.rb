@@ -504,12 +504,25 @@ class WikiActionApi
     client
   end
 
+  # Wikimedia OAuth 2 owner-only consumer token (scopes: basic +
+  # highvolume). With this set, requests count against the
+  # consumer's per-account quota (150k req/hr at time of writing) and
+  # get apihighlimits-equivalent paging — vs anonymous's per-IP
+  # bucket that throttles to ~5k req/hr. No-op when the credential
+  # isn't set (e.g. local dev without the credential file decrypted)
+  # so requests fall back to anonymous.
+  def authenticate(client)
+    token = Rails.application.credentials.dig(:wiki, :token)
+    client.oauth_access_token(token) if token
+    client
+  end
+
   def api_client
-    set_user_agent(MediawikiApi::Client.new(@api_url))
+    authenticate(set_user_agent(MediawikiApi::Client.new(@api_url)))
   end
 
   def wikidata_api_client
-    set_user_agent(MediawikiApi::Client.new('https://www.wikidata.org/w/api.php'))
+    authenticate(set_user_agent(MediawikiApi::Client.new('https://www.wikidata.org/w/api.php')))
   end
 
   # Default backoff when the server doesn't send a Retry-After header.
@@ -540,7 +553,12 @@ class WikiActionApi
         wait_seconds = retry_after.to_i if retry_after
         wait_seconds = [wait_seconds || 0, DEFAULT_RETRY_AFTER_SECONDS].max
         wait_seconds = [wait_seconds, MAX_RETRY_AFTER_SECONDS].min
-        wait_seconds += rand(0.0..0.5)
+        # 0–3 s of jitter, not 0–0.5: under high concurrency (analytics
+        # is now multi-threaded) all retrying threads tend to wake up
+        # near the same Retry-After deadline. With 0–0.5 s jitter on a
+        # 5–30 s wait they re-burst as a near-synchronous herd; 0–3 s
+        # is enough to spread the wave across a few seconds.
+        wait_seconds += rand(0.0..3.0)
         puts "WikiActionApi / 429 Too Many Requests - waiting #{wait_seconds.round(2)}s (attempt #{tries}/#{total_tries})"
         sleep wait_seconds
       else

@@ -54,4 +54,11 @@ RSpec.describe ImportTopicBuilderArticlesJob, type: :job do
       described_class.new.perform(topic.id, handle)
     }.not_to change { bag.reload.article_bag_articles.count }
   end
+
+  it 'auto-chains article analytics on success (analytics chains to timepoint build at its tail)' do
+    expect {
+      described_class.new.perform(topic.id, handle)
+    }.to change(GenerateArticleAnalyticsJob.jobs, :size).by(1)
+      .and change(IncrementalTopicBuildJob.jobs, :size).by(0)
+  end
 end
