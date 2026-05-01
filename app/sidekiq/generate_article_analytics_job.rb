@@ -5,14 +5,14 @@ class GenerateArticleAnalyticsJob
   include Sidekiq::Status::Worker
   sidekiq_options queue: 'article_analytics'
 
-  # Tuned to half the timepoint-service thread count. Phase 2 makes ~16
-  # external calls per article (vs ~4 per article-timestamp pair in the
-  # timepoint phases), so each thread here generates roughly 4× the
-  # request density. 5 threads keeps the peak burst comparable to the
-  # 10-thread timepoint phases. Per-request 429 retry-with-backoff in
-  # WikiActionApi / WikiRestApi / WikimediaPageviewsApi catches the
-  # rest.
-  THREADS_COUNT = 5
+  # Empirically tuned: 5 threads × ~16 calls/article saturates
+  # Wikipedia's per-IP bucket within seconds — a 6562-article test run
+  # generated 44 `429 Too Many Requests` events in the first 3
+  # minutes, with throughput throttled to ~17 articles/min. 3 threads
+  # holds steady-state below the bucket-refill rate so the retry
+  # handler is the exception, not the rule. Per-request retry with
+  # Retry-After + 0–3 s jitter still catches the occasional burst.
+  THREADS_COUNT = 3
 
   def perform(topic_id)
     @expiration = 60 * 60 * 24 * 7
