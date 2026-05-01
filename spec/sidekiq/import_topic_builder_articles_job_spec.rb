@@ -54,4 +54,16 @@ RSpec.describe ImportTopicBuilderArticlesJob, type: :job do
       described_class.new.perform(topic.id, handle)
     }.not_to change { bag.reload.article_bag_articles.count }
   end
+
+  it 'auto-chains article analytics + incremental topic build on success' do
+    expect {
+      described_class.new.perform(topic.id, handle)
+    }.to change(GenerateArticleAnalyticsJob.jobs, :size).by(1)
+      .and change(IncrementalTopicBuildJob.jobs, :size).by(1)
+
+    inc = IncrementalTopicBuildJob.jobs.last['args']
+    # (topic_id, stage, queue_next_stage, force_updates) — start at the
+    # first stage and chain through all four.
+    expect(inc).to eq([topic.id, 'classify', true, false])
+  end
 end

@@ -30,6 +30,15 @@ class ImportTopicBuilderArticlesJob
     end
 
     topic.reload.update(article_import_job_id: nil)
+
+    # The TB handoff is meant to be a one-click flow: after the user
+    # clicks Import, they should land on the topic page and watch all
+    # the data populate without further intervention. Kick off article
+    # analytics and the full incremental timepoint build pipeline in
+    # parallel; both jobs lazily populate per-article details on the
+    # fly when they encounter an article without them.
+    topic.queue_generate_article_analytics
+    topic.queue_incremental_topic_build(queue_next_stage: true, force_updates: false)
   end
 
   def expiration
