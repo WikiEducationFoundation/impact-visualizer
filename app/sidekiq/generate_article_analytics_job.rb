@@ -5,6 +5,15 @@ class GenerateArticleAnalyticsJob
   include Sidekiq::Status::Worker
   sidekiq_options queue: 'article_analytics'
 
+  # Tuned to half the timepoint-service thread count. Phase 2 makes ~16
+  # external calls per article (vs ~4 per article-timestamp pair in the
+  # timepoint phases), so each thread here generates roughly 4× the
+  # request density. 5 threads keeps the peak burst comparable to the
+  # 10-thread timepoint phases. Per-request 429 retry-with-backoff in
+  # WikiActionApi / WikiRestApi / WikimediaPageviewsApi catches the
+  # rest.
+  THREADS_COUNT = 5
+
   def perform(topic_id)
     @expiration = 60 * 60 * 24 * 7
 
@@ -13,7 +22,11 @@ class GenerateArticleAnalyticsJob
     return unless wiki
 
     articles = topic.active_article_bag.articles
-    return if articles.empty?
+    if articles.empty?
+      topic.reload.update(generate_article_analytics_job_id: nil)
+      chain_incremental_topic_build!(topic)
+      return
+    end
 
     total(articles.count)
     at(0, 'Starting article analytics generation')
@@ -26,73 +39,76 @@ class GenerateArticleAnalyticsJob
     prev_start_date = start_date.prev_year
 
     article_stats_service = ArticleStatsService.new(wiki)
+    progress_mutex = Mutex.new
+    skipped_mutex = Mutex.new
+    done = 0
+    skipped_count = 0
 
-    articles.each_with_index do |article, index|
-      at(index, "Fetching \"#{article.title}\"")
-      Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching average daily views for #{article.title} between #{start_date} and #{end_date}")
+    Parallel.each(articles, in_threads: THREADS_COUNT) do |article|
+      ActiveRecord::Base.connection_pool.with_connection do
+        # skip if the page doesn't exist
+        article_stats_service.update_details_for_article(article:)
+        if article.reload.missing
+          Rails.logger.info("[GenerateArticleAnalyticsJob] Article not found: #{article.title}")
+          skipped_mutex.synchronize { skipped_count += 1; store(skipped: skipped_count) }
+          progress_mutex.synchronize { done += 1; at(done, "Not found: #{article.title}") }
+          next
+        end
 
-      # skip if the page doesn't exist
-      article_stats_service.update_details_for_article(article:)
-      if article.reload.missing
-        Rails.logger.info("[GenerateArticleAnalyticsJob] Article not found: #{article.title}")
-        current_skipped = (Sidekiq::Status::get(@jid, :skipped) || '0').to_i
-        store(skipped: current_skipped + 1)
-        at(index + 1, "Not found: #{article.title}")
-        next
+        average_views = article_stats_service.get_average_daily_views(
+          article: article.title,
+          start_year: start_date.year,
+          end_year: end_date.year,
+          start_month: start_date.month,
+          start_day: start_date.day,
+          end_month: end_date.month,
+          end_day: end_date.day
+        )
+
+        prev_average_views = article_stats_service.get_average_daily_views(
+          article: article.title,
+          start_year: prev_start_date.year,
+          end_year: prev_end_date.year,
+          start_month: prev_start_date.month,
+          start_day: prev_start_date.day,
+          end_month: prev_end_date.month,
+          end_day: prev_end_date.day
+        )
+
+        topic_article_analytic = TopicArticleAnalytic.find_or_initialize_by(
+          topic:,
+          article:
+        )
+
+        topic_article_analytic.update!(
+          average_daily_views: average_views.round,
+          prev_average_daily_views: prev_average_views&.round,
+          publication_date: article.first_revision_at&.to_date,
+          linguistic_versions_count: fetch_linguistic_versions_count(article_stats_service:,
+                                                                     article:),
+          images_count: fetch_images_count(article_stats_service:, article:),
+          warning_tags_count: fetch_warning_tags_count(article_stats_service:, article:),
+          number_of_editors: fetch_number_of_editors(article_stats_service:, article:),
+          article_size: fetch_article_size(article_stats_service:, article:, date: end_date),
+          prev_article_size: fetch_article_size(article_stats_service:, article:,
+                                                date: prev_end_date),
+          talk_size: fetch_talk_size(article_stats_service:, article:, date: end_date),
+          prev_talk_size: fetch_talk_size(article_stats_service:, article:, date: prev_end_date),
+          lead_section_size: fetch_lead_section_size(article_stats_service:, article:,
+                                                     date: end_date),
+          assessment_grade: fetch_assessment_grade(article_stats_service:, article:),
+          article_protections: fetch_article_protections(article_stats_service:, article:),
+          incoming_links_count: fetch_incoming_links_count(article_stats_service:, article:)
+        )
+
+        Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, prev_average_views: #{prev_average_views&.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}, lead_section_size: #{topic_article_analytic.lead_section_size}")
+
+        progress_mutex.synchronize { done += 1; at(done, "Processed #{article.title}") }
       end
-
-      average_views = article_stats_service.get_average_daily_views(
-        article: article.title,
-        start_year: start_date.year,
-        end_year: end_date.year,
-        start_month: start_date.month,
-        start_day: start_date.day,
-        end_month: end_date.month,
-        end_day: end_date.day
-      )
-
-      prev_average_views = article_stats_service.get_average_daily_views(
-        article: article.title,
-        start_year: prev_start_date.year,
-        end_year: prev_end_date.year,
-        start_month: prev_start_date.month,
-        start_day: prev_start_date.day,
-        end_month: prev_end_date.month,
-        end_day: prev_end_date.day
-      )
-
-      topic_article_analytic = TopicArticleAnalytic.find_or_initialize_by(
-        topic:,
-        article:
-      )
-
-      topic_article_analytic.update!(
-        average_daily_views: average_views.round,
-        prev_average_daily_views: prev_average_views&.round,
-        publication_date: article.first_revision_at&.to_date,
-        linguistic_versions_count: fetch_linguistic_versions_count(article_stats_service:,
-                                                                   article:),
-        images_count: fetch_images_count(article_stats_service:, article:),
-        warning_tags_count: fetch_warning_tags_count(article_stats_service:, article:),
-        number_of_editors: fetch_number_of_editors(article_stats_service:, article:),
-        article_size: fetch_article_size(article_stats_service:, article:, date: end_date),
-        prev_article_size: fetch_article_size(article_stats_service:, article:,
-                                              date: prev_end_date),
-        talk_size: fetch_talk_size(article_stats_service:, article:, date: end_date),
-        prev_talk_size: fetch_talk_size(article_stats_service:, article:, date: prev_end_date),
-        lead_section_size: fetch_lead_section_size(article_stats_service:, article:,
-                                                   date: end_date),
-        assessment_grade: fetch_assessment_grade(article_stats_service:, article:),
-        article_protections: fetch_article_protections(article_stats_service:, article:),
-        incoming_links_count: fetch_incoming_links_count(article_stats_service:, article:)
-      )
-
-      Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, prev_average_views: #{prev_average_views&.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}, lead_section_size: #{topic_article_analytic.lead_section_size}")
-
-      at(index + 1, "Processed #{article.title}")
     end
 
     topic.reload.update(generate_article_analytics_job_id: nil)
+    chain_incremental_topic_build!(topic)
   end
 
   def expiration
@@ -100,6 +116,17 @@ class GenerateArticleAnalyticsJob
   end
 
   private
+
+  # The TB handoff is a one-click flow: ingest → analytics → timepoint
+  # build, all auto-chained. For CSV-driven topics the user still
+  # drives each step manually from the topic-detail page, so don't
+  # auto-chain there.
+  def chain_incremental_topic_build!(topic)
+    return unless topic.tb_handle.present?
+    return if topic.incremental_topic_build_job_id.present?
+
+    topic.queue_incremental_topic_build(queue_next_stage: true, force_updates: false)
+  end
 
   def fetch_article_size(article_stats_service:, article:, date:)
     Rails.logger.info("[GenerateArticleAnalyticsJob] Fetching article size for #{article.title} at #{date}")

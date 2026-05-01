@@ -34,11 +34,14 @@ class ImportTopicBuilderArticlesJob
     # The TB handoff is meant to be a one-click flow: after the user
     # clicks Import, they should land on the topic page and watch all
     # the data populate without further intervention. Kick off article
-    # analytics and the full incremental timepoint build pipeline in
-    # parallel; both jobs lazily populate per-article details on the
-    # fly when they encounter an article without them.
+    # analytics; that job, on completion, will queue the timepoint
+    # build pipeline. The two used to run in parallel, but the
+    # combined burst (5 analytics threads + 10 timepoint threads
+    # against enwiki) caused enough 429s that downstream threads
+    # exhausted retries and silently lost data. Sequential keeps the
+    # peak concurrent thread count at 10, matching what's been
+    # production-stable.
     topic.queue_generate_article_analytics
-    topic.queue_incremental_topic_build(queue_next_stage: true, force_updates: false)
   end
 
   def expiration
