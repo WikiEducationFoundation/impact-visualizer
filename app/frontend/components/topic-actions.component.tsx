@@ -14,30 +14,34 @@ import TopicAction from "./topic-action.component";
 function renderActions({ topic, setCanEditTopic }) {
   const output: React.JSX.Element[] = [];
   const actions: String[] = [];
-  let proceed = true;
 
-  if (
-    topic.user_count > 0 &&
-    topic.articles_count > 0 &&
+  // Topic Builder imports own the article (and eventually the user)
+  // list; the CSV upload UI doesn't apply. Until TB starts emitting
+  // users, a TB topic just runs with 0 users — the backend allows it.
+  const isTbTopic = !!topic.tb_handle;
+
+  const importsSettled =
     (!topic.users_import_status ||
       topic.users_import_status === "idle" ||
       topic.users_import_status === "complete") &&
     (!topic.articles_import_status ||
       topic.articles_import_status === "idle" ||
-      topic.articles_import_status === "complete")
+      topic.articles_import_status === "complete");
+
+  // Backend (TopicService#incremental_topic_build) only requires articles,
+  // not users. CSV-driven topics historically gated on user_count > 0 too;
+  // keep that for non-TB topics so the prior UX is preserved.
+  if (
+    topic.articles_count > 0 &&
+    importsSettled &&
+    (isTbTopic || topic.user_count > 0)
   ) {
-    // actions.push('timepoints');
     actions.push("incremental_topic_build");
-    proceed = true;
   }
 
-  actions.push("users");
-  if (!topic.users_csv_filename) proceed = false;
-
-  if (proceed) {
-    actions.push("articles");
-    actions.push("article_analytics");
-  }
+  if (!isTbTopic) actions.push("users");
+  actions.push("articles");
+  actions.push("article_analytics");
 
   actions.forEach((action) => {
     output.push(
