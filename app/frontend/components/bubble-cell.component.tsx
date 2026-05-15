@@ -7,9 +7,39 @@ const BUBBLE_HALF = BUBBLE_BOX / 2;
 type BubbleCellProps = {
   row: BubbleSizeFields;
   scales: RadiusScales;
+  isLoading?: boolean;
+  isQueued?: boolean;
 };
 
-const BubbleCell: React.FC<BubbleCellProps> = ({ row, scales }) => {
+const BubbleCell: React.FC<BubbleCellProps> = ({
+  row,
+  scales,
+  isLoading,
+  isQueued,
+}) => {
+  if (isLoading || isQueued) {
+    return (
+      <td className="ArticleLangCell ArticleLangCell--present">
+        <svg
+          className={`ArticleLangCellSkeleton ArticleLangCellSkeleton--${isLoading ? "loading" : "queued"}`}
+          width={BUBBLE_BOX}
+          height={BUBBLE_BOX}
+          viewBox={`-${BUBBLE_HALF} -${BUBBLE_HALF} ${BUBBLE_BOX} ${BUBBLE_BOX}`}
+          aria-hidden="true"
+        >
+          <circle
+            r={16}
+            fill="none"
+            stroke={isLoading ? "#90caf9" : "#e0e0e0"}
+            strokeWidth={3}
+            strokeDasharray={isLoading ? "25 75" : "4 4"}
+            strokeLinecap="round"
+          />
+        </svg>
+      </td>
+    );
+  }
+
   return (
     <td className="ArticleLangCell ArticleLangCell--present">
       <svg

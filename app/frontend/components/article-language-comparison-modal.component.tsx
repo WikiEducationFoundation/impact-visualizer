@@ -45,10 +45,11 @@ function ArticleLanguageComparisonModal({
   const sourceLang = wiki?.language ?? "en";
 
   const { data, status, error } = useQuery({
-    queryKey: ["articleLanguageComparison", topicId, articleTitle],
+    queryKey: ["langComparison", topicId, articleTitle],
     queryFn: () =>
       TopicService.getArticleLanguageComparison(topicId, articleTitle),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 4 * 60 * 60 * 1000,
+    gcTime: 4 * 60 * 60 * 1000,
   });
 
   const loading = status === "pending";

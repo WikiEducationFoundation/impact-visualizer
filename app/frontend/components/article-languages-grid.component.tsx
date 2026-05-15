@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { BsInfoCircle } from "react-icons/bs";
 import { FiEdit2 } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
@@ -7,6 +8,8 @@ import usePagination from "../hooks/usePagination";
 import { LANGUAGE_LABELS, getTranslateUrl } from "../utils/language-links";
 import { makeSqrtAreaScale } from "../utils/bubble-chart-utils";
 import BubbleCell from "./bubble-cell.component";
+import TopicService from "../services/topic.service";
+import type { LangComparisonData } from "../services/topic.service";
 import type {
   BubbleSizeFields,
   RadiusScale,
@@ -34,9 +37,12 @@ type ArticleLanguagesGridProps = {
   languages: readonly TargetLanguage[];
   onArticleClick?: (articleTitle: string) => void;
   progress?: LangLinksProgress;
+  topicId?: string | number;
 };
 
 const ITEMS_PER_PAGE = 10;
+const LANG_FETCH_CONCURRENCY = 5;
+const LANG_DATA_STALE_MS = 4 * 60 * 60 * 1000;
 
 function LanguageCell({
   articleTitle,
@@ -45,6 +51,9 @@ function LanguageCell({
   sourceLang,
   row,
   scales,
+  langData,
+  isLoading,
+  isQueued,
 }: {
   articleTitle: string;
   lang: string;
@@ -52,27 +61,51 @@ function LanguageCell({
   sourceLang: string;
   row: ArticleRowForGrid;
   scales: RadiusScales;
+  langData?: LangComparisonData | null;
+  isLoading?: boolean;
+  isQueued?: boolean;
 }) {
-  if (exists) {
-    return <BubbleCell row={row} scales={scales} />;
+  if (!exists) {
+    return (
+      <td className="ArticleLangCell ArticleLangCell--missing">
+        <span className="ArticleLangCellMissing">
+          <IoCloseCircle size={18} />
+          <span>Missing</span>
+        </span>
+        <a
+          className="ArticleLangCellTranslate"
+          href={getTranslateUrl(articleTitle, sourceLang, lang)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FiEdit2 size={14} />
+          <span>Translate article</span>
+        </a>
+      </td>
+    );
   }
 
+  // The source-language column already has accurate data
+  const isSourceLang = lang === sourceLang;
+
+  const displayRow: ArticleRowForGrid =
+    !isSourceLang && langData
+      ? {
+          ...row,
+          article_size: langData.article_size,
+          lead_section_size: langData.lead_section_size,
+          talk_size: langData.talk_size,
+          prev_article_size: null,
+        }
+      : row;
+
   return (
-    <td className="ArticleLangCell ArticleLangCell--missing">
-      <span className="ArticleLangCellMissing">
-        <IoCloseCircle size={18} />
-        <span>Missing</span>
-      </span>
-      <a
-        className="ArticleLangCellTranslate"
-        href={getTranslateUrl(articleTitle, sourceLang, lang)}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <FiEdit2 size={14} />
-        <span>Translate article</span>
-      </a>
-    </td>
+    <BubbleCell
+      row={displayRow}
+      scales={scales}
+      isLoading={!isSourceLang && isLoading}
+      isQueued={!isSourceLang && isQueued}
+    />
   );
 }
 
@@ -150,6 +183,7 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
   languages,
   onArticleClick,
   progress,
+  topicId,
 }) => {
   const { currentPageData, currentPage, totalPages, goToPage } = usePagination({
     data: articles,
@@ -177,6 +211,56 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
       article: build("article_size", [20, 600]),
     };
   }, [scaleSource]);
+
+  const [unlockedIdx, setUnlockedIdx] = useState(LANG_FETCH_CONCURRENCY - 1);
+  const pageKeyRef = useRef<string>("");
+  // Stable page identity key — changes only when the set of articles changes
+  const pageKey = currentPageData.map((r) => r.article).join("\0");
+
+  const langQueries = useQueries({
+    queries: currentPageData.map((row, i) => ({
+      queryKey: ["langComparison", topicId, row.article],
+      queryFn: ({ signal }) =>
+        TopicService.getArticleLanguageComparison(topicId!, row.article, signal),
+      enabled: !!topicId && !loading && i <= unlockedIdx,
+      staleTime: LANG_DATA_STALE_MS,
+      gcTime: LANG_DATA_STALE_MS,
+    })),
+  });
+
+  // Maintain the sliding window: each time a query settles, advance the unlock
+  // pointer so that a new query starts and concurrency stays at LANG_FETCH_CONCURRENCY.
+  // Cached queries settle synchronously and fast-forward the window instantly.
+  useEffect(() => {
+    if (pageKey !== pageKeyRef.current) {
+      pageKeyRef.current = pageKey;
+      setUnlockedIdx(LANG_FETCH_CONCURRENCY - 1);
+      return;
+    }
+    const settledCount = langQueries
+      .slice(0, unlockedIdx + 1)
+      .filter((q) => q.isSuccess || q.isError).length;
+
+    const targetIdx = Math.min(
+      settledCount + LANG_FETCH_CONCURRENCY - 1,
+      currentPageData.length - 1,
+    );
+
+    if (targetIdx > unlockedIdx) {
+      setUnlockedIdx(targetIdx);
+    }
+  }, [pageKey, langQueries, unlockedIdx, currentPageData.length]);
+
+  const langDataByArticle = useMemo(() => {
+    const map = new Map<string, Record<string, LangComparisonData | null>>();
+    currentPageData.forEach((row, i) => {
+      const result = langQueries[i];
+      if (result?.data) {
+        map.set(row.article, result.data);
+      }
+    });
+    return map;
+  }, [langQueries, currentPageData]);
 
   if (loading) {
     const pct =
@@ -240,8 +324,18 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
           </tr>
         </thead>
         <tbody>
-          {currentPageData.map((row) => {
+          {currentPageData.map((row, rowIdx) => {
             const langs = languageLinks.get(row.article) ?? new Set<string>();
+            const articleLangData = langDataByArticle.get(row.article);
+            const inFetchPhase = !!topicId && !loading;
+            const rowIsLoading =
+              inFetchPhase && langQueries[rowIdx]?.isLoading === true;
+            const rowIsQueued =
+              inFetchPhase &&
+              !rowIsLoading &&
+              !langQueries[rowIdx]?.isSuccess &&
+              !langQueries[rowIdx]?.isError;
+
             return (
               <tr key={row.article} className="ArticleLangRow">
                 <td
@@ -259,6 +353,9 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
                     sourceLang={sourceLang}
                     row={row}
                     scales={radiusScales}
+                    langData={articleLangData?.[lang]}
+                    isLoading={rowIsLoading && langs.has(lang)}
+                    isQueued={rowIsQueued && langs.has(lang)}
                   />
                 ))}
               </tr>

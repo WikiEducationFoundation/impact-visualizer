@@ -158,10 +158,12 @@ class TopicService {
   getArticleLanguageComparison(
     id: number | string,
     article: string,
+    signal?: AbortSignal,
   ): Promise<Record<string, LangComparisonData | null>> {
     return http
       .get(`/topics/${id}/article_language_comparison`, {
         params: { article },
+        signal,
       })
       .then((response: AxiosResponse) => {
         return _.get(response, "data");

@@ -14,6 +14,48 @@
   }
 }
 
+.ExportButtonGroup {
+  position: relative;
+  display: inline-block;
+}
+
+.ExportButtonCaret {
+  margin-left: 6px;
+  font-size: 12px;
+}
+
+.ExportButtonMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 224px;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  padding: 4px 0;
+}
+
+.ExportButtonMenuItem {
+  display: block;
+  width: 100%;
+  padding: 8px 14px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  color: #1f2937;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: #f1f5f9;
+  }
+
+  &:disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+  }
+}
+
 .IconButton {
   background-color: transparent;
   border: none;

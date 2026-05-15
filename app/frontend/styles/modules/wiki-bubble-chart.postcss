@@ -1330,6 +1330,19 @@
   vertical-align: middle;
 }
 
+.ArticleLangCellSkeleton {
+  display: inline-block;
+  vertical-align: middle;
+
+  &--loading {
+    animation: articleLangCellSpin 1s linear infinite;
+  }
+}
+
+@keyframes articleLangCellSpin {
+  to { transform: rotate(360deg); }
+}
+
 .ArticleLangCellMissing {
   display: flex;
   align-items: center;
