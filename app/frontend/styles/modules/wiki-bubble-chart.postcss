@@ -1,3 +1,15 @@
+$border-grey:     #d9d9d9;
+$border-light:    #e0e0e0;
+$border-faint:    #eee;
+$primary:         #1976d2;
+$primary-dark:    #1565c0;
+$text-secondary:  #616161;
+$text-muted:      #757575;
+$text-strong:     #424242;
+$danger-bg:       #ffcdd2;
+$danger-fg:       #c62828;
+
+
 .vega-bind-name,
 .BoxTitle {
   font-size: 14px;
@@ -5,17 +17,18 @@
   margin-bottom: 6px;
 }
 
+
 .WikiBubbleChart {
   background-color: white;
-  border: 1px solid #e0e0e0;
+  border: 1px solid $border-light;
   width: 100%;
 
-  &QualityFilters {
+  .QualityFilters {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1px;
-    background: #d9d9d9;
-    border-top: 1px solid #d9d9d9;
+    background: $border-grey;
+    border-top: 1px solid $border-grey;
     align-items: stretch;
 
     @media (min-width: 768px) {
@@ -23,12 +36,12 @@
     }
   }
 
-  &AxisControls {
+  .AxisControls {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1px;
-    background: #d9d9d9;
-    border-bottom: 1px solid #d9d9d9;
+    background: $border-grey;
+    border-bottom: 1px solid $border-grey;
     align-items: stretch;
 
     @media (min-width: 768px) {
@@ -40,24 +53,24 @@
     }
   }
 
-  &HeaderFilters,
-  &HeaderSearch,
-  &HeaderSort {
+  .HeaderFilters,
+  .HeaderSearch,
+  .HeaderSort {
     background: white;
   }
 
-  &HeaderFilters {
+  .HeaderFilters {
     padding-right: 12px;
   }
 
-  &HeaderExtra {
+  .HeaderExtra {
     background: white;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  &FilterBox {
+  .FilterBox {
     background: white;
     padding: 12px;
     display: flex;
@@ -97,17 +110,17 @@
     }
   }
 
-  &AxisControls &FilterBox {
+  .AxisControls .FilterBox {
     justify-content: flex-start;
     min-width: 0;
   }
 
-  &SortLabel {
+  .SortLabel {
     font-size: 13px;
     font-weight: 500;
   }
 
-  &SortSelect {
+  .SortSelect {
     padding: 4px 8px;
     border-radius: 4px;
     border: 1px solid #cfcfcf;
@@ -116,34 +129,34 @@
     background-color: #fff;
   }
 
-  &AxisIcon {
+  .AxisIcon {
     margin: 16px 10px 0;
   }
 
-  &AxisControl {
+  .AxisControl {
     display: flex;
     align-items: flex-start;
     gap: 10px;
   }
 
-  &AxisFields {
+  .AxisFields {
     display: flex;
     flex-direction: column;
     gap: 4px;
     flex: 1;
   }
 
-  &AxisLabelRow {
+  .AxisLabelRow {
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  &ScaleToggle {
+  .ScaleToggle {
     display: flex;
   }
 
-  &ScaleBtn {
+  .ScaleBtn {
     padding: 2px 8px;
     font-size: 12px;
     font-weight: 500;
@@ -159,8 +172,8 @@
     }
 
     &.is-active {
-      background-color: #1976d2;
-      border-color: #1976d2;
+      background-color: $primary;
+      border-color: $primary;
       color: #fff;
     }
 
@@ -170,218 +183,51 @@
     }
   }
 
-  &RangeRow {
+  .RangeRow {
     display: flex;
     gap: 8px;
     align-items: center;
   }
 
-  &RangeField {
+  .RangeField {
     display: flex;
     align-items: center;
     gap: 6px;
     margin-bottom: 0;
   }
 
-  &RangeLabel {
+  .RangeLabel {
     font-size: 12px;
     font-weight: 400;
   }
 
-  &RangeInput {
+  .RangeInput {
     padding: 4px 8px;
     font-size: 13px;
     width: 100%;
   }
 
-  .CentralityFilter {
-    display: grid;
-    grid-template-rows: auto auto;
-    gap: 0;
-    height: 100%;
-
-    &Header {
-      display: flex;
-      align-items: baseline;
-      justify-content: flex-start;
-      gap: 8px;
-
-      .BoxTitle {
-        flex: 0 0 auto;
-      }
-    }
-
-    &Value {
-      margin-left: auto;
-      font-size: 13px;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    &Slider {
-      position: relative;
-      height: 24px;
-      margin: 3px 0 0;
-    }
-
-    &Track,
-    &Range {
-      position: absolute;
-      top: 50%;
-      height: 4px;
-      border-radius: 999px;
-      transform: translateY(-50%);
-    }
-
-    &Track {
-      left: 0;
-      right: 0;
-      background: #d9d9d9;
-    }
-
-    &Range {
-      background: #1976d2;
-    }
-
-    &Input {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      border: 0;
-      box-shadow: none;
-      margin: 0;
-      outline: none;
-      padding: 0;
-      pointer-events: none;
-      -webkit-appearance: none;
-      appearance: none;
-      background: transparent;
-
-      &:focus,
-      &:focus-visible {
-        border: 0;
-        box-shadow: none;
-        outline: none;
-      }
-
-      &::-webkit-slider-runnable-track {
-        height: 4px;
-        border: 0;
-        box-shadow: none;
-        background: transparent;
-      }
-
-      &::-webkit-slider-thumb {
-        width: 16px;
-        height: 16px;
-        border: 0;
-        box-shadow: none;
-        border-radius: 50%;
-        background: #1976d2;
-        cursor: pointer;
-        pointer-events: auto;
-        margin-top: -6px;
-        -webkit-appearance: none;
-        appearance: none;
-      }
-
-      &::-moz-range-thumb {
-        width: 14px;
-        height: 14px;
-        border: 0;
-        box-shadow: none;
-        border-radius: 50%;
-        background: #1976d2;
-        cursor: pointer;
-        pointer-events: auto;
-        transform: translateY(-5px);
-      }
-
-      &::-moz-range-track {
-        background: transparent;
-        border: 0;
-      }
-
-      &--min {
-        z-index: 2;
-
-        &::-webkit-slider-thumb {
-          transform: translateX(-3px);
-        }
-
-        &::-moz-range-thumb {
-          transform: translate(-3px, -5px);
-        }
-      }
-
-      &--max {
-        z-index: 3;
-
-        &::-webkit-slider-thumb {
-          transform: translateX(3px);
-        }
-
-        &::-moz-range-thumb {
-          transform: translate(3px, -5px);
-        }
-      }
-    }
-
-    &Bounds {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      margin: -3px 0 0;
-      color: #616161;
-      font-size: 11px;
-      line-height: 1;
-
-      span:first-child {
-        transform: translateX(3px);
-      }
-
-      span:last-child {
-        justify-self: end;
-        transform: translateX(3px);
-      }
-    }
-
-    &Checkbox {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 0;
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 1.2;
-
-      input {
-        flex: 0 0 auto;
-        width: 13px;
-        height: 13px;
-        margin: 0;
-      }
-    }
-  }
-
-  &TitleRow {
-    border-bottom: 1px solid #d9d9d9;
+  .TitleRow {
+    border-bottom: 1px solid $border-grey;
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 12px;
   }
 
-  &SearchContainer {
+  .SearchContainer {
     display: flex;
   }
 
-  &Container {
+  .Container {
     overflow-y: hidden;
     width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
   }
 
-  &Heading {
+  .Heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -389,17 +235,17 @@
     padding: 8px 12px;
   }
 
-  &HeadingControls {
+  .HeadingControls {
     display: flex;
     align-items: center;
     gap: 10px;
 
-    .ArticleSearchAutocompleteWrapper {
+    .ArticleSearchAutocomplete {
       width: 320px;
     }
   }
 
-  &ShowLabels {
+  .ShowLabels {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -414,7 +260,7 @@
     }
   }
 
-  &InfoLine {
+  .InfoLine {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -422,25 +268,25 @@
     font-style: italic;
   }
 
-  &Body {
+  .Body {
     position: relative;
     display: flex;
   }
 
-  &Stats {
+  .Stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1px;
-    background: #d9d9d9;
-    border-top: 1px solid #d9d9d9;
-    border-bottom: 1px solid #d9d9d9;
+    background: $border-grey;
+    border-top: 1px solid $border-grey;
+    border-bottom: 1px solid $border-grey;
 
     @media (min-width: 768px) {
       grid-template-columns: repeat(4, 1fr);
     }
   }
 
-  &StatCell {
+  .StatCell {
     background: white;
     padding: 14px 16px;
     display: flex;
@@ -449,20 +295,20 @@
     gap: 8px;
   }
 
-  &StatValue {
+  .StatValue {
     font-size: 22px;
     font-weight: 700;
     color: black;
     line-height: 1.1;
   }
 
-  &StatLabel {
+  .StatLabel {
     font-size: 12px;
-    color: #616161;
+    color: $text-secondary;
     line-height: 1.3;
   }
 
-  &Legend {
+  .Legend {
     display: flex;
     justify-content: space-between;
     padding: 8px 12px;
@@ -472,123 +318,330 @@
     align-items: center;
     font-size: 0.9rem;
 
-    &Item {
+    .Item {
       display: flex;
       align-items: center;
       gap: 4px;
     }
 
-    &DotArticle,
-    &DotLead,
-    &RingDiscussion,
-    &RingPrevArticle {
+    .DotArticle,
+    .DotLead,
+    .RingDiscussion,
+    .RingPrevArticle {
       display: inline-block;
       width: 12px;
       height: 12px;
       border-radius: 50%;
     }
 
-    &DotArticle {
+    .DotArticle {
       background-color: rgba(13, 71, 161, 0.5);
     }
 
-    &DotLead {
+    .DotLead {
       background-color: #90caf9;
     }
 
-    &RingDiscussion {
+    .RingDiscussion {
       border: 2px solid #2196f3;
       background-color: transparent;
     }
 
-    &RingPrevArticle {
+    .RingPrevArticle {
       border: 2px dashed #64b5f6;
       background-color: transparent;
     }
 
-    &LineChange {
+    .LineChange {
       display: inline-block;
       width: 16px;
       height: 0;
       border-top: 2px dashed #757575;
     }
 
-    &Box {
+    .Box {
       border: 1px solid #ccc;
       padding: 12px 16px;
     }
 
-    &Title {
+    .Title {
       font-weight: bold;
       font-size: 14px;
     }
 
-    &Text {
+    .Text {
       font-size: 14px;
       font-style: italic;
       align-self: flex-start;
     }
   }
+
+  .TabBar {
+    display: flex;
+    border-bottom: 1px solid $border-grey;
+  }
+
+  .Tab {
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: $text-muted;
+    background: #f5f5f5;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition:
+      color 120ms ease,
+      background-color 120ms ease,
+      border-color 120ms ease;
+
+    &:hover:not(.is-active) {
+      background: #eeeeee;
+      color: #333;
+    }
+
+    &.is-active {
+      font-weight: 600;
+      color: #000;
+      background: white;
+      border-bottom-color: $primary-dark;
+    }
+  }
 }
 
+
+.CentralityFilter {
+  display: grid;
+  grid-template-rows: auto auto;
+  gap: 0;
+  height: 100%;
+
+  .Header {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 8px;
+    background: none;
+    border-bottom: none;
+
+    .BoxTitle {
+      flex: 0 0 auto;
+    }
+  }
+
+  .Value {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .Slider {
+    position: relative;
+    height: 24px;
+    margin: 3px 0 0;
+  }
+
+  .Track,
+  .Range {
+    position: absolute;
+    top: 50%;
+    height: 4px;
+    border-radius: 999px;
+    transform: translateY(-50%);
+  }
+
+  .Track {
+    left: 0;
+    right: 0;
+    background: $border-grey;
+  }
+
+  .Range {
+    background: $primary;
+  }
+
+  input[type="range"].Input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    border: 0;
+    box-shadow: none;
+    margin: 0;
+    outline: none;
+    padding: 0;
+    pointer-events: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+
+    &:focus,
+    &:focus-visible {
+      border: 0;
+      box-shadow: none;
+      outline: none;
+    }
+
+    &::-webkit-slider-runnable-track {
+      height: 4px;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    &::-webkit-slider-thumb {
+      width: 16px;
+      height: 16px;
+      border: 0;
+      box-shadow: none;
+      border-radius: 50%;
+      background: $primary;
+      cursor: pointer;
+      pointer-events: auto;
+      margin-top: -6px;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    &::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border: 0;
+      box-shadow: none;
+      border-radius: 50%;
+      background: $primary;
+      cursor: pointer;
+      pointer-events: auto;
+      transform: translateY(-5px);
+    }
+
+    &::-moz-range-track {
+      background: transparent;
+      border: 0;
+    }
+
+    &--min {
+      z-index: 2;
+
+      &::-webkit-slider-thumb {
+        transform: translateX(-3px);
+      }
+
+      &::-moz-range-thumb {
+        transform: translate(-3px, -5px);
+      }
+    }
+
+    &--max {
+      z-index: 3;
+
+      &::-webkit-slider-thumb {
+        transform: translateX(3px);
+      }
+
+      &::-moz-range-thumb {
+        transform: translate(3px, -5px);
+      }
+    }
+  }
+
+  .Bounds {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: -3px 0 0;
+    color: $text-secondary;
+    font-size: 11px;
+    line-height: 1;
+
+    span:first-child {
+      transform: translateX(3px);
+    }
+
+    span:last-child {
+      justify-self: end;
+      transform: translateX(3px);
+    }
+  }
+
+  .Checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.2;
+
+    input {
+      flex: 0 0 auto;
+      width: 13px;
+      height: 13px;
+      margin: 0;
+    }
+  }
+}
+
+
 .QualityAssessment {
-  &Title {
+  .Title {
     font-weight: 600;
     margin-bottom: 6px;
     font-size: 14px;
   }
-}
 
-.QualityFilterGrid {
-  display: grid;
-  grid-template-columns: repeat(20, minmax(0, 1fr));
-  gap: 8px 12px;
+  .Grid {
+    display: grid;
+    grid-template-columns: repeat(20, minmax(0, 1fr));
+    gap: 8px 12px;
 
-  .QualityFilterBtn:nth-child(-n + 5) {
-    grid-column: span 4;
+    .Btn:nth-child(-n + 5) {
+      grid-column: span 4;
+    }
+
+    .Btn:nth-child(n + 6) {
+      grid-column: span 5;
+    }
   }
 
-  .QualityFilterBtn:nth-child(n + 6) {
-    grid-column: span 5;
+  .Btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 10px;
+    border: 1px solid $border-grey;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease,
+      box-shadow 120ms ease;
+
+    &:hover {
+      border-color: #bdbdbd;
+    }
+
+    &.is-selected {
+      background-color: #cfe9e7;
+      border-color: #b6deda;
+    }
+  }
+
+  .Dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+
+  .Label {
+    font-size: 13px;
   }
 }
 
-.QualityFilterBtn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 6px 10px;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-  background: #fff;
-  cursor: pointer;
-  transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
-
-  &:hover {
-    border-color: #bdbdbd;
-  }
-
-  &.is-selected {
-    background-color: #cfe9e7;
-    border-color: #b6deda;
-  }
-}
-
-.QualityFilterDot {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  display: inline-block;
-}
-
-.QualityFilterLabel {
-  font-size: 13px;
-}
 
 .ProtectionFilter {
   display: grid;
@@ -599,14 +652,14 @@
     margin-bottom: 6px;
   }
 
-  &Checkboxes {
+  .Checkboxes {
     display: flex;
     flex-direction: row;
     gap: 8px;
     align-self: center;
   }
 
-  &Label {
+  .Label {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -615,7 +668,7 @@
     cursor: pointer;
     padding: 2px 10px;
     margin-bottom: 0;
-    border: 1px solid #d9d9d9;
+    border: 1px solid $border-grey;
     border-radius: 6px;
     background: #fff;
     transition:
@@ -634,21 +687,20 @@
   }
 }
 
-.ArticleSearchAutocomplete {
-  &Wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
 
-  &Icon {
+.ArticleSearchAutocomplete {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .Icon {
     position: absolute;
     left: 8px;
     color: black;
     font-size: 16px;
   }
 
-  &Input {
+  .Input {
     width: 100%;
     padding-left: 28px !important;
 
@@ -657,7 +709,7 @@
     }
   }
 
-  &List {
+  .List {
     position: absolute;
     top: 100%;
     left: 0;
@@ -666,7 +718,7 @@
     padding: 0;
     list-style: none;
     background: #fff;
-    border: 1px solid #d9d9d9;
+    border: 1px solid $border-grey;
     border-top: none;
     border-radius: 0 0 6px 6px;
     max-height: 240px;
@@ -674,7 +726,7 @@
     z-index: 100;
   }
 
-  &Item {
+  .Item {
     padding: 10px 12px;
     font-size: 14px;
     cursor: pointer;
@@ -693,36 +745,35 @@
   }
 }
 
-.ArticleDetail {
-  &PanelBackdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 
-  &Panel {
+.ArticleDetail {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .Panel {
     background: white;
     width: 90vw;
     height: 85vh;
     display: flex;
     flex-direction: column;
-    border: 1px solid #e0e0e0;
+    border: 1px solid $border-light;
     border-radius: 4px;
     overflow: hidden;
 
-    &Header {
+    .Header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 12px 20px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid $border-light;
     }
 
-    &Title {
+    .Title {
       font-size: 18px;
       font-weight: 600;
       margin: 0;
@@ -731,18 +782,18 @@
       gap: 8px;
     }
 
-    &TitleLink {
+    .TitleLink {
       color: inherit;
       display: flex;
       align-items: center;
       transition: color 120ms ease;
 
       &:hover {
-        color: #1565c0;
+        color: $primary-dark;
       }
     }
 
-    &Close {
+    .Close {
       background: none;
       border: none;
       cursor: pointer;
@@ -762,7 +813,7 @@
       }
     }
 
-    &Body {
+    .Body {
       display: grid;
       grid-template-columns: 1fr 1.6fr 1.4fr;
       flex: 1;
@@ -775,41 +826,41 @@
     }
   }
 
-  &ColBody {
+  .ColBody {
     flex: 1;
     overflow-y: auto;
   }
 
-  &Info {
-    border-right: 1px solid #e0e0e0;
+  .Info {
+    border-right: 1px solid $border-light;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 
-    &Header {
+    .Header {
       font-size: 14px;
       font-weight: 600;
       padding: 12px 16px 8px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid $border-light;
     }
 
-    &Section {
+    .Section {
       padding: 12px 16px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid $border-light;
 
       &:last-child {
         border-bottom: none;
       }
 
-      &Title {
+      .Title {
         font-size: 13px;
         font-weight: 600;
-        color: #424242;
+        color: $text-strong;
         margin-bottom: 8px;
       }
     }
 
-    &Row {
+    .Row {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
@@ -823,45 +874,47 @@
       }
     }
 
-    &Label {
-      color: #757575;
+    .Label {
+      color: $text-muted;
       flex-shrink: 0;
     }
 
-    &Value {
+    .Value {
       font-weight: 500;
       text-align: right;
     }
   }
 
-  &Content {
-    border-right: 1px solid #e0e0e0;
+  .Content {
+    border-right: 1px solid $border-light;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 
-    &Header {
+    .Header {
+      display: block;
       padding: 12px 16px 8px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid $border-light;
     }
 
-    &Title {
+    .Title {
+      display: inline;
       font-size: 14px;
       font-weight: 600;
     }
 
-    &Subtitle {
+    .Subtitle {
       font-size: 13px;
-      color: #757575;
+      color: $text-muted;
       margin-left: 4px;
     }
 
-    &Tabs {
+    .Tabs {
       display: flex;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid $border-light;
     }
 
-    &Tab {
+    .Tab {
       flex: 1;
       padding: 8px 20px;
       font-size: 13px;
@@ -869,13 +922,13 @@
       border: none;
       border-bottom: 2px solid transparent;
       cursor: pointer;
-      color: #757575;
+      color: $text-muted;
       transition:
         color 120ms ease,
         background-color 120ms ease;
 
       &:first-child {
-        border-right: 1px solid #e0e0e0;
+        border-right: 1px solid $border-light;
       }
 
       &:hover:not(.is-active) {
@@ -886,12 +939,12 @@
         font-weight: 600;
         color: #000;
         background: white;
-        border-bottom-color: #1565c0;
+        border-bottom-color: $primary-dark;
       }
     }
   }
 
-  &WordCloud {
+  .WordCloud {
     padding: 20px 16px;
     display: flex;
     flex-wrap: wrap;
@@ -899,37 +952,37 @@
     align-items: baseline;
     line-height: 1.4;
 
-    &Word {
+    .Word {
       color: #1a237e;
       cursor: default;
       transition: color 100ms ease;
 
       &:hover {
-        color: #1565c0;
+        color: $primary-dark;
       }
     }
 
-    &Spinner {
+    .SpinnerWrap {
       width: 100%;
       display: flex;
       justify-content: center;
       padding-top: 32px;
     }
 
-    &Message {
+    .Message {
       font-size: 13px;
       color: #9e9e9e;
       font-style: italic;
     }
   }
 
-  &Contrib {
+  .Contrib {
     background: #c8f5c2;
     display: flex;
     flex-direction: column;
     overflow: hidden;
 
-    &SectionHeader {
+    .SectionHeader {
       font-size: 14px;
       font-weight: 600;
       padding: 12px 16px 8px;
@@ -937,15 +990,16 @@
       background: white;
     }
 
-    &Header {
+    .Header {
       font-size: 14px;
       font-weight: 500;
       line-height: 1.5;
       padding: 20px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      background: none;
     }
 
-    &List {
+    .List {
       list-style: none;
       margin: 0;
       padding: 0;
@@ -953,7 +1007,7 @@
       flex-direction: column;
     }
 
-    &Item {
+    .Item {
       display: flex;
       align-items: flex-start;
       gap: 10px;
@@ -967,12 +1021,13 @@
       }
     }
 
-    &Arrow {
+    .Arrow {
       margin-top: 2px;
       color: #2e7d32;
     }
   }
 }
+
 
 .FilteredArticlesSidebar {
   position: relative;
@@ -989,10 +1044,10 @@
   &.is-open {
     width: 316px;
     min-width: 316px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid $border-light;
   }
 
-  &Toggle {
+  .Toggle {
     position: absolute;
     left: 0;
     width: 36px;
@@ -1014,23 +1069,23 @@
       background: #5a6099;
     }
 
-    &Icon {
+    .Icon {
       color: #fff;
     }
 
-    &Count {
+    .Count {
       font-size: 11px;
       font-weight: 600;
       color: #fff;
     }
   }
 
-  &.is-open &Toggle {
+  &.is-open .Toggle {
     left: 0;
     border-radius: 0;
   }
 
-  &Content {
+  .Content {
     display: flex;
     flex-direction: column;
     width: 280px;
@@ -1045,7 +1100,7 @@
       margin-left 250ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  &.is-open &Content {
+  &.is-open .Content {
     opacity: 1;
     visibility: visible;
     margin-left: 0;
@@ -1053,28 +1108,28 @@
     min-width: 316px;
   }
 
-  &Header {
+  .Header {
     padding: 16px;
     padding-left: 52px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid $border-light;
     background: #fff;
     display: flex;
     flex-direction: column;
     position: relative;
   }
 
-  &Title {
+  .Title {
     font-size: 14px;
     font-weight: 600;
     color: #333;
   }
 
-  &Count {
+  .Count {
     font-size: 12px;
     color: #666;
   }
 
-  &List {
+  .List {
     overflow-y: auto;
     margin: 0;
     padding: 0;
@@ -1098,7 +1153,7 @@
     }
   }
 
-  &Item {
+  .Item {
     display: flex;
     align-items: center;
     height: 42px;
@@ -1112,13 +1167,13 @@
     &:hover {
       background-color: #f0f4ff;
 
-      .FilteredArticlesSidebarExternalLink {
+      .ExternalLink {
         opacity: 1;
       }
     }
   }
 
-  &Link {
+  .Link {
     flex: 1;
     padding: 12px 8px 12px 16px;
     font-size: 13px;
@@ -1137,7 +1192,7 @@
     }
   }
 
-  &ExternalLink {
+  .ExternalLink {
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -1154,188 +1209,255 @@
   }
 }
 
-.WikiBubbleChartTabBar {
-  display: flex;
-  border-bottom: 1px solid #d9d9d9;
-}
 
-.WikiBubbleChartTab {
-  padding: 10px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #757575;
-  background: #f5f5f5;
-  border: none;
-  border-bottom: 2px solid transparent;
-  cursor: pointer;
-  transition:
-    color 120ms ease,
-    background-color 120ms ease,
-    border-color 120ms ease;
-
-  &:hover:not(.is-active) {
-    background: #eeeeee;
-    color: #333;
+.ArticleLang {
+  .Grid {
+    display: flex;
+    flex-direction: column;
   }
 
-  &.is-active {
-    font-weight: 600;
-    color: #000;
-    background: white;
-    border-bottom-color: #1565c0;
+  .Grid--loading,
+  .Grid--empty,
+  .Grid--error {
+    padding: 48px 24px;
+    text-align: center;
+    color: $text-muted;
+    font-size: 14px;
+    font-style: italic;
   }
-}
 
-.ArticleLangGrid {
-  display: flex;
-  flex-direction: column;
-}
+  .Grid--loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
 
-.ArticleLangGridLoading,
-.ArticleLangGridEmpty,
-.ArticleLangGridError {
-  padding: 48px 24px;
-  text-align: center;
-  color: #757575;
-  font-size: 14px;
-  font-style: italic;
-}
+    .LoadingText {
+      font-size: 14px;
+      color: $text-secondary;
+    }
 
-.ArticleLangGridLoading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
+    .Progress {
+      width: 100%;
+      max-width: 360px;
+      height: 8px;
+      background: $border-light;
+      border-radius: 4px;
+      overflow: hidden;
 
-.ArticleLangGridLoadingText {
-  font-size: 14px;
-  color: #616161;
-}
+      .Bar {
+        height: 100%;
+        background: $primary;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+      }
+    }
+  }
 
-.ArticleLangProgressTrack {
-  width: 100%;
-  max-width: 360px;
-  height: 8px;
-  background: #e0e0e0;
-  border-radius: 4px;
-  overflow: hidden;
-}
+  .Grid--error {
+    color: $danger-fg;
+  }
 
-.ArticleLangProgressBar {
-  height: 100%;
-  background: #1976d2;
-  border-radius: 4px;
-  transition: width 0.3s ease;
-}
+  .Table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
 
-.ArticleLangGridError {
-  color: #c62828;
-}
+    th {
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-strong;
+      text-align: center;
+      background: white;
+      border: 1px solid $border-faint;
+      border-top: 1px solid $border-grey;
+    }
 
-.ArticleLangTable {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
+    tbody tr {
+      border-bottom: 1px solid $border-faint;
 
-  th {
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .HeaderArticle {
+      text-align: left !important;
+      font-style: italic;
+      font-weight: 500 !important;
+      color: $text-secondary !important;
+
+      .Inner {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+    }
+
+    .HeaderLang {
+      width: 1fr;
+    }
+  }
+
+  .Row {
+    &:hover {
+      background: #f9f9f9;
+    }
+
+    .Title {
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+
+      &--clickable {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .Cell {
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px 8px;
+    position: relative;
+
+    &--present {
+      background: white;
+    }
+
+    &--missing {
+      background: $danger-bg;
+
+      .Translate {
+        display: none;
+      }
+
+      &:hover .Translate {
+        display: flex;
+      }
+
+      &:hover .Missing {
+        display: none;
+      }
+    }
+
+    .Dot {
+      display: inline-block;
+      width: 42px;
+      height: 42px;
+    }
+
+    .Bubble {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .Skeleton {
+      display: inline-block;
+      vertical-align: middle;
+
+      &--loading {
+        animation: articleLangCellSpin 1s linear infinite;
+      }
+    }
+
+    .Missing {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      color: $danger-fg;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .Translate {
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 12px;
+      margin: 0 auto;
+      width: fit-content;
+      background: #e0f2f1;
+      border: 1px solid #80cbc4;
+      border-radius: 4px;
+      color: #00695c;
+      font-size: 12px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        background-color 120ms ease,
+        border-color 120ms ease;
+
+      &:hover {
+        background: #b2dfdb;
+        border-color: #4db6ac;
+        text-decoration: none;
+        color: #00695c;
+      }
+    }
+  }
+
+  .Pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 16px 12px;
+    border-top: 1px solid $border-light;
+
+    .Btn {
+      min-width: 32px;
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid $border-grey;
+      border-radius: 4px;
+      background: white;
+      color: #333;
+      font-size: 13px;
+      cursor: pointer;
+      transition:
+        background-color 100ms ease,
+        border-color 100ms ease;
+
+      &:hover:not(.is-active):not(:disabled) {
+        background: #f0f0f0;
+        border-color: #bdbdbd;
+      }
+
+      &.is-active {
+        background: $primary;
+        border-color: $primary;
+        color: white;
+        font-weight: 600;
+      }
+
+      &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+    }
+
+    .Ellipsis {
+      min-width: 24px;
+      text-align: center;
+      color: #999;
+      font-size: 14px;
+    }
+  }
+
+  .Disclaimer {
     padding: 12px 16px;
     font-size: 13px;
-    font-weight: 600;
-    color: #424242;
-    text-align: center;
-    background: white;
-    border: 1px solid #eee;
-    border-top: 1px solid #d9d9d9;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid #eee;
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
-}
-
-.ArticleLangTableHeaderArticle {
-  text-align: left !important;
-  font-style: italic;
-  font-weight: 500 !important;
-  color: #616161 !important;
-
-  &__inner {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-}
-
-.ArticleLangTableHeaderLang {
-  width: 1fr;
-}
-
-.ArticleLangRow {
-  &:hover {
-    background: #f9f9f9;
-  }
-}
-
-.ArticleLangRowTitle {
-  padding: 14px 16px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 220px;
-}
-
-.ArticleLangCell {
-  text-align: center;
-  vertical-align: middle;
-  padding: 10px 8px;
-  position: relative;
-
-  &--present {
-    background: white;
-  }
-
-  &--missing {
-    background: #ffcdd2;
-
-    .ArticleLangCellTranslate {
-      display: none;
-    }
-
-    &:hover .ArticleLangCellTranslate {
-      display: flex;
-    }
-
-    &:hover .ArticleLangCellMissing {
-      display: none;
-    }
-  }
-}
-
-.ArticleLangCellDot {
-  display: inline-block;
-  width: 42px;
-  height: 42px;
-}
-
-.ArticleLangCellBubble {
-  display: inline-block;
-  vertical-align: middle;
-}
-
-.ArticleLangCellSkeleton {
-  display: inline-block;
-  vertical-align: middle;
-
-  &--loading {
-    animation: articleLangCellSpin 1s linear infinite;
+    font-style: italic;
+    color: $text-muted;
   }
 }
 
@@ -1343,290 +1465,203 @@
   to { transform: rotate(360deg); }
 }
 
-.ArticleLangCellMissing {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: #c62828;
-  font-size: 12px;
-  font-weight: 500;
-}
 
-.ArticleLangCellTranslate {
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 6px 12px;
-  margin: 0 auto;
-  width: fit-content;
-  background: #e0f2f1;
-  border: 1px solid #80cbc4;
-  border-radius: 4px;
-  color: #00695c;
-  font-size: 12px;
-  font-weight: 500;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color 120ms ease,
-    border-color 120ms ease;
-
-  &:hover {
-    background: #b2dfdb;
-    border-color: #4db6ac;
-    text-decoration: none;
-    color: #00695c;
-  }
-}
-
-.ArticleLangPagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  padding: 16px 12px;
-  border-top: 1px solid #e0e0e0;
-}
-
-.ArticleLangPaginationBtn {
-  min-width: 32px;
-  height: 32px;
-  padding: 0 8px;
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  background: white;
-  color: #333;
-  font-size: 13px;
-  cursor: pointer;
-  transition:
-    background-color 100ms ease,
-    border-color 100ms ease;
-
-  &:hover:not(.is-active):not(:disabled) {
-    background: #f0f0f0;
-    border-color: #bdbdbd;
-  }
-
-  &.is-active {
-    background: #1976d2;
-    border-color: #1976d2;
-    color: white;
-    font-weight: 600;
-  }
-
-  &:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
-}
-
-.ArticleLangPaginationEllipsis {
-  min-width: 24px;
-  text-align: center;
-  color: #999;
-  font-size: 14px;
-}
-
-.ArticleLangDisclaimer {
-  padding: 12px 16px;
-  font-size: 13px;
-  font-style: italic;
-  color: #757575;
-}
-
-.ArticleLangRowTitle--clickable {
-  cursor: pointer;
-}
-
-.ArticleLangComparisonBackdrop {
+.ArticleLangComparison {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-}
 
-.ArticleLangComparisonPanel {
-  background: white;
-  width: 90vw;
-  max-width: 1100px;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  overflow: hidden;
-}
+  .Panel {
+    background: white;
+    width: 90vw;
+    max-width: 1100px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid $border-light;
+    border-radius: 4px;
+    overflow: hidden;
 
-.ArticleLangComparisonHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  border-bottom: 1px solid #e0e0e0;
-}
+    .Body {
+      flex: 1;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+    }
 
-.ArticleLangComparisonTitle {
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0;
-}
+    .Header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      border-bottom: 1px solid $border-light;
 
-.ArticleLangComparisonClose {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #555;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  transition:
-    background-color 120ms ease,
-    color 120ms ease;
+      .Title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+      }
 
-  &:hover {
-    background-color: #f0f0f0;
-    color: #000;
-  }
-}
+      .Close {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #555;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+        transition:
+          background-color 120ms ease,
+          color 120ms ease;
 
-.ArticleLangComparisonLoading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 64px 24px;
-}
-
-.ArticleLangComparisonError {
-  padding: 48px 24px;
-  text-align: center;
-  color: #c62828;
-  font-size: 14px;
-}
-
-.ArticleLangComparisonTable {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
-
-.ArticleLangComparisonMetricHeader {
-  width: 200px;
-  background: white;
-  border: 1px solid #eee;
-}
-
-.ArticleLangComparisonLangHeader {
-  padding: 12px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #424242;
-  text-align: center;
-  background: white;
-  border: 1px solid #eee;
-
-  span {
-    margin-right: 4px;
+        &:hover {
+          background-color: #f0f0f0;
+          color: #000;
+        }
+      }
+    }
   }
 
-  &--missing {
-    background: #ffcdd2;
-    color: #c62828;
+  .Loading {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
   }
-}
 
-.ArticleLangComparisonHeaderLink {
-  color: inherit;
-  display: inline-flex;
-  align-items: center;
-  vertical-align: middle;
-
-  &:hover {
-    color: #1565c0;
-  }
-}
-
-.ArticleLangComparisonMetricLabel {
-  padding: 12px 16px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #555;
-  border: 1px solid #eee;
-  background: #fafafa;
-  white-space: nowrap;
-}
-
-.ArticleLangComparisonCell {
-  padding: 10px 12px;
-  border: 1px solid #eee;
-
-  &--missing {
-    background: #ffcdd2;
+  .Error {
+    padding: 48px 24px;
     text-align: center;
+    color: $danger-fg;
+    font-size: 14px;
   }
 
-  &--translate {
-    padding: 8px 12px;
+  .Table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    .MetricHeader {
+      width: 200px;
+      background: white;
+      border: 1px solid $border-faint;
+    }
+
+    .LangHeader {
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-strong;
+      text-align: center;
+      background: white;
+      border: 1px solid $border-faint;
+
+      span {
+        margin-right: 4px;
+      }
+
+      &--missing {
+        background: $danger-bg;
+        color: $danger-fg;
+      }
+
+      .Link {
+        color: inherit;
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+
+        &:hover {
+          color: $primary-dark;
+        }
+      }
+    }
+
+    .MetricLabel {
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      border: 1px solid $border-faint;
+      background: #fafafa;
+      white-space: nowrap;
+    }
+
+    .Cell {
+      padding: 10px 12px;
+      border: 1px solid $border-faint;
+
+      &--missing {
+        background: $danger-bg;
+        text-align: center;
+      }
+
+      &--translate {
+        padding: 8px 12px;
+      }
+
+      .MissingIcon {
+        color: $danger-fg;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .Inner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .Value {
+          font-size: 13px;
+          font-weight: 500;
+          color: #333;
+          min-width: 64px;
+          text-align: right;
+        }
+
+        .Track {
+          flex: 1;
+          height: 16px;
+          background: #f0f0f0;
+          border-radius: 2px;
+
+          .Bar {
+            height: 100%;
+            background: #90caf9;
+            border-radius: 2px;
+          }
+        }
+      }
+    }
   }
-}
 
-.ArticleLangComparisonMissingIcon {
-  color: #c62828;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ArticleLangComparisonCellInner {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.ArticleLangComparisonValue {
-  font-size: 13px;
-  font-weight: 500;
-  color: #333;
-  min-width: 64px;
-  text-align: right;
-}
-
-.ArticleLangComparisonBarTrack {
-  flex: 1;
-  height: 16px;
-  background: #f0f0f0;
-  border-radius: 2px;
-}
-
-.ArticleLangComparisonBar {
-  height: 100%;
-  background: #90caf9;
-  border-radius: 2px;
-}
-
-.ArticleLangComparisonTranslateLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: #e0f2f1;
-  border: 1px solid #80cbc4;
-  border-radius: 4px;
-  color: #00695c;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    background-color 120ms ease,
-    border-color 120ms ease;
-
-  &:hover {
-    background: #b2dfdb;
-    border-color: #4db6ac;
+  .TranslateLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #e0f2f1;
+    border: 1px solid #80cbc4;
+    border-radius: 4px;
     color: #00695c;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease;
+
+    &:hover {
+      background: #b2dfdb;
+      border-color: #4db6ac;
+      color: #00695c;
+    }
   }
 }

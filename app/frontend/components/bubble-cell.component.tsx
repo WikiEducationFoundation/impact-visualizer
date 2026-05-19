@@ -19,9 +19,9 @@ const BubbleCell: React.FC<BubbleCellProps> = ({
 }) => {
   if (isLoading || isQueued) {
     return (
-      <td className="ArticleLangCell ArticleLangCell--present">
+      <td className="Cell Cell--present">
         <svg
-          className={`ArticleLangCellSkeleton ArticleLangCellSkeleton--${isLoading ? "loading" : "queued"}`}
+          className={`Skeleton Skeleton--${isLoading ? "loading" : "queued"}`}
           width={BUBBLE_BOX}
           height={BUBBLE_BOX}
           viewBox={`-${BUBBLE_HALF} -${BUBBLE_HALF} ${BUBBLE_BOX} ${BUBBLE_BOX}`}
@@ -41,9 +41,9 @@ const BubbleCell: React.FC<BubbleCellProps> = ({
   }
 
   return (
-    <td className="ArticleLangCell ArticleLangCell--present">
+    <td className="Cell Cell--present">
       <svg
-        className="ArticleLangCellBubble"
+        className="Bubble"
         width={BUBBLE_BOX}
         height={BUBBLE_BOX}
         viewBox={`-${BUBBLE_HALF} -${BUBBLE_HALF} ${BUBBLE_BOX} ${BUBBLE_BOX}`}

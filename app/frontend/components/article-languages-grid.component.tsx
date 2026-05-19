@@ -67,13 +67,13 @@ function LanguageCell({
 }) {
   if (!exists) {
     return (
-      <td className="ArticleLangCell ArticleLangCell--missing">
-        <span className="ArticleLangCellMissing">
+      <td className="Cell Cell--missing">
+        <span className="Missing">
           <IoCloseCircle size={18} />
           <span>Missing</span>
         </span>
         <a
-          className="ArticleLangCellTranslate"
+          className="Translate"
           href={getTranslateUrl(articleTitle, sourceLang, lang)}
           target="_blank"
           rel="noopener noreferrer"
@@ -137,9 +137,9 @@ function PaginationBar({
   }
 
   return (
-    <div className="ArticleLangPagination">
+    <div className="Pagination">
       <button
-        className="ArticleLangPaginationBtn"
+        className="Btn"
         disabled={currentPage === 1}
         onClick={() => goToPage(currentPage - 1)}
         aria-label="Previous page"
@@ -148,13 +148,13 @@ function PaginationBar({
       </button>
       {pages.map((p, i) =>
         p === "ellipsis" ? (
-          <span key={`e${i}`} className="ArticleLangPaginationEllipsis">
+          <span key={`e${i}`} className="Ellipsis">
             &hellip;
           </span>
         ) : (
           <button
             key={p}
-            className={`ArticleLangPaginationBtn ${p === currentPage ? "is-active" : ""}`}
+            className={`Btn ${p === currentPage ? "is-active" : ""}`}
             onClick={() => goToPage(p)}
           >
             {p}
@@ -162,7 +162,7 @@ function PaginationBar({
         ),
       )}
       <button
-        className="ArticleLangPaginationBtn"
+        className="Btn"
         disabled={currentPage === totalPages}
         onClick={() => goToPage(currentPage + 1)}
         aria-label="Next page"
@@ -269,9 +269,9 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
         : 0;
 
     return (
-      <div className="ArticleLangGridLoading">
+      <div className="Grid--loading">
         <Spinner size="large" />
-        <div className="ArticleLangGridLoadingText">
+        <div className="LoadingText">
           Fetching language data&hellip;{" "}
           {progress && progress.total > 0 && (
             <span>
@@ -280,9 +280,9 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
           )}
         </div>
         {progress && progress.total > 0 && (
-          <div className="ArticleLangProgressTrack">
+          <div className="Progress">
             <div
-              className="ArticleLangProgressBar"
+              className="Bar"
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -292,24 +292,24 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
   }
 
   if (error) {
-    return <div className="ArticleLangGridError">{error}</div>;
+    return <div className="Grid--error">{error}</div>;
   }
 
   if (articles.length === 0) {
     return (
-      <div className="ArticleLangGridEmpty">
+      <div className="Grid--empty">
         No articles match the current filters.
       </div>
     );
   }
 
   return (
-    <div className="ArticleLangGrid">
-      <table className="ArticleLangTable">
+    <div className="Grid">
+      <table className="Table">
         <thead>
           <tr>
-            <th className="ArticleLangTableHeaderArticle">
-              <div className="ArticleLangTableHeaderArticle__inner">
+            <th className="HeaderArticle">
+              <div className="Inner">
                 <BsInfoCircle size={24} />
                 <span>
                   Compare different linguistic versions of the article
@@ -317,7 +317,7 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
               </div>
             </th>
             {languages.map((lang) => (
-              <th key={lang} className="ArticleLangTableHeaderLang">
+              <th key={lang} className="HeaderLang">
                 {LANGUAGE_LABELS[lang] ?? lang} version
               </th>
             ))}
@@ -337,9 +337,9 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
               !langQueries[rowIdx]?.isError;
 
             return (
-              <tr key={row.article} className="ArticleLangRow">
+              <tr key={row.article} className="Row">
                 <td
-                  className={`ArticleLangRowTitle${onArticleClick ? " ArticleLangRowTitle--clickable" : ""}`}
+                  className={`Title${onArticleClick ? " Title--clickable" : ""}`}
                   onClick={() => onArticleClick?.(row.article)}
                 >
                   {row.article}

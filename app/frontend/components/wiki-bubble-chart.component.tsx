@@ -79,22 +79,22 @@ function QualityFilterButtons({
   return (
     <div className="QualityAssessment">
       <div className="BoxTitle">Quality assessment*</div>
-      <div className="QualityFilterGrid">
+      <div className="Grid">
         {gradeGroups.map((g) => {
           const isOn = g.grades.every((x) => selected[x] !== false);
           return (
             <button
               key={g.id}
               type="button"
-              className={`QualityFilterBtn ${isOn ? "is-selected" : ""}`}
+              className={`Btn ${isOn ? "is-selected" : ""}`}
               data-group={g.id}
               onClick={() => onToggle(g.grades, !isOn)}
             >
               <span
-                className="QualityFilterDot"
+                className="Dot"
                 style={{ backgroundColor: g.dot }}
               />
-              <span className="QualityFilterLabel">{g.label}</span>
+              <span className="Label">{g.label}</span>
             </button>
           );
         })}
@@ -117,8 +117,8 @@ function ProtectionFilterCheckboxes({
   return (
     <div className="ProtectionFilter">
       <div className="BoxTitle">Protection filter</div>
-      <div className="ProtectionFilterCheckboxes">
-        <label className="ProtectionFilterLabel">
+      <div className="Checkboxes">
+        <label className="Label">
           <input
             type="checkbox"
             checked={moveChecked}
@@ -126,7 +126,7 @@ function ProtectionFilterCheckboxes({
           />
           <span>Move restriction</span>
         </label>
-        <label className="ProtectionFilterLabel">
+        <label className="Label">
           <input
             type="checkbox"
             checked={editChecked}
@@ -161,9 +161,9 @@ function CentralityFilter({
 
   return (
     <div className="CentralityFilter">
-      <div className="CentralityFilterHeader">
+      <div className="Header">
         <div className="BoxTitle">Centrality</div>
-        <label className="CentralityFilterCheckbox">
+        <label className="Checkbox">
           <input
             type="checkbox"
             checked={includeUnassessed}
@@ -172,14 +172,14 @@ function CentralityFilter({
           />
           <span>include articles without centrality</span>
         </label>
-        <div className="CentralityFilterValue">
+        <div className="Value">
           {min}-{max}
         </div>
       </div>
-      <div className="CentralityFilterSlider">
-        <div className="CentralityFilterTrack" />
+      <div className="Slider">
+        <div className="Track" />
         <div
-          className="CentralityFilterRange"
+          className="Range"
           style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
         />
         <input
@@ -190,7 +190,7 @@ function CentralityFilter({
           value={min}
           onChange={(e) => onMinChange(Number(e.target.value))}
           aria-label="Minimum centrality"
-          className="CentralityFilterInput CentralityFilterInput--min"
+          className="Input Input--min"
         />
         <input
           type="range"
@@ -200,10 +200,10 @@ function CentralityFilter({
           value={max}
           onChange={(e) => onMaxChange(Number(e.target.value))}
           aria-label="Maximum centrality"
-          className="CentralityFilterInput CentralityFilterInput--max"
+          className="Input Input--max"
         />
       </div>
-      <div className="CentralityFilterBounds">
+      <div className="Bounds">
         <span>{CENTRALITY_MIN}</span>
         <span>{CENTRALITY_MAX}</span>
       </div>
@@ -1089,7 +1089,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   return (
     <div className="WikiBubbleChart">
-      <div className="WikiBubbleChartTitleRow">
+      <div className="TitleRow">
         <h2 className="u-mb0">Article analytics over chosen focus period</h2>
         <CSVButton
           articles={sortedRows}
@@ -1099,17 +1099,17 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         />
       </div>
 
-      <div className="WikiBubbleChartTabBar">
+      <div className="TabBar">
         <button
           type="button"
-          className={`WikiBubbleChartTab ${activeTab === "overview" ? "is-active" : ""}`}
+          className={`Tab ${activeTab === "overview" ? "is-active" : ""}`}
           onClick={() => handleTabChange("overview")}
         >
           Articles overview
         </button>
         <button
           type="button"
-          className={`WikiBubbleChartTab ${activeTab === "languages" ? "is-active" : ""}`}
+          className={`Tab ${activeTab === "languages" ? "is-active" : ""}`}
           onClick={() => handleTabChange("languages")}
         >
           Languages
@@ -1117,29 +1117,29 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       </div>
 
       <div
-        className="WikiBubbleChartTabPanel"
+        className="TabPanel"
         hidden={activeTab !== "overview"}
       >
-        <div className="WikiBubbleChartAxisControls">
-          <div className="WikiBubbleChartFilterBox">
-            <div className="WikiBubbleChartAxisControl">
-              <FaArrowUp size={30} className="WikiBubbleChartAxisIcon" />
-              <div className="WikiBubbleChartAxisFields">
-                <div className="WikiBubbleChartAxisLabelRow">
+        <div className="AxisControls">
+          <div className="FilterBox">
+            <div className="AxisControl">
+              <FaArrowUp size={30} className="AxisIcon" />
+              <div className="AxisFields">
+                <div className="AxisLabelRow">
                   <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
                     Vertical axis
                   </label>
-                  <div className="WikiBubbleChartScaleToggle">
+                  <div className="ScaleToggle">
                     <button
                       type="button"
-                      className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "linear" ? "is-active" : ""}`}
+                      className={`ScaleBtn ${yAxisScaleType === "linear" ? "is-active" : ""}`}
                       onClick={() => setYAxisScaleType("linear")}
                     >
                       Linear
                     </button>
                     <button
                       type="button"
-                      className={`WikiBubbleChartScaleBtn ${yAxisScaleType === "log" ? "is-active" : ""}`}
+                      className={`ScaleBtn ${yAxisScaleType === "log" ? "is-active" : ""}`}
                       onClick={() => setYAxisScaleType("log")}
                     >
                       Log
@@ -1148,7 +1148,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 </div>
                 <select
                   id="wiki-bubble-y-axis"
-                  className="WikiBubbleChartSortSelect"
+                  className="SortSelect"
                   value={yAxisKey}
                   onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
                 >
@@ -1160,13 +1160,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             </div>
           </div>
 
-          <div className="WikiBubbleChartFilterBox">
+          <div className="FilterBox">
             <div className="BoxTitle">Y-axis range</div>
-            <div className="WikiBubbleChartRangeRow">
-              <label className="WikiBubbleChartRangeField">
-                <span className="WikiBubbleChartRangeLabel">min</span>
+            <div className="RangeRow">
+              <label className="RangeField">
+                <span className="RangeLabel">min</span>
                 <input
-                  className="WikiBubbleChartRangeInput"
+                  className="RangeInput"
                   type="number"
                   inputMode="numeric"
                   placeholder={
@@ -1179,10 +1179,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                   aria-label="Y-axis minimum"
                 />
               </label>
-              <label className="WikiBubbleChartRangeField">
-                <span className="WikiBubbleChartRangeLabel">max</span>
+              <label className="RangeField">
+                <span className="RangeLabel">max</span>
                 <input
-                  className="WikiBubbleChartRangeInput"
+                  className="RangeInput"
                   type="number"
                   inputMode="numeric"
                   placeholder={
@@ -1198,25 +1198,25 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             </div>
           </div>
 
-          <div className="WikiBubbleChartFilterBox">
-            <div className="WikiBubbleChartAxisControl">
-              <FaArrowRight size={30} className="WikiBubbleChartAxisIcon" />
-              <div className="WikiBubbleChartAxisFields">
-                <div className="WikiBubbleChartAxisLabelRow">
+          <div className="FilterBox">
+            <div className="AxisControl">
+              <FaArrowRight size={30} className="AxisIcon" />
+              <div className="AxisFields">
+                <div className="AxisLabelRow">
                   <label htmlFor="wiki-bubble-sort" className="BoxTitle">
                     Horizontal axis
                   </label>
-                  <div className="WikiBubbleChartScaleToggle">
+                  <div className="ScaleToggle">
                     <button
                       type="button"
-                      className={`WikiBubbleChartScaleBtn ${xAxisMode === "ranked" ? "is-active" : ""}`}
+                      className={`ScaleBtn ${xAxisMode === "ranked" ? "is-active" : ""}`}
                       onClick={() => setXAxisMode("ranked")}
                     >
                       Ranked
                     </button>
                     <button
                       type="button"
-                      className={`WikiBubbleChartScaleBtn ${xAxisMode === "scaled" ? "is-active" : ""}`}
+                      className={`ScaleBtn ${xAxisMode === "scaled" ? "is-active" : ""}`}
                       onClick={() =>
                         xAxisKey !== "title" && setXAxisMode("scaled")
                       }
@@ -1233,7 +1233,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 </div>
                 <select
                   id="wiki-bubble-sort"
-                  className="WikiBubbleChartSortSelect"
+                  className="SortSelect"
                   value={xAxisKey}
                   onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
                 >
@@ -1262,7 +1262,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             </div>
           </div>
 
-          <div className="WikiBubbleChartFilterBox">
+          <div className="FilterBox">
             <CentralityFilter
               min={centralityMin}
               max={centralityMax}
@@ -1274,13 +1274,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        <div className="WikiBubbleChartHeading">
-          <div className="WikiBubbleChartInfoLine">
-            <BsInfoCircle size={24} className="WikiBubbleChartInfoIcon" />
+        <div className="Heading">
+          <div className="InfoLine">
+            <BsInfoCircle size={24} className="InfoIcon" />
             <span>See an overview of articles with their statistics</span>
           </div>
-          <div className="WikiBubbleChartHeadingControls">
-            <label className="WikiBubbleChartShowLabels">
+          <div className="HeadingControls">
+            <label className="ShowLabels">
               <input
                 type="checkbox"
                 checked={showLabels}
@@ -1296,8 +1296,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        <div className="WikiBubbleChartBody">
-          <div className="WikiBubbleChartContainer" ref={containerRef} />
+        <div className="Body">
+          <div className="Container" ref={containerRef} />
           <FilteredArticlesSidebar
             articles={filteredArticles}
             wiki={wiki}
@@ -1307,15 +1307,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           />
         </div>
 
-        <div className="WikiBubbleChartQualityFilters">
-          <div className="WikiBubbleChartFilterBox">
+        <div className="QualityFilters">
+          <div className="FilterBox">
             <QualityFilterButtons
               onToggle={toggleGrades}
               selected={selectedGrades}
             />
           </div>
 
-          <div className="WikiBubbleChartFilterBox">
+          <div className="FilterBox">
             <ProtectionFilterCheckboxes
               moveChecked={filterMoveRestriction}
               editChecked={filterEditRestriction}
@@ -1325,16 +1325,16 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        <div className="WikiBubbleChartStats">
-          <div className="WikiBubbleChartStatCell">
-            <span className="WikiBubbleChartStatValue">
+        <div className="Stats">
+          <div className="StatCell">
+            <span className="StatValue">
               {aggregateStats.totalArticles.toLocaleString()}
             </span>
-            <span className="WikiBubbleChartStatLabel">Total articles</span>
+            <span className="StatLabel">Total articles</span>
           </div>
 
-          <div className="WikiBubbleChartStatCell">
-            <span className="WikiBubbleChartStatValue">
+          <div className="StatCell">
+            <span className="StatValue">
               {aggregateStats.millionVisits !== null
                 ? aggregateStats.millionVisits.toLocaleString("en-US", {
                     minimumFractionDigits: 2,
@@ -1342,7 +1342,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                   })
                 : "—"}
             </span>
-            <span className="WikiBubbleChartStatLabel">
+            <span className="StatLabel">
               Million visits
               {aggregateStats.startDateLabel
                 ? ` (since ${aggregateStats.startDateLabel})`
@@ -1350,54 +1350,54 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             </span>
           </div>
 
-          <div className="WikiBubbleChartStatCell">
-            <span className="WikiBubbleChartStatValue">
+          <div className="StatCell">
+            <span className="StatValue">
               {aggregateStats.averageTotalViews !== null
                 ? aggregateStats.averageTotalViews.toLocaleString()
                 : "—"}
             </span>
-            <span className="WikiBubbleChartStatLabel">
+            <span className="StatLabel">
               Average total views per article
             </span>
           </div>
 
-          <div className="WikiBubbleChartStatCell">
-            <span className="WikiBubbleChartStatValue">
+          <div className="StatCell">
+            <span className="StatValue">
               {aggregateStats.averageArticleSize !== null
                 ? aggregateStats.averageArticleSize.toLocaleString()
                 : "—"}
             </span>
-            <span className="WikiBubbleChartStatLabel">
+            <span className="StatLabel">
               Average article size (bytes)
             </span>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="WikiBubbleChartLegend">
-          <div className="WikiBubbleChartLegendText">
+        <div className="Legend">
+          <div className="Text">
             * Quality assessment is done by the Wikipedia community and it may
             be inconsistent
           </div>
-          <div className="WikiBubbleChartLegendBox">
-            <div className="WikiBubbleChartLegendTitle">Legend</div>
+          <div className="Box">
+            <div className="Title">Legend</div>
             <img src="/images/legend.png" />
           </div>
         </div>
       </div>
 
       <div
-        className="WikiBubbleChartTabPanel"
+        className="TabPanel"
         hidden={activeTab !== "languages"}
       >
-        <div className="WikiBubbleChartQualityFilters">
-          <div className="WikiBubbleChartFilterBox">
+        <div className="QualityFilters">
+          <div className="FilterBox">
             <QualityFilterButtons
               onToggle={toggleGrades}
               selected={selectedGrades}
             />
           </div>
-          <div className="WikiBubbleChartFilterBox">
+          <div className="FilterBox">
             <ProtectionFilterCheckboxes
               moveChecked={filterMoveRestriction}
               editChecked={filterEditRestriction}
@@ -1407,26 +1407,28 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        <ArticleLanguagesGrid
-          articles={filteredArticles}
-          allArticles={sortedRows}
-          languageLinks={languageLinks}
-          wiki={wiki}
-          loading={langLinksLoading}
-          error={
-            langLinksError
-              ? "Failed to fetch language data. Please try again later."
-              : null
-          }
-          languages={TARGET_LANGUAGES}
-          onArticleClick={setLangCompareArticle}
-          progress={langLinksProgress}
-          topicId={topicId}
-        />
+        <div className="ArticleLang">
+          <ArticleLanguagesGrid
+            articles={filteredArticles}
+            allArticles={sortedRows}
+            languageLinks={languageLinks}
+            wiki={wiki}
+            loading={langLinksLoading}
+            error={
+              langLinksError
+                ? "Failed to fetch language data. Please try again later."
+                : null
+            }
+            languages={TARGET_LANGUAGES}
+            onArticleClick={setLangCompareArticle}
+            progress={langLinksProgress}
+            topicId={topicId}
+          />
 
-        <div className="ArticleLangDisclaimer">
-          * Quality assessment is done by the Wikipedia community and it may be
-          inconsistent
+          <div className="Disclaimer">
+            * Quality assessment is done by the Wikipedia community and it may be
+            inconsistent
+          </div>
         </div>
       </div>
 

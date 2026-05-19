@@ -101,27 +101,27 @@ function ArticleDetailPanel({
 
   return (
     <div
-      className="ArticleDetailPanelBackdrop"
+      className="ArticleDetail"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="ArticleDetailPanel">
-        <div className="ArticleDetailPanelHeader">
-          <h3 className="ArticleDetailPanelTitle">
+      <div className="Panel">
+        <div className="Header">
+          <h3 className="Title">
             {article.article}
             <a
               href={wikiUrl}
               target="_blank"
               rel="noreferrer"
-              className="ArticleDetailPanelTitleLink"
+              className="TitleLink"
               aria-label="Open on Wikipedia"
             >
               <FiExternalLink size={18} />
             </a>
           </h3>
           <button
-            className="ArticleDetailPanelClose"
+            className="Close"
             onClick={onClose}
             aria-label="Close"
           >
@@ -129,55 +129,55 @@ function ArticleDetailPanel({
           </button>
         </div>
 
-        <div className="ArticleDetailPanelBody">
-          <div className="ArticleDetailInfo">
-            <div className="ArticleDetailInfoHeader">Article information</div>
-            <div className="ArticleDetailColBody">
-              <div className="ArticleDetailInfoSection">
-                <div className="ArticleDetailInfoSectionTitle">General</div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Instance</span>
-                  <span className="ArticleDetailInfoValue">
+        <div className="Body">
+          <div className="Info">
+            <div className="Header">Article information</div>
+            <div className="ColBody">
+              <div className="Section">
+                <div className="Title">General</div>
+                <div className="Row">
+                  <span className="Label">Instance</span>
+                  <span className="Value">
                     {instanceLabel}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Creation date</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Creation date</span>
+                  <span className="Value">
                     {formattedDate}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Restriction</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Restriction</span>
+                  <span className="Value">
                     {restrictionLabel}
                   </span>
                 </div>
               </div>
 
-              <div className="ArticleDetailInfoSection">
-                <div className="ArticleDetailInfoSectionTitle">
+              <div className="Section">
+                <div className="Title">
                   Qualitative information
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
+                <div className="Row">
+                  <span className="Label">
                     Quality assessment
                   </span>
-                  <span className="ArticleDetailInfoValue">
+                  <span className="Value">
                     {article.assessment_grade ?? "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Centrality</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Centrality</span>
+                  <span className="Value">
                     {article.centrality != null
                       ? article.centrality.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Warning tags</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Warning tags</span>
+                  <span className="Value">
                     {article.warning_tags_count != null
                       ? article.warning_tags_count.toLocaleString()
                       : "—"}
@@ -185,53 +185,53 @@ function ArticleDetailPanel({
                 </div>
               </div>
 
-              <div className="ArticleDetailInfoSection">
-                <div className="ArticleDetailInfoSectionTitle">
+              <div className="Section">
+                <div className="Title">
                   Content data
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
+                <div className="Row">
+                  <span className="Label">
                     Article size (in byte)
                   </span>
-                  <span className="ArticleDetailInfoValue">
+                  <span className="Value">
                     {article.article_size != null
                       ? article.article_size.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
+                <div className="Row">
+                  <span className="Label">
                     Lead section size (in byte)
                   </span>
-                  <span className="ArticleDetailInfoValue">
+                  <span className="Value">
                     {article.lead_section_size != null
                       ? article.lead_section_size.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
+                <div className="Row">
+                  <span className="Label">
                     Discussion size (in byte)
                   </span>
-                  <span className="ArticleDetailInfoValue">
+                  <span className="Value">
                     {article.talk_size != null
                       ? article.talk_size.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Images</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Images</span>
+                  <span className="Value">
                     {article.images_count != null
                       ? article.images_count.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
+                <div className="Row">
+                  <span className="Label">
                     Linguistic versions
                   </span>
-                  <span className="ArticleDetailInfoValue">
+                  <span className="Value">
                     {article.linguistic_versions_count != null
                       ? article.linguistic_versions_count.toLocaleString()
                       : "—"}
@@ -239,41 +239,41 @@ function ArticleDetailPanel({
                 </div>
               </div>
 
-              <div className="ArticleDetailInfoSection">
-                <div className="ArticleDetailInfoSectionTitle">
+              <div className="Section">
+                <div className="Title">
                   User engagement data
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
+                <div className="Row">
+                  <span className="Label">
                     Avg daily views
                   </span>
-                  <span className="ArticleDetailInfoValue">
+                  <span className="Value">
                     {article.average_daily_views != null
                       ? article.average_daily_views.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
+                <div className="Row">
+                  <span className="Label">
                     Avg daily views (prev. year)
                   </span>
-                  <span className="ArticleDetailInfoValue">
+                  <span className="Value">
                     {article.prev_average_daily_views != null
                       ? article.prev_average_daily_views.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Editors</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Editors</span>
+                  <span className="Value">
                     {article.number_of_editors != null
                       ? article.number_of_editors.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Incoming links</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Incoming links</span>
+                  <span className="Value">
                     {article.incoming_links_count != null
                       ? article.incoming_links_count.toLocaleString()
                       : "—"}
@@ -283,38 +283,38 @@ function ArticleDetailPanel({
             </div>
           </div>
 
-          <div className="ArticleDetailContent">
-            <div className="ArticleDetailContentHeader">
-              <span className="ArticleDetailContentTitle">
+          <div className="Content">
+            <div className="Header">
+              <span className="Title">
                 Content analysis
               </span>
-              <span className="ArticleDetailContentSubtitle">
+              <span className="Subtitle">
                 | Terms occurring more frequently
               </span>
             </div>
-            <div className="ArticleDetailContentTabs">
+            <div className="Tabs">
               <button
-                className={`ArticleDetailContentTab${activeTab === "all" ? " is-active" : ""}`}
+                className={`Tab${activeTab === "all" ? " is-active" : ""}`}
                 onClick={() => setActiveTab("all")}
               >
                 All terms
               </button>
               <button
-                className={`ArticleDetailContentTab${activeTab === "peacock" ? " is-active" : ""}`}
+                className={`Tab${activeTab === "peacock" ? " is-active" : ""}`}
                 onClick={() => setActiveTab("peacock")}
               >
                 Peacock terms
               </button>
             </div>
-            <div className="ArticleDetailColBody">
-              <div className="ArticleDetailWordCloud">
+            <div className="ColBody">
+              <div className="WordCloud">
                 {loadingWords && (
-                  <div className="ArticleDetailWordCloudSpinner">
+                  <div className="SpinnerWrap">
                     <Spinner size="large" />
                   </div>
                 )}
                 {!loadingWords && displayedWords.length === 0 && (
-                  <span className="ArticleDetailWordCloudMessage">
+                  <span className="Message">
                     No terms found.
                   </span>
                 )}
@@ -322,7 +322,7 @@ function ArticleDetailPanel({
                   displayedWords.map(({ word, count }) => (
                     <span
                       key={word}
-                      className="ArticleDetailWordCloudWord"
+                      className="Word"
                       style={{
                         fontSize: `${0.75 + Math.pow(count / maxCount, 0.5) * 2.75}rem`,
                       }}
@@ -334,20 +334,20 @@ function ArticleDetailPanel({
             </div>
           </div>
 
-          <div className="ArticleDetailContrib">
-            <div className="ArticleDetailContribSectionHeader">
+          <div className="Contrib">
+            <div className="SectionHeader">
               Contribution
             </div>
-            <div className="ArticleDetailColBody">
-              <div className="ArticleDetailContribHeader">
+            <div className="ColBody">
+              <div className="Header">
                 You can contribute to increase the quality of this article.
               </div>
-              <ul className="ArticleDetailContribList">
+              <ul className="List">
                 {contributions.map((item) => (
-                  <li key={item} className="ArticleDetailContribItem">
+                  <li key={item} className="Item">
                     <FaArrowRight
                       size={12}
-                      className="ArticleDetailContribArrow"
+                      className="Arrow"
                     />
                     <span>{item}</span>
                   </li>
