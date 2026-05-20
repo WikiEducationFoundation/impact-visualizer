@@ -151,8 +151,16 @@ function makeSqrtAreaScale(
   values: number[],
   [rangeMin, rangeMax]: [number, number],
 ): (v: number) => number {
-  const sMin = Math.sqrt(Math.min(...values));
-  const sMax = Math.sqrt(Math.max(...values));
+  // Iterate rather than spread into Math.min/max: with tens of thousands of
+  // articles, the spread exceeds the JS argument limit and throws RangeError.
+  let min = Infinity;
+  let max = -Infinity;
+  for (const value of values) {
+    if (value < min) min = value;
+    if (value > max) max = value;
+  }
+  const sMin = Math.sqrt(min);
+  const sMax = Math.sqrt(max);
   if (sMax === sMin) return () => (rangeMin + rangeMax) / 2;
   return (v) => {
     const t = (Math.sqrt(v) - sMin) / (sMax - sMin);
