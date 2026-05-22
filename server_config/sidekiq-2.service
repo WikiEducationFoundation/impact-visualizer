@@ -1,0 +1,41 @@
+#
+# Second sidekiq process for impact-visualizer (wmcloud).
+# Runs alongside sidekiq.service, pulling from the same Redis / all queues.
+#
+# Install:
+#   sudo cp sidekiq-2.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable sidekiq-2
+#   sudo systemctl start sidekiq-2
+#
+# Use `journalctl -u sidekiq-2 -rn 100` to view the last 100 lines of log output.
+#
+[Unit]
+Description=sidekiq (#2)
+After=syslog.target network.target
+
+[Service]
+Type=notify
+NotifyAccess=all
+WatchdogSec=10
+
+WorkingDirectory=/var/www/impact-visualizer/current
+ExecStart=/usr/local/rvm/bin/rvm in /var/www/impact-visualizer/current do bundle exec sidekiq -e wmcloud
+
+# Greatly reduce Ruby memory fragmentation and heap usage
+# https://www.mikeperham.com/2018/04/25/taming-rails-memory-bloat/
+Environment=MALLOC_ARENA_MAX=2
+
+# if we crash, restart
+RestartSec=1
+Restart=always
+
+# output goes to /var/log/syslog (Ubuntu) or /var/log/messages (CentOS)
+StandardOutput=syslog
+StandardError=syslog
+
+# Distinguishes log lines from the primary sidekiq process in syslog
+SyslogIdentifier=sidekiq-2
+
+[Install]
+WantedBy=multi-user.target
