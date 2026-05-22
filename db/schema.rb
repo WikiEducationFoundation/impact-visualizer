@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_05_12_000000) do
+ActiveRecord::Schema[7.0].define(version: 2026_05_22_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -130,6 +130,12 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_12_000000) do
     t.jsonb "properties"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "source", default: "iv_classify", null: false
+    t.string "tb_handle"
+    t.text "description"
+    t.string "derived_from"
+    t.integer "ordering"
+    t.index ["source"], name: "index_classifications_on_source"
   end
 
   create_table "topic_article_analytics", force: :cascade do |t|

@@ -1,13 +1,22 @@
 # frozen_string_literal: true
 
 class Classification < ApplicationRecord
+  SOURCE_IV_CLASSIFY = 'iv_classify'
+  SOURCE_TB_PAYLOAD = 'tb_payload'
+  SOURCES = [SOURCE_IV_CLASSIFY, SOURCE_TB_PAYLOAD].freeze
+
   ## Associations
-  has_many :topic_classifications
+  has_many :topic_classifications, dependent: :destroy
   has_many :topics, through: :topic_classifications
-  has_many :article_classifications
+  has_many :article_classifications, dependent: :destroy
   has_many :articles, through: :article_classifications
 
+  ## Scopes
+  scope :iv_classify, -> { where(source: SOURCE_IV_CLASSIFY) }
+  scope :tb_payload, -> { where(source: SOURCE_TB_PAYLOAD) }
+
   ## Validations
+  validates :source, inclusion: { in: SOURCES }
   validates :prerequisites, json_schema: true
   validates :properties, json_schema: true
 
@@ -60,7 +69,8 @@ class Classification < ApplicationRecord
   end
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[created_at id name prerequisites properties updated_at]
+    %w[created_at derived_from description id name ordering prerequisites
+       properties source tb_handle updated_at]
   end
 
 end
@@ -70,9 +80,18 @@ end
 # Table name: classifications
 #
 #  id            :bigint           not null, primary key
+#  derived_from  :string
+#  description   :text
 #  name          :string
+#  ordering      :integer
 #  prerequisites :jsonb
 #  properties    :jsonb
+#  source        :string           default("iv_classify"), not null
+#  tb_handle     :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#
+# Indexes
+#
+#  index_classifications_on_source  (source)
 #

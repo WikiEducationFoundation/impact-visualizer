@@ -73,8 +73,12 @@ describe TopicBuilderPackageService do
       expect { described_class.assert_supported_schema!('schema_version' => 1) }.not_to raise_error
     end
 
-    it 'raises on other versions' do
-      expect { described_class.assert_supported_schema!('schema_version' => 2) }
+    it 'no-ops on schema_version=2' do
+      expect { described_class.assert_supported_schema!('schema_version' => 2) }.not_to raise_error
+    end
+
+    it 'raises on unsupported versions' do
+      expect { described_class.assert_supported_schema!('schema_version' => 3) }
         .to raise_error(TopicBuilderPackageService::SchemaVersionError)
     end
   end

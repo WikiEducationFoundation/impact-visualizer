@@ -127,9 +127,18 @@ end
 # Table name: classifications
 #
 #  id            :bigint           not null, primary key
+#  derived_from  :string
+#  description   :text
 #  name          :string
+#  ordering      :integer
 #  prerequisites :jsonb
 #  properties    :jsonb
+#  source        :string           default("iv_classify"), not null
+#  tb_handle     :string
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#
+# Indexes
+#
+#  index_classifications_on_source  (source)
 #

@@ -7,7 +7,7 @@ require 'json'
 # Fetches and validates a TB→IV handoff package from topic-builder.
 # Spec: docs/wikipedia-topic-builder-impact-visualizer.md (or upstream)
 class TopicBuilderPackageService
-  SUPPORTED_SCHEMA_VERSION = 1
+  SUPPORTED_SCHEMA_VERSIONS = [1, 2].freeze
   HANDLE_PREFIX = 'tbp_'
   TIMEOUT_SECONDS = 20
 
@@ -68,7 +68,7 @@ class TopicBuilderPackageService
   end
 
   def self.assert_supported_schema!(package)
-    return if package['schema_version'] == SUPPORTED_SCHEMA_VERSION
+    return if SUPPORTED_SCHEMA_VERSIONS.include?(package['schema_version'])
     raise SchemaVersionError.new(package['schema_version'])
   end
 end

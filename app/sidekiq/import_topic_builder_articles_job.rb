@@ -38,6 +38,8 @@ class ImportTopicBuilderArticlesJob
       at(idx + 1)
     end
 
+    TopicBuilderTagIngestService.new(topic: topic, package: package).sync!
+
     topic.reload.update(article_import_job_id: nil)
 
     # The TB handoff is meant to be a one-click flow: after the user

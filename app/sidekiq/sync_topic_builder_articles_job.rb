@@ -35,6 +35,8 @@ class SyncTopicBuilderArticlesJob
 
     TopicBuilderSyncService.new(topic:, package:).sync!
 
+    TopicBuilderTagIngestService.new(topic:, package:).sync!
+
     at(diff_count, 'Sync applied')
 
     topic.reload.update(article_import_job_id: nil)

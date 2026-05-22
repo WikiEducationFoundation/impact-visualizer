@@ -25,6 +25,18 @@ describe ClassificationService do
       expect(classification_service).to receive(:classify_article).thrice
       classification_service.classify_all_articles
     end
+
+    it 'skips Wikidata fetch when only tb_payload classifications exist' do
+      topic.classifications << Classification.create!(
+        name: 'Biography',
+        prerequisites: [],
+        properties: [],
+        source: Classification::SOURCE_TB_PAYLOAD
+      )
+      classification_service = described_class.new(topic:)
+      expect(classification_service.wiki_action_api).not_to receive(:get_wikidata_claims)
+      classification_service.classify_all_articles
+    end
   end
 
   describe '#classify_article', vcr: true do

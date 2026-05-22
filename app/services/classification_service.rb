@@ -12,19 +12,27 @@ class ClassificationService
   end
 
   def classify_all_articles(&block)
+    # TB-sourced classifications are snapshot-frozen from the package
+    # and do not need per-article Wikidata fetches. Cache the iv_classify
+    # list once so each article either gets matched against rule-based
+    # classifications or skips the Wikidata fetch entirely.
+    iv_classifications = @topic.classifications.iv_classify.to_a
     article_bag_articles = @topic.active_article_bag.article_bag_articles
     article_bag_articles.each do |article_bag_article|
       yield if block
       article = article_bag_article.article
-      classify_article(article:)
+      classify_article(article:, classifications: iv_classifications)
     end
   end
 
-  def classify_article(article:)
+  def classify_article(article:, classifications: nil)
+    classifications ||= @topic.classifications.iv_classify.to_a
+    return if classifications.empty?
+
     claims = @wiki_action_api.get_wikidata_claims(article.title)
     return unless claims.present?
 
-    @topic.classifications.each do |classification|
+    classifications.each do |classification|
       prerequisites = classification.prerequisites.to_hashugar
       properties = classification.properties.to_hashugar
 
