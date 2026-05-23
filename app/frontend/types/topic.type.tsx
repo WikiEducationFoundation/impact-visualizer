@@ -53,6 +53,10 @@ export default interface Topic {
   incremental_topic_build_stage_message: string;
   incremental_topic_build_stage: string | null;
   incremental_topic_build_message: string;
+  incremental_topic_build_at: number | null;
+  incremental_topic_build_total: number | null;
+  incremental_topic_build_timestamps_done: number | null;
+  incremental_topic_build_timestamps_total: number | null;
   timepoint_generate_message: string;
   classifications: Array<Classification>;
   convert_tokens_to_words: boolean;

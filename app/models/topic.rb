@@ -333,6 +333,31 @@ class Topic < ApplicationRecord
     Sidekiq::Status::pct_complete(incremental_topic_build_job_id)
   end
 
+  # Absolute counters for the current stage's progress hash. `at` and
+  # `total` are units-per-stage (cells, articles, or timestamps depending
+  # on stage); the frontend labels them per current stage. timestamps_*
+  # are sub-counters emitted by stages that loop over the topic's
+  # timestamps (article_timepoints, topic_timepoints).
+  def incremental_topic_build_at
+    return nil unless incremental_topic_build_job_id
+    Sidekiq::Status::at(incremental_topic_build_job_id)
+  end
+
+  def incremental_topic_build_total
+    return nil unless incremental_topic_build_job_id
+    Sidekiq::Status::total(incremental_topic_build_job_id)
+  end
+
+  def incremental_topic_build_timestamps_done
+    return nil unless incremental_topic_build_job_id
+    Sidekiq::Status::get(incremental_topic_build_job_id, :timestamps_done)&.to_i
+  end
+
+  def incremental_topic_build_timestamps_total
+    return nil unless incremental_topic_build_job_id
+    Sidekiq::Status::get(incremental_topic_build_job_id, :timestamps_total)&.to_i
+  end
+
   def generate_article_analytics_percent_complete
     return nil unless generate_article_analytics_job_id
     Sidekiq::Status::pct_complete(generate_article_analytics_job_id)

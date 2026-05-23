@@ -22,7 +22,8 @@ class IncrementalTopicBuildJob
       timepoint_service = TimepointService.new(
         topic:, force_updates:, logging_enabled: Rails.env.development?,
         total: method(:total), at: method(:at),
-        message: proc { |msg| store message: msg }
+        message: proc { |msg| store message: msg },
+        store: proc { |hash| store(hash) }
       )
       timepoint_service.incremental_build(stage.to_sym, queue_next_stage:)
     rescue StandardError => e

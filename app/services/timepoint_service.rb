@@ -9,7 +9,7 @@ class TimepointService
   attr_accessor :topic, :logging_enabled, :force_updates
 
   def initialize(topic:, force_updates: false, logging_enabled: false, total: nil, at: nil,
-                 message: nil)
+                 message: nil, store: nil)
     @topic = topic
     @article_stats_service = ArticleStatsService.new(@topic.wiki)
     @topic_timepoint_stats_service = TopicTimepointStatsService.new
@@ -22,6 +22,11 @@ class TimepointService
     @at = at
     @total = total
     @message = message || proc { |_msg| }
+    # `store:` accepts a hash and writes structured fields into the job's
+    # sidekiq-status hash. Used to expose monotonically-increasing
+    # sub-counters (timestamps_done, timestamps_total) the UI can show
+    # alongside the at/total cell counts.
+    @store = store || proc { |_hash| }
 
     log('TimepointService: initialize')
   end
@@ -101,27 +106,35 @@ class TimepointService
   def build_timepoints_for_all_timestamps
     # Loop through Topic's timestamps
     timestamps = @topic.timestamps
+    timestamps_total = timestamps.count
     timestamp_count = 0
+
+    @store.call(timestamps_done: 0, timestamps_total: timestamps_total)
 
     # Build/update most everything for each timestamp
     timestamps.each do |timestamp|
       timestamp_count += 1
-      # increment_progress_count
-      log "#build_timepoints_for_timestamp timestamp:#{timestamp_count}/#{timestamps.count}"
-      notify("Building timepoints for timestamp #{timestamp_count}/#{timestamps.count}…")
+      log "#build_timepoints_for_timestamp timestamp:#{timestamp_count}/#{timestamps_total}"
+      notify("Building timepoints for timestamp #{timestamp_count}/#{timestamps_total}…")
       build_timepoints_for_timestamp(timestamp:)
+      @store.call(timestamps_done: timestamp_count, timestamps_total: timestamps_total)
     end
   end
 
   def build_topic_timepoints
     timestamps = @topic.timestamps
+    timestamps_total = timestamps.count
     timestamp_count = 0
+
+    @store.call(timestamps_done: 0, timestamps_total: timestamps_total)
+
     timestamps.each do |timestamp|
       timestamp_count += 1
       increment_progress_count
       topic_timepoint = TopicTimepoint.find_or_create_by!(topic:, timestamp:)
-      log "#update_stats_for_topic_timepoint timestamp:#{timestamp_count}/#{timestamps.count}"
+      log "#update_stats_for_topic_timepoint timestamp:#{timestamp_count}/#{timestamps_total}"
       @topic_timepoint_stats_service.update_stats_for_topic_timepoint(topic_timepoint:)
+      @store.call(timestamps_done: timestamp_count, timestamps_total: timestamps_total)
     end
   end
 

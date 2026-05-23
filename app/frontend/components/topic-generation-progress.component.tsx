@@ -207,9 +207,7 @@ function buildTimepointsPhase(topic: Topic): Phase {
   });
 
   const detail = status === "running"
-    ? topic.incremental_topic_build_stage_message ||
-      topic.incremental_topic_build_message ||
-      null
+    ? buildTimepointsDetail(topic, currentStageKey)
     : null;
 
   return {
@@ -222,6 +220,45 @@ function buildTimepointsPhase(topic: Topic): Phase {
     countLabel: null,
     subStages,
   };
+}
+
+// Label for the at/total counter depends on which stage is running —
+// classify counts articles, article_timepoints counts (article × timestamp)
+// cells, tokens counts articles, topic_timepoints counts timestamps.
+const STAGE_AT_LABEL: Record<string, string> = {
+  classify: "articles classified",
+  article_timepoints: "timepoint cells",
+  tokens: "articles processed",
+  topic_timepoints: "timestamps summarized",
+};
+
+function buildTimepointsDetail(
+  topic: Topic,
+  stageKey: string | null,
+): string | null {
+  const lines: string[] = [];
+
+  const stageMessage =
+    topic.incremental_topic_build_stage_message ||
+    topic.incremental_topic_build_message;
+  if (stageMessage) lines.push(stageMessage);
+
+  const at = topic.incremental_topic_build_at;
+  const total = topic.incremental_topic_build_total;
+  if (_.isNumber(at) && _.isNumber(total) && total > 0) {
+    const label = (stageKey && STAGE_AT_LABEL[stageKey]) || "steps";
+    lines.push(`${at.toLocaleString()} / ${total.toLocaleString()} ${label}`);
+  }
+
+  const tsDone = topic.incremental_topic_build_timestamps_done;
+  const tsTotal = topic.incremental_topic_build_timestamps_total;
+  if (_.isNumber(tsDone) && _.isNumber(tsTotal) && tsTotal > 0) {
+    lines.push(
+      `${tsDone.toLocaleString()} / ${tsTotal.toLocaleString()} timestamps`,
+    );
+  }
+
+  return lines.length > 0 ? lines.join(" · ") : null;
 }
 
 function buildPhases(topic: Topic): Phase[] {

@@ -12,7 +12,8 @@ RSpec.describe GenerateTimepointsJob, type: :job do
       logging_enabled: true,
       total: kind_of(Method),
       at: kind_of(Method),
-      message: kind_of(Proc)
+      message: kind_of(Proc),
+      store: kind_of(Proc)
     ).and_call_original
     expect(TopicSummaryService).to receive(:new).with(topic:).and_call_original
     expect_any_instance_of(TimepointService).to receive(:full_timepoint_build)
