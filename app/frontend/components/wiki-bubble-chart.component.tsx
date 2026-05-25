@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import { useQuery } from "@tanstack/react-query";
-import { BsInfoCircle } from "react-icons/bs";
+import { BsBook, BsInfoCircle } from "react-icons/bs";
 import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
@@ -16,6 +16,7 @@ import ArticleDetailPanel from "./article-detail-panel.component";
 import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
 import ArticleLanguagesGrid from "./article-languages-grid.component";
 import ArticleLanguageComparisonModal from "./article-language-comparison-modal.component";
+import GlossaryModal from "./glossary-modal.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
@@ -90,10 +91,7 @@ function QualityFilterButtons({
               data-group={g.id}
               onClick={() => onToggle(g.grades, !isOn)}
             >
-              <span
-                className="Dot"
-                style={{ backgroundColor: g.dot }}
-              />
+              <span className="Dot" style={{ backgroundColor: g.dot }} />
               <span className="Label">{g.label}</span>
             </button>
           );
@@ -270,6 +268,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [langCompareArticle, setLangCompareArticle] = useState<string | null>(
     null,
   );
+  const [glossaryOpen, setGlossaryOpen] = useState<boolean>(false);
   const [showLabels, setShowLabels] = useState<boolean>(false);
   const searchSignalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -1097,6 +1096,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           csvConvert={convertAnalyticsToCSV}
           filename="article-analytics"
         />
+        <button
+          type="button"
+          className="GlossaryBtn"
+          onClick={() => setGlossaryOpen(true)}
+        >
+          <BsBook size={14} />
+          <span>Glossary</span>
+        </button>
       </div>
 
       <div className="TabBar">
@@ -1116,10 +1123,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </button>
       </div>
 
-      <div
-        className="TabPanel"
-        hidden={activeTab !== "overview"}
-      >
+      <div className="TabPanel" hidden={activeTab !== "overview"}>
         <div className="AxisControls">
           <div className="FilterBox">
             <div className="AxisControl">
@@ -1356,9 +1360,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 ? aggregateStats.averageTotalViews.toLocaleString()
                 : "—"}
             </span>
-            <span className="StatLabel">
-              Average total views per article
-            </span>
+            <span className="StatLabel">Average total views per article</span>
           </div>
 
           <div className="StatCell">
@@ -1367,9 +1369,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 ? aggregateStats.averageArticleSize.toLocaleString()
                 : "—"}
             </span>
-            <span className="StatLabel">
-              Average article size (bytes)
-            </span>
+            <span className="StatLabel">Average article size (bytes)</span>
           </div>
         </div>
 
@@ -1386,10 +1386,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         </div>
       </div>
 
-      <div
-        className="TabPanel"
-        hidden={activeTab !== "languages"}
-      >
+      <div className="TabPanel" hidden={activeTab !== "languages"}>
         <div className="QualityFilters">
           <div className="FilterBox">
             <QualityFilterButtons
@@ -1426,8 +1423,18 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           />
 
           <div className="Disclaimer">
-            * Quality assessment is done by the Wikipedia community and it may be
-            inconsistent
+            <span>
+              * Quality assessment is done by the Wikipedia community and it may
+              be inconsistent.
+            </span>
+            <button
+              type="button"
+              className="GlossaryBtn"
+              onClick={() => setGlossaryOpen(true)}
+            >
+              <BsBook size={14} aria-hidden="true" />
+              <span>Glossary</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1449,6 +1456,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           onClose={() => setLangCompareArticle(null)}
         />
       )}
+
+      {glossaryOpen && <GlossaryModal onClose={() => setGlossaryOpen(false)} />}
     </div>
   );
 };
