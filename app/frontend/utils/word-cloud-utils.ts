@@ -234,6 +234,23 @@ const STOPWORDS = new Set([
   "took",
 ]);
 
+export async function fetchArticleWordFrequencies(
+  title: string,
+  lang: string,
+  project: string,
+): Promise<{ word: string; count: number }[]> {
+  const url =
+    `https://${lang}.${project}.org/w/api.php?` +
+    `action=query&prop=extracts&explaintext=true&exsectionformat=plain` +
+    `&titles=${encodeURIComponent(title)}&format=json&origin=*`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+  const pages = data?.query?.pages ?? {};
+  const page = Object.values(pages)[0] as { extract?: string } | undefined;
+  return computeWordFrequencies(page?.extract ?? "");
+}
+
 export function computeWordFrequencies(
   text: string,
   topN = 70,

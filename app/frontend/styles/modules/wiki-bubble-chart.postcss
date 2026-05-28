@@ -1,14 +1,13 @@
-$border-grey:     #d9d9d9;
-$border-light:    #e0e0e0;
-$border-faint:    #eee;
-$primary:         #1976d2;
-$primary-dark:    #1565c0;
-$text-secondary:  #616161;
-$text-muted:      #757575;
-$text-strong:     #424242;
-$danger-bg:       #ffcdd2;
-$danger-fg:       #c62828;
-
+$border-grey: #d9d9d9;
+$border-light: #e0e0e0;
+$border-faint: #eee;
+$primary: #1976d2;
+$primary-dark: #1565c0;
+$text-secondary: #616161;
+$text-muted: #757575;
+$text-strong: #424242;
+$danger-bg: #ffcdd2;
+$danger-fg: #c62828;
 
 .vega-bind-name,
 .BoxTitle {
@@ -16,7 +15,6 @@ $danger-fg:       #c62828;
   font-weight: 600;
   margin-bottom: 6px;
 }
-
 
 .WikiBubbleChart {
   background-color: white;
@@ -440,7 +438,6 @@ $danger-fg:       #c62828;
   }
 }
 
-
 .CentralityFilter {
   display: grid;
   grid-template-rows: auto auto;
@@ -613,7 +610,6 @@ $danger-fg:       #c62828;
   }
 }
 
-
 .QualityAssessment {
   .Title {
     font-weight: 600;
@@ -673,7 +669,6 @@ $danger-fg:       #c62828;
   }
 }
 
-
 .ProtectionFilter {
   display: grid;
   grid-template-rows: auto 1fr;
@@ -717,7 +712,6 @@ $danger-fg:       #c62828;
     }
   }
 }
-
 
 .ArticleSearchAutocomplete {
   position: relative;
@@ -775,7 +769,6 @@ $danger-fg:       #c62828;
     }
   }
 }
-
 
 .ArticleDetail {
   position: fixed;
@@ -1056,9 +1049,21 @@ $danger-fg:       #c62828;
       margin-top: 2px;
       color: #2e7d32;
     }
+
+    .SpinnerWrap {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .Message {
+      font-size: 13px;
+      color: #4a4a4a;
+      font-style: italic;
+      padding: 16px 20px;
+    }
   }
 }
-
 
 .FilteredArticlesSidebar {
   position: relative;
@@ -1239,7 +1244,6 @@ $danger-fg:       #c62828;
     }
   }
 }
-
 
 .ArticleLang {
   .Grid {
@@ -1528,9 +1532,10 @@ $danger-fg:       #c62828;
 }
 
 @keyframes articleLangCellSpin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
-
 
 .ArticleLangComparison {
   position: fixed;

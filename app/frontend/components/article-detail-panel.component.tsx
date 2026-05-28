@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { FaArrowRight } from "react-icons/fa6";
 import { FiExternalLink } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
@@ -6,9 +7,10 @@ import Spinner from "./spinner.component";
 import type { ArticleAnalytics } from "../types/bubble-chart.type";
 import { getWikiUrl } from "../utils/search-utils";
 import {
-  computeWordFrequencies,
+  fetchArticleWordFrequencies,
   PEACOCK_TERMS,
 } from "../utils/word-cloud-utils";
+import { fetchArticleNeeds } from "../utils/article-quality-utils";
 
 type Wiki = {
   language: string;
@@ -23,15 +25,6 @@ export type ArticleRow = {
   has_edit_restriction: boolean;
 } & ArticleAnalytics;
 
-const contributions = [
-  "Add reliable, high-quality sources",
-  "Improve the lead section by adding some information",
-  "Remove the warning tags",
-  "Add internal and external links thoughtfully",
-  "When appropriate, add some images",
-  "Copyedit for clarity and consistency",
-];
-
 function ArticleDetailPanel({
   article,
   wiki,
@@ -42,30 +35,22 @@ function ArticleDetailPanel({
   onClose: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<"all" | "peacock">("all");
-  const [words, setWords] = useState<{ word: string; count: number }[]>([]);
-  const [loadingWords, setLoadingWords] = useState(false);
+  const lang = wiki?.language ?? "en";
+  const project = wiki?.project ?? "wikipedia";
+  const isWikipedia = project === "wikipedia";
 
-  useEffect(() => {
-    setLoadingWords(true);
-    setWords([]);
-    const lang = wiki?.language ?? "en";
-    const project = wiki?.project ?? "wikipedia";
-    const url =
-      `https://${lang}.${project}.org/w/api.php?` +
-      `action=query&prop=extracts&explaintext=true&exsectionformat=plain` +
-      `&titles=${encodeURIComponent(article.article)}&format=json&origin=*`;
+  const { data: words = [], isLoading: loadingWords } = useQuery({
+    queryKey: ["articleWordFrequencies", lang, project, article.article],
+    queryFn: () => fetchArticleWordFrequencies(article.article, lang, project),
+    staleTime: 60 * 60 * 1000,
+  });
 
-    fetch(url)
-      .then((r) => r.json())
-      .then((data) => {
-        const pages = data?.query?.pages ?? {};
-        const page = Object.values(pages)[0] as any;
-        const extract: string = page?.extract ?? "";
-        setWords(computeWordFrequencies(extract));
-      })
-      .catch(() => setWords([]))
-      .finally(() => setLoadingWords(false));
-  }, [article.article, wiki]);
+  const { data: needs = [], isLoading: loadingNeeds } = useQuery({
+    queryKey: ["articleNeeds", lang, article.article],
+    queryFn: () => fetchArticleNeeds(article.article, lang),
+    enabled: isWikipedia,
+    staleTime: 60 * 60 * 1000,
+  });
 
   const displayedWords =
     activeTab === "peacock"
@@ -120,11 +105,7 @@ function ArticleDetailPanel({
               <FiExternalLink size={18} />
             </a>
           </h3>
-          <button
-            className="Close"
-            onClick={onClose}
-            aria-label="Close"
-          >
+          <button className="Close" onClick={onClose} aria-label="Close">
             <IoClose size={28} />
           </button>
         </div>
@@ -137,32 +118,22 @@ function ArticleDetailPanel({
                 <div className="Title">General</div>
                 <div className="Row">
                   <span className="Label">Instance</span>
-                  <span className="Value">
-                    {instanceLabel}
-                  </span>
+                  <span className="Value">{instanceLabel}</span>
                 </div>
                 <div className="Row">
                   <span className="Label">Creation date</span>
-                  <span className="Value">
-                    {formattedDate}
-                  </span>
+                  <span className="Value">{formattedDate}</span>
                 </div>
                 <div className="Row">
                   <span className="Label">Restriction</span>
-                  <span className="Value">
-                    {restrictionLabel}
-                  </span>
+                  <span className="Value">{restrictionLabel}</span>
                 </div>
               </div>
 
               <div className="Section">
-                <div className="Title">
-                  Qualitative information
-                </div>
+                <div className="Title">Qualitative information</div>
                 <div className="Row">
-                  <span className="Label">
-                    Quality assessment
-                  </span>
+                  <span className="Label">Quality assessment</span>
                   <span className="Value">
                     {article.assessment_grade ?? "—"}
                   </span>
@@ -186,13 +157,9 @@ function ArticleDetailPanel({
               </div>
 
               <div className="Section">
-                <div className="Title">
-                  Content data
-                </div>
+                <div className="Title">Content data</div>
                 <div className="Row">
-                  <span className="Label">
-                    Article size (in byte)
-                  </span>
+                  <span className="Label">Article size (in byte)</span>
                   <span className="Value">
                     {article.article_size != null
                       ? article.article_size.toLocaleString()
@@ -200,9 +167,7 @@ function ArticleDetailPanel({
                   </span>
                 </div>
                 <div className="Row">
-                  <span className="Label">
-                    Lead section size (in byte)
-                  </span>
+                  <span className="Label">Lead section size (in byte)</span>
                   <span className="Value">
                     {article.lead_section_size != null
                       ? article.lead_section_size.toLocaleString()
@@ -210,9 +175,7 @@ function ArticleDetailPanel({
                   </span>
                 </div>
                 <div className="Row">
-                  <span className="Label">
-                    Discussion size (in byte)
-                  </span>
+                  <span className="Label">Discussion size (in byte)</span>
                   <span className="Value">
                     {article.talk_size != null
                       ? article.talk_size.toLocaleString()
@@ -228,9 +191,7 @@ function ArticleDetailPanel({
                   </span>
                 </div>
                 <div className="Row">
-                  <span className="Label">
-                    Linguistic versions
-                  </span>
+                  <span className="Label">Linguistic versions</span>
                   <span className="Value">
                     {article.linguistic_versions_count != null
                       ? article.linguistic_versions_count.toLocaleString()
@@ -240,13 +201,9 @@ function ArticleDetailPanel({
               </div>
 
               <div className="Section">
-                <div className="Title">
-                  User engagement data
-                </div>
+                <div className="Title">User engagement data</div>
                 <div className="Row">
-                  <span className="Label">
-                    Avg daily views
-                  </span>
+                  <span className="Label">Avg daily views</span>
                   <span className="Value">
                     {article.average_daily_views != null
                       ? article.average_daily_views.toLocaleString()
@@ -254,9 +211,7 @@ function ArticleDetailPanel({
                   </span>
                 </div>
                 <div className="Row">
-                  <span className="Label">
-                    Avg daily views (prev. year)
-                  </span>
+                  <span className="Label">Avg daily views (prev. year)</span>
                   <span className="Value">
                     {article.prev_average_daily_views != null
                       ? article.prev_average_daily_views.toLocaleString()
@@ -285,9 +240,7 @@ function ArticleDetailPanel({
 
           <div className="Content">
             <div className="Header">
-              <span className="Title">
-                Content analysis
-              </span>
+              <span className="Title">Content analysis</span>
               <span className="Subtitle">
                 | Terms occurring more frequently
               </span>
@@ -314,9 +267,7 @@ function ArticleDetailPanel({
                   </div>
                 )}
                 {!loadingWords && displayedWords.length === 0 && (
-                  <span className="Message">
-                    No terms found.
-                  </span>
+                  <span className="Message">No terms found.</span>
                 )}
                 {!loadingWords &&
                   displayedWords.map(({ word, count }) => (
@@ -335,24 +286,37 @@ function ArticleDetailPanel({
           </div>
 
           <div className="Contrib">
-            <div className="SectionHeader">
-              Contribution
-            </div>
+            <div className="SectionHeader">Contribution</div>
             <div className="ColBody">
               <div className="Header">
                 You can contribute to increase the quality of this article.
               </div>
-              <ul className="List">
-                {contributions.map((item) => (
-                  <li key={item} className="Item">
-                    <FaArrowRight
-                      size={12}
-                      className="Arrow"
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+              {loadingNeeds && (
+                <div className="SpinnerWrap">
+                  <Spinner size="large" />
+                </div>
+              )}
+              {!loadingNeeds && !isWikipedia && (
+                <span className="Message">
+                  Contribution suggestions are available for Wikipedia articles
+                  only.
+                </span>
+              )}
+              {!loadingNeeds && isWikipedia && needs.length === 0 && (
+                <span className="Message">
+                  No specific improvements suggested for this article.
+                </span>
+              )}
+              {!loadingNeeds && isWikipedia && needs.length > 0 && (
+                <ul className="List">
+                  {needs.map((item) => (
+                    <li key={item} className="Item">
+                      <FaArrowRight size={12} className="Arrow" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         </div>
