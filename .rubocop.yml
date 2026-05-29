@@ -66,6 +66,10 @@ Metrics/ModuleLength:
 Rails/EnvironmentVariableAccess:
   AllowReads: true
 
+Rails/SkipsModelValidations:
+  Exclude:
+    - 'spec/**/*' # test setup legitimately forces state, bypassing validations
+
 ########################
 # Permanent exceptions #
 ########################

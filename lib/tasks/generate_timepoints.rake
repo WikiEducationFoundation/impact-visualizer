@@ -9,6 +9,6 @@ task generate_timepoints: :environment do
   topic = Topic.find_by(slug: topic_slug)
   TimepointService.new(topic:, force_updates:).full_timepoint_build
   TopicSummaryService.new(topic:).create_summary
-  topic.touch
+  topic.touch # rubocop:disable Rails/SkipsModelValidations -- bump updated_at after a manual build
   exit!
 end

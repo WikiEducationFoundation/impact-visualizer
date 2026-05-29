@@ -14,7 +14,10 @@ class ImportTopicBuilderArticlesJob
   # and re-import (or, future-self, click a Retry button).
   sidekiq_retries_exhausted do |msg, _ex|
     topic_id = msg['args'].first
+    # rubocop:disable Rails/SkipsModelValidations -- clearing a job-tracking
+    # column in bulk; no validations or callbacks should run for this.
     Topic.where(id: topic_id).update_all(article_import_job_id: nil)
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   EXPIRATION_SECONDS = 60 * 60 * 24 * 30
