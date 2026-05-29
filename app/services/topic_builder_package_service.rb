@@ -17,6 +17,7 @@ class TopicBuilderPackageService
 
   class SchemaVersionError < Error
     attr_reader :schema_version
+
     def initialize(schema_version)
       @schema_version = schema_version
       super("Unsupported package schema_version: #{schema_version.inspect}")
