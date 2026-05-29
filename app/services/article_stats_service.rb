@@ -83,14 +83,16 @@ class ArticleStatsService
     # Get the Revision at timestamp
     revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp:)
 
-    # If no revision, article probably was deleted
-    return unless revision
-    # FIXME: If the text is hidden (ie, the revison content was deleted), ideally we should find
-    # the first prior revision that isn't deleted. Until that is implemeted, we'll treat this
-    # the same way as a deleted article.
-    # We don't actually need the whole text, so we just request the sha1 to see whether the text
-    # is deleted; if so, `sha1hidden` will be in the revision data.
-    return if revision['sha1hidden']
+    # No usable revision: the page was probably deleted at this timestamp,
+    # or the text is suppressed (sha1hidden — we request only the sha1 to
+    # detect this without pulling the whole revision).
+    # FIXME: for suppressed text, ideally we'd fall back to the most recent
+    # non-hidden prior revision; until then we treat it like a deletion.
+    # Either way, mark the timepoint processed so a retry doesn't re-fetch it.
+    if revision.nil? || revision['sha1hidden']
+      article_timepoint.update(stats_complete: true)
+      return
+    end
 
     # Get count of Revisions at timestamp
     revisions_count = @visualizer_tools_api.get_page_edits_count(
@@ -119,7 +121,8 @@ class ArticleStatsService
       revision_id: revision['revid'],
       revisions_count: revisions_count || 0,
       wp10_prediction: weighted_quality,
-      wp10_prediction_category: predicted_category
+      wp10_prediction_category: predicted_category,
+      stats_complete: true
     )
   end
 

@@ -398,6 +398,12 @@ describe TimepointService do
       # Run to capture initial
       timepoint_service.full_timepoint_build
 
+      # A fully-completed build leaves every timepoint marked done. Mark them
+      # explicitly so the "re-run skips completed work" assertion doesn't
+      # depend on whether the recorded cassette left any timepoint stranded
+      # (a stranded one would be correctly re-filled on the next pass).
+      ArticleTimepoint.update_all(stats_complete: true)
+
       # Get ready to run again
       topic_timepoints_count = topic.timestamps.count
 
@@ -418,6 +424,66 @@ describe TimepointService do
       )
 
       timepoint_service.full_timepoint_build
+    end
+  end
+
+  describe '#build_timepoints_for_article (idempotency / retry cost)' do
+    let(:topic) do
+      create(:topic, start_date: Date.new(2023, 1, 1), end_date: Date.new(2023, 1, 30),
+                     timepoint_day_interval: 7)
+    end
+    let(:article) { create(:article) }
+    let(:article_bag_article) do
+      create(:article_bag_article, article:, article_bag: topic.active_article_bag)
+    end
+    let(:timestamp) { Date.new(2023, 1, 8) }
+    let(:topic_timepoint) { TopicTimepoint.create!(topic:, timestamp:) }
+    let(:service) { described_class.new(topic:) }
+
+    before do
+      @article_fills = 0
+      @topic_article_fills = 0
+      allow_any_instance_of(ArticleStatsService).to receive(:update_details_for_article)
+      allow_any_instance_of(ArticleStatsService).to(
+        receive(:update_stats_for_article_timepoint) { @article_fills += 1 }
+      )
+      allow_any_instance_of(TopicArticleTimepointStatsService).to(
+        receive(:update_stats_for_topic_article_timepoint) { @topic_article_fills += 1 }
+      )
+    end
+
+    def build!
+      service.build_timepoints_for_article(article_bag_article:, topic_timepoint:)
+    end
+
+    it 'fills stats for a brand-new timepoint' do
+      build!
+      expect(@article_fills).to eq(1)
+      expect(@topic_article_fills).to eq(1)
+    end
+
+    it 'skips a fully-built timepoint on re-run (cheap retry)' do
+      at = ArticleTimepoint.create!(article:, timestamp:, revision_id: 999)
+      TopicArticleTimepoint.create!(article_timepoint: at, topic_timepoint:, attributed_length_delta: 0)
+      build!
+      expect(@article_fills).to eq(0)
+      expect(@topic_article_fills).to eq(0)
+    end
+
+    it 're-fills an article timepoint stranded without stats by an interrupted run' do
+      at = ArticleTimepoint.create!(article:, timestamp:, revision_id: nil)
+      TopicArticleTimepoint.create!(article_timepoint: at, topic_timepoint:, attributed_length_delta: 0)
+      build!
+      expect(@article_fills).to eq(1)        # re-filled rather than skipped forever
+      expect(@topic_article_fills).to eq(1)  # dependent deltas refreshed in lockstep
+    end
+
+    it 'skips a deleted/hidden timepoint already marked complete (nil revision_id)' do
+      at = ArticleTimepoint.create!(article:, timestamp:, revision_id: nil, stats_complete: true)
+      TopicArticleTimepoint.create!(article_timepoint: at, topic_timepoint:, attributed_length_delta: 0)
+      build!
+      expect(@article_fills).to eq(0)        # stats_complete marker prevents a re-fetch
+      expect(@topic_article_fills).to eq(0)
     end
   end
 

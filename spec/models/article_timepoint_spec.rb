@@ -101,6 +101,7 @@ end
 #  id                       :bigint           not null, primary key
 #  article_length           :integer
 #  revisions_count          :integer
+#  stats_complete           :boolean          default(FALSE), not null
 #  timestamp                :date
 #  token_count              :integer
 #  wp10_prediction          :float

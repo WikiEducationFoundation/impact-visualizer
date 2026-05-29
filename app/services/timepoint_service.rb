@@ -176,28 +176,36 @@ class TimepointService
     # If Article was created after timestamp, skip it
     return unless article.exists_at_timestamp?(timestamp)
 
-    # Capture if ArticleTimepoint found or created
-    new_article_timepoint = false
-
     # Find or create ArticleTimepoint for each Article
-    article_timepoint = ArticleTimepoint.find_or_create_for_timestamp(
-      timestamp:, article:
-    ) { new_article_timepoint = true }
+    article_timepoint = ArticleTimepoint.find_or_create_for_timestamp(timestamp:, article:)
 
-    # Update ArticleTimepoint with stats, but only if new or force_updates
-    if new_article_timepoint || @force_updates
+    # Fill the article stats (three external API calls) when they're not yet
+    # complete or forced. stats_complete is set once the stats pass finishes —
+    # including for deleted/hidden revisions that leave revision_id nil — so
+    # this is idempotent: a row stranded by an interrupted run is completed on
+    # the next pass, and a finished one is never re-fetched. (revision_id is a
+    # fallback for rows built before the stats_complete column existed.)
+    # stats_filled tracks whether we ran the pass so the dependent per-topic
+    # deltas below refresh in lockstep.
+    stats_done = article_timepoint.stats_complete? || article_timepoint.revision_id.present?
+    stats_filled = false
+    if !stats_done || @force_updates
       @article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
+      stats_filled = true
     end
 
-    # Capture if TopicArticleTimepoint found or created
-    new_topic_article_timepoint = false
-
     # Find or create TopicArticleTimepoint for each Article
+    new_topic_article_timepoint = false
     topic_article_timepoint = TopicArticleTimepoint.find_or_create_by!(
       article_timepoint:, topic_timepoint:
     ) { new_topic_article_timepoint = true }
 
-    if new_topic_article_timepoint || @force_updates
+    # Recompute the per-topic deltas (which include an API-backed attribution
+    # pass) for a new timepoint, when the underlying article stats were just
+    # (re)filled — existing deltas are now stale, so this also completes a
+    # timepoint whose article stats were stranded by an earlier crash — or
+    # when forced.
+    if new_topic_article_timepoint || stats_filled || @force_updates
       @topic_article_timepoint_stats_service = TopicArticleTimepointStatsService.new(
         topic_article_timepoint:
       )
