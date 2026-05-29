@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :topic_editor do
-
   end
 end
 

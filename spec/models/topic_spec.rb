@@ -85,7 +85,6 @@ RSpec.describe Topic do
       expect(Sidekiq::Status).to receive(:get).with('abc', :stage).and_return('classify')
       expect(topic.incremental_topic_build_stage_message).to eq('Stage 1/4 (classify)')
     end
-
   end
 
   describe 'CSV instance methods' do
