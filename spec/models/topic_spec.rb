@@ -220,9 +220,36 @@ RSpec.describe Topic do
       expect(topic.data_generation_in_progress?).to be(false)
     end
 
-    it 'is true when any phase has a job_id' do
+    it 'is true when a recorded job is still queued' do
       topic.update(generate_article_analytics_job_id: 'jid-xyz')
+      allow(Sidekiq::Status).to receive(:status).with('jid-xyz').and_return(:queued)
       expect(topic.data_generation_in_progress?).to be(true)
+    end
+
+    it 'is true when a recorded job is working and held by a worker' do
+      topic.update(incremental_topic_build_job_id: 'jid-live')
+      allow(Sidekiq::Status).to receive(:status).with('jid-live').and_return(:working)
+      allow(described_class).to receive(:busy_job_ids).and_return(['jid-live'])
+      expect(topic.data_generation_in_progress?).to be(true)
+    end
+
+    it 'is false when a job is frozen at :working but no worker holds it (killed mid-run)' do
+      topic.update(incremental_topic_build_job_id: 'jid-dead')
+      allow(Sidekiq::Status).to receive(:status).with('jid-dead').and_return(:working)
+      allow(described_class).to receive(:busy_job_ids).and_return([])
+      expect(topic.data_generation_in_progress?).to be(false)
+    end
+
+    it 'is false when the recorded job has reached a terminal status' do
+      topic.update(incremental_topic_build_job_id: 'jid-done')
+      allow(Sidekiq::Status).to receive(:status).with('jid-done').and_return(:complete)
+      expect(topic.data_generation_in_progress?).to be(false)
+    end
+
+    it 'is false when the status hash has expired (unknown jid)' do
+      topic.update(incremental_topic_build_job_id: 'jid-gone')
+      allow(Sidekiq::Status).to receive(:status).with('jid-gone').and_return(nil)
+      expect(topic.data_generation_in_progress?).to be(false)
     end
   end
 
@@ -237,7 +264,17 @@ RSpec.describe Topic do
 
     it 'is :running while any phase is queued' do
       topic.update(article_import_job_id: 'jid-abc')
+      allow(Sidekiq::Status).to receive(:status).with('jid-abc').and_return(:queued)
       expect(topic.data_generation_state).to eq(:running)
+    end
+
+    it 'is not :running when the recorded job has died (stale job_id)' do
+      topic.update(incremental_topic_build_job_id: 'jid-dead')
+      allow(Sidekiq::Status).to receive(:status).with('jid-dead').and_return(:working)
+      allow(described_class).to receive(:busy_job_ids).and_return([])
+      allow(topic).to receive(:most_recent_summary).and_return(nil)
+      allow(topic).to receive(:article_analytics_exist?).and_return(false)
+      expect(topic.data_generation_state).to eq(:idle)
     end
 
     it 'is :complete once both summaries and analytics exist' do
@@ -315,6 +352,8 @@ RSpec.describe Topic do
 
     it 'is a no-op when a phase is already in flight' do
       topic.update(article_import_job_id: 'in-flight')
+      allow(Sidekiq::Status).to receive(:status).with('in-flight').and_return(:working)
+      allow(described_class).to receive(:busy_job_ids).and_return(['in-flight'])
       expect(ImportArticlesJob).not_to receive(:perform_async)
       expect(GenerateArticleAnalyticsJob).not_to receive(:perform_async)
       expect(topic.start_data_generation!).to eq(:already_running)

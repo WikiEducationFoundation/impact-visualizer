@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'sidekiq/api' # Sidekiq::Workers, for job-liveness checks
+
 class Topic < ApplicationRecord
   ## Mixins
   include Rails.application.routes.url_helpers
@@ -235,13 +237,16 @@ class Topic < ApplicationRecord
     queue_generate_article_analytics
   end
 
-  # True when any phase of the pipeline (import / analytics / build) has
-  # an active job_id recorded. Each job clears its own id on completion.
+  # True when any phase of the pipeline (import / analytics / build) has a
+  # job that is still genuinely alive in Sidekiq. Each job clears its own
+  # id on completion, but a job killed mid-run (deploy SIGTERM, OOM) can't,
+  # leaving a stale *_job_id that must NOT pin the topic in :running — so
+  # we verify liveness against Sidekiq rather than trusting the column.
   def data_generation_in_progress?
     [article_import_job_id, users_import_job_id,
      generate_article_analytics_job_id,
      incremental_topic_build_job_id,
-     timepoint_generate_job_id].any?(&:present?)
+     timepoint_generate_job_id].any? { |job_id| self.class.job_alive?(job_id) }
   end
 
   # Unified state for the topic detail page's progress UI.
@@ -435,6 +440,27 @@ class Topic < ApplicationRecord
     %w[chart_time_unit created_at description display editor_label end_date id name
        slug start_date tb_handle timepoint_day_interval updated_at words_per_token
        convert_tokens_to_words wiki_id]
+  end
+
+  # Whether a recorded *_job_id still refers to a live Sidekiq job.
+  # :queued / :retrying mean it's waiting in a queue or the retry set.
+  # :working is only trustworthy when a worker actually holds the jid — a
+  # process killed mid-run (OOM/SIGKILL) leaves the status frozen at
+  # :working with no worker, which must count as dead. Everything else
+  # (:complete, :failed, :interrupted, or an expired/unknown nil) is done.
+  def self.job_alive?(job_id)
+    return false if job_id.blank?
+
+    case Sidekiq::Status.status(job_id)
+    when :queued, :retrying then true
+    when :working then busy_job_ids.include?(job_id)
+    else false
+    end
+  end
+
+  # jids of jobs currently held by a Sidekiq worker across all processes.
+  def self.busy_job_ids
+    Sidekiq::Workers.new.filter_map { |_process, _thread, work| work.dig('payload', 'jid') }
   end
 
   private
