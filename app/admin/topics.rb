@@ -277,11 +277,11 @@ ActiveAdmin.register Topic do
       input :users_csv,
             as: :file,
             label: 'Users CSV',
-            hint: topic.users_csv.attached? ? "Currently attached: #{topic.users_csv.filename.to_s}" : nil
+            hint: topic.users_csv.attached? ? "Currently attached: #{topic.users_csv.filename}" : nil
       input :articles_csv,
             as: :file,
             label: 'Articles CSV',
-            hint: topic.articles_csv.attached? ? "Currently attached: #{topic.articles_csv.filename.to_s}" : nil
+            hint: topic.articles_csv.attached? ? "Currently attached: #{topic.articles_csv.filename}" : nil
       f.input :classifications, as: :check_boxes, collection: Classification.all.map { |c| [c.name, c.id] }
     end
 
