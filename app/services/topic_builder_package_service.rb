@@ -71,6 +71,6 @@ class TopicBuilderPackageService
 
   def self.assert_supported_schema!(package)
     return if SUPPORTED_SCHEMA_VERSIONS.include?(package['schema_version'])
-    raise SchemaVersionError.new(package['schema_version'])
+    raise SchemaVersionError, package['schema_version']
   end
 end
