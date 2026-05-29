@@ -1,3 +1,11 @@
+inherit_from: .rubocop_todo.yml
+
+# Merge (rather than replace) Exclude lists from .rubocop_todo.yml, so the
+# manual per-cop excludes below combine with the grandfathered file lists.
+inherit_mode:
+  merge:
+    - Exclude
+
 require:
   - rubocop-rails
   - rubocop-rspec
