@@ -145,6 +145,12 @@ class TimepointService
     topic_timepoint = TopicTimepoint.find_or_create_by!(topic:, timestamp:)
 
     article_bag_articles = @topic.active_article_bag.article_bag_articles
+    # Count once up front. The progress/log strings below interpolate the
+    # total on every article, and the string is built before `log` checks
+    # whether logging is enabled — so leaving `.count` inline fired a
+    # COUNT(*) per article (160k+ COUNT queries per timestamp on a large
+    # topic) even in production where the log is a no-op.
+    total = article_bag_articles.count
     article_count = 0
 
     # Loop through all Articles
@@ -153,9 +159,9 @@ class TimepointService
         ActiveRecord::Base.connection_pool.with_connection do
           article_count += 1
           increment_progress_count
-          log "  #build_timepoints_for_article timestamp:#{timestamp} topic_timepoint_id:#{topic_timepoint.id} article_id:#{article_bag_article.article_id} article:#{article_count}/#{article_bag_articles.count}"
+          log "  #build_timepoints_for_article timestamp:#{timestamp} topic_timepoint_id:#{topic_timepoint.id} article_id:#{article_bag_article.article_id} article:#{article_count}/#{total}"
           if (article_count % 200).zero?
-            notify("Built article timepoint #{article_count}/#{article_bag_articles.count} for #{timestamp}")
+            notify("Built article timepoint #{article_count}/#{total} for #{timestamp}")
           end
           build_timepoints_for_article(article_bag_article:, topic_timepoint:)
           ActiveRecord::Base.connection_pool.release_connection
