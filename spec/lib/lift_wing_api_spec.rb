@@ -40,7 +40,9 @@ describe LiftWingApi do
     let(:wikidata) { create(:wiki, project: 'wikidata', language: 'en') }
 
     it 'works with auth', vcr: true do
-      described_class.new(wikipedia).get_revision_quality(641962088)
+      expect do
+        described_class.new(wikipedia).get_revision_quality(641962088)
+      end.not_to raise_error
     end
 
     it 'fetches json for wikipedia', vcr: true do
