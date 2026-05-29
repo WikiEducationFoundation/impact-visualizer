@@ -38,7 +38,7 @@ RSpec.configure do |config|
   config.after { Sidekiq::Testing.fake! }
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  config.fixture_path = "#{Rails.root}/spec/fixtures"
 
   config.example_status_persistence_file_path = 'spec/examples.txt'
 
