@@ -78,8 +78,14 @@ class GenerateArticleAnalyticsJob
         # separate "errored" counter, and move on.
         begin
           if recently_processed_article_ids.include?(article.id)
-            cached_mutex.synchronize { cached_count += 1; store(cached: cached_count) }
-            progress_mutex.synchronize { done += 1; at(done, "Cached: #{article.title}") }
+            cached_mutex.synchronize do
+              cached_count += 1
+              store(cached: cached_count)
+            end
+            progress_mutex.synchronize do
+              done += 1
+              at(done, "Cached: #{article.title}")
+            end
             next
           end
 
@@ -87,8 +93,14 @@ class GenerateArticleAnalyticsJob
           article_stats_service.update_details_for_article(article:)
           if article.reload.missing
             Rails.logger.info("[GenerateArticleAnalyticsJob] Article not found: #{article.title}")
-            skipped_mutex.synchronize { skipped_count += 1; store(skipped: skipped_count) }
-            progress_mutex.synchronize { done += 1; at(done, "Not found: #{article.title}") }
+            skipped_mutex.synchronize do
+              skipped_count += 1
+              store(skipped: skipped_count)
+            end
+            progress_mutex.synchronize do
+              done += 1
+              at(done, "Not found: #{article.title}")
+            end
             next
           end
 
@@ -140,13 +152,22 @@ class GenerateArticleAnalyticsJob
 
           Rails.logger.info("[GenerateArticleAnalyticsJob] Saved analytics for #{article.title} - average_views: #{average_views.round}, prev_average_views: #{prev_average_views&.round}, article_size: #{topic_article_analytic.article_size}, prev_article_size: #{topic_article_analytic.prev_article_size}, talk_size: #{topic_article_analytic.talk_size}, prev_talk_size: #{topic_article_analytic.prev_talk_size}, lead_section_size: #{topic_article_analytic.lead_section_size}")
 
-          progress_mutex.synchronize { done += 1; at(done, "Processed #{article.title}") }
+          progress_mutex.synchronize do
+            done += 1
+            at(done, "Processed #{article.title}")
+          end
         rescue StandardError => e
           Rails.logger.error(
             "[GenerateArticleAnalyticsJob] Skipping #{article.title} due to #{e.class}: #{e.message}"
           )
-          errored_mutex.synchronize { errored_count += 1; store(errored: errored_count) }
-          progress_mutex.synchronize { done += 1; at(done, "Errored: #{article.title}") }
+          errored_mutex.synchronize do
+            errored_count += 1
+            store(errored: errored_count)
+          end
+          progress_mutex.synchronize do
+            done += 1
+            at(done, "Errored: #{article.title}")
+          end
         end
       end
     end
