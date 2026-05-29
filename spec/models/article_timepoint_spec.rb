@@ -72,11 +72,11 @@ RSpec.describe ArticleTimepoint do
       timestamp = Date.new(2023, 1, 1)
       article.update first_revision_at: nil
       expect(described_class.count).to eq(0)
-      expect do
+      expect {
         described_class.find_or_create_for_timestamp(
           timestamp:, article:
         )
-      end.to raise_error(ImpactVisualizerErrors::ArticleMissingFirstRevisionInfo)
+      }.to raise_error(ImpactVisualizerErrors::ArticleMissingFirstRevisionInfo)
       expect(described_class.count).to eq(0)
     end
 
@@ -84,11 +84,11 @@ RSpec.describe ArticleTimepoint do
       timestamp = Date.new(2023, 1, 1)
       article.update first_revision_at: timestamp + 1.day
       expect(described_class.count).to eq(0)
-      expect do
+      expect {
         described_class.find_or_create_for_timestamp(
           timestamp:, article:
         )
-      end.to raise_error(ImpactVisualizerErrors::ArticleCreatedAfterTimestamp)
+      }.to raise_error(ImpactVisualizerErrors::ArticleCreatedAfterTimestamp)
       expect(described_class.count).to eq(0)
     end
   end

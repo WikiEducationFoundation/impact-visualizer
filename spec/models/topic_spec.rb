@@ -369,9 +369,9 @@ RSpec.describe Topic do
     end
 
     it 'raises if provided timestamp is not valid' do
-      expect do
+      expect {
         topic.timestamp_previous_to(Date.new(2022, 1, 2))
-      end.to raise_error(ImpactVisualizerErrors::InvalidTimestampForTopic)
+      }.to raise_error(ImpactVisualizerErrors::InvalidTimestampForTopic)
     end
   end
 
@@ -389,9 +389,9 @@ RSpec.describe Topic do
     end
 
     it 'raises if provided timestamp is not valid' do
-      expect do
+      expect {
         topic.timestamp_next_to(Date.new(2024, 1, 2))
-      end.to raise_error(ImpactVisualizerErrors::InvalidTimestampForTopic)
+      }.to raise_error(ImpactVisualizerErrors::InvalidTimestampForTopic)
     end
   end
 

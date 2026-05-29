@@ -64,9 +64,9 @@ class Wiki < ApplicationRecord
     @tokens_per_word_table ||= begin
       path = Rails.root.join('config', 'words_per_token.yml')
       data = path.exist? ? YAML.safe_load_file(path) : {}
-      (data['languages'] || {}).transform_values do |entry|
+      (data['languages'] || {}).transform_values { |entry|
         entry['median_tokens_per_word']
-      end.compact
+      }.compact
     end
   end
 

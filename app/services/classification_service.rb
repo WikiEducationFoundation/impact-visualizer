@@ -446,9 +446,9 @@ class ClassificationService
     counted_values = count_values(property_counts:)
 
     # Sort the values by count
-    sorted_values = counted_values.sort_by do |_k, value|
+    sorted_values = counted_values.sort_by { |_k, value|
       value[:count]
-    end.reverse
+    }.reverse
 
     # Narrow down the list to most counted
     top_values = sorted_values.take(count || @top_value_count)

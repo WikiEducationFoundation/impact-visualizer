@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :topic_summary do
-    topic {
+    topic do
       Topic.first || create(:topic)
-    }    
+    end    
   end
 end
 

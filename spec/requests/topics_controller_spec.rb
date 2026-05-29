@@ -266,9 +266,9 @@ describe TopicsController do
         name: 'My Topic',
         description: 'My topic description.'
       }
-      expect do
+      expect {
         put("/api/topics/#{topic.id}", params:)
-      end.to raise_error(ActiveRecord::RecordNotFound)
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'returns unauthorized without current_topic_editor' do
@@ -293,9 +293,9 @@ describe TopicsController do
     it 'returns 404 without associated current_topic_editor' do
       sign_in(create(:topic_editor))
       topic = topic_editor.topics.first
-      expect do
+      expect {
         delete("/api/topics/#{topic.id}")
-      end.to raise_error(ActiveRecord::RecordNotFound)
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'returns unauthorized without current_topic_editor' do
@@ -320,9 +320,9 @@ describe TopicsController do
     it 'returns 404 without associated current_topic_editor' do
       sign_in(create(:topic_editor))
       topic = topic_editor.topics.first
-      expect do
+      expect {
         get("/api/topics/#{topic.id}/import_users")
-      end.to raise_error(ActiveRecord::RecordNotFound)
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'returns unauthorized without current_topic_editor' do
@@ -347,9 +347,9 @@ describe TopicsController do
     it 'returns 404 without associated current_topic_editor' do
       sign_in(create(:topic_editor))
       topic = topic_editor.topics.first
-      expect do
+      expect {
         get("/api/topics/#{topic.id}/import_articles")
-      end.to raise_error(ActiveRecord::RecordNotFound)
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'returns unauthorized without current_topic_editor' do
@@ -391,9 +391,9 @@ describe TopicsController do
     it 'returns 404 without associated current_topic_editor' do
       sign_in(create(:topic_editor))
       topic = topic_editor.topics.first
-      expect do
+      expect {
         get("/api/topics/#{topic.id}/generate_timepoints")
-      end.to raise_error(ActiveRecord::RecordNotFound)
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'returns unauthorized without current_topic_editor' do
@@ -435,9 +435,9 @@ describe TopicsController do
     it 'returns 404 without associated current_topic_editor' do
       sign_in(create(:topic_editor))
       topic = topic_editor.topics.first
-      expect do
+      expect {
         get("/api/topics/#{topic.id}/incremental_topic_build")
-      end.to raise_error(ActiveRecord::RecordNotFound)
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'returns unauthorized without current_topic_editor' do
@@ -470,9 +470,9 @@ describe TopicsController do
     it 'returns 404 without associated current_topic_editor' do
       sign_in(create(:topic_editor))
       topic = topic_editor.topics.first
-      expect do
+      expect {
         post("/api/topics/#{topic.id}/start_data_generation")
-      end.to raise_error(ActiveRecord::RecordNotFound)
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
     it 'returns unauthorized without current_topic_editor' do

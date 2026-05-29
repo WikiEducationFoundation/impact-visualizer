@@ -128,9 +128,9 @@ describe ArticleStatsService do
 
       it 'captures revision_id', :vcr do
         article_stats_service.update_first_revision_info(article:)
-        expect do
+        expect {
           article_stats_service.update_stats_for_article_timepoint(article_timepoint:)
-        end.to raise_error(ImpactVisualizerErrors::ArticleCreatedAfterTimestamp)
+        }.to raise_error(ImpactVisualizerErrors::ArticleCreatedAfterTimestamp)
       end
     end
   end

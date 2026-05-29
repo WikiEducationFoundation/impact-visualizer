@@ -51,9 +51,9 @@ describe ImportService do
 
     it 'raises if CSV not specified' do
       topic.articles_csv.purge
-      expect do
+      expect {
         import_service.import_articles
-      end.to raise_error(ImpactVisualizerErrors::CsvMissingForImport)
+      }.to raise_error(ImpactVisualizerErrors::CsvMissingForImport)
     end
   end
 
@@ -80,9 +80,9 @@ describe ImportService do
 
     it 'raises if CSV not specified' do
       topic.users_csv.purge
-      expect do
+      expect {
         import_service.import_users
-      end.to raise_error(ImpactVisualizerErrors::CsvMissingForImport)
+      }.to raise_error(ImpactVisualizerErrors::CsvMissingForImport)
     end
   end
 end

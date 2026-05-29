@@ -11,17 +11,17 @@ describe WikiWhoApi do
     let(:broken_revision_id) { 1255983861 }
 
     it 'handles 400 error as expected', :vcr do
-      expect do
+      expect {
         subject.get_revision_tokens(missing_revision_id)
-      end.not_to raise_error(WikiWhoApi::RevisionTokenError)
+      }.not_to raise_error(WikiWhoApi::RevisionTokenError)
 
       expect(subject.get_revision_tokens(missing_revision_id)).to eq(nil)
     end
 
     it 'handles 408 error as expected', :vcr do
-      expect do
+      expect {
         subject.get_revision_tokens(broken_revision_id)
-      end.not_to raise_error(WikiWhoApi::RevisionTokenError)
+      }.not_to raise_error(WikiWhoApi::RevisionTokenError)
 
       expect(subject.get_revision_tokens(missing_revision_id)).to eq(nil)
     end
@@ -30,9 +30,9 @@ describe WikiWhoApi do
       allow_any_instance_of(Faraday::Connection).to receive(:get)
         .and_raise(Faraday::TimeoutError)
       expect_any_instance_of(described_class).to receive(:log_error).once
-      expect do
+      expect {
         subject.get_revision_tokens(revision_id)
-      end.to raise_error(WikiWhoApi::RevisionTokenError, "status: nil / revision_id: #{revision_id}")
+      }.to raise_error(WikiWhoApi::RevisionTokenError, "status: nil / revision_id: #{revision_id}")
     end
   end
 

@@ -171,12 +171,12 @@ class Topic < ApplicationRecord
       .joins(:article)
       .joins(centrality_join)
       .pluck('articles.title', :average_daily_views, :prev_average_daily_views, :article_size, :prev_article_size, :talk_size, :prev_talk_size, :lead_section_size, :assessment_grade, :publication_date, :linguistic_versions_count, :warning_tags_count, :images_count, :number_of_editors, :article_protections, :incoming_links_count, 'article_bag_articles.centrality')
-      .map do |title, average_daily_views, prev_average_daily_views, article_size, prev_article_size, talk_size, prev_talk_size, lead_section_size, assessment_grade, publication_date, linguistic_versions_count, warning_tags_count, images_count, number_of_editors, article_protections, incoming_links_count, centrality|
+      .map { |title, average_daily_views, prev_average_daily_views, article_size, prev_article_size, talk_size, prev_talk_size, lead_section_size, assessment_grade, publication_date, linguistic_versions_count, warning_tags_count, images_count, number_of_editors, article_protections, incoming_links_count, centrality|
         [title,
          { average_daily_views:, prev_average_daily_views:, article_size:, prev_article_size:, talk_size:, prev_talk_size:,
           lead_section_size:, assessment_grade:, publication_date:, linguistic_versions_count:, warning_tags_count:,
           images_count:, number_of_editors:, article_protections:, incoming_links_count:, centrality: }]
-      end
+      }
       .to_h
   end
 

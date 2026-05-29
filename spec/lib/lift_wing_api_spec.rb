@@ -8,18 +8,18 @@ describe LiftWingApi do
     let(:subject) { described_class.new(wikipedia).get_revision_quality(641962088) }
 
     it 'handles 400 error as expected', vcr: true do
-      expect do
+      expect {
         described_class.new(wikipedia).get_revision_quality(398357283)
-      end.not_to raise_error(Faraday::ClientError)
+      }.not_to raise_error(Faraday::ClientError)
     end
 
     it 'handles timeout errors gracefully' do
       allow_any_instance_of(Faraday::Connection).to receive(:send)
         .and_raise(Faraday::TimeoutError)
       expect_any_instance_of(described_class).to receive(:log_error).once
-      expect do
+      expect {
         expect(subject).to eq(nil)
-      end.to raise_error(LiftWingApi::RevisionQualityError)
+      }.to raise_error(LiftWingApi::RevisionQualityError)
     end
   end
 

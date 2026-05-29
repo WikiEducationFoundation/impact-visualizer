@@ -26,16 +26,16 @@ describe TopicService do
     end
 
     it 'raises without @topic_editor' do
-      expect do
+      expect {
         described_class.new(topic:)
-      end.to raise_error(ArgumentError)
+      }.to raise_error(ArgumentError)
     end
 
     it 'raises without @topic_editor authorization' do
       TopicEditorTopic.destroy_all
-      expect do
+      expect {
         described_class.new(topic:, topic_editor:)
-      end.to raise_error(ImpactVisualizerErrors::TopicEditorNotAuthorizedForTopic)
+      }.to raise_error(ImpactVisualizerErrors::TopicEditorNotAuthorizedForTopic)
     end
   end
 
@@ -89,9 +89,9 @@ describe TopicService do
   describe '#update_topic' do
     it 'raises if no topic' do
       topic_service = described_class.new(topic_editor:)
-      expect do
+      expect {
         topic_service.update_topic(topic_params: {})
-      end.to raise_error(ImpactVisualizerErrors::TopicMissing)
+      }.to raise_error(ImpactVisualizerErrors::TopicMissing)
     end
 
     it 'updates topic, does not queue import' do
@@ -132,33 +132,33 @@ describe TopicService do
   describe '#delete_topic' do
     it 'raises if no topic' do
       topic_service = described_class.new(topic_editor:)
-      expect do
+      expect {
         topic_service.delete_topic
-      end.to raise_error(ImpactVisualizerErrors::TopicMissing)
+      }.to raise_error(ImpactVisualizerErrors::TopicMissing)
     end
 
     it 'deletes the topic' do
       topic_service = described_class.new(topic:, topic_editor:)
       topic_service.delete_topic
-      expect do
+      expect {
         topic.reload
-      end.to raise_error(ActiveRecord::RecordNotFound)
+      }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 
   describe '#import_users' do
     it 'raises if no topic' do
       topic_service = described_class.new(topic_editor:)
-      expect do
+      expect {
         topic_service.import_users
-      end.to raise_error(ImpactVisualizerErrors::TopicMissing)
+      }.to raise_error(ImpactVisualizerErrors::TopicMissing)
     end
 
     it 'raises if no csv attached' do
       topic_service = described_class.new(topic_editor:, topic:)
-      expect do
+      expect {
         topic_service.import_users
-      end.to raise_error(ImpactVisualizerErrors::CsvMissingForImport)
+      }.to raise_error(ImpactVisualizerErrors::CsvMissingForImport)
     end
 
     it 'initiates user import from attached csv' do
@@ -175,16 +175,16 @@ describe TopicService do
   describe '#import_articles' do
     it 'raises if no topic' do
       topic_service = described_class.new(topic_editor:)
-      expect do
+      expect {
         topic_service.import_articles
-      end.to raise_error(ImpactVisualizerErrors::TopicMissing)
+      }.to raise_error(ImpactVisualizerErrors::TopicMissing)
     end
 
     it 'raises if no csv attached' do
       topic_service = described_class.new(topic_editor:, topic:)
-      expect do
+      expect {
         topic_service.import_articles
-      end.to raise_error(ImpactVisualizerErrors::CsvMissingForImport)
+      }.to raise_error(ImpactVisualizerErrors::CsvMissingForImport)
     end
 
     it 'initiates user import from attached csv' do
@@ -201,17 +201,17 @@ describe TopicService do
   describe '#generate_timepoints' do
     it 'raises if no topic' do
       topic_service = described_class.new(topic_editor:)
-      expect do
+      expect {
         topic_service.generate_timepoints
-      end.to raise_error(ImpactVisualizerErrors::TopicMissing)
+      }.to raise_error(ImpactVisualizerErrors::TopicMissing)
     end
 
     it 'raises if no articles' do
       topic_service = described_class.new(topic_editor:, topic:)
       expect(topic).to receive(:articles_count).and_return(0)
-      expect do
+      expect {
         topic_service.generate_timepoints
-      end.to raise_error(ImpactVisualizerErrors::TopicNotReadyForTimepointGeneration)
+      }.to raise_error(ImpactVisualizerErrors::TopicNotReadyForTimepointGeneration)
     end
 
     it 'initiates timepoint generation' do
