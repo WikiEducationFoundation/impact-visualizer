@@ -115,7 +115,6 @@ class WikimediaPageviewsApi
     end
   end
 
-
   def format_date(year, month, day)
     "#{year}#{month.to_s.rjust(2, '0')}#{day.to_s.rjust(2, '0')}"
   end

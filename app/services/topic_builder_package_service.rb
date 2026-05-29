@@ -14,6 +14,7 @@ class TopicBuilderPackageService
   class Error < StandardError; end
   class NotFound < Error; end
   class NetworkError < Error; end
+
   class SchemaVersionError < Error
     attr_reader :schema_version
     def initialize(schema_version)
