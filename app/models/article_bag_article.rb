@@ -11,7 +11,7 @@ class ArticleBagArticle < ApplicationRecord
 
   # For ActiveAdmin
   def self.ransackable_attributes(auth_object = nil)
-    ["article_bag_id", "article_id", "centrality", "created_at", "id", "updated_at"]
+    ['article_bag_id', 'article_id', 'centrality', 'created_at', 'id', 'updated_at']
   end
 
 end

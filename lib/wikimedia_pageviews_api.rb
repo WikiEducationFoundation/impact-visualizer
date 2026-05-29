@@ -107,7 +107,7 @@ class WikimediaPageviewsApi
       wait_seconds += rand(0.0..3.0)
       unless Rails.env.test?
         Rails.logger.warn(
-          "WikimediaPageviewsApi / 429 Too Many Requests - " \
+          'WikimediaPageviewsApi / 429 Too Many Requests - ' \
           "waiting #{wait_seconds.round(2)}s (attempt #{tries}/#{MAX_TRIES})"
         )
       end
