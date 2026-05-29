@@ -3,7 +3,7 @@ FactoryBot.define do
   factory :topic_summary do
     topic do
       Topic.first || create(:topic)
-    end    
+    end
   end
 end
 
