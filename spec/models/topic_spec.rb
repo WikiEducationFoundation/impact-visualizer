@@ -13,6 +13,24 @@ RSpec.describe Topic do
   it { is_expected.to have_many(:topic_editors).through(:topic_editor_topics) }
   it { is_expected.to belong_to(:wiki) }
 
+  describe 'validations' do
+    it 'is invalid when end_date is before start_date' do
+      topic = build(:topic, start_date: Date.new(2023, 6, 1), end_date: Date.new(2023, 1, 1))
+      expect(topic).not_to be_valid
+      expect(topic.errors[:end_date]).to include('must not be before the start date')
+    end
+
+    it 'is valid when end_date equals start_date' do
+      topic = build(:topic, start_date: Date.new(2023, 1, 1), end_date: Date.new(2023, 1, 1))
+      expect(topic).to be_valid
+    end
+
+    it 'is valid when start_date and end_date are blank' do
+      topic = build(:topic, start_date: nil, end_date: nil)
+      expect(topic).to be_valid
+    end
+  end
+
   describe 'job status methods' do
     let(:topic) { create(:topic) }
 
@@ -342,6 +360,15 @@ RSpec.describe Topic do
       topic.update(start_date: Time.zone.now, end_date: nil)
       expect { topic.timestamps }
         .to raise_error(ImpactVisualizerErrors::TopicMissingEndDate)
+    end
+
+    it 'raises a clear error when end_date is before start_date' do
+      # Assign in memory (timestamps only reads the dates) to reproduce a
+      # topic with an invalid range without tripping the model validation.
+      topic.start_date = Date.new(2023, 6, 1)
+      topic.end_date = Date.new(2023, 1, 1)
+      expect { topic.timestamps }
+        .to raise_error(ImpactVisualizerErrors::TopicInvalidDateRange)
     end
   end
 

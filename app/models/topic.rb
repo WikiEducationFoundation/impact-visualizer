@@ -20,6 +20,9 @@ class Topic < ApplicationRecord
   has_many :topic_classifications
   has_many :classifications, through: :topic_classifications
 
+  ## Validations
+  validate :end_date_not_before_start_date
+
   ## Instance methods
 
   # The tokens_per_word divisor that should actually be used to convert
@@ -37,6 +40,11 @@ class Topic < ApplicationRecord
 
     clean_start_date = start_date.beginning_of_day
     clean_end_date = end_date.beginning_of_day
+
+    # A backwards range yields zero timepoints, which would leave the loop
+    # below empty and blow up on `output.last < clean_end_date`. Fail with a
+    # clear domain error instead of a NoMethodError on nil.
+    raise ImpactVisualizerErrors::TopicInvalidDateRange if clean_end_date < clean_start_date
 
     # Get total number of days within range... converted from seconds to days, with a 1 day buffer
     total_days = ((clean_end_date - clean_start_date) / 1.day.to_i) + 1
@@ -427,6 +435,16 @@ class Topic < ApplicationRecord
     %w[chart_time_unit created_at description display editor_label end_date id name
        slug start_date tb_handle timepoint_day_interval updated_at words_per_token
        convert_tokens_to_words wiki_id]
+  end
+
+  private
+
+  # A topic whose end_date precedes its start_date has an empty timeframe
+  # and breaks timepoint generation (see #timestamps). Reject it at save.
+  def end_date_not_before_start_date
+    return if start_date.blank? || end_date.blank?
+    return unless end_date < start_date
+    errors.add(:end_date, 'must not be before the start date')
   end
 end
 
