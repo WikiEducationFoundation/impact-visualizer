@@ -52,7 +52,7 @@ RSpec.describe ImportTopicBuilderArticlesJob, type: :job do
     described_class.new.perform(topic.id, handle)
     expect {
       described_class.new.perform(topic.id, handle)
-    }.not_to change { bag.reload.article_bag_articles.count }
+    }.not_to(change { bag.reload.article_bag_articles.count })
   end
 
   it 'clears article_import_job_id when all retries are exhausted' do

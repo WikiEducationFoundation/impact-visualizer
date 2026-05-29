@@ -193,7 +193,7 @@ describe TopicBuilderTagIngestService do
         topic.classifications << iv_cls
 
         expect { described_class.new(topic:, package:).sync! }
-          .not_to change { Classification.exists?(iv_cls.id) }
+          .not_to(change { Classification.exists?(iv_cls.id) })
       end
     end
 
