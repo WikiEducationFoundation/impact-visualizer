@@ -10,7 +10,7 @@ class ArticleBagArticle < ApplicationRecord
                          allow_nil: true
 
   # For ActiveAdmin
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[article_bag_id article_id centrality created_at id updated_at]
   end
 end

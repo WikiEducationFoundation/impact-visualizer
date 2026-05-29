@@ -3,7 +3,7 @@ class TopicSummary < ApplicationRecord
   belongs_to :topic
 
   # For ActiveAdmin
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[
       articles_count articles_count_delta
       attributed_articles_created_delta attributed_length_delta

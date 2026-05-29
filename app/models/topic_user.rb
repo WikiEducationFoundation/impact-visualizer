@@ -4,7 +4,7 @@ class TopicUser < ApplicationRecord
   belongs_to :topic
   belongs_to :user
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[created_at id topic_id updated_at user_id]
   end
 end
