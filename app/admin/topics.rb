@@ -245,9 +245,7 @@ ActiveAdmin.register Topic do
       row :convert_tokens_to_words
       row :tokens_per_word
       row :users_csv do
-        if topic.users_csv.attached?
-          link_to topic.users_csv.filename.to_s, url_for(topic.users_csv)
-        end
+        link_to topic.users_csv.filename.to_s, url_for(topic.users_csv) if topic.users_csv.attached?
       end
       row :articles_csv do
         if topic.articles_csv.attached?

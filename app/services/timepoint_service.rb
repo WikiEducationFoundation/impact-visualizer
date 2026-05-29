@@ -217,9 +217,7 @@ class TimepointService
         article_count += 1
         increment_progress_count
         log "  #update_token_stats_for_article article:#{article_count}/#{total} article_id: #{article.id}"
-        if (article_count % 50).zero?
-          notify("Updating token stats #{article_count}/#{total}…")
-        end
+        notify("Updating token stats #{article_count}/#{total}…") if (article_count % 50).zero?
 
         # Update stats for all timestamps for article
         update_token_stats_for_article(article:)
