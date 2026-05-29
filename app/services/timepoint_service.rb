@@ -369,6 +369,6 @@ class TimepointService
   end
 
   def notify(msg)
-    @message.call(msg) if @message
+    @message&.call(msg)
   end
 end
