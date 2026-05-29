@@ -19,6 +19,7 @@ AllCops:
     - 'app/views/**/**/*.haml'
     - 'docs/**/*'
     - 'setup/*'
+    - 'scripts/**/*' # standalone developer probe/utility scripts, not app code
   TargetRubyVersion: 3.1
 
 Layout/LineLength:
