@@ -517,7 +517,8 @@ class WikiActionApi
   # filing us in Wikimedia's "unidentified" tier (10 req/min) instead
   # of the compliant tier (200 req/min). Set the UA via the private
   # ivar until the gem exposes a public accessor.
-  def set_user_agent(client)
+  # Configures and returns the client; not a writer/accessor despite the name.
+  def set_user_agent(client) # rubocop:disable Naming/AccessorMethodName
     conn = client.instance_variable_get(:@conn)
     conn.headers[:user_agent] = Features.user_agent if conn
     client
