@@ -38,7 +38,7 @@ RSpec.describe ImportTopicBuilderArticlesJob, type: :job do
   it 'persists centrality scores per article' do
     described_class.new.perform(topic.id, handle)
     scores = bag.reload.article_bag_articles.includes(:article)
-                .map { |a| [a.article.title, a.centrality] }.to_h
+      .map { |a| [a.article.title, a.centrality] }.to_h
     expect(scores).to eq('Achievement gap' => 8, 'Active learning' => nil)
   end
 

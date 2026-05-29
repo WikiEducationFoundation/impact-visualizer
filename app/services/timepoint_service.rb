@@ -240,8 +240,8 @@ class TimepointService
     return scope if scope.nil? || @force_updates
 
     unavailable_ids = TopicArticleAnalytic
-                      .where(topic: @topic, tokens_unavailable: true)
-                      .pluck(:article_id)
+      .where(topic: @topic, tokens_unavailable: true)
+      .pluck(:article_id)
     return scope if unavailable_ids.empty?
 
     scope.where.not(article_id: unavailable_ids)

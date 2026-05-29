@@ -552,7 +552,7 @@ describe TimepointService do
 
       it 'filters previously-flagged articles out of the parallel loop' do
         TopicArticleAnalytic.where(topic:, article: article_1)
-                            .update_all(tokens_unavailable: true)
+          .update_all(tokens_unavailable: true)
 
         described_class.new(topic:).update_token_stats
 
@@ -570,7 +570,7 @@ describe TimepointService do
 
       it 'clears tokens_unavailable on a subsequent successful fetch' do
         TopicArticleAnalytic.where(topic:, article: article_1)
-                            .update_all(tokens_unavailable: true)
+          .update_all(tokens_unavailable: true)
 
         # force_updates lets the previously-flagged article through and
         # WikiWho now returns a real (non-nil) result.

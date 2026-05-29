@@ -8,7 +8,7 @@ class TopicTimepointStatsService
     # which on a 6562-article topic with N timepoints turns into
     # ~164k extra queries per stats run.
     topic_article_timepoints = topic_timepoint.topic_article_timepoints
-                                              .includes(:article_timepoint)
+      .includes(:article_timepoint)
 
     # Get previous
     topic = topic_timepoint.topic
