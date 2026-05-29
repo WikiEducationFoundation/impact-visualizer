@@ -55,7 +55,7 @@ describe WikiWhoApi do
       studied = Wiki.tokens_per_word_table.keys
       missing = studied - described_class::AVAILABLE_WIKIPEDIAS
       expect(missing).to eq([]),
-        "Languages with words_per_token data but not in WikiWhoApi: #{missing.inspect}"
+                         "Languages with words_per_token data but not in WikiWhoApi: #{missing.inspect}"
     end
 
     it 'excludes Norwegian variants which 404 at the WikiWho API' do
