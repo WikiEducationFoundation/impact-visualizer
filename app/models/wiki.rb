@@ -98,7 +98,7 @@ class Wiki < ApplicationRecord
   end
 
   def self.ransackable_attributes(auth_object = nil)
-    ['created_at', 'id', 'language', 'project', 'updated_at']
+    %w[created_at id language project updated_at]
   end
 
   def name
