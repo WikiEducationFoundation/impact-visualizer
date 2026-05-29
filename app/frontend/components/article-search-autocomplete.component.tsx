@@ -92,13 +92,13 @@ const ArticleSearchAutocomplete: React.FC<ArticleSearchAutocompleteProps> = ({
   return (
     <>
       <div
-        className="ArticleSearchAutocompleteWrapper"
+        className="ArticleSearchAutocomplete"
         ref={suggestionsRef as RefObject<HTMLDivElement>}
       >
-        <GoSearch className="ArticleSearchAutocompleteIcon" />
+        <GoSearch className="Icon" />
         <input
           type="search"
-          className="ArticleSearchAutocompleteInput"
+          className="Input"
           placeholder="Search article"
           value={searchTerm}
           onChange={(e) => handleInputChange(e.target.value)}
@@ -106,14 +106,12 @@ const ArticleSearchAutocomplete: React.FC<ArticleSearchAutocompleteProps> = ({
           onKeyDown={handleKeyDown}
         />
         {showSuggestions && suggestions.length > 0 && (
-          <ul className="ArticleSearchAutocompleteList" ref={listRef}>
+          <ul className="List" ref={listRef}>
             {suggestions.map((title, i) => (
               <li
                 key={title}
                 ref={(el) => (itemRefs.current[i] = el)}
-                className={`ArticleSearchAutocompleteItem ${
-                  activeSuggestion === i ? "is-active" : ""
-                }`}
+                className={`Item ${activeSuggestion === i ? "is-active" : ""}`}
                 onClick={() => handleSuggestionClick(title)}
                 onMouseEnter={() => setActiveSuggestion(i)}
               >

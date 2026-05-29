@@ -71,16 +71,16 @@ function ArticleLanguageComparisonModal({
 
   return (
     <div
-      className="ArticleLangComparisonBackdrop"
+      className="ArticleLangComparison"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="ArticleLangComparisonPanel">
-        <div className="ArticleLangComparisonHeader">
-          <h3 className="ArticleLangComparisonTitle">{articleTitle}</h3>
+      <div className="Panel">
+        <div className="Header">
+          <h3 className="Title">{articleTitle}</h3>
           <button
-            className="ArticleLangComparisonClose"
+            className="Close"
             onClick={onClose}
             aria-label="Close"
           >
@@ -88,30 +88,30 @@ function ArticleLanguageComparisonModal({
           </button>
         </div>
 
-        <div className="ArticleLangComparisonBody">
+        <div className="Body">
           {loading && (
-            <div className="ArticleLangComparisonLoading">
+            <div className="Loading">
               <Spinner size="large" />
             </div>
           )}
 
           {error && (
-            <div className="ArticleLangComparisonError">
+            <div className="Error">
               Failed to load language comparison data.
             </div>
           )}
 
           {!loading && !error && data && (
-            <table className="ArticleLangComparisonTable">
+            <table className="Table">
               <thead>
                 <tr>
-                  <th className="ArticleLangComparisonMetricHeader" />
+                  <th className="MetricHeader" />
                   {languages.map((lang) => {
                     const entry = data[lang];
                     return (
                       <th
                         key={lang}
-                        className={`ArticleLangComparisonLangHeader${!entry ? " ArticleLangComparisonLangHeader--missing" : ""}`}
+                        className={`LangHeader${!entry ? " LangHeader--missing" : ""}`}
                       >
                         <span>{LANGUAGE_LABELS[lang] ?? lang} version</span>
                         {entry && (
@@ -119,7 +119,7 @@ function ArticleLanguageComparisonModal({
                             href={getWikiUrl(entry.title, { language: lang })}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="ArticleLangComparisonHeaderLink"
+                            className="Link"
                             aria-label={`Open ${LANGUAGE_LABELS[lang]} version`}
                           >
                             <FiExternalLink size={14} />
@@ -133,7 +133,7 @@ function ArticleLanguageComparisonModal({
               <tbody>
                 {METRIC_ROWS.map((metric) => (
                   <tr key={metric.key}>
-                    <td className="ArticleLangComparisonMetricLabel">
+                    <td className="MetricLabel">
                       {metric.label}
                     </td>
                     {languages.map((lang) => {
@@ -142,9 +142,9 @@ function ArticleLanguageComparisonModal({
                         return (
                           <td
                             key={lang}
-                            className="ArticleLangComparisonCell ArticleLangComparisonCell--missing"
+                            className="Cell Cell--missing"
                           >
-                            <span className="ArticleLangComparisonMissingIcon">
+                            <span className="MissingIcon">
                               <IoCloseCircle size={22} />
                             </span>
                           </td>
@@ -156,14 +156,14 @@ function ArticleLanguageComparisonModal({
                       const barWidth = max > 0 ? (value / max) * 100 : 0;
 
                       return (
-                        <td key={lang} className="ArticleLangComparisonCell">
-                          <div className="ArticleLangComparisonCellInner">
-                            <span className="ArticleLangComparisonValue">
+                        <td key={lang} className="Cell">
+                          <div className="Inner">
+                            <span className="Value">
                               {value.toLocaleString()}
                             </span>
-                            <div className="ArticleLangComparisonBarTrack">
+                            <div className="Track">
                               <div
-                                className="ArticleLangComparisonBar"
+                                className="Bar"
                                 style={{ width: `${barWidth}%` }}
                               />
                             </div>
@@ -175,21 +175,21 @@ function ArticleLanguageComparisonModal({
                 ))}
 
                 <tr>
-                  <td className="ArticleLangComparisonMetricLabel" />
+                  <td className="MetricLabel" />
                   {languages.map((lang) => {
                     const entry = data[lang];
                     if (entry) {
                       return (
-                        <td key={lang} className="ArticleLangComparisonCell" />
+                        <td key={lang} className="Cell" />
                       );
                     }
                     return (
                       <td
                         key={lang}
-                        className="ArticleLangComparisonCell ArticleLangComparisonCell--missing ArticleLangComparisonCell--translate"
+                        className="Cell Cell--missing Cell--translate"
                       >
                         <a
-                          className="ArticleLangComparisonTranslateLink"
+                          className="TranslateLink"
                           href={getTranslateUrl(articleTitle, sourceLang, lang)}
                           target="_blank"
                           rel="noopener noreferrer"

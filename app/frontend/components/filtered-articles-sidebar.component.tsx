@@ -32,10 +32,10 @@ function SidebarRow(props: SidebarRowProps): React.ReactElement | null {
   if (!articleRow) return null;
 
   return (
-    <li style={style} className="FilteredArticlesSidebarItem">
+    <li style={style} className="Item">
       <button
         type="button"
-        className="FilteredArticlesSidebarLink"
+        className="Link"
         onClick={() => onArticleClick?.(articleRow)}
       >
         {articleRow.article}
@@ -47,7 +47,7 @@ function SidebarRow(props: SidebarRowProps): React.ReactElement | null {
         })}
         target="_blank"
         rel="noopener noreferrer"
-        className="FilteredArticlesSidebarExternalLink"
+        className="ExternalLink"
         onClick={(e) => e.stopPropagation()}
       >
         <FiExternalLink />
@@ -62,29 +62,29 @@ const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> =
       <div className={`FilteredArticlesSidebar ${isOpen ? "is-open" : ""}`}>
         <button
           type="button"
-          className="FilteredArticlesSidebarToggle"
+          className="Toggle"
           onClick={onToggle}
           aria-label={isOpen ? "Close sidebar" : "Open sidebar"}
         >
-          <span className="FilteredArticlesSidebarToggleIcon">
+          <span className="Icon">
             {isOpen ? <GoTriangleRight /> : <GoTriangleLeft />}
           </span>
-          <span className="FilteredArticlesSidebarToggleCount">
+          <span className="Count">
             {articles.length}
           </span>
         </button>
-        <div className="FilteredArticlesSidebarContent">
-          <div className="FilteredArticlesSidebarHeader">
-            <span className="FilteredArticlesSidebarTitle">
+        <div className="Content">
+          <div className="Header">
+            <span className="Title">
               Filtered Articles
             </span>
-            <span className="FilteredArticlesSidebarCount">
+            <span className="Count">
               {articles.length} article{articles.length !== 1 ? "s" : ""}
             </span>
           </div>
           {isOpen && (
             <List
-              className="FilteredArticlesSidebarList"
+              className="List"
               rowComponent={SidebarRow}
               rowCount={articles.length}
               rowHeight={ITEM_HEIGHT}

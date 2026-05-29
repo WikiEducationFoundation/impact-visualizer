@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { FaArrowRight } from "react-icons/fa6";
 import { FiExternalLink } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
@@ -6,9 +7,10 @@ import Spinner from "./spinner.component";
 import type { ArticleAnalytics } from "../types/bubble-chart.type";
 import { getWikiUrl } from "../utils/search-utils";
 import {
-  computeWordFrequencies,
+  fetchArticleWordFrequencies,
   PEACOCK_TERMS,
 } from "../utils/word-cloud-utils";
+import { fetchArticleNeeds } from "../utils/article-quality-utils";
 
 type Wiki = {
   language: string;
@@ -23,15 +25,6 @@ export type ArticleRow = {
   has_edit_restriction: boolean;
 } & ArticleAnalytics;
 
-const contributions = [
-  "Add reliable, high-quality sources",
-  "Improve the lead section by adding some information",
-  "Remove the warning tags",
-  "Add internal and external links thoughtfully",
-  "When appropriate, add some images",
-  "Copyedit for clarity and consistency",
-];
-
 function ArticleDetailPanel({
   article,
   wiki,
@@ -42,30 +35,22 @@ function ArticleDetailPanel({
   onClose: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<"all" | "peacock">("all");
-  const [words, setWords] = useState<{ word: string; count: number }[]>([]);
-  const [loadingWords, setLoadingWords] = useState(false);
+  const lang = wiki?.language ?? "en";
+  const project = wiki?.project ?? "wikipedia";
+  const isWikipedia = project === "wikipedia";
 
-  useEffect(() => {
-    setLoadingWords(true);
-    setWords([]);
-    const lang = wiki?.language ?? "en";
-    const project = wiki?.project ?? "wikipedia";
-    const url =
-      `https://${lang}.${project}.org/w/api.php?` +
-      `action=query&prop=extracts&explaintext=true&exsectionformat=plain` +
-      `&titles=${encodeURIComponent(article.article)}&format=json&origin=*`;
+  const { data: words = [], isLoading: loadingWords } = useQuery({
+    queryKey: ["articleWordFrequencies", lang, project, article.article],
+    queryFn: () => fetchArticleWordFrequencies(article.article, lang, project),
+    staleTime: 60 * 60 * 1000,
+  });
 
-    fetch(url)
-      .then((r) => r.json())
-      .then((data) => {
-        const pages = data?.query?.pages ?? {};
-        const page = Object.values(pages)[0] as any;
-        const extract: string = page?.extract ?? "";
-        setWords(computeWordFrequencies(extract));
-      })
-      .catch(() => setWords([]))
-      .finally(() => setLoadingWords(false));
-  }, [article.article, wiki]);
+  const { data: needs = [], isLoading: loadingNeeds } = useQuery({
+    queryKey: ["articleNeeds", lang, article.article],
+    queryFn: () => fetchArticleNeeds(article.article, lang),
+    enabled: isWikipedia,
+    staleTime: 60 * 60 * 1000,
+  });
 
   const displayedWords =
     activeTab === "peacock"
@@ -101,83 +86,69 @@ function ArticleDetailPanel({
 
   return (
     <div
-      className="ArticleDetailPanelBackdrop"
+      className="ArticleDetail"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="ArticleDetailPanel">
-        <div className="ArticleDetailPanelHeader">
-          <h3 className="ArticleDetailPanelTitle">
+      <div className="Panel">
+        <div className="Header">
+          <h3 className="Title">
             {article.article}
             <a
               href={wikiUrl}
               target="_blank"
               rel="noreferrer"
-              className="ArticleDetailPanelTitleLink"
+              className="TitleLink"
               aria-label="Open on Wikipedia"
             >
               <FiExternalLink size={18} />
             </a>
           </h3>
-          <button
-            className="ArticleDetailPanelClose"
-            onClick={onClose}
-            aria-label="Close"
-          >
+          <button className="Close" onClick={onClose} aria-label="Close">
             <IoClose size={28} />
           </button>
         </div>
 
-        <div className="ArticleDetailPanelBody">
-          <div className="ArticleDetailInfo">
-            <div className="ArticleDetailInfoHeader">Article information</div>
-            <div className="ArticleDetailColBody">
-              <div className="ArticleDetailInfoSection">
-                <div className="ArticleDetailInfoSectionTitle">General</div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Instance</span>
-                  <span className="ArticleDetailInfoValue">
-                    {instanceLabel}
-                  </span>
+        <div className="Body">
+          <div className="Info">
+            <div className="Header">Article information</div>
+            <div className="ColBody">
+              <div className="Section">
+                <div className="Title">General</div>
+                <div className="Row">
+                  <span className="Label">Instance</span>
+                  <span className="Value">{instanceLabel}</span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Creation date</span>
-                  <span className="ArticleDetailInfoValue">
-                    {formattedDate}
-                  </span>
+                <div className="Row">
+                  <span className="Label">Creation date</span>
+                  <span className="Value">{formattedDate}</span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Restriction</span>
-                  <span className="ArticleDetailInfoValue">
-                    {restrictionLabel}
-                  </span>
+                <div className="Row">
+                  <span className="Label">Restriction</span>
+                  <span className="Value">{restrictionLabel}</span>
                 </div>
               </div>
 
-              <div className="ArticleDetailInfoSection">
-                <div className="ArticleDetailInfoSectionTitle">
-                  Qualitative information
-                </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
-                    Quality assessment
-                  </span>
-                  <span className="ArticleDetailInfoValue">
+              <div className="Section">
+                <div className="Title">Qualitative information</div>
+                <div className="Row">
+                  <span className="Label">Quality assessment</span>
+                  <span className="Value">
                     {article.assessment_grade ?? "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Centrality</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Centrality</span>
+                  <span className="Value">
                     {article.centrality != null
                       ? article.centrality.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Warning tags</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Warning tags</span>
+                  <span className="Value">
                     {article.warning_tags_count != null
                       ? article.warning_tags_count.toLocaleString()
                       : "—"}
@@ -185,53 +156,43 @@ function ArticleDetailPanel({
                 </div>
               </div>
 
-              <div className="ArticleDetailInfoSection">
-                <div className="ArticleDetailInfoSectionTitle">
-                  Content data
-                </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
-                    Article size (in byte)
-                  </span>
-                  <span className="ArticleDetailInfoValue">
+              <div className="Section">
+                <div className="Title">Content data</div>
+                <div className="Row">
+                  <span className="Label">Article size (in byte)</span>
+                  <span className="Value">
                     {article.article_size != null
                       ? article.article_size.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
-                    Lead section size (in byte)
-                  </span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Lead section size (in byte)</span>
+                  <span className="Value">
                     {article.lead_section_size != null
                       ? article.lead_section_size.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
-                    Discussion size (in byte)
-                  </span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Discussion size (in byte)</span>
+                  <span className="Value">
                     {article.talk_size != null
                       ? article.talk_size.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Images</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Images</span>
+                  <span className="Value">
                     {article.images_count != null
                       ? article.images_count.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
-                    Linguistic versions
-                  </span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Linguistic versions</span>
+                  <span className="Value">
                     {article.linguistic_versions_count != null
                       ? article.linguistic_versions_count.toLocaleString()
                       : "—"}
@@ -239,41 +200,35 @@ function ArticleDetailPanel({
                 </div>
               </div>
 
-              <div className="ArticleDetailInfoSection">
-                <div className="ArticleDetailInfoSectionTitle">
-                  User engagement data
-                </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
-                    Avg daily views
-                  </span>
-                  <span className="ArticleDetailInfoValue">
+              <div className="Section">
+                <div className="Title">User engagement data</div>
+                <div className="Row">
+                  <span className="Label">Avg daily views</span>
+                  <span className="Value">
                     {article.average_daily_views != null
                       ? article.average_daily_views.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">
-                    Avg daily views (prev. year)
-                  </span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Avg daily views (prev. year)</span>
+                  <span className="Value">
                     {article.prev_average_daily_views != null
                       ? article.prev_average_daily_views.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Editors</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Editors</span>
+                  <span className="Value">
                     {article.number_of_editors != null
                       ? article.number_of_editors.toLocaleString()
                       : "—"}
                   </span>
                 </div>
-                <div className="ArticleDetailInfoRow">
-                  <span className="ArticleDetailInfoLabel">Incoming links</span>
-                  <span className="ArticleDetailInfoValue">
+                <div className="Row">
+                  <span className="Label">Incoming links</span>
+                  <span className="Value">
                     {article.incoming_links_count != null
                       ? article.incoming_links_count.toLocaleString()
                       : "—"}
@@ -283,46 +238,42 @@ function ArticleDetailPanel({
             </div>
           </div>
 
-          <div className="ArticleDetailContent">
-            <div className="ArticleDetailContentHeader">
-              <span className="ArticleDetailContentTitle">
-                Content analysis
-              </span>
-              <span className="ArticleDetailContentSubtitle">
+          <div className="Content">
+            <div className="Header">
+              <span className="Title">Content analysis</span>
+              <span className="Subtitle">
                 | Terms occurring more frequently
               </span>
             </div>
-            <div className="ArticleDetailContentTabs">
+            <div className="Tabs">
               <button
-                className={`ArticleDetailContentTab${activeTab === "all" ? " is-active" : ""}`}
+                className={`Tab${activeTab === "all" ? " is-active" : ""}`}
                 onClick={() => setActiveTab("all")}
               >
                 All terms
               </button>
               <button
-                className={`ArticleDetailContentTab${activeTab === "peacock" ? " is-active" : ""}`}
+                className={`Tab${activeTab === "peacock" ? " is-active" : ""}`}
                 onClick={() => setActiveTab("peacock")}
               >
                 Peacock terms
               </button>
             </div>
-            <div className="ArticleDetailColBody">
-              <div className="ArticleDetailWordCloud">
+            <div className="ColBody">
+              <div className="WordCloud">
                 {loadingWords && (
-                  <div className="ArticleDetailWordCloudSpinner">
+                  <div className="SpinnerWrap">
                     <Spinner size="large" />
                   </div>
                 )}
                 {!loadingWords && displayedWords.length === 0 && (
-                  <span className="ArticleDetailWordCloudMessage">
-                    No terms found.
-                  </span>
+                  <span className="Message">No terms found.</span>
                 )}
                 {!loadingWords &&
                   displayedWords.map(({ word, count }) => (
                     <span
                       key={word}
-                      className="ArticleDetailWordCloudWord"
+                      className="Word"
                       style={{
                         fontSize: `${0.75 + Math.pow(count / maxCount, 0.5) * 2.75}rem`,
                       }}
@@ -334,25 +285,38 @@ function ArticleDetailPanel({
             </div>
           </div>
 
-          <div className="ArticleDetailContrib">
-            <div className="ArticleDetailContribSectionHeader">
-              Contribution
-            </div>
-            <div className="ArticleDetailColBody">
-              <div className="ArticleDetailContribHeader">
+          <div className="Contrib">
+            <div className="SectionHeader">Contribution</div>
+            <div className="ColBody">
+              <div className="Header">
                 You can contribute to increase the quality of this article.
               </div>
-              <ul className="ArticleDetailContribList">
-                {contributions.map((item) => (
-                  <li key={item} className="ArticleDetailContribItem">
-                    <FaArrowRight
-                      size={12}
-                      className="ArticleDetailContribArrow"
-                    />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+              {loadingNeeds && (
+                <div className="SpinnerWrap">
+                  <Spinner size="large" />
+                </div>
+              )}
+              {!loadingNeeds && !isWikipedia && (
+                <span className="Message">
+                  Contribution suggestions are available for Wikipedia articles
+                  only.
+                </span>
+              )}
+              {!loadingNeeds && isWikipedia && needs.length === 0 && (
+                <span className="Message">
+                  No specific improvements suggested for this article.
+                </span>
+              )}
+              {!loadingNeeds && isWikipedia && needs.length > 0 && (
+                <ul className="List">
+                  {needs.map((item) => (
+                    <li key={item} className="Item">
+                      <FaArrowRight size={12} className="Arrow" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
         </div>
