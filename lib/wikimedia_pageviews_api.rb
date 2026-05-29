@@ -84,7 +84,9 @@ class WikimediaPageviewsApi
       response = begin
         @client.get(url)
       rescue *TRANSIENT_NETWORK_ERRORS => e
-        return nil if tries >= MAX_TRIES
+        # Intentional: give up and return nil from the method once retries
+        # are exhausted, so the caller can record nil and move on.
+        return nil if tries >= MAX_TRIES # rubocop:disable Lint/NoReturnInBeginEndBlocks
         backoff = (2**tries) + rand(0.0..3.0)
         unless Rails.env.test?
           Rails.logger.warn(
