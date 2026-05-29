@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 namespace :deploy do
   namespace :check do
     before :linked_files, :set_master_key do

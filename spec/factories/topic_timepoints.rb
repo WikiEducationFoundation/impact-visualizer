@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 FactoryBot.define do
   factory :topic_timepoint do
     articles_count { Faker::Number.number(digits: 5) }

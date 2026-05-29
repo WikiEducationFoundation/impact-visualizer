@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class TopicSummary < ApplicationRecord
   belongs_to :topic
 
