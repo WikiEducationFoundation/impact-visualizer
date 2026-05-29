@@ -10,9 +10,9 @@ class JsonSchemaValidator < ActiveModel::EachValidator
     rescue NameError => e
       # re-raise exception with a more descriptive message
       raise(
-        $!,
+        e,
         "Expected #{record.class.name}::#{c} to declare a JSON Schema for #{attribute}",
-        $!.backtrace
+        e.backtrace
       )
     end
     unless JSON::Validator.validate(schema, value, strict: false, validate_schema: true)
