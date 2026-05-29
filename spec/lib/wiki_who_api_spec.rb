@@ -72,7 +72,9 @@ describe WikiWhoApi do
     it 'fetches tokens and attributed editor ID for a given revision', :vcr do
       tokens = subject.get_revision_tokens(revision_id)
       expect(tokens.count).to eq(177)
-      expect(tokens.first['str']).to be_a(String)
+      # Tokens are projected to just the fields downstream code reads;
+      # the large, unused `str` field is intentionally dropped.
+      expect(tokens.first.keys).to contain_exactly('o_rev_id', 'editor')
       expect(tokens.first['editor']).to be_a(String)
     end
   end

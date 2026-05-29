@@ -28,15 +28,9 @@ class WikiWhoApi
   end
 
   def get_revision_tokens(revision_id)
-    url_query = query_url(revision_id)
-    # response = wiki_who_server.get(url_query)
-    response = make_request(url_query)
+    response = make_request(query_url(revision_id))
 
-    if response&.status == 200
-      response_body = response.body
-      wiki_who_data = Oj.load(response_body)
-      return wiki_who_data.dig('revisions', 0, revision_id.to_s, 'tokens').to_hashugar
-    end
+    return parse_revision_tokens(response.body, revision_id) if response&.status == 200
 
     # Some revisions break the WikiWho API, possibly related to text-suppressed revisions
     # where the content is not available but the existence revision itself remains in the history.
@@ -54,6 +48,20 @@ class WikiWhoApi
   end
 
   private
+
+  def parse_revision_tokens(body, revision_id)
+    tokens = Oj.load(body).dig('revisions', 0, revision_id.to_s, 'tokens')
+    return nil unless tokens
+
+    # Project each token down to just the fields downstream code reads:
+    # o_rev_id (revision-range filtering) and editor (attribution). The
+    # unused `str` field carries the article's full text and dominates the
+    # payload, so dropping it — along with the Hashugar wrapping — keeps
+    # memory bounded: token sets for large articles are retained across the
+    # entire per-timestamp loop and fetched by ~10 threads at once.
+    # See TimepointService#update_token_stats / ArticleTokenService.
+    tokens.map { |token| { 'o_rev_id' => token['o_rev_id'], 'editor' => token['editor'] } }
+  end
 
   def query_url(rev_id)
     "#{@wiki.language}#{WIKI_WHO_API_PATH}rev_content/rev_id/#{rev_id}/?editor=true&o_rev_id=true"
