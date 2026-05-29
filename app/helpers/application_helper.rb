@@ -21,6 +21,8 @@ module ApplicationHelper
     return ''.html_safe if text.blank?
 
     renderer = Redcarpet::Render::HTML.new(MARKDOWN_RENDER_OPTIONS)
-    Redcarpet::Markdown.new(renderer, MARKDOWN_EXTENSIONS).render(text.to_s).html_safe
+    html = Redcarpet::Markdown.new(renderer, MARKDOWN_EXTENSIONS).render(text.to_s)
+    # filter_html + safe_links_only strip raw/unsafe HTML, so the output is safe to mark.
+    html.html_safe # rubocop:disable Rails/OutputSafety
   end
 end

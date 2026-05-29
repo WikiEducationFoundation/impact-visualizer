@@ -31,7 +31,8 @@ ActiveAdmin.register Topic do
       end_date = 'Now'
       end_date = record.end_date.strftime('%-m/%-d/%Y') if record.end_date
       if record.start_date && end_date
-        raw "#{record.start_date.strftime('%-m/%-d/%Y')}&ndash;#{end_date}"
+        # Server-formatted dates plus a static HTML entity; no user input.
+        raw "#{record.start_date.strftime('%-m/%-d/%Y')}&ndash;#{end_date}" # rubocop:disable Rails/OutputSafety
       end
     end
     column :timepoint_day_interval
@@ -131,7 +132,8 @@ ActiveAdmin.register Topic do
                         queue_next_stage: false
                       )
                     )
-                    output.join.html_safe
+                    # Joins escaped link_to output with static <br> markup; admin-only.
+                    output.join.html_safe # rubocop:disable Rails/OutputSafety
                   end
                 end
               end
@@ -157,7 +159,8 @@ ActiveAdmin.register Topic do
                     output << link_to('Queue Timepoint Generation (Force Updates)', generate_timepoints_admin_topic_path(force_updates: true))
                     output << '<br>'
                     output << link_to('Queue Timepoint Generation (Changes Only)', generate_timepoints_admin_topic_path(force_updates: false))
-                    output.join.html_safe
+                    # Joins escaped link_to output with static <br> markup; admin-only.
+                    output.join.html_safe # rubocop:disable Rails/OutputSafety
                   end
                 end
               end
