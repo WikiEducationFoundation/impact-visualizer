@@ -4,7 +4,7 @@ require 'benchmark'
 class TimepointService
   THREADS_COUNT = 10
   BATCH_SIZE = 200
-  STAGES = %i[classify article_timepoints tokens topic_timepoints]
+  STAGES = %i[classify article_timepoints tokens topic_timepoints].freeze
 
   attr_accessor :topic, :logging_enabled, :force_updates
 

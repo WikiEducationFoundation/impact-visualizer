@@ -5,5 +5,5 @@ module TestArticles
     11846
     22418955
     2364730
-  ]
+  ].freeze
 end
