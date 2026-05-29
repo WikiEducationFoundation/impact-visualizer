@@ -78,7 +78,7 @@ describe ImportsController do
 
       it 'renders the schema-mismatch page on unknown schema_version' do
         stub_request(:get, url).to_return(
-          status: 200, body: package.merge('schema_version' => 2).to_json
+          status: 200, body: package.merge('schema_version' => 3).to_json
         )
         get "/imports/#{handle}"
         expect(response.status).to eq(422)
