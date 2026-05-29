@@ -359,7 +359,7 @@ class ClassificationService
 
     # Increment counts
     counted_values.each do |key, value|
-      segment = segments[key] ? segments[key] : segments['other']
+      segment = segments[key] || segments['other']
       segment[:count] += value[:count]
       segment[:revisions_count] += value[:revisions_count]
       segment[:token_count] += value[:token_count]
