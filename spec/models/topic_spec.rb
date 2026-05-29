@@ -253,6 +253,29 @@ RSpec.describe Topic do
     end
   end
 
+  describe '.busy_job_ids' do
+    # Sidekiq 7.3 WorkSet#each yields Sidekiq::Work objects (not Hashes);
+    # the jid lives at work.job.jid. Exercise that real shape so the
+    # extraction can't silently break again.
+    it 'extracts jids from Sidekiq::Work items' do
+      work = Sidekiq::Work.new(
+        'host:1:abc', 'tid1',
+        'queue' => 'timepoints',
+        'run_at' => 0,
+        'payload' => Sidekiq.dump_json('jid' => 'live-jid', 'class' => 'IncrementalTopicBuildJob')
+      )
+      allow(Sidekiq::Workers).to receive(:new).and_return([['host:1:abc', 'tid1', work]])
+      expect(described_class.busy_job_ids).to eq(['live-jid'])
+    end
+  end
+
+  describe '.job_alive?' do
+    it 'fails safe (assumes alive) when the Sidekiq check raises' do
+      allow(Sidekiq::Status).to receive(:status).and_raise(StandardError, 'redis down')
+      expect(described_class.job_alive?('some-jid')).to be(true)
+    end
+  end
+
   describe '#data_generation_state' do
     let(:topic) { create(:topic) }
 

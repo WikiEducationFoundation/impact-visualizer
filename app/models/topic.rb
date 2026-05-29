@@ -456,11 +456,19 @@ class Topic < ApplicationRecord
     when :working then busy_job_ids.include?(job_id)
     else false
     end
+  rescue StandardError => e
+    # Never let Sidekiq/Redis introspection 500 a topic render. Fail safe
+    # by assuming the recorded job is still alive (preserves the running
+    # state) rather than crashing or falsely showing a build as idle.
+    Rails.logger.warn("Topic.job_alive? Sidekiq check failed: #{e.class}: #{e.message}")
+    true
   end
 
   # jids of jobs currently held by a Sidekiq worker across all processes.
+  # WorkSet#each yields Sidekiq::Work objects (Sidekiq 7.3+), whose #job is
+  # a JobRecord exposing #jid — don't treat the work item as a Hash.
   def self.busy_job_ids
-    Sidekiq::Workers.new.filter_map { |_process, _thread, work| work.dig('payload', 'jid') }
+    Sidekiq::Workers.new.map { |_process, _thread, work| work.job.jid }
   end
 
   private
