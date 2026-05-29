@@ -355,7 +355,7 @@ class WikiActionApi
       pages.each do |page|
         next if page['missing']
         title = page['title']
-        langs = (page['langlinks'] || []).map { |ll| ll['lang'] }
+        langs = (page['langlinks'] || []).pluck('lang')
         result[title] = if result.key?(title)
                           (result[title] + langs).uniq
                         else
