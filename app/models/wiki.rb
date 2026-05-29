@@ -20,6 +20,9 @@ class Wiki < ApplicationRecord
     wiktionary
   ].freeze
 
+  # Static list of Wikimedia language codes; intentionally inline rather
+  # than loaded from an external source.
+  # rubocop:disable Metrics/CollectionLiteralLength
   LANGUAGES = %w[
     aa ab ace ady af ak als alt am ami an ang ar arc ary arz as ast atj av avk ay awa az azb
     ba ban bar bat-smg bcl be be-tarask be-x-old bg bh bi bjn blk bm bn bo bpy br bs
@@ -38,6 +41,7 @@ class Wiki < ApplicationRecord
     ur uz ve vec vep vi vls vo vro w wa war wikipedia wo wuu xal xh xmf yi yo yue za
     zea zh zh-cfr zh-classical zh-cn zh-min-nan zh-tw zh-yue zu
   ].freeze
+  # rubocop:enable Metrics/CollectionLiteralLength
 
   ## Validations
   validates_uniqueness_of :project, scope: :language, case_sensitive: false
