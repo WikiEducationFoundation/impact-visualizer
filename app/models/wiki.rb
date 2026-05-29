@@ -113,7 +113,6 @@ class Wiki < ApplicationRecord
   def tokens_per_word_default
     self.class.tokens_per_word_table[language] || TOKENS_PER_WORD_GLOBAL_FALLBACK
   end
-
 end
 
 # == Schema Information

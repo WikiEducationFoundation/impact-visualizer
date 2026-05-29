@@ -72,7 +72,6 @@ class Classification < ApplicationRecord
     %w[created_at derived_from description id name ordering prerequisites
        properties source tb_handle updated_at]
   end
-
 end
 
 # == Schema Information
