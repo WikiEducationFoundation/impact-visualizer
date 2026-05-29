@@ -60,7 +60,7 @@ ActiveAdmin.register Topic do
                         )
                         status_tag(message + " Working #{percent}%", class: 'green')
                       else
-                        status_tag(message + "#{status}", class: 'orange')
+                        status_tag(message + status.to_s, class: 'orange')
                       end
                     end
                     span style: 'margin-left: 5px' do
