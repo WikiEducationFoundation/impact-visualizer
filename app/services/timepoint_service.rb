@@ -151,11 +151,31 @@ class TimepointService
     # COUNT(*) per article (160k+ COUNT queries per timestamp on a large
     # topic) even in production where the log is a no-op.
     total = article_bag_articles.count
-    article_count = 0
 
+    # Article ids whose timepoint for this timestamp is already fully built.
+    # A resumed build would otherwise re-walk every cell — millions of
+    # find_or_create round-trips per timestamp on a large topic — only to
+    # skip them one at a time. Fetch the done set once and skip them in bulk.
+    done_article_ids = @force_updates ? Set.new : completed_article_ids_for(topic_timepoint)
+
+    article_count = 0
     # Loop through all Articles
     article_bag_articles.in_batches(of: BATCH_SIZE) do |batch|
-      Parallel.each(batch, in_threads: THREADS_COUNT) do |article_bag_article|
+      # Preload the articles (build_timepoints_for_article reads
+      # article_bag_article.article) so the partition and the
+      # exists-at-timestamp check don't each fire a per-row query.
+      todo, skipped = batch.includes(:article).to_a.partition do |article_bag_article|
+        done_article_ids.exclude?(article_bag_article.article_id)
+      end
+
+      # Already-built cells still count toward progress.
+      if skipped.any?
+        article_count += skipped.size
+        @progress_count += skipped.size
+        @at&.call(@progress_count)
+      end
+
+      Parallel.each(todo, in_threads: THREADS_COUNT) do |article_bag_article|
         ActiveRecord::Base.connection_pool.with_connection do
           article_count += 1
           increment_progress_count
@@ -168,6 +188,21 @@ class TimepointService
         end
       end
     end
+  end
+
+  # Article ids that already have a fully-built timepoint for this
+  # topic_timepoint: a linking TopicArticleTimepoint whose ArticleTimepoint
+  # has its stats written (revision_id, or the stats_complete marker for
+  # deleted/hidden revisions). These are skipped on a resumed build. Anything
+  # missing or half-built falls out of this set and is processed normally, so
+  # build_timepoints_for_article stays the source of truth for completeness.
+  def completed_article_ids_for(topic_timepoint)
+    TopicArticleTimepoint
+      .where(topic_timepoint_id: topic_timepoint.id)
+      .joins(:article_timepoint)
+      .where('article_timepoints.revision_id IS NOT NULL OR article_timepoints.stats_complete')
+      .pluck('article_timepoints.article_id')
+      .to_set
   end
 
   def build_timepoints_for_article(article_bag_article:, topic_timepoint:)

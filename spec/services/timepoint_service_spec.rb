@@ -427,6 +427,47 @@ describe TimepointService do
     end
   end
 
+  describe '#build_timepoints_for_timestamp (resume skip)' do
+    let(:topic) do
+      create(:topic, start_date: Date.new(2023, 1, 1), end_date: Date.new(2023, 1, 30),
+                     timepoint_day_interval: 7)
+    end
+    let(:timestamp) { Date.new(2023, 1, 8) }
+    let(:service) { described_class.new(topic:) }
+    let(:article_done) { create(:article, pageid: 11, title: 'Already built') }
+    let(:article_todo) { create(:article, pageid: 22, title: 'Not yet built') }
+
+    before do
+      bag = topic.active_article_bag
+      create(:article_bag_article, article: article_done, article_bag: bag)
+      create(:article_bag_article, article: article_todo, article_bag: bag)
+
+      # article_done already has a fully-built timepoint for this timestamp.
+      tt = TopicTimepoint.create!(topic:, timestamp:)
+      at = ArticleTimepoint.create!(article: article_done, timestamp:, revision_id: 555)
+      TopicArticleTimepoint.create!(article_timepoint: at, topic_timepoint: tt)
+    end
+
+    it 'only processes articles without an already-built timepoint' do
+      processed = []
+      allow(service).to receive(:build_timepoints_for_article) do |article_bag_article:, **|
+        processed << article_bag_article.article_id
+      end
+      service.build_timepoints_for_timestamp(timestamp:)
+      expect(processed).to eq([article_todo.id])
+    end
+
+    it 'processes everything when force_updates is set' do
+      service = described_class.new(topic:, force_updates: true)
+      processed = []
+      allow(service).to receive(:build_timepoints_for_article) do |article_bag_article:, **|
+        processed << article_bag_article.article_id
+      end
+      service.build_timepoints_for_timestamp(timestamp:)
+      expect(processed).to contain_exactly(article_done.id, article_todo.id)
+    end
+  end
+
   describe '#build_timepoints_for_article (idempotency / retry cost)' do
     let(:topic) do
       create(:topic, start_date: Date.new(2023, 1, 1), end_date: Date.new(2023, 1, 30),
