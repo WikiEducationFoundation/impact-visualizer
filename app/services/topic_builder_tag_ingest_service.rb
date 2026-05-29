@@ -92,8 +92,8 @@ class TopicBuilderTagIngestService
         next unless classification
 
         ArticleClassification.create!(
-          classification: classification,
-          article: article,
+          classification:,
+          article:,
           properties: enrich_article_values(classification, article_tag['values'])
         )
       end

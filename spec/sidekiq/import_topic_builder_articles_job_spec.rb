@@ -6,7 +6,7 @@ RSpec.describe ImportTopicBuilderArticlesJob, type: :job do
   let!(:wiki) { Wiki.find_or_create_by!(language: 'en', project: 'wikipedia') }
   let(:handle) { 'tbp_abc123' }
   let(:url) { "https://topic-builder.wikiedu.org/packages/#{handle}" }
-  let(:topic) { create(:topic, wiki: wiki, tb_handle: handle) }
+  let(:topic) { create(:topic, wiki:, tb_handle: handle) }
   let(:bag) { topic.active_article_bag }
   let(:package) do
     {

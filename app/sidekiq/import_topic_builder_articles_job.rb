@@ -38,7 +38,7 @@ class ImportTopicBuilderArticlesJob
       at(idx + 1)
     end
 
-    TopicBuilderTagIngestService.new(topic: topic, package: package).sync!
+    TopicBuilderTagIngestService.new(topic:, package:).sync!
 
     topic.reload.update(article_import_job_id: nil)
 
@@ -65,8 +65,8 @@ class ImportTopicBuilderArticlesJob
     title = entry['title'].to_s
     return if title.empty?
 
-    article = Article.find_or_create_by!(title: title, wiki: wiki)
-    ArticleBagArticle.find_or_create_by!(article_bag: bag, article: article) do |aba|
+    article = Article.find_or_create_by!(title:, wiki:)
+    ArticleBagArticle.find_or_create_by!(article_bag: bag, article:) do |aba|
       aba.centrality = entry['centrality']
     end
   end

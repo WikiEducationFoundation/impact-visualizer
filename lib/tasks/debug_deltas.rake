@@ -17,7 +17,7 @@ task debug_deltas: :environment do
     article_timepoint = topic_article_timepoint.article_timepoint
     article = article_timepoint.article
     previous_article_timepoint = ArticleTimepoint.find_by(
-      article: article,
+      article:,
       timestamp: previous_timestamp
     )
     total_length += article_timepoint.article_length

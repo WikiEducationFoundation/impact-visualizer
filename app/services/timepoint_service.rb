@@ -109,7 +109,7 @@ class TimepointService
     timestamps_total = timestamps.count
     timestamp_count = 0
 
-    @store.call(timestamps_done: 0, timestamps_total: timestamps_total)
+    @store.call(timestamps_done: 0, timestamps_total:)
 
     # Build/update most everything for each timestamp
     timestamps.each do |timestamp|
@@ -117,7 +117,7 @@ class TimepointService
       log "#build_timepoints_for_timestamp timestamp:#{timestamp_count}/#{timestamps_total}"
       notify("Building timepoints for timestamp #{timestamp_count}/#{timestamps_total}…")
       build_timepoints_for_timestamp(timestamp:)
-      @store.call(timestamps_done: timestamp_count, timestamps_total: timestamps_total)
+      @store.call(timestamps_done: timestamp_count, timestamps_total:)
     end
   end
 
@@ -126,7 +126,7 @@ class TimepointService
     timestamps_total = timestamps.count
     timestamp_count = 0
 
-    @store.call(timestamps_done: 0, timestamps_total: timestamps_total)
+    @store.call(timestamps_done: 0, timestamps_total:)
 
     timestamps.each do |timestamp|
       timestamp_count += 1
@@ -134,7 +134,7 @@ class TimepointService
       topic_timepoint = TopicTimepoint.find_or_create_by!(topic:, timestamp:)
       log "#update_stats_for_topic_timepoint timestamp:#{timestamp_count}/#{timestamps_total}"
       @topic_timepoint_stats_service.update_stats_for_topic_timepoint(topic_timepoint:)
-      @store.call(timestamps_done: timestamp_count, timestamps_total: timestamps_total)
+      @store.call(timestamps_done: timestamp_count, timestamps_total:)
     end
   end
 

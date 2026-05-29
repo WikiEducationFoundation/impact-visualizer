@@ -56,7 +56,7 @@ class LiftWingApi
     token = Rails.application.credentials.dig(:wiki, :token)
     headers = { 'Content-Type': 'application/json' }
     headers['Authorization'] = "Bearer #{token}" if token.present?
-    options = { url: LIFT_WING_SERVER_URL, headers: headers }
+    options = { url: LIFT_WING_SERVER_URL, headers: }
     connection = Faraday.new(options) do |faraday|
       faraday.response :raise_error
       faraday.adapter Faraday.default_adapter
