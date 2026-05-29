@@ -320,12 +320,8 @@ describe TimepointService do
     end
 
     it 'does NOT update details for Article, force_updates=false', :vcr do
-      article_bag = create(:small_article_bag, topic:)
+      create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
-
-      topic_timepoints_count = topic.timestamps.count
-      article_count = article_bag.articles.count
-      topic_article_timepoint_count = topic_timepoints_count * article_count
 
       expect_any_instance_of(ArticleStatsService).not_to(
         receive(:update_details_for_article)
@@ -396,7 +392,7 @@ describe TimepointService do
 
     it 'does not update stats for ArticleTimepoints/TopicArticleTimepoints, ' \
        'force_updates=FALSE', :vcr do
-      article_bag = create(:small_article_bag, topic:)
+      create(:small_article_bag, topic:)
       timepoint_service = described_class.new(topic:)
 
       # Run to capture initial
