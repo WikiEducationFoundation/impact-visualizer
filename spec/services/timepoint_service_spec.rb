@@ -434,13 +434,16 @@ describe TimepointService do
     end
     let(:timestamp) { Date.new(2023, 1, 8) }
     let(:service) { described_class.new(topic:) }
-    let(:article_done) { create(:article, pageid: 11, title: 'Already built') }
-    let(:article_todo) { create(:article, pageid: 22, title: 'Not yet built') }
+    let(:article_done) { create(:article, pageid: 11, title: 'Already built', first_revision_at: Date.new(2020, 1, 1)) }
+    let(:article_todo) { create(:article, pageid: 22, title: 'Not yet built', first_revision_at: Date.new(2020, 1, 1)) }
+    # Postdates the timestamp — never had a timepoint, never will.
+    let(:article_future) { create(:article, pageid: 33, title: 'Created later', first_revision_at: Date.new(2024, 1, 1)) }
 
     before do
       bag = topic.active_article_bag
       create(:article_bag_article, article: article_done, article_bag: bag)
       create(:article_bag_article, article: article_todo, article_bag: bag)
+      create(:article_bag_article, article: article_future, article_bag: bag)
 
       # article_done already has a fully-built timepoint for this timestamp.
       tt = TopicTimepoint.create!(topic:, timestamp:)
@@ -448,12 +451,14 @@ describe TimepointService do
       TopicArticleTimepoint.create!(article_timepoint: at, topic_timepoint: tt)
     end
 
-    it 'only processes articles without an already-built timepoint' do
+    it 'only processes articles that existed and are not already built' do
       processed = []
       allow(service).to receive(:build_timepoints_for_article) do |article_bag_article:, **|
         processed << article_bag_article.article_id
       end
       service.build_timepoints_for_timestamp(timestamp:)
+      # article_done is skipped (built); article_future is skipped (didn't exist
+      # yet); only article_todo remains.
       expect(processed).to eq([article_todo.id])
     end
 
@@ -464,7 +469,7 @@ describe TimepointService do
         processed << article_bag_article.article_id
       end
       service.build_timepoints_for_timestamp(timestamp:)
-      expect(processed).to contain_exactly(article_done.id, article_todo.id)
+      expect(processed).to contain_exactly(article_done.id, article_todo.id, article_future.id)
     end
   end
 

@@ -152,20 +152,10 @@ class TimepointService
     # topic) even in production where the log is a no-op.
     total = article_bag_articles.count
 
-    # Process only the cells not already built for this timestamp. The
-    # database does the anti-join (NOT IN the completed-article subquery), so
-    # a resumed build never even loads the already-done rows — a fully-built
-    # timestamp loads nothing. build_timepoints_for_article stays the source
-    # of truth for completeness, so anything missing or half-built (no tat, or
-    # revision_id nil and not stats_complete) falls out of the subquery and is
-    # processed normally.
-    todo = if @force_updates
-             article_bag_articles
-           else
-             article_bag_articles.where.not(article_id: completed_article_ids_for(topic_timepoint))
-           end
+    todo = articles_needing_timepoints(article_bag_articles:, topic_timepoint:, timestamp:)
 
-    # Already-built cells still count toward progress.
+    # Everything we're not processing (built, or not-yet-existing) still counts
+    # toward progress.
     skipped = total - todo.count
     if skipped.positive?
       @progress_count += skipped
@@ -174,9 +164,10 @@ class TimepointService
 
     article_count = skipped
     todo.in_batches(of: BATCH_SIZE) do |batch|
-      # Preload the articles (build_timepoints_for_article reads
-      # article_bag_article.article) on this thread before fanning out.
-      records = batch.includes(:article).to_a
+      # Load the work batch with its articles (build_timepoints_for_article
+      # reads article_bag_article.article) on this thread before fanning out.
+      # preload, not includes, to avoid colliding with the joins(:article) above.
+      records = batch.preload(:article).to_a
       Parallel.each(records, in_threads: THREADS_COUNT) do |article_bag_article|
         ActiveRecord::Base.connection_pool.with_connection do
           article_count += 1
@@ -190,6 +181,26 @@ class TimepointService
         end
       end
     end
+  end
+
+  # The article-bag-articles that still need a timepoint built for this
+  # timestamp: articles that existed at it and aren't already built. Both
+  # filters run in the database, so a resumed build never even loads the rest.
+  # Two exclusions matter:
+  #   * completed cells — already built (NOT IN the completed-article subquery)
+  #   * articles that postdate this timestamp — they never get a timepoint, so
+  #     they're never "complete"; without this they'd be re-walked (and
+  #     early-returned) every cycle. NULL first_revision_at means details aren't
+  #     fetched yet, so those are kept and processed.
+  # build_timepoints_for_article remains the source of truth for completeness,
+  # so anything half-built falls back into this set and is handled there.
+  def articles_needing_timepoints(article_bag_articles:, topic_timepoint:, timestamp:)
+    return article_bag_articles if @force_updates
+
+    article_bag_articles
+      .joins(:article)
+      .where('articles.first_revision_at IS NULL OR articles.first_revision_at < ?', timestamp)
+      .where.not(article_id: completed_article_ids_for(topic_timepoint))
   end
 
   # Subquery of article ids that already have a fully-built timepoint for this
