@@ -85,7 +85,8 @@ end
 #
 # Indexes
 #
-#  index_topic_timepoints_on_topic_id  (topic_id)
+#  index_topic_timepoints_on_topic_id                (topic_id)
+#  index_topic_timepoints_on_topic_id_and_timestamp  (topic_id,timestamp) UNIQUE
 #
 # Foreign Keys
 #

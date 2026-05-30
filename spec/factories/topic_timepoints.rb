@@ -12,6 +12,9 @@ FactoryBot.define do
     length_delta { Faker::Number.number(digits: 5) }
     revisions_count { Faker::Number.number(digits: 5) }
     revisions_count_delta { Faker::Number.number(digits: 5) }
+    # A stage-4-aggregated topic_timepoint always has a (non-null) category
+    # breakdown; the API only serves timepoints that have been summarized.
+    wp10_prediction_categories { { 'FA' => 1, 'B' => 4, 'Stub' => 16 } }
     timestamp { Faker::Date.backward(days: 365) }
     token_count { Faker::Number.number(digits: 5) }
     token_count_delta { Faker::Number.number(digits: 5) }
@@ -46,7 +49,8 @@ end
 #
 # Indexes
 #
-#  index_topic_timepoints_on_topic_id  (topic_id)
+#  index_topic_timepoints_on_topic_id                (topic_id)
+#  index_topic_timepoints_on_topic_id_and_timestamp  (topic_id,timestamp) UNIQUE
 #
 # Foreign Keys
 #

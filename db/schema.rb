@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_05_30_000000) do
+ActiveRecord::Schema[7.0].define(version: 2026_05_30_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -253,6 +253,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_30_000000) do
     t.bigint "attributed_token_count"
     t.jsonb "wp10_prediction_categories"
     t.jsonb "classifications", default: []
+    t.index ["topic_id", "timestamp"], name: "index_topic_timepoints_on_topic_id_and_timestamp", unique: true
     t.index ["topic_id"], name: "index_topic_timepoints_on_topic_id"
   end
 
