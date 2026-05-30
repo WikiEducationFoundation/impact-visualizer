@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_05_29_000000) do
+ActiveRecord::Schema[7.0].define(version: 2026_05_30_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -213,15 +213,15 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_29_000000) do
     t.integer "articles_count"
     t.integer "articles_count_delta"
     t.integer "attributed_articles_created_delta"
-    t.integer "attributed_length_delta"
-    t.integer "attributed_revisions_count_delta"
-    t.integer "attributed_token_count"
-    t.integer "length"
-    t.integer "length_delta"
-    t.integer "revisions_count"
-    t.integer "revisions_count_delta"
-    t.integer "token_count"
-    t.integer "token_count_delta"
+    t.bigint "attributed_length_delta"
+    t.bigint "attributed_revisions_count_delta"
+    t.bigint "attributed_token_count"
+    t.bigint "length"
+    t.bigint "length_delta"
+    t.bigint "revisions_count"
+    t.bigint "revisions_count_delta"
+    t.bigint "token_count"
+    t.bigint "token_count_delta"
     t.integer "timepoint_count"
     t.float "average_wp10_prediction"
     t.bigint "topic_id", null: false
@@ -234,23 +234,23 @@ ActiveRecord::Schema[7.0].define(version: 2026_05_29_000000) do
   end
 
   create_table "topic_timepoints", force: :cascade do |t|
-    t.integer "length"
-    t.integer "length_delta"
+    t.bigint "length"
+    t.bigint "length_delta"
     t.integer "articles_count"
     t.integer "articles_count_delta"
-    t.integer "revisions_count"
-    t.integer "revisions_count_delta"
-    t.integer "attributed_length_delta"
-    t.integer "attributed_revisions_count_delta"
+    t.bigint "revisions_count"
+    t.bigint "revisions_count_delta"
+    t.bigint "attributed_length_delta"
+    t.bigint "attributed_revisions_count_delta"
     t.integer "attributed_articles_created_delta"
     t.date "timestamp"
     t.bigint "topic_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.float "average_wp10_prediction"
-    t.integer "token_count"
-    t.integer "token_count_delta"
-    t.integer "attributed_token_count"
+    t.bigint "token_count"
+    t.bigint "token_count_delta"
+    t.bigint "attributed_token_count"
     t.jsonb "wp10_prediction_categories"
     t.jsonb "classifications", default: []
     t.index ["topic_id"], name: "index_topic_timepoints_on_topic_id"

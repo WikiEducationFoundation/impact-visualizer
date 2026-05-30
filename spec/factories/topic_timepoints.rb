@@ -27,18 +27,18 @@ end
 #  articles_count                    :integer
 #  articles_count_delta              :integer
 #  attributed_articles_created_delta :integer
-#  attributed_length_delta           :integer
-#  attributed_revisions_count_delta  :integer
-#  attributed_token_count            :integer
+#  attributed_length_delta           :bigint
+#  attributed_revisions_count_delta  :bigint
+#  attributed_token_count            :bigint
 #  average_wp10_prediction           :float
 #  classifications                   :jsonb
-#  length                            :integer
-#  length_delta                      :integer
-#  revisions_count                   :integer
-#  revisions_count_delta             :integer
+#  length                            :bigint
+#  length_delta                      :bigint
+#  revisions_count                   :bigint
+#  revisions_count_delta             :bigint
 #  timestamp                         :date
-#  token_count                       :integer
-#  token_count_delta                 :integer
+#  token_count                       :bigint
+#  token_count_delta                 :bigint
 #  wp10_prediction_categories        :jsonb
 #  created_at                        :datetime         not null
 #  updated_at                        :datetime         not null
