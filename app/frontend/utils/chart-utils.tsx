@@ -535,7 +535,9 @@ const ChartUtils = {
 
         values.push({
           date: timepoint.timestamp,
-          count: timepoint.wp10_prediction_categories[category] || 0,
+          // Timepoints from an in-progress build can have a null category
+          // map; treat it as empty rather than dereferencing null.
+          count: (timepoint.wp10_prediction_categories || {})[category] || 0,
           category: category,
           categoryIndex: _.indexOf(this.categoryOrder, category)
         });
@@ -557,7 +559,7 @@ const ChartUtils = {
 
     timepoints.forEach((timepoint) => {
       const classification = _.find(timepoint.classifications, { id: classificationId });
-      categories.push(..._.keys(classification.wp10_prediction_categories));
+      categories.push(..._.keys(classification?.wp10_prediction_categories));
     })
 
     categories = _.uniq(categories);
@@ -569,9 +571,13 @@ const ChartUtils = {
 
     timepoints.forEach((timepoint) => {
       const classification = _.find(timepoint.classifications, { id: classificationId });
+      // A timepoint from an in-progress build may not have this classification
+      // summarized yet; treat missing/null data as empty rather than crashing.
+      const classificationCount = classification?.count || 0;
+      const categoryCounts = classification?.wp10_prediction_categories || {};
       categories.forEach((category) => {
         if (category === 'Missing') {
-          const missingCount = total - classification.count;
+          const missingCount = total - classificationCount;
           values.push({
             date: timepoint.timestamp,
             count: missingCount,
@@ -583,7 +589,7 @@ const ChartUtils = {
 
         values.push({
           date: timepoint.timestamp,
-          count: classification.wp10_prediction_categories[category] || 0,
+          count: categoryCounts[category] || 0,
           category: category,
           categoryIndex: _.indexOf(this.categoryOrder, category)
         });
