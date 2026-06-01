@@ -6,15 +6,21 @@ class TimepointService
   BATCH_SIZE = 200
   STAGES = %i[classify article_timepoints tokens topic_timepoints].freeze
 
-  attr_accessor :topic, :logging_enabled, :force_updates
+  attr_accessor :topic, :logging_enabled, :force_updates, :attribution_only
 
-  def initialize(topic:, force_updates: false, logging_enabled: false, total: nil, at: nil,
-                 message: nil, store: nil)
+  def initialize(topic:, force_updates: false, attribution_only: false, logging_enabled: false,
+                 total: nil, at: nil, message: nil, store: nil)
     @topic = topic
     @article_stats_service = ArticleStatsService.new(@topic.wiki)
     @topic_timepoint_stats_service = TopicTimepointStatsService.new
     @topic_article_timepoint_stats_service = nil
     @force_updates = force_updates
+    # When set, the build recomputes ONLY the user-attributed fields on
+    # already-built cells (no article-detail/stat refetch). Used when a
+    # topic's user list changes on an otherwise-complete topic — see
+    # Topic#queue_attribution_rebuild. Always entered at :article_timepoints,
+    # so :classify is skipped entirely (it doesn't depend on users).
+    @attribution_only = attribution_only
     @logging_enabled = !Rails.env.test? && logging_enabled
 
     # Capture Sidekiq Status methods
@@ -53,7 +59,8 @@ class TimepointService
         @topic.id,
         next_stage.to_s,
         true,
-        @force_updates
+        @force_updates,
+        @attribution_only
       )
     else
       TopicSummaryService.new(topic:).create_summary
@@ -195,7 +202,10 @@ class TimepointService
   # build_timepoints_for_article remains the source of truth for completeness,
   # so anything half-built falls back into this set and is handled there.
   def articles_needing_timepoints(article_bag_articles:, topic_timepoint:, timestamp:)
-    return article_bag_articles if @force_updates
+    # attribution_only revisits every already-built cell to recompute its
+    # attributed_* fields, so it must bypass the completed-cell anti-join
+    # too (those cells are exactly the ones it needs to touch).
+    return article_bag_articles if @force_updates || @attribution_only
 
     article_bag_articles
       .joins(:article)
@@ -219,6 +229,11 @@ class TimepointService
   def build_timepoints_for_article(article_bag_article:, topic_timepoint:)
     timestamp = topic_timepoint.timestamp
     article = article_bag_article.article
+
+    if @attribution_only
+      reattribute_topic_article_timepoint(article:, topic_timepoint:, timestamp:)
+      return
+    end
 
     # Update basic details of Article
     if !article.details? || @force_updates
@@ -263,6 +278,34 @@ class TimepointService
       )
       @topic_article_timepoint_stats_service.update_stats_for_topic_article_timepoint
     end
+  end
+
+  # Recompute ONLY the user-attributed fields on an already-built cell, for
+  # an attribution_only rebuild. The article's length/revision stats don't
+  # depend on the user list, so we skip the (per-cell) detail + 3-call stats
+  # refetch that the full build does and recompute just the attribution:
+  #   * attributed_creation — from the article's stored first-revision data
+  #     (no API)
+  #   * attributed_deltas   — one revisions-in-range fetch per cell
+  # The baseline (non-attributed) deltas are intentionally left untouched.
+  # If the cell doesn't exist (article postdates the timestamp, or it was
+  # never built) there is nothing to re-attribute, so we bail.
+  def reattribute_topic_article_timepoint(article:, topic_timepoint:, timestamp:)
+    return unless article.exists_at_timestamp?(timestamp)
+
+    article_timepoint = ArticleTimepoint.find_by(timestamp:, article:)
+    return unless article_timepoint
+
+    topic_article_timepoint = TopicArticleTimepoint.find_by(
+      article_timepoint:, topic_timepoint:
+    )
+    return unless topic_article_timepoint
+
+    stats_service = TopicArticleTimepointStatsService.new(
+      topic_article_timepoint:
+    )
+    stats_service.update_attributed_deltas
+    stats_service.update_attributed_creation
   end
 
   def update_token_stats
@@ -322,8 +365,12 @@ class TimepointService
     # articles shared across topics are tracked independently, and so
     # attributed_token_count (which depends on topic.users) stays in
     # sync per-topic. force_updates=true bypasses the gate.
+    # attribution_only must also bypass this gate: the article's latest
+    # revision is unchanged, but attributed_token_count depends on the user
+    # list, which is exactly what changed — so the tokens must be re-fetched
+    # and re-attributed even though the revision id matches.
     topic_article_analytic = TopicArticleAnalytic.find_by(topic: @topic, article:)
-    if !@force_updates &&
+    if !@force_updates && !@attribution_only &&
        topic_article_analytic&.tokens_revision_id == latest_revision_id
       log "  #update_token_stats_for_article SKIP (tokens up-to-date) article_id:#{article.id}"
       return

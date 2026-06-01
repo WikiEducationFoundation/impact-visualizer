@@ -211,12 +211,27 @@ class Topic < ApplicationRecord
   def queue_incremental_topic_build(
     stage: TimepointService::STAGES.first,
     queue_next_stage: true,
-    force_updates: false
+    force_updates: false,
+    attribution_only: false
   )
     job_id = IncrementalTopicBuildJob.perform_async(
-      id, stage.to_s, queue_next_stage, force_updates
+      id, stage.to_s, queue_next_stage, force_updates, attribution_only
     )
     update incremental_topic_build_job_id: job_id
+  end
+
+  # Recompute only the user-attributed data after the topic's user list
+  # changes on an already-built topic. Enters at :article_timepoints
+  # (skipping :classify, which doesn't depend on users) in attribution_only
+  # mode, so the build re-attributes existing cells without refetching the
+  # user-independent article stats, then re-aggregates topic timepoints and
+  # the summary. See TimepointService#reattribute_topic_article_timepoint.
+  def queue_attribution_rebuild
+    queue_incremental_topic_build(
+      stage: :article_timepoints,
+      queue_next_stage: true,
+      attribution_only: true
+    )
   end
 
   def queue_generate_article_analytics
@@ -235,6 +250,21 @@ class Topic < ApplicationRecord
     return unless articles_count.positive?
 
     queue_generate_article_analytics
+  end
+
+  # Called from ImportUsersJob when a user import finishes. On an
+  # already-built topic, changing the user list only invalidates the
+  # user-attributed data, so we recompute just that (attribution_only)
+  # rather than re-running analytics + a full build that would skip every
+  # already-built cell and leave attribution stale. During the initial
+  # build the topic isn't :complete yet, so we fall back to the normal
+  # analytics chain (which gates on the parallel article import).
+  def chain_after_user_import
+    if data_generation_state == :complete
+      queue_attribution_rebuild
+    else
+      chain_to_analytics_if_ready
+    end
   end
 
   # True when any phase of the pipeline (import / analytics / build) has a

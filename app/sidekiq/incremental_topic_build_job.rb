@@ -5,8 +5,11 @@ class IncrementalTopicBuildJob
   include Sidekiq::Status::Worker
   sidekiq_options queue: 'timepoints'
 
+  # rubocop:disable Metrics/ParameterLists -- Sidekiq serializes args
+  # positionally, so the build flags ride along as ordered params.
   def perform(topic_id, stage = TimepointService::STAGES.first,
-              queue_next_stage = false, force_updates = false)
+              queue_next_stage = false, force_updates = false,
+              attribution_only = false)
     @expiration = 60 * 60 * 24 * 30
     # Each stage of the 4-stage build is its own Sidekiq job with its
     # own status hash; the frontend computes ETA per-stage from this.
@@ -16,11 +19,12 @@ class IncrementalTopicBuildJob
     topic.update incremental_topic_build_job_id: job_id
 
     force_updates = ActiveModel::Type::Boolean.new.cast(force_updates)
+    attribution_only = ActiveModel::Type::Boolean.new.cast(attribution_only)
     queue_next_stage = ActiveModel::Type::Boolean.new.cast(queue_next_stage)
 
     begin
       timepoint_service = TimepointService.new(
-        topic:, force_updates:, logging_enabled: Rails.env.development?,
+        topic:, force_updates:, attribution_only:, logging_enabled: Rails.env.development?,
         total: method(:total), at: method(:at),
         message: proc { |msg| store message: msg },
         store: proc { |hash| store(hash) }
@@ -33,6 +37,7 @@ class IncrementalTopicBuildJob
 
     topic.update(incremental_topic_build_job_id: nil)
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def expiration
     @expiration = 60 * 60 * 24 * 30

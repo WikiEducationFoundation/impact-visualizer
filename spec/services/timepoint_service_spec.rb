@@ -112,6 +112,7 @@ describe TimepointService do
           topic.id,
           'article_timepoints',
           true,
+          false,
           false
         )
         timepoint_service.incremental_build(:classify, queue_next_stage: true)
@@ -124,6 +125,7 @@ describe TimepointService do
           topic.id,
           'tokens',
           true,
+          false,
           false
         )
         timepoint_service.incremental_build(:article_timepoints, queue_next_stage: true)
@@ -136,6 +138,7 @@ describe TimepointService do
           topic.id,
           'topic_timepoints',
           true,
+          false,
           false
         )
         timepoint_service.incremental_build(:tokens, queue_next_stage: true)
@@ -533,6 +536,51 @@ describe TimepointService do
     end
   end
 
+  describe '#build_timepoints_for_article (attribution_only)' do
+    let(:topic) do
+      create(:topic, start_date: Date.new(2023, 1, 1), end_date: Date.new(2023, 1, 30),
+                     timepoint_day_interval: 7)
+    end
+    let(:article) { create(:article, first_revision_at: Date.new(2020, 1, 1)) }
+    let(:article_bag_article) do
+      create(:article_bag_article, article:, article_bag: topic.active_article_bag)
+    end
+    let(:timestamp) { Date.new(2023, 1, 8) }
+    let(:topic_timepoint) { TopicTimepoint.create!(topic:, timestamp:) }
+    let(:service) { described_class.new(topic:, attribution_only: true) }
+
+    def build!
+      service.build_timepoints_for_article(article_bag_article:, topic_timepoint:)
+    end
+
+    it 'recomputes only attribution on an existing cell, skipping the article-stat refetch' do
+      at = ArticleTimepoint.create!(article:, timestamp:, revision_id: 999)
+      TopicArticleTimepoint.create!(article_timepoint: at, topic_timepoint:, attributed_length_delta: 0)
+
+      expect_any_instance_of(ArticleStatsService).not_to receive(:update_details_for_article)
+      expect_any_instance_of(ArticleStatsService).not_to receive(:update_stats_for_article_timepoint)
+      expect_any_instance_of(TopicArticleTimepointStatsService).to receive(:update_attributed_deltas)
+      expect_any_instance_of(TopicArticleTimepointStatsService).to receive(:update_attributed_creation)
+      expect_any_instance_of(TopicArticleTimepointStatsService).not_to receive(:update_baseline_deltas)
+
+      build!
+    end
+
+    it 'bails (no stats service) when the cell was never built' do
+      # ArticleTimepoint exists but no linking TopicArticleTimepoint — nothing
+      # to re-attribute.
+      ArticleTimepoint.create!(article:, timestamp:, revision_id: 999)
+      expect(TopicArticleTimepointStatsService).not_to receive(:new)
+      build!
+    end
+
+    it 'bails when the article postdates the timestamp' do
+      article.update!(first_revision_at: Date.new(2024, 1, 1))
+      expect(TopicArticleTimepointStatsService).not_to receive(:new)
+      build!
+    end
+  end
+
   describe '#update_token_stats' do
     # This shared context sets up 1 Topic with 2 Articles and 2 Timepoints
     include_context 'topic with two timepoints'
@@ -623,6 +671,16 @@ describe TimepointService do
         TopicArticleAnalytic.where(topic:).update_all(tokens_revision_id: latest_revision_id)
 
         described_class.new(topic:, force_updates: true).update_token_stats
+
+        expect(fetch_count.value).to eq(article_bag.articles.count)
+      end
+
+      it 'bypasses the gate when attribution_only is true' do
+        # The revision id is unchanged, but the user list changed — tokens
+        # must be re-fetched so attributed_token_count can be recomputed.
+        TopicArticleAnalytic.where(topic:).update_all(tokens_revision_id: latest_revision_id)
+
+        described_class.new(topic:, attribution_only: true).update_token_stats
 
         expect(fetch_count.value).to eq(article_bag.articles.count)
       end

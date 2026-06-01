@@ -154,7 +154,7 @@ RSpec.describe Topic do
 
     it 'queues IncrementalTopicBuildJob for Topic, defaults' do
       expect(IncrementalTopicBuildJob).to receive(:perform_async)
-        .with(topic.id, 'classify', true, false)
+        .with(topic.id, 'classify', true, false, false)
         .and_return('abc123')
       topic.queue_incremental_topic_build
       expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
@@ -162,7 +162,7 @@ RSpec.describe Topic do
 
     it 'queues IncrementalTopicBuildJob for Topic, with force_updates' do
       expect(IncrementalTopicBuildJob).to receive(:perform_async)
-        .with(topic.id, 'classify', true, true)
+        .with(topic.id, 'classify', true, true, false)
         .and_return('abc123')
       topic.queue_incremental_topic_build(force_updates: true)
       expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
@@ -170,7 +170,7 @@ RSpec.describe Topic do
 
     it 'queues IncrementalTopicBuildJob for Topic, with stage' do
       expect(IncrementalTopicBuildJob).to receive(:perform_async)
-        .with(topic.id, 'tokens', true, false)
+        .with(topic.id, 'tokens', true, false, false)
         .and_return('abc123')
       topic.queue_incremental_topic_build(stage: 'tokens')
       expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
@@ -178,7 +178,7 @@ RSpec.describe Topic do
 
     it 'queues IncrementalTopicBuildJob for Topic, with stage and force_updates' do
       expect(IncrementalTopicBuildJob).to receive(:perform_async)
-        .with(topic.id, 'tokens', true, true)
+        .with(topic.id, 'tokens', true, true, false)
         .and_return('abc123')
       topic.queue_incremental_topic_build(stage: 'tokens', force_updates: true)
       expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
@@ -186,9 +186,29 @@ RSpec.describe Topic do
 
     it 'queues IncrementalTopicBuildJob for Topic, with stage and queue_next_stage' do
       expect(IncrementalTopicBuildJob).to receive(:perform_async)
-        .with(topic.id, 'tokens', false, false)
+        .with(topic.id, 'tokens', false, false, false)
         .and_return('abc123')
       topic.queue_incremental_topic_build(stage: 'tokens', queue_next_stage: false)
+      expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
+    end
+
+    it 'queues IncrementalTopicBuildJob for Topic, with attribution_only' do
+      expect(IncrementalTopicBuildJob).to receive(:perform_async)
+        .with(topic.id, 'article_timepoints', true, false, true)
+        .and_return('abc123')
+      topic.queue_incremental_topic_build(stage: 'article_timepoints', attribution_only: true)
+      expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
+    end
+  end
+
+  describe '#queue_attribution_rebuild' do
+    let(:topic) { create(:topic) }
+
+    it 'queues an attribution_only build entered at :article_timepoints' do
+      expect(IncrementalTopicBuildJob).to receive(:perform_async)
+        .with(topic.id, 'article_timepoints', true, false, true)
+        .and_return('abc123')
+      topic.queue_attribution_rebuild
       expect(topic.reload.incremental_topic_build_job_id).to eq('abc123')
     end
   end
@@ -339,6 +359,30 @@ RSpec.describe Topic do
       empty_topic = create(:topic)
       expect(GenerateArticleAnalyticsJob).not_to receive(:perform_async)
       empty_topic.chain_to_analytics_if_ready
+    end
+  end
+
+  describe '#chain_after_user_import' do
+    let(:topic) { create(:topic) }
+
+    it 'recomputes attribution when the topic is already built' do
+      allow(topic).to receive(:data_generation_state).and_return(:complete)
+      expect(topic).to receive(:queue_attribution_rebuild)
+      expect(topic).not_to receive(:chain_to_analytics_if_ready)
+      topic.chain_after_user_import
+    end
+
+    it 'falls back to the analytics chain during the initial build' do
+      allow(topic).to receive(:data_generation_state).and_return(:running)
+      expect(topic).to receive(:chain_to_analytics_if_ready)
+      expect(topic).not_to receive(:queue_attribution_rebuild)
+      topic.chain_after_user_import
+    end
+
+    it 'falls back to the analytics chain when the topic is idle' do
+      allow(topic).to receive(:data_generation_state).and_return(:idle)
+      expect(topic).to receive(:chain_to_analytics_if_ready)
+      topic.chain_after_user_import
     end
   end
 

@@ -9,6 +9,7 @@ RSpec.describe IncrementalTopicBuildJob, type: :job do
     expect(TimepointService).to receive(:new).with(
       topic:,
       force_updates: false,
+      attribution_only: false,
       logging_enabled: false,
       total: kind_of(Method),
       at: kind_of(Method),
@@ -25,6 +26,7 @@ RSpec.describe IncrementalTopicBuildJob, type: :job do
     expect(TimepointService).to receive(:new).with(
       topic:,
       force_updates: false,
+      attribution_only: false,
       logging_enabled: false,
       total: kind_of(Method),
       at: kind_of(Method),
@@ -41,6 +43,7 @@ RSpec.describe IncrementalTopicBuildJob, type: :job do
     expect(TimepointService).to receive(:new).with(
       topic:,
       force_updates: true,
+      attribution_only: false,
       logging_enabled: false,
       total: kind_of(Method),
       at: kind_of(Method),
@@ -50,5 +53,22 @@ RSpec.describe IncrementalTopicBuildJob, type: :job do
     expect_any_instance_of(TimepointService).to receive(:incremental_build)
       .with(:article_timepoints, queue_next_stage: true)
     described_class.new.perform(topic.id, 'article_timepoints', true, true)
+  end
+
+  it 'hands off in attribution_only mode (:article_timepoints, queue_next_stage=true)' do
+    Sidekiq::Testing.inline!
+    expect(TimepointService).to receive(:new).with(
+      topic:,
+      force_updates: false,
+      attribution_only: true,
+      logging_enabled: false,
+      total: kind_of(Method),
+      at: kind_of(Method),
+      message: kind_of(Proc),
+      store: kind_of(Proc)
+    ).and_call_original
+    expect_any_instance_of(TimepointService).to receive(:incremental_build)
+      .with(:article_timepoints, queue_next_stage: true)
+    described_class.new.perform(topic.id, 'article_timepoints', true, false, true)
   end
 end
