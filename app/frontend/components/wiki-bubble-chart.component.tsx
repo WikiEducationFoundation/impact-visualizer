@@ -8,7 +8,14 @@ import React, {
 } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import { useQuery } from "@tanstack/react-query";
-import { BsBook, BsInfoCircle } from "react-icons/bs";
+import { useSearchParams } from "react-router-dom";
+import {
+  BsBook,
+  BsInfoCircle,
+  BsImage,
+  BsLink45Deg,
+  BsCheck2,
+} from "react-icons/bs";
 import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
@@ -33,6 +40,11 @@ import {
 } from "../utils/bubble-chart-utils";
 import { fetchLanguageLinks, TARGET_LANGUAGES } from "../utils/language-links";
 import type { LangLinksProgress } from "../utils/language-links";
+import { exportChartImage } from "../utils/chart-image-export";
+import {
+  decodeChartState,
+  encodeChartState,
+} from "../utils/bubble-chart-permalink";
 
 type Wiki = {
   language: string;
@@ -44,6 +56,7 @@ interface WikiBubbleChartProps {
   actions?: boolean;
   wiki?: Wiki;
   topicId?: string | number;
+  topicName?: string;
   topicStartDate?: string;
   topicEndDate?: string;
 }
@@ -214,6 +227,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   actions = false,
   wiki,
   topicId,
+  topicName,
   topicStartDate,
   topicEndDate,
 }) => {
@@ -221,43 +235,54 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const viewRef = useRef<Result | null>(null);
   const sortedRowsRef = useRef<any[]>([]);
   const lastEmbeddedSortedRowsRef = useRef<any[] | null>(null);
+  const [searchParams] = useSearchParams();
+
+  // Parse the shared view from the URL exactly once, so every control below can
+  // initialize straight from it without a URL->state effect (which would loop).
+  const [initialState] = useState(() => decodeChartState(searchParams));
+
   const [selectedGrades, setSelectedGrades] = useState<Record<string, boolean>>(
-    {
-      FA: true,
-      FL: true,
-      A: true,
-      GA: true,
-      B: true,
-      C: true,
-      Start: true,
-      Stub: true,
-      List: true,
-      Unassessed: true,
-    },
+    initialState.selectedGrades,
   );
-  const [xAxisKey, setXAxisKey] = useState<XAxisKey>("title");
-  const [xAxisMode, setXAxisMode] = useState<"ranked" | "scaled">("ranked");
-  const [yAxisKey, setYAxisKey] = useState<YAxisKey>("average_daily_views");
+  const [xAxisKey, setXAxisKey] = useState<XAxisKey>(initialState.xAxisKey);
+  const [xAxisMode, setXAxisMode] = useState<"ranked" | "scaled">(
+    initialState.xAxisMode,
+  );
+  const [yAxisKey, setYAxisKey] = useState<YAxisKey>(initialState.yAxisKey);
   const [yAxisScaleType, setYAxisScaleType] = useState<"linear" | "log">(
-    "linear",
+    initialState.yAxisScaleType,
   );
-  const [yAxisMinInput, setYAxisMinInput] = useState<string>("");
-  const [yAxisMaxInput, setYAxisMaxInput] = useState<string>("");
-  const [committedYAxisMinInput, setCommittedYAxisMinInput] =
-    useState<string>("");
-  const [committedYAxisMaxInput, setCommittedYAxisMaxInput] =
-    useState<string>("");
+  const [yAxisMinInput, setYAxisMinInput] = useState<string>(
+    initialState.yAxisMin,
+  );
+  const [yAxisMaxInput, setYAxisMaxInput] = useState<string>(
+    initialState.yAxisMax,
+  );
+  const [committedYAxisMinInput, setCommittedYAxisMinInput] = useState<string>(
+    initialState.yAxisMin,
+  );
+  const [committedYAxisMaxInput, setCommittedYAxisMaxInput] = useState<string>(
+    initialState.yAxisMax,
+  );
   const yAxisDomainDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
-  const [filterMoveRestriction, setFilterMoveRestriction] =
-    useState<boolean>(false);
-  const [filterEditRestriction, setFilterEditRestriction] =
-    useState<boolean>(false);
-  const [centralityMin, setCentralityMin] = useState<number>(CENTRALITY_MIN);
-  const [centralityMax, setCentralityMax] = useState<number>(CENTRALITY_MAX);
-  const [includeNoCentrality, setIncludeNoCentrality] = useState<boolean>(true);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [filterMoveRestriction, setFilterMoveRestriction] = useState<boolean>(
+    initialState.filterMoveRestriction,
+  );
+  const [filterEditRestriction, setFilterEditRestriction] = useState<boolean>(
+    initialState.filterEditRestriction,
+  );
+  const [centralityMin, setCentralityMin] = useState<number>(
+    initialState.centralityMin,
+  );
+  const [centralityMax, setCentralityMax] = useState<number>(
+    initialState.centralityMax,
+  );
+  const [includeNoCentrality, setIncludeNoCentrality] = useState<boolean>(
+    initialState.includeNoCentrality,
+  );
+  const [searchTerm, setSearchTerm] = useState<string>(initialState.searchTerm);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [selectedArticle, setSelectedArticle] = useState<ArticleRow | null>(
     null,
@@ -269,10 +294,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     null,
   );
   const [glossaryOpen, setGlossaryOpen] = useState<boolean>(false);
-  const [showLabels, setShowLabels] = useState<boolean>(false);
+  const [showLabels, setShowLabels] = useState<boolean>(
+    initialState.showLabels,
+  );
+  const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const searchSignalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
+  const linkCopiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevYAxisKeyRef = useRef<YAxisKey>(initialState.yAxisKey);
 
   const yAxisConfig = useMemo(() => {
     switch (yAxisKey) {
@@ -512,6 +542,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   ]);
 
   useEffect(() => {
+    // Only clear the range on a genuine y-axis change. Skipping the no-op mount
+    // run (and any StrictMode re-run) keeps a y-range restored from the URL.
+    if (prevYAxisKeyRef.current === yAxisKey) return;
+    prevYAxisKeyRef.current = yAxisKey;
     setYAxisMinInput("");
     setYAxisMaxInput("");
     setCommittedYAxisMinInput("");
@@ -1000,6 +1034,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       if (searchSignalTimerRef.current) {
         clearTimeout(searchSignalTimerRef.current);
       }
+      if (linkCopiedTimerRef.current) {
+        clearTimeout(linkCopiedTimerRef.current);
+      }
     };
   }, []);
 
@@ -1086,6 +1123,83 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     setActiveTab(tab);
   };
 
+  // Build a shareable URL from the current view on demand. The query string
+  // encodes the controls; pathname + hash are preserved so the parent's
+  // hash-driven view selection (e.g. #bubble) survives.
+  const buildPermalink = () => {
+    const next = encodeChartState({
+      xAxisKey,
+      xAxisMode,
+      yAxisKey,
+      yAxisScaleType,
+      yAxisMin: committedYAxisMinInput,
+      yAxisMax: committedYAxisMaxInput,
+      filterMoveRestriction,
+      filterEditRestriction,
+      centralityMin,
+      centralityMax,
+      includeNoCentrality,
+      searchTerm,
+      showLabels,
+      selectedGrades,
+    });
+    const qs = new URLSearchParams(next).toString();
+    return `${window.location.origin}${window.location.pathname}${
+      qs ? `?${qs}` : ""
+    }${window.location.hash}`;
+  };
+
+  const handleSaveImage = async () => {
+    if (!viewRef.current) return;
+    const formatDate = (value?: string) =>
+      value
+        ? new Date(value).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })
+        : null;
+    const start = formatDate(topicStartDate);
+    const end = formatDate(topicEndDate);
+    const dateRangeLabel = start ? `${start} - ${end ?? "now"}` : null;
+    const generatedLabel = `Generated ${new Date().toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })}`;
+    const safeName =
+      (topicName ?? "article-analytics")
+        .replace(/[^\w-]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "article-analytics";
+
+    try {
+      await exportChartImage({
+        view: viewRef.current.view,
+        logoSrc: "/images/logo.png",
+        title: topicName ?? "Article analytics",
+        dateRangeLabel,
+        generatedLabel,
+        permalink: buildPermalink(),
+        filename: `${safeName}-chart`,
+      });
+    } catch (err) {
+      console.error("Failed to export chart image", err);
+    }
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(buildPermalink());
+      setLinkCopied(true);
+      if (linkCopiedTimerRef.current) {
+        clearTimeout(linkCopiedTimerRef.current);
+      }
+      linkCopiedTimerRef.current = setTimeout(() => setLinkCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy link", err);
+    }
+  };
+
   return (
     <div className="WikiBubbleChart">
       <div className="TitleRow">
@@ -1096,6 +1210,29 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           csvConvert={convertAnalyticsToCSV}
           filename="article-analytics"
         />
+        <button
+          type="button"
+          className="ShareBtn"
+          onClick={handleSaveImage}
+          disabled={!hasData}
+          title="Download the current chart as a PNG with credits"
+        >
+          <BsImage size={14} aria-hidden="true" />
+          <span>Save image</span>
+        </button>
+        <button
+          type="button"
+          className="ShareBtn"
+          onClick={handleCopyLink}
+          title="Copy a link to this exact chart view"
+        >
+          {linkCopied ? (
+            <BsCheck2 size={16} aria-hidden="true" />
+          ) : (
+            <BsLink45Deg size={16} aria-hidden="true" />
+          )}
+          <span>{linkCopied ? "Copied" : "Copy link"}</span>
+        </button>
         <button
           type="button"
           className="GlossaryBtn"

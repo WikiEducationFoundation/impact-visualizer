@@ -118,6 +118,15 @@ function downloadAsTXT(txtContent: string, fileName = "data"): void {
   link.click();
 }
 
+function downloadBlob(blob: Blob, fileName = "download"): void {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.setAttribute("download", fileName);
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 const convertInitialResponseToTree = (
   response: MediaWikiResponse,
   existingIDs: INode<IFlatMetadata>[],
@@ -311,6 +320,7 @@ export {
   convertArticlesToCSV,
   downloadAsCSV,
   downloadAsTXT,
+  downloadBlob,
   convertInitialResponseToTree,
   convertResponseToTree,
   removeCategoryPrefix,

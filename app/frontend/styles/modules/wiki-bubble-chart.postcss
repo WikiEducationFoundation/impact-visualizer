@@ -212,8 +212,8 @@ $danger-fg: #c62828;
     gap: 12px;
     padding: 12px;
 
+    .ShareBtn,
     .GlossaryBtn {
-      margin-left: auto;
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -240,6 +240,15 @@ $danger-fg: #c62828;
         outline: 2px solid #1565c0;
         outline-offset: 2px;
       }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .GlossaryBtn {
+      margin-left: auto;
     }
   }
 

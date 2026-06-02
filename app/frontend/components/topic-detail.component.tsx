@@ -284,6 +284,7 @@ function TopicDetail() {
             actions
             wiki={topic.wiki}
             topicId={id}
+            topicName={topic.name}
             topicStartDate={topic.start_date}
             topicEndDate={topic.end_date}
           />
@@ -297,6 +298,7 @@ function TopicDetail() {
             actions
             wiki={topic.wiki}
             topicId={id}
+            topicName={topic.name}
             topicStartDate={topic.start_date}
             topicEndDate={topic.end_date}
           />
