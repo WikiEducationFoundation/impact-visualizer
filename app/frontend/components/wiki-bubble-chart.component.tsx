@@ -18,6 +18,7 @@ import {
 } from "react-icons/bs";
 import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
+import WikitextButton from "./wikitext-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
 import ArticleDetailPanel from "./article-detail-panel.component";
 import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
@@ -32,6 +33,7 @@ import type {
 } from "../types/bubble-chart.type";
 import {
   convertAnalyticsToCSV,
+  convertAnalyticsToWikitext,
   getAssessmentColor,
   compareArticlesByPublicationDateAsc,
   compareArticlesByNumericFieldAsc,
@@ -1208,6 +1210,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           articles={sortedRows}
           filteredArticles={filteredArticles}
           csvConvert={convertAnalyticsToCSV}
+          filename="article-analytics"
+        />
+        <WikitextButton
+          articles={sortedRows}
+          filteredArticles={filteredArticles}
+          wikitextConvert={convertAnalyticsToWikitext}
           filename="article-analytics"
         />
         <button
