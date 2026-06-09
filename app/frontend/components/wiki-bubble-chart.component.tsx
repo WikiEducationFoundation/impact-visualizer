@@ -299,6 +299,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [showLabels, setShowLabels] = useState<boolean>(
     initialState.showLabels,
   );
+  const [excludedOutliers, setExcludedOutliers] = useState<Set<string>>(
+    () => new Set(initialState.excludedOutliers),
+  );
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const searchSignalTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -400,11 +403,21 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     return sortedRows.map((row) => row.article);
   }, [sortedRows]);
 
+  // Stable key for the excluded set so it can drive memo/effect deps without
+  // relying on Set identity (which changes on every toggle).
+  const excludedKey = useMemo(
+    () => [...excludedOutliers].sort().join("|"),
+    [excludedOutliers],
+  );
+
   const yAxisAutoDomain = useMemo(() => {
     let min = Infinity;
     let max = -Infinity;
     let found = false;
     for (let i = 0; i < rows.length; i++) {
+      // Trimmed outliers must not stretch the auto domain, otherwise removing
+      // them from the plot would not actually rescale the remaining bubbles.
+      if (excludedOutliers.has(rows[i].article)) continue;
       const v = rows[i][yAxisConfig.currentField];
       if (typeof v === "number" && Number.isFinite(v)) {
         if (v < min) min = v;
@@ -415,7 +428,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     if (!found)
       return { min: null as number | null, max: null as number | null };
     return { min, max };
-  }, [rows, yAxisConfig.currentField]);
+  }, [rows, yAxisConfig.currentField, excludedOutliers]);
 
   const parsedYAxisDomain = useMemo(() => {
     const parsedMin =
@@ -661,6 +674,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       "((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || (grade_Unassessed && !datum.assessment_grade))",
       "((!filter_move_restriction || datum.has_move_restriction) && (!filter_edit_restriction || datum.has_edit_restriction))",
       "((isValid(datum.centrality) && datum.centrality >= centrality_min && datum.centrality <= centrality_max) || (!isValid(datum.centrality) && include_no_centrality))",
+      "(indexof(trimmed_articles, datum.article) < 0)",
     ].join(" && ");
 
     const isLargeDataset = currentSortedRows.length > LARGE_DATASET_THRESHOLD;
@@ -715,6 +729,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         { name: "centrality_min", value: centralityMin },
         { name: "centrality_max", value: centralityMax },
         { name: "include_no_centrality", value: includeNoCentrality },
+        { name: "trimmed_articles", value: [...excludedOutliers] },
         {
           name: "y_domain_min",
           value:
@@ -998,6 +1013,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     yAxisScaleType,
     yAxisAutoDomain.min,
     yAxisAutoDomain.max,
+    excludedKey,
   ]);
 
   useEffect(() => {
@@ -1108,6 +1124,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     setShowLabels(checked);
   };
 
+  const handleToggleOutlier = (article: string) => {
+    setExcludedOutliers((prev) => {
+      const next = new Set(prev);
+      if (next.has(article)) {
+        next.delete(article);
+      } else {
+        next.add(article);
+      }
+      return next;
+    });
+  };
+
+  const handleClearOutliers = () => {
+    setExcludedOutliers(new Set());
+  };
+
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
     if (searchSignalTimerRef.current) {
@@ -1144,6 +1176,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       searchTerm,
       showLabels,
       selectedGrades,
+      excludedOutliers: [...excludedOutliers],
     });
     const qs = new URLSearchParams(next).toString();
     return `${window.location.origin}${window.location.pathname}${
@@ -1453,6 +1486,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             isOpen={sidebarOpen}
             onToggle={() => setSidebarOpen((prev) => !prev)}
             onArticleClick={setSelectedArticle}
+            excludedOutliers={excludedOutliers}
+            onToggleOutlier={handleToggleOutlier}
+            onClearOutliers={handleClearOutliers}
           />
         </div>
 

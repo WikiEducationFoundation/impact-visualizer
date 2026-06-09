@@ -1154,13 +1154,22 @@ $danger-fg: #c62828;
   }
 
   .Header {
-    padding: 16px;
-    padding-left: 52px;
+    min-height: 72px;
+    box-sizing: border-box;
+    padding: 12px 16px 12px 52px;
     border-bottom: 1px solid $border-light;
     background: #fff;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     position: relative;
+  }
+
+  .HeaderTop {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
   }
 
   .Title {
@@ -1172,6 +1181,45 @@ $danger-fg: #c62828;
   .Count {
     font-size: 12px;
     color: #666;
+    white-space: nowrap;
+  }
+
+  .TrimControls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .TrimFilter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #444;
+    cursor: pointer;
+    margin-bottom: 0;
+
+    input[type="checkbox"] {
+      cursor: pointer;
+    }
+  }
+
+  .ClearBtn {
+    padding: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: $primary;
+    background: none;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .List {
@@ -1251,6 +1299,34 @@ $danger-fg: #c62828;
     &:hover {
       color: #676eb4;
     }
+  }
+
+  .TrimBtn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 8px 4px 8px 14px;
+    background: none;
+    border: none;
+    color: #c2c2c2;
+    cursor: pointer;
+    transition: color 120ms ease;
+
+    &:hover {
+      color: #676eb4;
+    }
+
+    &.is-excluded {
+      color: $primary;
+    }
+  }
+
+  .TrimBtn + .Link {
+    padding-left: 8px;
+  }
+
+  .Item.is-excluded .Link {
+    color: #999;
   }
 }
 

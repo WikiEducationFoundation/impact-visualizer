@@ -15,6 +15,7 @@ export interface ChartUiState {
   searchTerm: string;
   showLabels: boolean;
   selectedGrades: Record<string, boolean>;
+  excludedOutliers: string[];
 }
 
 const CENTRALITY_MIN = 1;
@@ -64,6 +65,7 @@ export const DEFAULT_CHART_UI_STATE: ChartUiState = {
   searchTerm: "",
   showLabels: false,
   selectedGrades: Object.fromEntries(GRADE_KEYS.map((g) => [g, true])),
+  excludedOutliers: [],
 };
 
 function allGradesOn(selected: Record<string, boolean>): boolean {
@@ -93,6 +95,9 @@ export function encodeChartState(state: ChartUiState): Record<string, string> {
     const off = GRADE_KEYS.filter((g) => state.selectedGrades[g] === false);
     if (off.length) params.off = off.join(",");
   }
+
+  if (state.excludedOutliers.length)
+    params.trim = state.excludedOutliers.join("|");
 
   return params;
 }
@@ -162,6 +167,9 @@ export function decodeChartState(params: URLSearchParams): ChartUiState {
       if (offSet.has(g)) state.selectedGrades[g] = false;
     }
   }
+
+  const trim = params.get("trim");
+  state.excludedOutliers = trim ? trim.split("|").filter(Boolean) : [];
 
   return state;
 }
