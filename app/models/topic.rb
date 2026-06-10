@@ -199,7 +199,7 @@ class Topic < ApplicationRecord
   # names the article belongs to. Scoped to the active bag so it lines up with
   # the articles in article_analytics_data.
   def article_classification_names_by_title
-    ArticleClassification
+    names_by_title = ArticleClassification
       .joins(:article, :classification)
       .where(classification_id: classification_ids,
              articles: { id: active_article_bag&.article_ids })
@@ -207,7 +207,7 @@ class Topic < ApplicationRecord
       .each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |(title, name), acc|
         acc[title] << name
       end
-      .transform_values { |names| names.uniq.sort }
+    names_by_title.transform_values { |names| names.uniq.sort }
   end
 
   def article_analytics_exist?

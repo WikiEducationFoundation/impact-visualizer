@@ -610,8 +610,10 @@ RSpec.describe Topic do
       before do
         topic.classifications << biography
         topic.classifications << movement
-        ArticleClassification.create!(classification: biography, article: article_in_bag, properties: [])
-        ArticleClassification.create!(classification: movement, article: article_in_bag, properties: [])
+        ArticleClassification.create!(classification: biography, article: article_in_bag,
+                                      properties: [])
+        ArticleClassification.create!(classification: movement, article: article_in_bag,
+                                      properties: [])
       end
 
       it 'includes the sorted, unique tag names the article belongs to' do
@@ -626,7 +628,8 @@ RSpec.describe Topic do
       it 'ignores classifications that do not belong to the topic' do
         other = Classification.create!(name: 'unrelated', prerequisites: [], properties: [],
                                        source: Classification::SOURCE_TB_PAYLOAD)
-        ArticleClassification.create!(classification: other, article: article_in_bag, properties: [])
+        ArticleClassification.create!(classification: other, article: article_in_bag,
+                                      properties: [])
         expect(topic.article_analytics_data['In'][:classifications]).to eq(%w[biography movement])
       end
     end
