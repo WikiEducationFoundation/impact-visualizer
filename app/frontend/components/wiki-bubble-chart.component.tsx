@@ -116,6 +116,49 @@ function QualityFilterButtons({
   );
 }
 
+function TagFilterButtons({
+  tags,
+  deselected,
+  onToggle,
+  onToggleAll,
+}: {
+  tags: string[];
+  deselected: Set<string>;
+  onToggle: (tag: string, on: boolean) => void;
+  onToggleAll: (on: boolean) => void;
+}) {
+  const allSelected = deselected.size === 0;
+  return (
+    <div className="TagFilter">
+      <div className="TagFilterHead">
+        <div className="BoxTitle">Tags</div>
+        <button
+          type="button"
+          className="ToggleAll"
+          onClick={() => onToggleAll(!allSelected)}
+        >
+          {allSelected ? "Deselect all" : "Select all"}
+        </button>
+      </div>
+      <div className="Grid">
+        {tags.map((tag) => {
+          const isOn = !deselected.has(tag);
+          return (
+            <button
+              key={tag}
+              type="button"
+              className={`Btn ${isOn ? "is-selected" : ""}`}
+              onClick={() => onToggle(tag, !isOn)}
+            >
+              <span className="Label">{tag}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function ProtectionFilterCheckboxes({
   moveChecked,
   editChecked,
@@ -246,6 +289,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [selectedGrades, setSelectedGrades] = useState<Record<string, boolean>>(
     initialState.selectedGrades,
   );
+
+  const [deselectedTags, setDeselectedTags] = useState<Set<string>>(
+    () => new Set(initialState.deselectedTags),
+  );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>(initialState.xAxisKey);
   const [xAxisMode, setXAxisMode] = useState<"ranked" | "scaled">(
     initialState.xAxisMode,
@@ -346,6 +393,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         return {
           article,
           ...analytics,
+          classifications: analytics?.classifications ?? [],
           assessment_grade_color: getAssessmentColor(
             analytics?.assessment_grade,
           ),
@@ -357,6 +405,21 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
     return [];
   }, [data]);
+
+  const availableTags = useMemo(() => {
+    const set = new Set<string>();
+    for (const row of rows) {
+      for (const tag of row.classifications) set.add(tag);
+    }
+    return [...set].sort();
+  }, [rows]);
+
+  // Stable dependency so the Vega spec rebuilds only when the tag set changes,
+  // not on every tag toggle (toggles are signal-driven, like grades).
+  const availableTagsKey = useMemo(
+    () => availableTags.join("|"),
+    [availableTags],
+  );
 
   const sortedRows = useMemo(() => {
     if (!rows.length) return [];
@@ -541,6 +604,18 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         return false;
       }
 
+      const rowTags = row.classifications ?? [];
+      if (rowTags.length > 0) {
+        let anySelected = false;
+        for (const tag of rowTags) {
+          if (!deselectedTags.has(tag)) {
+            anySelected = true;
+            break;
+          }
+        }
+        if (!anySelected) return false;
+      }
+
       return true;
     });
   }, [
@@ -554,6 +629,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     includeNoCentrality,
     parsedYAxisDomain,
     yAxisConfig.currentField,
+    deselectedTags,
   ]);
 
   useEffect(() => {
@@ -669,12 +745,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       scale: yScaleSpec,
     };
 
+    const tagFilterExpr = availableTags.length
+      ? `(length(datum.classifications) == 0 || (${availableTags
+          .map(
+            (tag, i) =>
+              `(tag_${i} && indexof(datum.classifications, ${JSON.stringify(tag)}) >= 0)`,
+          )
+          .join(" || ")}))`
+      : "true";
+
     const visibilityFilterExpr = [
       "(!search_input || indexof(lower(datum.article), search_input) >= 0)",
       "((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || (grade_Unassessed && !datum.assessment_grade))",
       "((!filter_move_restriction || datum.has_move_restriction) && (!filter_edit_restriction || datum.has_edit_restriction))",
       "((isValid(datum.centrality) && datum.centrality >= centrality_min && datum.centrality <= centrality_max) || (!isValid(datum.centrality) && include_no_centrality))",
       "(indexof(trimmed_articles, datum.article) < 0)",
+      tagFilterExpr,
     ].join(" && ");
 
     const isLargeDataset = currentSortedRows.length > LARGE_DATASET_THRESHOLD;
@@ -730,6 +816,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         { name: "centrality_max", value: centralityMax },
         { name: "include_no_centrality", value: includeNoCentrality },
         { name: "trimmed_articles", value: [...excludedOutliers] },
+        ...availableTags.map((tag, i) => ({
+          name: `tag_${i}`,
+          value: !deselectedTags.has(tag),
+        })),
         {
           name: "y_domain_min",
           value:
@@ -1014,6 +1104,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     yAxisAutoDomain.min,
     yAxisAutoDomain.max,
     excludedKey,
+    availableTagsKey,
   ]);
 
   useEffect(() => {
@@ -1071,6 +1162,37 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         });
         return next;
       });
+    });
+  };
+
+  const toggleTag = (tag: string, on: boolean) => {
+    const index = availableTags.indexOf(tag);
+    if (viewRef.current && index >= 0) {
+      viewRef.current.view.signal(`tag_${index}`, on);
+      viewRef.current.view.runAsync();
+    }
+    startTransition(() => {
+      setDeselectedTags((prev) => {
+        const next = new Set(prev);
+        if (on) {
+          next.delete(tag);
+        } else {
+          next.add(tag);
+        }
+        return next;
+      });
+    });
+  };
+
+  const toggleAllTags = (on: boolean) => {
+    if (viewRef.current) {
+      availableTags.forEach((_tag, i) =>
+        viewRef.current!.view.signal(`tag_${i}`, on),
+      );
+      viewRef.current.view.runAsync();
+    }
+    startTransition(() => {
+      setDeselectedTags(on ? new Set() : new Set(availableTags));
     });
   };
 
@@ -1176,6 +1298,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       searchTerm,
       showLabels,
       selectedGrades,
+      deselectedTags: [...deselectedTags],
       excludedOutliers: [...excludedOutliers],
     });
     const qs = new URLSearchParams(next).toString();
@@ -1492,7 +1615,20 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           />
         </div>
 
-        <div className="QualityFilters">
+        <div
+          className={`QualityFilters ${availableTags.length ? "has-tags" : ""}`}
+        >
+          {availableTags.length > 0 && (
+            <div className="FilterBox FilterBox--tags">
+              <TagFilterButtons
+                tags={availableTags}
+                deselected={deselectedTags}
+                onToggle={toggleTag}
+                onToggleAll={toggleAllTags}
+              />
+            </div>
+          )}
+
           <div className="FilterBox">
             <QualityFilterButtons
               onToggle={toggleGrades}
@@ -1568,7 +1704,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       </div>
 
       <div className="TabPanel" hidden={activeTab !== "languages"}>
-        <div className="QualityFilters">
+        <div
+          className={`QualityFilters ${availableTags.length ? "has-tags" : ""}`}
+        >
+          {availableTags.length > 0 && (
+            <div className="FilterBox FilterBox--tags">
+              <TagFilterButtons
+                tags={availableTags}
+                deselected={deselectedTags}
+                onToggle={toggleTag}
+                onToggleAll={toggleAllTags}
+              />
+            </div>
+          )}
           <div className="FilterBox">
             <QualityFilterButtons
               onToggle={toggleGrades}

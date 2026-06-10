@@ -21,6 +21,7 @@ type ArticleAnalytics = {
   assessment_grade: string | null;
   publication_date: string | null;
   article_protections: ArticleProtection[];
+  classifications?: string[];
 };
 
 type NumericSortField =

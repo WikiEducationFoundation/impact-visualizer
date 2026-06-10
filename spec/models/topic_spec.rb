@@ -596,6 +596,40 @@ RSpec.describe Topic do
       expect(data.keys).to contain_exactly('In')
       expect(data['Out']).to be_nil
     end
+
+    context 'with classifications' do
+      let(:biography) do
+        Classification.create!(name: 'biography', prerequisites: [], properties: [],
+                               source: Classification::SOURCE_TB_PAYLOAD)
+      end
+      let(:movement) do
+        Classification.create!(name: 'movement', prerequisites: [], properties: [],
+                               source: Classification::SOURCE_TB_PAYLOAD)
+      end
+
+      before do
+        topic.classifications << biography
+        topic.classifications << movement
+        ArticleClassification.create!(classification: biography, article: article_in_bag, properties: [])
+        ArticleClassification.create!(classification: movement, article: article_in_bag, properties: [])
+      end
+
+      it 'includes the sorted, unique tag names the article belongs to' do
+        expect(topic.article_analytics_data['In'][:classifications]).to eq(%w[biography movement])
+      end
+
+      it 'returns an empty array for articles with no tags' do
+        ArticleClassification.where(article: article_in_bag).destroy_all
+        expect(topic.article_analytics_data['In'][:classifications]).to eq([])
+      end
+
+      it 'ignores classifications that do not belong to the topic' do
+        other = Classification.create!(name: 'unrelated', prerequisites: [], properties: [],
+                                       source: Classification::SOURCE_TB_PAYLOAD)
+        ArticleClassification.create!(classification: other, article: article_in_bag, properties: [])
+        expect(topic.article_analytics_data['In'][:classifications]).to eq(%w[biography movement])
+      end
+    end
   end
 
   describe '#total_average_daily_visits' do

@@ -177,6 +177,11 @@ class Topic < ApplicationRecord
       ]
     )
 
+    # Per-article tag (Classification) names for this topic, keyed by title.
+    # Fetched separately rather than joined into the pluck above, which would
+    # duplicate analytics rows for articles carrying more than one tag.
+    names_by_title = article_classification_names_by_title
+
     topic_article_analytics
       .joins(:article)
       .joins(centrality_join)
@@ -185,8 +190,24 @@ class Topic < ApplicationRecord
         [title,
          { average_daily_views:, prev_average_daily_views:, article_size:, prev_article_size:, talk_size:, prev_talk_size:,
           lead_section_size:, assessment_grade:, publication_date:, linguistic_versions_count:, warning_tags_count:,
-          images_count:, number_of_editors:, article_protections:, incoming_links_count:, centrality: }]
+          images_count:, number_of_editors:, article_protections:, incoming_links_count:, centrality:,
+          classifications: names_by_title[title] || [] }]
       end
+  end
+
+  # Maps article title => sorted, unique list of this topic's Classification
+  # names the article belongs to. Scoped to the active bag so it lines up with
+  # the articles in article_analytics_data.
+  def article_classification_names_by_title
+    ArticleClassification
+      .joins(:article, :classification)
+      .where(classification_id: classification_ids,
+             articles: { id: active_article_bag&.article_ids })
+      .pluck('articles.title', 'classifications.name')
+      .each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |(title, name), acc|
+        acc[title] << name
+      end
+      .transform_values { |names| names.uniq.sort }
   end
 
   def article_analytics_exist?
