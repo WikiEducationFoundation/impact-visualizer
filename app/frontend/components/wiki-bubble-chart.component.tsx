@@ -119,19 +119,32 @@ function QualityFilterButtons({
 function TagFilterButtons({
   tags,
   deselected,
+  includeUntagged,
   onToggle,
   onToggleAll,
+  onIncludeUntaggedChange,
 }: {
   tags: string[];
   deselected: Set<string>;
+  includeUntagged: boolean;
   onToggle: (tag: string, on: boolean) => void;
   onToggleAll: (on: boolean) => void;
+  onIncludeUntaggedChange: (checked: boolean) => void;
 }) {
   const allSelected = deselected.size === 0;
   return (
     <div className="TagFilter">
       <div className="TagFilterHead">
         <div className="BoxTitle">Tags</div>
+        <label className="Checkbox">
+          <input
+            type="checkbox"
+            checked={includeUntagged}
+            onChange={(e) => onIncludeUntaggedChange(e.target.checked)}
+            aria-label="Include untagged articles"
+          />
+          <span>include untagged articles</span>
+        </label>
         <button
           type="button"
           className="ToggleAll"
@@ -292,6 +305,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   const [deselectedTags, setDeselectedTags] = useState<Set<string>>(
     () => new Set(initialState.deselectedTags),
+  );
+  const [includeUntagged, setIncludeUntagged] = useState<boolean>(
+    initialState.includeUntagged,
   );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>(initialState.xAxisKey);
   const [xAxisMode, setXAxisMode] = useState<"ranked" | "scaled">(
@@ -614,6 +630,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           }
         }
         if (!anySelected) return false;
+      } else if (!includeUntagged) {
+        return false;
       }
 
       return true;
@@ -630,6 +648,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     parsedYAxisDomain,
     yAxisConfig.currentField,
     deselectedTags,
+    includeUntagged,
   ]);
 
   useEffect(() => {
@@ -746,7 +765,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     };
 
     const tagFilterExpr = availableTags.length
-      ? `(length(datum.classifications) == 0 || (${availableTags
+      ? `((length(datum.classifications) == 0 && include_untagged) || (${availableTags
           .map(
             (tag, i) =>
               `(tag_${i} && indexof(datum.classifications, ${JSON.stringify(tag)}) >= 0)`,
@@ -820,6 +839,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           name: `tag_${i}`,
           value: !deselectedTags.has(tag),
         })),
+        { name: "include_untagged", value: includeUntagged },
         {
           name: "y_domain_min",
           value:
@@ -1196,6 +1216,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     });
   };
 
+  const handleIncludeUntaggedChange = (checked: boolean) => {
+    if (viewRef.current) {
+      viewRef.current.view.signal("include_untagged", checked);
+      viewRef.current.view.runAsync();
+    }
+    startTransition(() => setIncludeUntagged(checked));
+  };
+
   const handleMoveRestrictionChange = (checked: boolean) => {
     if (viewRef.current) {
       viewRef.current.view.signal("filter_move_restriction", checked);
@@ -1299,6 +1327,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       showLabels,
       selectedGrades,
       deselectedTags: [...deselectedTags],
+      includeUntagged,
       excludedOutliers: [...excludedOutliers],
     });
     const qs = new URLSearchParams(next).toString();
@@ -1623,8 +1652,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               <TagFilterButtons
                 tags={availableTags}
                 deselected={deselectedTags}
+                includeUntagged={includeUntagged}
                 onToggle={toggleTag}
                 onToggleAll={toggleAllTags}
+                onIncludeUntaggedChange={handleIncludeUntaggedChange}
               />
             </div>
           )}
@@ -1712,8 +1743,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               <TagFilterButtons
                 tags={availableTags}
                 deselected={deselectedTags}
+                includeUntagged={includeUntagged}
                 onToggle={toggleTag}
                 onToggleAll={toggleAllTags}
+                onIncludeUntaggedChange={handleIncludeUntaggedChange}
               />
             </div>
           )}

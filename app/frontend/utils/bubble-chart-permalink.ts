@@ -16,6 +16,7 @@ export interface ChartUiState {
   showLabels: boolean;
   selectedGrades: Record<string, boolean>;
   deselectedTags: string[];
+  includeUntagged: boolean;
   excludedOutliers: string[];
 }
 
@@ -67,6 +68,7 @@ export const DEFAULT_CHART_UI_STATE: ChartUiState = {
   showLabels: false,
   selectedGrades: Object.fromEntries(GRADE_KEYS.map((g) => [g, true])),
   deselectedTags: [],
+  includeUntagged: true,
   excludedOutliers: [],
 };
 
@@ -102,6 +104,8 @@ export function encodeChartState(state: ChartUiState): Record<string, string> {
   // the user turned off.
   if (state.deselectedTags.length)
     params.tagsoff = state.deselectedTags.join(",");
+
+  if (!state.includeUntagged) params.untag = "0";
 
   if (state.excludedOutliers.length)
     params.trim = state.excludedOutliers.join("|");
@@ -177,6 +181,8 @@ export function decodeChartState(params: URLSearchParams): ChartUiState {
 
   const tagsoff = params.get("tagsoff");
   state.deselectedTags = tagsoff ? tagsoff.split(",").filter(Boolean) : [];
+
+  state.includeUntagged = params.get("untag") !== "0";
 
   const trim = params.get("trim");
   state.excludedOutliers = trim ? trim.split("|").filter(Boolean) : [];

@@ -732,16 +732,34 @@ $danger-fg: #c62828;
   .TagFilterHead {
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 12px;
     margin-bottom: 6px;
 
     .BoxTitle {
+      flex: 0 0 auto;
       margin-bottom: 0;
     }
   }
 
+  .Checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 0;
+    font-size: 12px;
+    font-weight: 400;
+
+    input {
+      flex: 0 0 auto;
+      width: 13px;
+      height: 13px;
+      margin: 0;
+    }
+  }
+
   .ToggleAll {
+    margin-left: auto;
     border: none;
     background: none;
     padding: 0;
