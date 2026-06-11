@@ -147,6 +147,81 @@ function convertAnalyticsToCSV(
   return csvContent;
 }
 
+const ANALYTICS_EXPORT_HEADERS = [
+  "Article",
+  "Creation Date",
+  "Average Daily Views",
+  "Average Daily Views (prev year)",
+  "Article Size",
+  "Article Size (prev year)",
+  "Lead Section Size",
+  "Talk Size",
+  "Talk Size (prev year)",
+  "Number of Editors",
+  "Incoming Links",
+  "Centrality",
+  "Linguistic Versions",
+  "Warning Tags",
+  "Images",
+  "Assessment Grade",
+  "Protections",
+];
+
+// Escape characters that would break out of a wikitable cell ("|" / "||")
+// and flatten any stray newlines.
+function escapeWikitextCell(value: string): string {
+  return value.replace(/\|/g, "&#124;").replace(/[\r\n]+/g, " ");
+}
+
+function convertAnalyticsToWikitext(
+  rows: Array<{
+    article: string;
+    average_daily_views: number;
+    prev_average_daily_views: number | null;
+    article_size: number;
+    prev_article_size: number | null;
+    lead_section_size: number;
+    talk_size: number;
+    prev_talk_size: number | null;
+    number_of_editors: number;
+    incoming_links_count: number;
+    centrality: number | null;
+    linguistic_versions_count: number;
+    warning_tags_count: number;
+    images_count: number;
+    assessment_grade: string | null;
+    publication_date: string | null;
+    protection_summary?: string;
+  }>,
+): string {
+  let wikitext = '{| class="wikitable sortable"\n';
+  wikitext += `! ${ANALYTICS_EXPORT_HEADERS.join(" !! ")}\n`;
+  rows.forEach((row) => {
+    const cells = [
+      `[[${escapeWikitextCell(row.article)}]]`,
+      row.publication_date ?? "",
+      row.average_daily_views,
+      row.prev_average_daily_views ?? "",
+      row.article_size,
+      row.prev_article_size ?? "",
+      row.lead_section_size,
+      row.talk_size,
+      row.prev_talk_size ?? "",
+      row.number_of_editors,
+      row.incoming_links_count,
+      row.centrality ?? "",
+      row.linguistic_versions_count,
+      row.warning_tags_count,
+      row.images_count,
+      row.assessment_grade ?? "",
+      escapeWikitextCell(row.protection_summary ?? ""),
+    ];
+    wikitext += `|-\n| ${cells.join(" || ")}\n`;
+  });
+  wikitext += "|}\n";
+  return wikitext;
+}
+
 function makeSqrtAreaScale(
   values: number[],
   [rangeMin, rangeMax]: [number, number],
@@ -200,6 +275,7 @@ export {
   formatProtectionSummary,
   xAxisTitleForKey,
   convertAnalyticsToCSV,
+  convertAnalyticsToWikitext,
   getAssessmentColor,
   makeSqrtAreaScale,
 };
