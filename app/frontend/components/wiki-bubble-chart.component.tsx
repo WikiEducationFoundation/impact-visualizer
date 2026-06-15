@@ -68,6 +68,67 @@ const LARGE_DATASET_THRESHOLD = 10000;
 const CENTRALITY_MIN = 1;
 const CENTRALITY_MAX = 10;
 
+// Largest bubble radius (Vega derives radius from area; max size range is 1500).
+const MAX_CIRCLE_RADIUS = Math.sqrt(1500 / Math.PI);
+const Y_BOTTOM_MARGIN = MAX_CIRCLE_RADIUS * 2;
+
+// Post-compile tweaks Vega-Lite can't express directly.
+const patchChartScales = (vgSpec: any) => {
+  try {
+    const scales = vgSpec.scales || [];
+
+    // Clamp x pan/zoom to the data extent (no dragging into empty space; no-op
+    // once every bubble is visible). The bound x domain is recomputed by
+    // panLinear/zoomLinear each frame, so we rewrite those to clamp at the
+    // source against `x_base` — the x scale without the interactive override.
+    const xScale = scales.find((s: any) => s.name === "x");
+    if (xScale && xScale.domainRaw) {
+      if (!scales.some((s: any) => s.name === "x_base")) {
+        const base = { ...xScale, name: "x_base" };
+        delete base.domainRaw;
+        scales.push(base);
+        vgSpec.scales = scales;
+      }
+      const B = "domain('x_base')";
+      const clamp = (proposed: string) =>
+        `(span(${proposed}) >= span(${B}) ? ${B}` +
+        ` : (${proposed})[0] < ${B}[0] ? [${B}[0], ${B}[0] + span(${proposed})]` +
+        ` : (${proposed})[1] > ${B}[1] ? [${B}[1] - span(${proposed}), ${B}[1]]` +
+        ` : (${proposed}))`;
+      for (const sig of vgSpec.signals || []) {
+        if (!Array.isArray(sig.on)) continue;
+        for (const handler of sig.on) {
+          if (
+            typeof handler.update === "string" &&
+            /panLinear|zoomLinear/.test(handler.update)
+          ) {
+            handler.update = clamp(handler.update);
+          }
+        }
+      }
+    }
+
+    // Inset the y range's bottom so low-value bubbles clear the floor. Done in
+    // pixel space: scale.padding is ignored once domainMin/Max are set, and
+    // lowering the domain would expose negative axis values.
+    const yScale = scales.find((s: any) => s.name === "y");
+    if (yScale && Array.isArray(yScale.range) && yScale.range.length === 2) {
+      const bottom = yScale.range[0];
+      const bottomExpr =
+        bottom && typeof bottom === "object" && "signal" in bottom
+          ? bottom.signal
+          : String(bottom);
+      yScale.range = [
+        { signal: `(${bottomExpr}) - ${Y_BOTTOM_MARGIN}` },
+        yScale.range[1],
+      ];
+    }
+  } catch {
+    // leave the spec untouched if the compiled shape is unexpected
+  }
+  return vgSpec;
+};
+
 const gradeGroups = [
   { id: "fa", label: "Featured", grades: ["FA", "FL"], dot: "#9CBDFF" },
   { id: "ga", label: "GA", grades: ["GA"], dot: "#66FF66" },
@@ -678,9 +739,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     const currentSortedRows = sortedRowsRef.current;
     const isLogScale = yAxisScaleType === "log";
 
-    // calculate padding based on maximum circle radius to prevent clipping
-    const maxCircleRadius = Math.sqrt(1500 / Math.PI); // this is how vega calculates the circle radius
-
     let yScaleSpec: Record<string, any>;
     if (isLogScale) {
       const logAutoMin =
@@ -698,16 +756,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         },
       };
     } else {
-      const fallbackMin = -25;
-      const fallbackMax = yAxisAutoDomain.max ?? 1000;
-      const fallbackRange = fallbackMax - fallbackMin;
-      const fallbackPadding = maxCircleRadius * (fallbackRange / HEIGHT);
+      // Fall back to the auto domain when no user range; clamp autoMin to 0.
+      const autoMin =
+        yAxisAutoDomain.min !== null ? Math.max(0, yAxisAutoDomain.min) : 0;
+      const autoMax = yAxisAutoDomain.max ?? 1000;
+      const loExpr = `(isFinite(y_domain_min) ? y_domain_min : ${autoMin})`;
+      const hiExpr = `(isFinite(y_domain_max) ? y_domain_max : ${autoMax})`;
+      // Radius padding in domain units so boundary bubbles stay visible; max(,1)
+      // guards a degenerate span; domainMin clamps to 0 (no below-zero axis).
+      const spanExpr = `max((${hiExpr}) - (${loExpr}), 1)`;
+      const padExpr = `(${MAX_CIRCLE_RADIUS} * (${spanExpr}) / ${HEIGHT})`;
       yScaleSpec = {
         domainMin: {
-          expr: `isFinite(y_domain_min) && y_domain_min > 0 ? y_domain_min : ${fallbackMin - fallbackPadding}`,
+          expr: `max(0, (${loExpr}) - ${padExpr})`,
         },
         domainMax: {
-          expr: `isFinite(y_domain_max) ? y_domain_max : ${fallbackMax + fallbackPadding}`,
+          expr: `(${hiExpr}) + ${padExpr}`,
         },
       };
     }
@@ -746,6 +810,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             grid: false,
           },
         };
+
+    // Edge padding so the first/last bubble isn't clipped (the pan clamp
+    // otherwise pins the domain flush to the data).
+    xEncoding.scale = { ...(xEncoding.scale || {}), padding: MAX_CIRCLE_RADIUS };
 
     const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
     const yFilterExprParts: string[] = [];
@@ -1074,6 +1142,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       actions,
       renderer: "canvas",
       mode: "vega-lite",
+      patch: patchChartScales as EmbedOptions["patch"],
       tooltip: {
         sanitize: (value: string) => value,
       } as EmbedOptions["tooltip"],
