@@ -113,6 +113,18 @@ const patchChartScales = (vgSpec: any) => {
     // lowering the domain would expose negative axis values.
     const yScale = scales.find((s: any) => s.name === "y");
     if (yScale && Array.isArray(yScale.range) && yScale.range.length === 2) {
+      if (!scales.some((s: any) => s.name === "y_grid")) {
+        const gridClone = { ...yScale, name: "y_grid" };
+        delete gridClone.domainRaw;
+        scales.push(gridClone);
+        vgSpec.scales = scales;
+      }
+      for (const axis of vgSpec.axes || []) {
+        if (axis.scale === "x" && axis.grid && axis.gridScale === "y") {
+          axis.gridScale = "y_grid";
+        }
+      }
+
       const bottom = yScale.range[0];
       const bottomExpr =
         bottom && typeof bottom === "object" && "signal" in bottom
