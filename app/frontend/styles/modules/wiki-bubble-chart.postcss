@@ -1503,6 +1503,45 @@ $danger-fg: #c62828;
 
     .HeaderLang {
       width: 1fr;
+      cursor: grab;
+      user-select: none;
+      position: relative;
+
+      &--dragging {
+        opacity: 0.4;
+        background: #e3f2fd;
+      }
+
+      &--dragover {
+        border-left: 4px solid $primary;
+        background: #e3f2fd;
+
+        .DragHandle {
+          color: $primary;
+        }
+      }
+
+      &-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .DragHandle {
+        color: lightgrey;
+        cursor: grab;
+        flex-shrink: 0;
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      &:active,
+      &:active .DragHandle {
+        cursor: grabbing;
+      }
     }
   }
 
@@ -1718,8 +1757,8 @@ $danger-fg: #c62828;
 
   .Panel {
     background: white;
-    width: 90vw;
-    max-width: 1100px;
+    width: 95vw;
+    max-width: 1500px;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
@@ -1789,50 +1828,90 @@ $danger-fg: #c62828;
     border-collapse: collapse;
     table-layout: fixed;
 
-    .MetricHeader {
+    .CornerHeader {
       width: 200px;
       background: white;
       border: 1px solid $border-faint;
     }
 
-    .LangHeader {
-      padding: 12px 16px;
+    .MetricHeader {
+      padding: 12px 14px;
       font-size: 13px;
       font-weight: 600;
       color: $text-strong;
       text-align: center;
       background: white;
       border: 1px solid $border-faint;
+    }
 
-      span {
-        margin-right: 4px;
+    .LangRow {
+      cursor: grab;
+
+      &--dragging {
+        opacity: 0.4;
+        background: #e3f2fd;
       }
+
+      &--dragover {
+        background: #e3f2fd;
+
+        td,
+        th {
+          border-top: 3px solid $primary;
+        }
+
+        .DragHandle {
+          color: $primary;
+        }
+      }
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
+    .LangHeader {
+      width: 200px;
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-strong;
+      text-align: left;
+      background: white;
+      border: 1px solid $border-faint;
+      user-select: none;
 
       &--missing {
         background: $danger-bg;
         color: $danger-fg;
       }
 
+      &-inner {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .DragHandle {
+        color: lightgrey;
+        cursor: grab;
+        flex-shrink: 0;
+      }
+
+      .LangName {
+        margin-right: auto;
+      }
+
       .Link {
         color: inherit;
         display: inline-flex;
         align-items: center;
-        vertical-align: middle;
+        flex-shrink: 0;
 
         &:hover {
           color: $primary-dark;
         }
       }
-    }
-
-    .MetricLabel {
-      padding: 12px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      color: #555;
-      border: 1px solid $border-faint;
-      background: #fafafa;
-      white-space: nowrap;
     }
 
     .Cell {
@@ -1844,10 +1923,6 @@ $danger-fg: #c62828;
         text-align: center;
       }
 
-      &--translate {
-        padding: 8px 12px;
-      }
-
       .MissingIcon {
         color: $danger-fg;
         display: flex;
@@ -1857,20 +1932,17 @@ $danger-fg: #c62828;
 
       .Inner {
         display: flex;
-        align-items: center;
-        gap: 10px;
+        flex-direction: column;
+        gap: 6px;
 
         .Value {
           font-size: 13px;
           font-weight: 500;
           color: #333;
-          min-width: 64px;
-          text-align: right;
         }
 
         .Track {
-          flex: 1;
-          height: 16px;
+          height: 14px;
           background: #f0f0f0;
           border-radius: 2px;
 

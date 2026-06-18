@@ -3,9 +3,11 @@ import { useQueries } from "@tanstack/react-query";
 import { BsInfoCircle } from "react-icons/bs";
 import { FiEdit2 } from "react-icons/fi";
 import { IoCloseCircle } from "react-icons/io5";
+import { MdDragIndicator } from "react-icons/md";
 import Spinner from "./spinner.component";
 import usePagination from "../hooks/usePagination";
 import { LANGUAGE_LABELS, getTranslateUrl } from "../utils/language-links";
+import { reorder, useLanguageOrder } from "../utils/language-order";
 import { makeSqrtAreaScale } from "../utils/bubble-chart-utils";
 import BubbleCell from "./bubble-cell.component";
 import TopicService from "../services/topic.service";
@@ -192,6 +194,10 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
 
   const sourceLang = wiki?.language ?? "en";
 
+  const [orderedLanguages, setOrderedLanguages] = useLanguageOrder(languages);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
   const scaleSource = allArticles ?? articles;
 
   const radiusScales = useMemo<RadiusScales>(() => {
@@ -221,7 +227,11 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
     queries: currentPageData.map((row, i) => ({
       queryKey: ["langComparison", topicId, row.article],
       queryFn: ({ signal }) =>
-        TopicService.getArticleLanguageComparison(topicId!, row.article, signal),
+        TopicService.getArticleLanguageComparison(
+          topicId!,
+          row.article,
+          signal,
+        ),
       enabled: !!topicId && !loading && i <= unlockedIdx,
       staleTime: LANG_DATA_STALE_MS,
       gcTime: LANG_DATA_STALE_MS,
@@ -281,10 +291,7 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
         </div>
         {progress && progress.total > 0 && (
           <div className="Progress">
-            <div
-              className="Bar"
-              style={{ width: `${pct}%` }}
-            />
+            <div className="Bar" style={{ width: `${pct}%` }} />
           </div>
         )}
       </div>
@@ -297,9 +304,7 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
 
   if (articles.length === 0) {
     return (
-      <div className="Grid--empty">
-        No articles match the current filters.
-      </div>
+      <div className="Grid--empty">No articles match the current filters.</div>
     );
   }
 
@@ -316,9 +321,38 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
                 </span>
               </div>
             </th>
-            {languages.map((lang) => (
-              <th key={lang} className="HeaderLang">
-                {LANGUAGE_LABELS[lang] ?? lang} version
+            {orderedLanguages.map((lang, i) => (
+              <th
+                key={lang}
+                className={`HeaderLang${
+                  dragOverIndex === i ? " HeaderLang--dragover" : ""
+                }${dragIndex === i ? " HeaderLang--dragging" : ""}`}
+                draggable
+                onDragStart={() => setDragIndex(i)}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (dragOverIndex !== i) setDragOverIndex(i);
+                }}
+                onDrop={() => {
+                  if (dragIndex !== null && dragIndex !== i) {
+                    setOrderedLanguages(reorder(orderedLanguages, dragIndex, i));
+                  }
+                  setDragIndex(null);
+                  setDragOverIndex(null);
+                }}
+                onDragEnd={() => {
+                  setDragIndex(null);
+                  setDragOverIndex(null);
+                }}
+              >
+                <div className="HeaderLang-inner">
+                  <MdDragIndicator
+                    className="DragHandle"
+                    size={35}
+                    aria-hidden="true"
+                  />
+                  <span>{LANGUAGE_LABELS[lang] ?? lang} version</span>
+                </div>
               </th>
             ))}
           </tr>
@@ -344,7 +378,7 @@ const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
                 >
                   {row.article}
                 </td>
-                {languages.map((lang) => (
+                {orderedLanguages.map((lang) => (
                   <LanguageCell
                     key={lang}
                     articleTitle={row.article}
