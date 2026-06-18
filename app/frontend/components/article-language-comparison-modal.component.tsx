@@ -148,10 +148,7 @@ function ArticleLanguageComparisonModal({
                         setDragOverIndex(null);
                       }}
                     >
-                      <th
-                        scope="row"
-                        className={`LangHeader${!entry ? " LangHeader--missing" : ""}`}
-                      >
+                      <th scope="row" className="LangHeader">
                         <div className="LangHeader-inner">
                           <MdDragIndicator
                             className="DragHandle"

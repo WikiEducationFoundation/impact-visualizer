@@ -1829,7 +1829,7 @@ $danger-fg: #c62828;
     table-layout: fixed;
 
     .CornerHeader {
-      width: 200px;
+      width: 300px;
       background: white;
       border: 1px solid $border-faint;
     }
@@ -1871,8 +1871,8 @@ $danger-fg: #c62828;
     }
 
     .LangHeader {
-      width: 200px;
-      padding: 12px 16px;
+      width: 300px;
+      padding: 14px 16px;
       font-size: 13px;
       font-weight: 600;
       color: $text-strong;
@@ -1881,25 +1881,17 @@ $danger-fg: #c62828;
       border: 1px solid $border-faint;
       user-select: none;
 
-      &--missing {
-        background: $danger-bg;
-        color: $danger-fg;
-      }
-
       &-inner {
         display: flex;
         align-items: center;
         gap: 8px;
+        white-space: nowrap;
       }
 
       .DragHandle {
         color: lightgrey;
         cursor: grab;
         flex-shrink: 0;
-      }
-
-      .LangName {
-        margin-right: auto;
       }
 
       .Link {
@@ -1932,16 +1924,20 @@ $danger-fg: #c62828;
 
       .Inner {
         display: flex;
-        flex-direction: column;
-        gap: 6px;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
 
         .Value {
           font-size: 13px;
           font-weight: 500;
           color: #333;
+          flex-shrink: 0;
+          text-align: right;
         }
 
         .Track {
+          flex: 1;
           height: 14px;
           background: #f0f0f0;
           border-radius: 2px;
@@ -1960,6 +1956,7 @@ $danger-fg: #c62828;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
     padding: 6px 12px;
     background: #e0f2f1;
     border: 1px solid #80cbc4;
