@@ -723,12 +723,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     setCommittedYAxisMaxInput("");
   }, [yAxisKey]);
 
-  useEffect(() => {
-    if (xAxisKey === "title") {
-      setXAxisMode("ranked");
-    }
-  }, [xAxisKey]);
-
   sortedRowsRef.current = sortedRows;
   const hasData = sortedRows.length > 0;
   const isLargeDatasetBucket = sortedRows.length > LARGE_DATASET_THRESHOLD;
@@ -813,7 +807,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
     // Edge padding so the first/last bubble isn't clipped (the pan clamp
     // otherwise pins the domain flush to the data).
-    xEncoding.scale = { ...(xEncoding.scale || {}), padding: MAX_CIRCLE_RADIUS };
+    xEncoding.scale = {
+      ...(xEncoding.scale || {}),
+      padding: MAX_CIRCLE_RADIUS,
+    };
 
     const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
     const yFilterExprParts: string[] = [];
@@ -1638,7 +1635,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                   id="wiki-bubble-sort"
                   className="SortSelect"
                   value={xAxisKey}
-                  onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
+                  onChange={(e) => {
+                    const key = e.target.value as XAxisKey;
+                    setXAxisKey(key);
+                    setXAxisMode(key === "title" ? "ranked" : "scaled");
+                  }}
                 >
                   <option value="title">Article title (A-Z)</option>
                   <option value="publication_date">
