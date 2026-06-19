@@ -18,6 +18,7 @@ import {
   BsEye,
   BsEyeSlash,
 } from "react-icons/bs";
+import { MdLegendToggle } from "react-icons/md";
 import {
   FaArrowRight,
   FaArrowUp,
@@ -32,6 +33,7 @@ import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
 import ArticleLanguagesGrid from "./article-languages-grid.component";
 import ArticleLanguageComparisonModal from "./article-language-comparison-modal.component";
 import GlossaryModal from "./glossary-modal.component";
+import LegendModal from "./legend-modal.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
@@ -484,6 +486,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     null,
   );
   const [glossaryOpen, setGlossaryOpen] = useState<boolean>(false);
+  const [legendOpen, setLegendOpen] = useState<boolean>(false);
   const [showLabels, setShowLabels] = useState<boolean>(
     initialState.showLabels,
   );
@@ -1580,6 +1583,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         <button
           type="button"
           className="GlossaryBtn"
+          onClick={() => setLegendOpen(true)}
+        >
+          <MdLegendToggle size={14} />
+          <span>Legend</span>
+        </button>
+        <button
+          type="button"
+          className="GlossaryBtn"
           onClick={() => setGlossaryOpen(true)}
         >
           <BsBook size={14} />
@@ -1898,16 +1909,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="Legend">
-          <div className="Text">
-            * Quality assessment is done by the Wikipedia community and it may
-            be inconsistent
-          </div>
-          <div className="Box">
-            <div className="Title">Legend</div>
-            <img src="/images/legend.png" />
-          </div>
+        <div className="Footnote">
+          * Quality assessment is done by the Wikipedia community and it may be
+          inconsistent
         </div>
       </div>
 
@@ -1999,6 +2003,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       )}
 
       {glossaryOpen && <GlossaryModal onClose={() => setGlossaryOpen(false)} />}
+
+      {legendOpen && <LegendModal onClose={() => setLegendOpen(false)} />}
     </div>
   );
 };
