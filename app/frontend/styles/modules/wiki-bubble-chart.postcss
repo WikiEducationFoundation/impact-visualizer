@@ -21,25 +21,6 @@ $danger-fg: #c62828;
   border: 1px solid $border-light;
   width: 100%;
 
-  .QualityFilters {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1px;
-    background: $border-grey;
-    border-top: 1px solid $border-grey;
-    align-items: stretch;
-
-    @media (min-width: 768px) {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    &.has-tags {
-      @media (min-width: 768px) {
-        grid-template-columns: 1fr 2fr 1fr;
-      }
-    }
-  }
-
   .AdvancedToggle {
     margin-left: auto;
     display: flex;
@@ -126,6 +107,10 @@ $danger-fg: #c62828;
 
     @media (min-width: 768px) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    &.AxisControls--horizontalOnly {
+      grid-template-columns: 1fr;
     }
   }
 

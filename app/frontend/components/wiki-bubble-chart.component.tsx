@@ -15,16 +15,9 @@ import {
   BsImage,
   BsLink45Deg,
   BsCheck2,
-  BsEye,
-  BsEyeSlash,
 } from "react-icons/bs";
 import { MdLegendToggle } from "react-icons/md";
-import {
-  FaArrowRight,
-  FaArrowUp,
-  FaChevronUp,
-  FaChevronDown,
-} from "react-icons/fa6";
+import { FaChevronUp, FaChevronDown } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import WikitextButton from "./wikitext-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
@@ -34,6 +27,8 @@ import ArticleLanguagesGrid from "./article-languages-grid.component";
 import ArticleLanguageComparisonModal from "./article-language-comparison-modal.component";
 import GlossaryModal from "./glossary-modal.component";
 import LegendModal from "./legend-modal.component";
+import AdvancedFilterPanel from "./advanced-filter-panel.component";
+import AxisControls from "./axis-controls.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
@@ -57,6 +52,8 @@ import {
   encodeChartState,
   DEFAULT_CHART_UI_STATE,
   GRADE_KEYS,
+  CENTRALITY_MIN,
+  CENTRALITY_MAX,
 } from "../utils/bubble-chart-permalink";
 
 type Wiki = {
@@ -76,8 +73,6 @@ interface WikiBubbleChartProps {
 
 const HEIGHT = 650;
 const LARGE_DATASET_THRESHOLD = 10000;
-const CENTRALITY_MIN = 1;
-const CENTRALITY_MAX = 10;
 
 // Largest bubble radius (Vega derives radius from area; max size range is 1500).
 const MAX_CIRCLE_RADIUS = Math.sqrt(1500 / Math.PI);
@@ -151,248 +146,6 @@ const patchChartScales = (vgSpec: any) => {
   }
   return vgSpec;
 };
-
-const gradeGroups = [
-  { id: "fa", label: "Featured", grades: ["FA", "FL"], dot: "#9CBDFF" },
-  { id: "ga", label: "GA", grades: ["GA"], dot: "#66FF66" },
-  { id: "aclass", label: "A-Class", grades: ["A"], dot: "#66FFFF" },
-  { id: "bclass", label: "B-Class", grades: ["B"], dot: "#B2FF66" },
-  { id: "cclass", label: "C-Class", grades: ["C"], dot: "#FFFF66" },
-  { id: "start", label: "Start", grades: ["Start"], dot: "#FFAA66" },
-  { id: "stub", label: "Stub", grades: ["Stub"], dot: "#FFA4A4" },
-  { id: "list", label: "List", grades: ["List"], dot: "#C7B1FF" },
-  {
-    id: "unassessed",
-    label: "Unassessed",
-    grades: ["Unassessed"],
-    dot: "#9E9E9E",
-  },
-];
-
-function QualityFilterButtons({
-  onToggle,
-  selected,
-  onReset,
-}: {
-  onToggle: (grades: string[], on: boolean) => void;
-  selected: Record<string, boolean>;
-  onReset: () => void;
-}) {
-  return (
-    <div className="QualityAssessment">
-      <div className="FilterHead">
-        <div className="BoxTitle">Filter by quality assessment*</div>
-        <button type="button" className="ResetLink" onClick={onReset}>
-          Reset all
-        </button>
-      </div>
-      <div className="FilterList">
-        {gradeGroups.map((g) => {
-          const isOn = g.grades.every((x) => selected[x] !== false);
-          return (
-            <button
-              key={g.id}
-              type="button"
-              className={`FilterRow ${isOn ? "is-on" : "is-off"}`}
-              data-group={g.id}
-              aria-pressed={isOn}
-              onClick={() => onToggle(g.grades, !isOn)}
-            >
-              {isOn ? (
-                <BsEye className="EyeIcon" />
-              ) : (
-                <BsEyeSlash className="EyeIcon" />
-              )}
-              <span className="Dot" style={{ backgroundColor: g.dot }} />
-              <span className="Label">{g.label}</span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function TagFilterButtons({
-  tags,
-  deselected,
-  includeUntagged,
-  onToggle,
-  onIncludeUntaggedChange,
-  onReset,
-}: {
-  tags: string[];
-  deselected: Set<string>;
-  includeUntagged: boolean;
-  onToggle: (tag: string, on: boolean) => void;
-  onIncludeUntaggedChange: (checked: boolean) => void;
-  onReset: () => void;
-}) {
-  return (
-    <div className="TagFilter">
-      <div className="FilterHead">
-        <div className="BoxTitle">Filter by tags</div>
-        <label className="Checkbox">
-          <input
-            type="checkbox"
-            checked={includeUntagged}
-            onChange={(e) => onIncludeUntaggedChange(e.target.checked)}
-            aria-label="Include untagged articles"
-          />
-          <span>include untagged</span>
-        </label>
-        <button type="button" className="ResetLink" onClick={onReset}>
-          Reset all
-        </button>
-      </div>
-      <div className="FilterList">
-        {tags.map((tag) => {
-          const isOn = !deselected.has(tag);
-          return (
-            <button
-              key={tag}
-              type="button"
-              className={`FilterRow ${isOn ? "is-on" : "is-off"}`}
-              aria-pressed={isOn}
-              onClick={() => onToggle(tag, !isOn)}
-            >
-              {isOn ? (
-                <BsEye className="EyeIcon" />
-              ) : (
-                <BsEyeSlash className="EyeIcon" />
-              )}
-              <span className="Label">{tag}</span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function ProtectionFilterCheckboxes({
-  moveChecked,
-  editChecked,
-  onMoveChange,
-  onEditChange,
-  onReset,
-}: {
-  moveChecked: boolean;
-  editChecked: boolean;
-  onMoveChange: (checked: boolean) => void;
-  onEditChange: (checked: boolean) => void;
-  onReset: () => void;
-}) {
-  const rows = [
-    { label: "Move restriction", checked: moveChecked, onChange: onMoveChange },
-    { label: "Edit restriction", checked: editChecked, onChange: onEditChange },
-  ];
-  return (
-    <div className="ProtectionFilter">
-      <div className="FilterHead">
-        <div className="BoxTitle">Filter by article protection</div>
-        <button type="button" className="ResetLink" onClick={onReset}>
-          Reset
-        </button>
-      </div>
-      <div className="FilterList">
-        {rows.map((row) => (
-          <button
-            key={row.label}
-            type="button"
-            className={`FilterRow ${row.checked ? "is-on" : "is-off"}`}
-            aria-pressed={row.checked}
-            onClick={() => row.onChange(!row.checked)}
-          >
-            {row.checked ? (
-              <BsEye className="EyeIcon" />
-            ) : (
-              <BsEyeSlash className="EyeIcon" />
-            )}
-            <span className="Label">{row.label}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function CentralityFilter({
-  min,
-  max,
-  includeUnassessed,
-  onMinChange,
-  onMaxChange,
-  onIncludeUnassessedChange,
-  onReset,
-}: {
-  min: number;
-  max: number;
-  includeUnassessed: boolean;
-  onMinChange: (value: number) => void;
-  onMaxChange: (value: number) => void;
-  onIncludeUnassessedChange: (checked: boolean) => void;
-  onReset: () => void;
-}) {
-  const minPercent =
-    ((min - CENTRALITY_MIN) / (CENTRALITY_MAX - CENTRALITY_MIN)) * 100;
-  const maxPercent =
-    ((max - CENTRALITY_MIN) / (CENTRALITY_MAX - CENTRALITY_MIN)) * 100;
-
-  return (
-    <div className="CentralityFilter">
-      <div className="FilterHead">
-        <div className="BoxTitle">Filter by centrality</div>
-        <label className="Checkbox">
-          <input
-            type="checkbox"
-            checked={includeUnassessed}
-            onChange={(e) => onIncludeUnassessedChange(e.target.checked)}
-            aria-label="Include articles with no centrality"
-          />
-          <span>include articles without centrality</span>
-        </label>
-        <button type="button" className="ResetLink" onClick={onReset}>
-          Reset
-        </button>
-      </div>
-      <div className="Value">
-        {min}-{max}
-      </div>
-      <div className="Slider">
-        <div className="Track" />
-        <div
-          className="Range"
-          style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
-        />
-        <input
-          type="range"
-          min={CENTRALITY_MIN}
-          max={CENTRALITY_MAX}
-          step={1}
-          value={min}
-          onChange={(e) => onMinChange(Number(e.target.value))}
-          aria-label="Minimum centrality"
-          className="Input Input--min"
-        />
-        <input
-          type="range"
-          min={CENTRALITY_MIN}
-          max={CENTRALITY_MAX}
-          step={1}
-          value={max}
-          onChange={(e) => onMaxChange(Number(e.target.value))}
-          aria-label="Maximum centrality"
-          className="Input Input--max"
-        />
-      </div>
-      <div className="Bounds">
-        <span>{CENTRALITY_MIN} (min)</span>
-        <span>{CENTRALITY_MAX} (max)</span>
-      </div>
-    </div>
-  );
-}
 
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
@@ -1424,6 +1177,46 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     handleEditRestrictionChange(false);
   };
 
+  const advancedFilterProps = {
+    tags: availableTags,
+    deselectedTags,
+    includeUntagged,
+    onToggleTag: toggleTag,
+    onIncludeUntaggedChange: handleIncludeUntaggedChange,
+    onResetTags: resetTags,
+    centralityMin,
+    centralityMax,
+    includeNoCentrality,
+    onCentralityMinChange: handleCentralityMinChange,
+    onCentralityMaxChange: handleCentralityMaxChange,
+    onIncludeNoCentralityChange: handleIncludeNoCentralityChange,
+    onResetCentrality: resetCentrality,
+    selectedGrades,
+    onToggleGrades: toggleGrades,
+    onResetGrades: resetGrades,
+    moveRestriction: filterMoveRestriction,
+    editRestriction: filterEditRestriction,
+    onMoveRestrictionChange: handleMoveRestrictionChange,
+    onEditRestrictionChange: handleEditRestrictionChange,
+    onResetProtection: resetProtection,
+  };
+
+  const axisControlProps = {
+    yAxisKey,
+    onYAxisKeyChange: setYAxisKey,
+    yAxisScaleType,
+    onYAxisScaleTypeChange: setYAxisScaleType,
+    yAxisMinInput,
+    onYAxisMinInputChange: setYAxisMinInput,
+    yAxisMaxInput,
+    onYAxisMaxInputChange: setYAxisMaxInput,
+    yAxisAutoDomain,
+    xAxisKey,
+    onXAxisKeyChange: setXAxisKey,
+    xAxisMode,
+    onXAxisModeChange: setXAxisMode,
+  };
+
   const handleShowLabelsChange = (checked: boolean) => {
     setShowLabels(checked);
   };
@@ -1613,220 +1406,26 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         >
           Languages
         </button>
-        {activeTab === "overview" && (
-          <button
-            type="button"
-            className="AdvancedToggle"
-            aria-expanded={advancedOpen}
-            onClick={() => setAdvancedOpen((open) => !open)}
-          >
-            <span className="AdvancedToggleLabel">Advanced Filters</span>
-            {advancedOpen ? (
-              <FaChevronUp size={14} />
-            ) : (
-              <FaChevronDown size={14} />
-            )}
-          </button>
-        )}
+        <button
+          type="button"
+          className="AdvancedToggle"
+          aria-expanded={advancedOpen}
+          onClick={() => setAdvancedOpen((open) => !open)}
+        >
+          <span className="AdvancedToggleLabel">Advanced Filters</span>
+          {advancedOpen ? (
+            <FaChevronUp size={14} />
+          ) : (
+            <FaChevronDown size={14} />
+          )}
+        </button>
       </div>
 
       <div className="TabPanel" hidden={activeTab !== "overview"}>
-        <div className="AxisControls">
-          <div className="FilterBox">
-            <div className="AxisControl">
-              <FaArrowUp size={30} className="AxisIcon" />
-              <div className="AxisFields">
-                <div className="AxisLabelRow">
-                  <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
-                    Vertical axis
-                  </label>
-                  <div className="ScaleToggle">
-                    <button
-                      type="button"
-                      className={`ScaleBtn ${yAxisScaleType === "linear" ? "is-active" : ""}`}
-                      onClick={() => setYAxisScaleType("linear")}
-                    >
-                      Linear
-                    </button>
-                    <button
-                      type="button"
-                      className={`ScaleBtn ${yAxisScaleType === "log" ? "is-active" : ""}`}
-                      onClick={() => setYAxisScaleType("log")}
-                    >
-                      Log
-                    </button>
-                  </div>
-                </div>
-                <select
-                  id="wiki-bubble-y-axis"
-                  className="SortSelect"
-                  value={yAxisKey}
-                  onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
-                >
-                  <option value="average_daily_views">Avg daily views</option>
-                  <option value="number_of_editors">Editors</option>
-                  <option value="incoming_links_count">Incoming links</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="FilterBox">
-            <div className="BoxTitle">Y-axis range</div>
-            <div className="RangeRow">
-              <label className="RangeField">
-                <span className="RangeLabel">min</span>
-                <input
-                  className="RangeInput"
-                  type="number"
-                  inputMode="numeric"
-                  placeholder={
-                    yAxisAutoDomain.min === null
-                      ? ""
-                      : String(yAxisAutoDomain.min)
-                  }
-                  value={yAxisMinInput}
-                  onChange={(e) => setYAxisMinInput(e.target.value)}
-                  aria-label="Y-axis minimum"
-                />
-              </label>
-              <label className="RangeField">
-                <span className="RangeLabel">max</span>
-                <input
-                  className="RangeInput"
-                  type="number"
-                  inputMode="numeric"
-                  placeholder={
-                    yAxisAutoDomain.max === null
-                      ? ""
-                      : String(yAxisAutoDomain.max)
-                  }
-                  value={yAxisMaxInput}
-                  onChange={(e) => setYAxisMaxInput(e.target.value)}
-                  aria-label="Y-axis maximum"
-                />
-              </label>
-            </div>
-          </div>
-
-          <div className="FilterBox">
-            <div className="AxisControl">
-              <FaArrowRight size={30} className="AxisIcon" />
-              <div className="AxisFields">
-                <div className="AxisLabelRow">
-                  <label htmlFor="wiki-bubble-sort" className="BoxTitle">
-                    Horizontal axis
-                  </label>
-                  <div className="ScaleToggle">
-                    <button
-                      type="button"
-                      className={`ScaleBtn ${xAxisMode === "ranked" ? "is-active" : ""}`}
-                      onClick={() => setXAxisMode("ranked")}
-                    >
-                      Ranked
-                    </button>
-                    <button
-                      type="button"
-                      className={`ScaleBtn ${xAxisMode === "scaled" ? "is-active" : ""}`}
-                      onClick={() =>
-                        xAxisKey !== "title" && setXAxisMode("scaled")
-                      }
-                      disabled={xAxisKey === "title"}
-                      title={
-                        xAxisKey === "title"
-                          ? "Not available for article title"
-                          : undefined
-                      }
-                    >
-                      Scaled
-                    </button>
-                  </div>
-                </div>
-                <select
-                  id="wiki-bubble-sort"
-                  className="SortSelect"
-                  value={xAxisKey}
-                  onChange={(e) => {
-                    const key = e.target.value as XAxisKey;
-                    setXAxisKey(key);
-                    setXAxisMode(key === "title" ? "ranked" : "scaled");
-                  }}
-                >
-                  <option value="title">Article title (A-Z)</option>
-                  <option value="publication_date">
-                    Creation date (Old-New)
-                  </option>
-                  <option value="linguistic_versions_count">
-                    Linguistic versions (Low-High)
-                  </option>
-                  <option value="article_size">
-                    Article size (Small-Large)
-                  </option>
-                  <option value="lead_section_size">
-                    Lead section size (Small-Large)
-                  </option>
-                  <option value="talk_size">
-                    Discussion page size (Small-Large)
-                  </option>
-                  <option value="warning_tags_count">
-                    Warning tags (Low-High)
-                  </option>
-                  <option value="images_count">Images (Low-High)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AxisControls idPrefix="overview" {...axisControlProps} />
 
         <div className="AdvancedFilters">
-          {advancedOpen && (
-            <div
-              className={`AdvancedPanel ${availableTags.length ? "has-tags" : ""}`}
-            >
-              {availableTags.length > 0 && (
-                <div className="FilterBox FilterBox--tags">
-                  <TagFilterButtons
-                    tags={availableTags}
-                    deselected={deselectedTags}
-                    includeUntagged={includeUntagged}
-                    onToggle={toggleTag}
-                    onIncludeUntaggedChange={handleIncludeUntaggedChange}
-                    onReset={resetTags}
-                  />
-                </div>
-              )}
-
-              <div className="FilterBox">
-                <CentralityFilter
-                  min={centralityMin}
-                  max={centralityMax}
-                  includeUnassessed={includeNoCentrality}
-                  onMinChange={handleCentralityMinChange}
-                  onMaxChange={handleCentralityMaxChange}
-                  onIncludeUnassessedChange={handleIncludeNoCentralityChange}
-                  onReset={resetCentrality}
-                />
-              </div>
-
-              <div className="FilterBox FilterBox--quality">
-                <QualityFilterButtons
-                  onToggle={toggleGrades}
-                  selected={selectedGrades}
-                  onReset={resetGrades}
-                />
-              </div>
-
-              <div className="FilterBox">
-                <ProtectionFilterCheckboxes
-                  moveChecked={filterMoveRestriction}
-                  editChecked={filterEditRestriction}
-                  onMoveChange={handleMoveRestrictionChange}
-                  onEditChange={handleEditRestrictionChange}
-                  onReset={resetProtection}
-                />
-              </div>
-            </div>
-          )}
+          {advancedOpen && <AdvancedFilterPanel {...advancedFilterProps} />}
         </div>
 
         <div className="Heading">
@@ -1916,37 +1515,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       </div>
 
       <div className="TabPanel" hidden={activeTab !== "languages"}>
-        <div
-          className={`QualityFilters ${availableTags.length ? "has-tags" : ""}`}
-        >
-          {availableTags.length > 0 && (
-            <div className="FilterBox FilterBox--tags">
-              <TagFilterButtons
-                tags={availableTags}
-                deselected={deselectedTags}
-                includeUntagged={includeUntagged}
-                onToggle={toggleTag}
-                onIncludeUntaggedChange={handleIncludeUntaggedChange}
-                onReset={resetTags}
-              />
-            </div>
-          )}
-          <div className="FilterBox">
-            <QualityFilterButtons
-              onToggle={toggleGrades}
-              selected={selectedGrades}
-              onReset={resetGrades}
-            />
-          </div>
-          <div className="FilterBox">
-            <ProtectionFilterCheckboxes
-              moveChecked={filterMoveRestriction}
-              editChecked={filterEditRestriction}
-              onMoveChange={handleMoveRestrictionChange}
-              onEditChange={handleEditRestrictionChange}
-              onReset={resetProtection}
-            />
-          </div>
+        <AxisControls idPrefix="languages" hideYAxis {...axisControlProps} />
+
+        <div className="AdvancedFilters">
+          {advancedOpen && <AdvancedFilterPanel {...advancedFilterProps} />}
         </div>
 
         <div className="ArticleLang">
