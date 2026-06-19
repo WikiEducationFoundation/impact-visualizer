@@ -15,8 +15,15 @@ import {
   BsImage,
   BsLink45Deg,
   BsCheck2,
+  BsEye,
+  BsEyeSlash,
 } from "react-icons/bs";
-import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
+import {
+  FaArrowRight,
+  FaArrowUp,
+  FaChevronUp,
+  FaChevronDown,
+} from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import WikitextButton from "./wikitext-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
@@ -46,6 +53,8 @@ import { exportChartImage } from "../utils/chart-image-export";
 import {
   decodeChartState,
   encodeChartState,
+  DEFAULT_CHART_UI_STATE,
+  GRADE_KEYS,
 } from "../utils/bubble-chart-permalink";
 
 type Wiki = {
@@ -161,24 +170,37 @@ const gradeGroups = [
 function QualityFilterButtons({
   onToggle,
   selected,
+  onReset,
 }: {
   onToggle: (grades: string[], on: boolean) => void;
   selected: Record<string, boolean>;
+  onReset: () => void;
 }) {
   return (
     <div className="QualityAssessment">
-      <div className="BoxTitle">Quality assessment*</div>
-      <div className="Grid">
+      <div className="FilterHead">
+        <div className="BoxTitle">Filter by quality assessment*</div>
+        <button type="button" className="ResetLink" onClick={onReset}>
+          Reset all
+        </button>
+      </div>
+      <div className="FilterList">
         {gradeGroups.map((g) => {
           const isOn = g.grades.every((x) => selected[x] !== false);
           return (
             <button
               key={g.id}
               type="button"
-              className={`Btn ${isOn ? "is-selected" : ""}`}
+              className={`FilterRow ${isOn ? "is-on" : "is-off"}`}
               data-group={g.id}
+              aria-pressed={isOn}
               onClick={() => onToggle(g.grades, !isOn)}
             >
+              {isOn ? (
+                <BsEye className="EyeIcon" />
+              ) : (
+                <BsEyeSlash className="EyeIcon" />
+              )}
               <span className="Dot" style={{ backgroundColor: g.dot }} />
               <span className="Label">{g.label}</span>
             </button>
@@ -194,21 +216,20 @@ function TagFilterButtons({
   deselected,
   includeUntagged,
   onToggle,
-  onToggleAll,
   onIncludeUntaggedChange,
+  onReset,
 }: {
   tags: string[];
   deselected: Set<string>;
   includeUntagged: boolean;
   onToggle: (tag: string, on: boolean) => void;
-  onToggleAll: (on: boolean) => void;
   onIncludeUntaggedChange: (checked: boolean) => void;
+  onReset: () => void;
 }) {
-  const allSelected = deselected.size === 0;
   return (
     <div className="TagFilter">
-      <div className="TagFilterHead">
-        <div className="BoxTitle">Tags</div>
+      <div className="FilterHead">
+        <div className="BoxTitle">Filter by tags</div>
         <label className="Checkbox">
           <input
             type="checkbox"
@@ -216,26 +237,28 @@ function TagFilterButtons({
             onChange={(e) => onIncludeUntaggedChange(e.target.checked)}
             aria-label="Include untagged articles"
           />
-          <span>include untagged articles</span>
+          <span>include untagged</span>
         </label>
-        <button
-          type="button"
-          className="ToggleAll"
-          onClick={() => onToggleAll(!allSelected)}
-        >
-          {allSelected ? "Deselect all" : "Select all"}
+        <button type="button" className="ResetLink" onClick={onReset}>
+          Reset all
         </button>
       </div>
-      <div className="Grid">
+      <div className="FilterList">
         {tags.map((tag) => {
           const isOn = !deselected.has(tag);
           return (
             <button
               key={tag}
               type="button"
-              className={`Btn ${isOn ? "is-selected" : ""}`}
+              className={`FilterRow ${isOn ? "is-on" : "is-off"}`}
+              aria-pressed={isOn}
               onClick={() => onToggle(tag, !isOn)}
             >
+              {isOn ? (
+                <BsEye className="EyeIcon" />
+              ) : (
+                <BsEyeSlash className="EyeIcon" />
+              )}
               <span className="Label">{tag}</span>
             </button>
           );
@@ -250,32 +273,43 @@ function ProtectionFilterCheckboxes({
   editChecked,
   onMoveChange,
   onEditChange,
+  onReset,
 }: {
   moveChecked: boolean;
   editChecked: boolean;
   onMoveChange: (checked: boolean) => void;
   onEditChange: (checked: boolean) => void;
+  onReset: () => void;
 }) {
+  const rows = [
+    { label: "Move restriction", checked: moveChecked, onChange: onMoveChange },
+    { label: "Edit restriction", checked: editChecked, onChange: onEditChange },
+  ];
   return (
     <div className="ProtectionFilter">
-      <div className="BoxTitle">Protection filter</div>
-      <div className="Checkboxes">
-        <label className="Label">
-          <input
-            type="checkbox"
-            checked={moveChecked}
-            onChange={(e) => onMoveChange(e.target.checked)}
-          />
-          <span>Move restriction</span>
-        </label>
-        <label className="Label">
-          <input
-            type="checkbox"
-            checked={editChecked}
-            onChange={(e) => onEditChange(e.target.checked)}
-          />
-          <span>Edit restriction</span>
-        </label>
+      <div className="FilterHead">
+        <div className="BoxTitle">Filter by article protection</div>
+        <button type="button" className="ResetLink" onClick={onReset}>
+          Reset
+        </button>
+      </div>
+      <div className="FilterList">
+        {rows.map((row) => (
+          <button
+            key={row.label}
+            type="button"
+            className={`FilterRow ${row.checked ? "is-on" : "is-off"}`}
+            aria-pressed={row.checked}
+            onClick={() => row.onChange(!row.checked)}
+          >
+            {row.checked ? (
+              <BsEye className="EyeIcon" />
+            ) : (
+              <BsEyeSlash className="EyeIcon" />
+            )}
+            <span className="Label">{row.label}</span>
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -288,6 +322,7 @@ function CentralityFilter({
   onMinChange,
   onMaxChange,
   onIncludeUnassessedChange,
+  onReset,
 }: {
   min: number;
   max: number;
@@ -295,6 +330,7 @@ function CentralityFilter({
   onMinChange: (value: number) => void;
   onMaxChange: (value: number) => void;
   onIncludeUnassessedChange: (checked: boolean) => void;
+  onReset: () => void;
 }) {
   const minPercent =
     ((min - CENTRALITY_MIN) / (CENTRALITY_MAX - CENTRALITY_MIN)) * 100;
@@ -303,8 +339,8 @@ function CentralityFilter({
 
   return (
     <div className="CentralityFilter">
-      <div className="Header">
-        <div className="BoxTitle">Centrality</div>
+      <div className="FilterHead">
+        <div className="BoxTitle">Filter by centrality</div>
         <label className="Checkbox">
           <input
             type="checkbox"
@@ -314,9 +350,12 @@ function CentralityFilter({
           />
           <span>include articles without centrality</span>
         </label>
-        <div className="Value">
-          {min}-{max}
-        </div>
+        <button type="button" className="ResetLink" onClick={onReset}>
+          Reset
+        </button>
+      </div>
+      <div className="Value">
+        {min}-{max}
       </div>
       <div className="Slider">
         <div className="Track" />
@@ -346,8 +385,8 @@ function CentralityFilter({
         />
       </div>
       <div className="Bounds">
-        <span>{CENTRALITY_MIN}</span>
-        <span>{CENTRALITY_MAX}</span>
+        <span>{CENTRALITY_MIN} (min)</span>
+        <span>{CENTRALITY_MAX} (max)</span>
       </div>
     </div>
   );
@@ -420,6 +459,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [includeNoCentrality, setIncludeNoCentrality] = useState<boolean>(
     initialState.includeNoCentrality,
   );
+  const [advancedOpen, setAdvancedOpen] = useState<boolean>(() => {
+    const s = initialState;
+    return (
+      s.deselectedTags.length > 0 ||
+      !s.includeUntagged ||
+      s.centralityMin !== DEFAULT_CHART_UI_STATE.centralityMin ||
+      s.centralityMax !== DEFAULT_CHART_UI_STATE.centralityMax ||
+      !s.includeNoCentrality ||
+      s.filterMoveRestriction ||
+      s.filterEditRestriction ||
+      GRADE_KEYS.some((g) => s.selectedGrades[g] === false)
+    );
+  });
   const [searchTerm, setSearchTerm] = useState<string>(initialState.searchTerm);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [selectedArticle, setSelectedArticle] = useState<ArticleRow | null>(
@@ -1348,6 +1400,27 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     startTransition(() => setIncludeNoCentrality(checked));
   };
 
+  const resetTags = () => {
+    toggleAllTags(true);
+    handleIncludeUntaggedChange(true);
+  };
+
+  const resetGrades = () => toggleGrades(GRADE_KEYS, true);
+
+  const resetCentrality = () => {
+    updateCentralitySignals(CENTRALITY_MIN, CENTRALITY_MAX, true);
+    startTransition(() => {
+      setCentralityMin(CENTRALITY_MIN);
+      setCentralityMax(CENTRALITY_MAX);
+      setIncludeNoCentrality(true);
+    });
+  };
+
+  const resetProtection = () => {
+    handleMoveRestrictionChange(false);
+    handleEditRestrictionChange(false);
+  };
+
   const handleShowLabelsChange = (checked: boolean) => {
     setShowLabels(checked);
   };
@@ -1529,6 +1602,21 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         >
           Languages
         </button>
+        {activeTab === "overview" && (
+          <button
+            type="button"
+            className="AdvancedToggle"
+            aria-expanded={advancedOpen}
+            onClick={() => setAdvancedOpen((open) => !open)}
+          >
+            <span className="AdvancedToggleLabel">Advanced Filters</span>
+            {advancedOpen ? (
+              <FaChevronUp size={14} />
+            ) : (
+              <FaChevronDown size={14} />
+            )}
+          </button>
+        )}
       </div>
 
       <div className="TabPanel" hidden={activeTab !== "overview"}>
@@ -1677,17 +1765,57 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="FilterBox">
-            <CentralityFilter
-              min={centralityMin}
-              max={centralityMax}
-              includeUnassessed={includeNoCentrality}
-              onMinChange={handleCentralityMinChange}
-              onMaxChange={handleCentralityMaxChange}
-              onIncludeUnassessedChange={handleIncludeNoCentralityChange}
-            />
-          </div>
+        <div className="AdvancedFilters">
+          {advancedOpen && (
+            <div
+              className={`AdvancedPanel ${availableTags.length ? "has-tags" : ""}`}
+            >
+              {availableTags.length > 0 && (
+                <div className="FilterBox FilterBox--tags">
+                  <TagFilterButtons
+                    tags={availableTags}
+                    deselected={deselectedTags}
+                    includeUntagged={includeUntagged}
+                    onToggle={toggleTag}
+                    onIncludeUntaggedChange={handleIncludeUntaggedChange}
+                    onReset={resetTags}
+                  />
+                </div>
+              )}
+
+              <div className="FilterBox">
+                <CentralityFilter
+                  min={centralityMin}
+                  max={centralityMax}
+                  includeUnassessed={includeNoCentrality}
+                  onMinChange={handleCentralityMinChange}
+                  onMaxChange={handleCentralityMaxChange}
+                  onIncludeUnassessedChange={handleIncludeNoCentralityChange}
+                  onReset={resetCentrality}
+                />
+              </div>
+
+              <div className="FilterBox FilterBox--quality">
+                <QualityFilterButtons
+                  onToggle={toggleGrades}
+                  selected={selectedGrades}
+                  onReset={resetGrades}
+                />
+              </div>
+
+              <div className="FilterBox">
+                <ProtectionFilterCheckboxes
+                  moveChecked={filterMoveRestriction}
+                  editChecked={filterEditRestriction}
+                  onMoveChange={handleMoveRestrictionChange}
+                  onEditChange={handleEditRestrictionChange}
+                  onReset={resetProtection}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="Heading">
@@ -1724,39 +1852,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             onToggleOutlier={handleToggleOutlier}
             onClearOutliers={handleClearOutliers}
           />
-        </div>
-
-        <div
-          className={`QualityFilters ${availableTags.length ? "has-tags" : ""}`}
-        >
-          {availableTags.length > 0 && (
-            <div className="FilterBox FilterBox--tags">
-              <TagFilterButtons
-                tags={availableTags}
-                deselected={deselectedTags}
-                includeUntagged={includeUntagged}
-                onToggle={toggleTag}
-                onToggleAll={toggleAllTags}
-                onIncludeUntaggedChange={handleIncludeUntaggedChange}
-              />
-            </div>
-          )}
-
-          <div className="FilterBox">
-            <QualityFilterButtons
-              onToggle={toggleGrades}
-              selected={selectedGrades}
-            />
-          </div>
-
-          <div className="FilterBox">
-            <ProtectionFilterCheckboxes
-              moveChecked={filterMoveRestriction}
-              editChecked={filterEditRestriction}
-              onMoveChange={handleMoveRestrictionChange}
-              onEditChange={handleEditRestrictionChange}
-            />
-          </div>
         </div>
 
         <div className="Stats">
@@ -1827,8 +1922,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 deselected={deselectedTags}
                 includeUntagged={includeUntagged}
                 onToggle={toggleTag}
-                onToggleAll={toggleAllTags}
                 onIncludeUntaggedChange={handleIncludeUntaggedChange}
+                onReset={resetTags}
               />
             </div>
           )}
@@ -1836,6 +1931,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             <QualityFilterButtons
               onToggle={toggleGrades}
               selected={selectedGrades}
+              onReset={resetGrades}
             />
           </div>
           <div className="FilterBox">
@@ -1844,6 +1940,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               editChecked={filterEditRestriction}
               onMoveChange={handleMoveRestrictionChange}
               onEditChange={handleEditRestrictionChange}
+              onReset={resetProtection}
             />
           </div>
         </div>
