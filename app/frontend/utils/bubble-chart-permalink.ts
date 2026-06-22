@@ -20,8 +20,8 @@ export interface ChartUiState {
   excludedOutliers: string[];
 }
 
-const CENTRALITY_MIN = 1;
-const CENTRALITY_MAX = 10;
+export const CENTRALITY_MIN = 1;
+export const CENTRALITY_MAX = 10;
 
 export const GRADE_KEYS = [
   "FA",

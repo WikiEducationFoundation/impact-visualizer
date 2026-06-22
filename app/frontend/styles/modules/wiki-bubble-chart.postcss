@@ -21,22 +21,79 @@ $danger-fg: #c62828;
   border: 1px solid $border-light;
   width: 100%;
 
-  .QualityFilters {
+  .AdvancedToggle {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-strong;
+
+    &:hover {
+      background: #eeeeee;
+    }
+  }
+
+  .AdvancedPanel {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1px;
     background: $border-grey;
     border-top: 1px solid $border-grey;
+    border-bottom: 1px solid $border-grey;
     align-items: stretch;
 
     @media (min-width: 768px) {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 1200px) {
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 2.2fr) minmax(0, 0.9fr);
     }
 
     &.has-tags {
-      @media (min-width: 768px) {
-        grid-template-columns: 1fr 2fr 1fr;
+      @media (min-width: 1200px) {
+        grid-template-columns:
+          minmax(0, 1.1fr) minmax(0, 1.3fr) minmax(0, 2.2fr)
+          minmax(0, 0.8fr);
       }
+    }
+
+    .TagFilter,
+    .QualityAssessment,
+    .ProtectionFilter {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .FilterBox {
+      min-height: 130px;
+    }
+
+    .FilterList {
+      flex: 1 1 0;
+      min-height: 0;
+      max-height: none;
+    }
+
+    .QualityAssessment .FilterList {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-content: start;
+    }
+
+    .QualityAssessment .FilterRow {
+      flex: 1 1 18%;
+    }
+
+    .FilterBox--tags,
+    .FilterBox--quality {
+      padding-bottom: 0;
     }
   }
 
@@ -49,11 +106,11 @@ $danger-fg: #c62828;
     align-items: stretch;
 
     @media (min-width: 768px) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    @media (min-width: 1024px) {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+    &.AxisControls--horizontalOnly {
+      grid-template-columns: 1fr;
     }
   }
 
@@ -256,6 +313,18 @@ $danger-fg: #c62828;
     .GlossaryBtn {
       margin-left: auto;
     }
+
+    .GlossaryBtn ~ .GlossaryBtn {
+      margin-left: 0;
+    }
+  }
+
+  .Footnote {
+    padding: 8px 12px;
+    border-top: 1px solid $border-grey;
+    font-size: 14px;
+    font-style: italic;
+    color: $text-secondary;
   }
 
   .SearchContainer {
@@ -351,77 +420,9 @@ $danger-fg: #c62828;
     line-height: 1.3;
   }
 
-  .Legend {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 12px;
-    margin-top: 8px;
-    gap: 16px;
-    flex-wrap: wrap;
-    align-items: center;
-    font-size: 0.9rem;
-
-    .Item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .DotArticle,
-    .DotLead,
-    .RingDiscussion,
-    .RingPrevArticle {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-
-    .DotArticle {
-      background-color: rgba(13, 71, 161, 0.5);
-    }
-
-    .DotLead {
-      background-color: #90caf9;
-    }
-
-    .RingDiscussion {
-      border: 2px solid #2196f3;
-      background-color: transparent;
-    }
-
-    .RingPrevArticle {
-      border: 2px dashed #64b5f6;
-      background-color: transparent;
-    }
-
-    .LineChange {
-      display: inline-block;
-      width: 16px;
-      height: 0;
-      border-top: 2px dashed #757575;
-    }
-
-    .Box {
-      border: 1px solid #ccc;
-      padding: 12px 16px;
-    }
-
-    .Title {
-      font-weight: bold;
-      font-size: 14px;
-      margin-bottom: 8px;
-    }
-
-    .Text {
-      font-size: 14px;
-      font-style: italic;
-      align-self: flex-start;
-    }
-  }
-
   .TabBar {
     display: flex;
+    align-items: center;
     border-bottom: 1px solid $border-grey;
   }
 
@@ -454,26 +455,11 @@ $danger-fg: #c62828;
 }
 
 .CentralityFilter {
-  display: grid;
-  grid-template-rows: auto auto;
-  gap: 0;
-  height: 100%;
-
-  .Header {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    gap: 8px;
-    background: none;
-    border-bottom: none;
-
-    .BoxTitle {
-      flex: 0 0 auto;
-    }
-  }
+  display: flex;
+  flex-direction: column;
 
   .Value {
-    margin-left: auto;
+    align-self: flex-end;
     font-size: 13px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
@@ -611,7 +597,7 @@ $danger-fg: #c62828;
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-bottom: 0;
+    margin-bottom: 8px;
     font-size: 12px;
     font-weight: 400;
     line-height: 1.2;
@@ -625,122 +611,128 @@ $danger-fg: #c62828;
   }
 }
 
-.QualityAssessment {
-  .Title {
-    font-weight: 600;
-    margin-bottom: 6px;
-    font-size: 14px;
+.FilterHead {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: 8px;
+
+  .BoxTitle {
+    margin-bottom: 0;
   }
 
-  .Grid {
-    display: grid;
-    grid-template-columns: repeat(20, minmax(0, 1fr));
-    gap: 8px 12px;
-
-    .Btn:nth-child(-n + 5) {
-      grid-column: span 4;
-    }
-
-    .Btn:nth-child(n + 6) {
-      grid-column: span 5;
-    }
+  .Checkbox {
+    margin-bottom: 0;
   }
 
-  .Btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 6px 10px;
-    border: 1px solid $border-grey;
-    border-radius: 6px;
-    background: #fff;
-    cursor: pointer;
-    transition:
-      background-color 120ms ease,
-      border-color 120ms ease,
-      box-shadow 120ms ease;
+  .ResetLink {
+    margin-left: auto;
+  }
+}
 
-    &:hover {
-      border-color: #bdbdbd;
-    }
+.ResetLink {
+  flex: 0 0 auto;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  color: #2a6f6a;
+  cursor: pointer;
+  white-space: nowrap;
 
-    &.is-selected {
-      background-color: #cfe9e7;
-      border-color: #b6deda;
-    }
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.FilterList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 76px;
+  overflow-y: auto;
+}
+
+.FilterRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 10px;
+  border: 1px solid $border-grey;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-size: 13px;
+  color: $text-strong;
+  transition:
+    border-color 120ms ease,
+    color 120ms ease;
+
+  &:hover {
+    border-color: #bdbdbd;
+  }
+
+  .EyeIcon {
+    flex: 0 0 auto;
+    font-size: 15px;
+    color: $text-secondary;
   }
 
   .Dot {
+    flex: 0 0 auto;
     width: 14px;
     height: 14px;
     border-radius: 3px;
-    display: inline-block;
   }
 
   .Label {
-    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.is-on {
+    background: #cfe9e7;
+    border-color: #9fd3ce;
+    color: #1f4f4a;
+    font-weight: 500;
+
+    .EyeIcon {
+      color: #2a8079;
+    }
+
+    &:hover {
+      border-color: #6fc0b8;
+    }
+  }
+
+  &.is-off {
+    color: $text-muted;
+    background: #fafafa;
+
+    .EyeIcon {
+      color: #bdbdbd;
+    }
+
+    .Dot {
+      opacity: 0.35;
+    }
   }
 }
 
+.QualityAssessment,
 .ProtectionFilter {
-  display: grid;
-  grid-template-rows: auto 1fr;
-  height: 100%;
-
-  > .BoxTitle {
-    margin-bottom: 6px;
-  }
-
-  .Checkboxes {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-    align-self: center;
-  }
-
-  .Label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 400;
-    cursor: pointer;
-    padding: 2px 10px;
-    margin-bottom: 0;
-    border: 1px solid $border-grey;
-    border-radius: 6px;
-    background: #fff;
-    transition:
-      background-color 120ms ease,
-      border-color 120ms ease;
-
-    &:hover {
-      border-color: #bdbdbd;
-      background-color: #f5f5f5;
-    }
-
-    input[type="checkbox"] {
-      cursor: pointer;
-      border-radius: 6px;
-    }
-  }
+  display: flex;
+  flex-direction: column;
 }
 
 .TagFilter {
-  .TagFilterHead {
-    display: flex;
-    align-items: baseline;
-    justify-content: flex-start;
-    gap: 12px;
-    margin-bottom: 6px;
-
-    .BoxTitle {
-      flex: 0 0 auto;
-      margin-bottom: 0;
-    }
-  }
+  display: flex;
+  flex-direction: column;
 
   .Checkbox {
     display: flex;
@@ -756,55 +748,6 @@ $danger-fg: #c62828;
       height: 13px;
       margin: 0;
     }
-  }
-
-  .ToggleAll {
-    margin-left: auto;
-    border: none;
-    background: none;
-    padding: 0;
-    font-size: 12px;
-    color: #2a6f6a;
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  .Grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    max-height: 76px;
-    overflow-y: auto;
-  }
-
-  .Btn {
-    display: flex;
-    align-items: center;
-    box-sizing: border-box;
-    padding: 6px 10px;
-    border: 1px solid $border-grey;
-    border-radius: 6px;
-    background: #fff;
-    cursor: pointer;
-    transition:
-      background-color 120ms ease,
-      border-color 120ms ease;
-
-    &:hover {
-      border-color: #bdbdbd;
-    }
-
-    &.is-selected {
-      background-color: #cfe9e7;
-      border-color: #b6deda;
-    }
-  }
-
-  .Label {
-    font-size: 13px;
   }
 }
 
@@ -1503,6 +1446,45 @@ $danger-fg: #c62828;
 
     .HeaderLang {
       width: 1fr;
+      cursor: grab;
+      user-select: none;
+      position: relative;
+
+      &--dragging {
+        opacity: 0.4;
+        background: #e3f2fd;
+      }
+
+      &--dragover {
+        border-left: 4px solid $primary;
+        background: #e3f2fd;
+
+        .DragHandle {
+          color: $primary;
+        }
+      }
+
+      &-inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .DragHandle {
+        color: lightgrey;
+        cursor: grab;
+        flex-shrink: 0;
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      &:active,
+      &:active .DragHandle {
+        cursor: grabbing;
+      }
     }
   }
 
@@ -1715,11 +1697,12 @@ $danger-fg: #c62828;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1000;
 
   .Panel {
     background: white;
-    width: 90vw;
-    max-width: 1100px;
+    width: 95vw;
+    max-width: 1500px;
     max-height: 85vh;
     display: flex;
     flex-direction: column;
@@ -1789,50 +1772,82 @@ $danger-fg: #c62828;
     border-collapse: collapse;
     table-layout: fixed;
 
-    .MetricHeader {
-      width: 200px;
+    .CornerHeader {
+      width: 300px;
       background: white;
       border: 1px solid $border-faint;
     }
 
-    .LangHeader {
-      padding: 12px 16px;
+    .MetricHeader {
+      padding: 12px 14px;
       font-size: 13px;
       font-weight: 600;
       color: $text-strong;
       text-align: center;
       background: white;
       border: 1px solid $border-faint;
+    }
 
-      span {
-        margin-right: 4px;
+    .LangRow {
+      cursor: grab;
+
+      &--dragging {
+        opacity: 0.4;
+        background: #e3f2fd;
       }
 
-      &--missing {
-        background: $danger-bg;
-        color: $danger-fg;
+      &--dragover {
+        background: #e3f2fd;
+
+        td,
+        th {
+          border-top: 3px solid $primary;
+        }
+
+        .DragHandle {
+          color: $primary;
+        }
+      }
+
+      &:active {
+        cursor: grabbing;
+      }
+    }
+
+    .LangHeader {
+      width: 300px;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: $text-strong;
+      text-align: left;
+      background: white;
+      border: 1px solid $border-faint;
+      user-select: none;
+
+      &-inner {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+
+      .DragHandle {
+        color: lightgrey;
+        cursor: grab;
+        flex-shrink: 0;
       }
 
       .Link {
         color: inherit;
         display: inline-flex;
         align-items: center;
-        vertical-align: middle;
+        flex-shrink: 0;
 
         &:hover {
           color: $primary-dark;
         }
       }
-    }
-
-    .MetricLabel {
-      padding: 12px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      color: #555;
-      border: 1px solid $border-faint;
-      background: #fafafa;
-      white-space: nowrap;
     }
 
     .Cell {
@@ -1844,10 +1859,6 @@ $danger-fg: #c62828;
         text-align: center;
       }
 
-      &--translate {
-        padding: 8px 12px;
-      }
-
       .MissingIcon {
         color: $danger-fg;
         display: flex;
@@ -1857,20 +1868,21 @@ $danger-fg: #c62828;
 
       .Inner {
         display: flex;
+        flex-direction: row;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
 
         .Value {
           font-size: 13px;
           font-weight: 500;
           color: #333;
-          min-width: 64px;
+          flex-shrink: 0;
           text-align: right;
         }
 
         .Track {
           flex: 1;
-          height: 16px;
+          height: 14px;
           background: #f0f0f0;
           border-radius: 2px;
 
@@ -1888,6 +1900,7 @@ $danger-fg: #c62828;
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
     padding: 6px 12px;
     background: #e0f2f1;
     border: 1px solid #80cbc4;
@@ -1908,7 +1921,8 @@ $danger-fg: #c62828;
   }
 }
 
-.GlossaryModal {
+.GlossaryModal,
+.LegendModal {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -2029,5 +2043,14 @@ $danger-fg: #c62828;
       color: $text-secondary;
       line-height: 1.5;
     }
+  }
+}
+
+.LegendModal {
+  .LegendImage {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
   }
 }

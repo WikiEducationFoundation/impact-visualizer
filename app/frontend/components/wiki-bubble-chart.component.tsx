@@ -16,7 +16,8 @@ import {
   BsLink45Deg,
   BsCheck2,
 } from "react-icons/bs";
-import { FaArrowRight, FaArrowUp } from "react-icons/fa6";
+import { MdLegendToggle } from "react-icons/md";
+import { FaChevronUp, FaChevronDown } from "react-icons/fa6";
 import CSVButton from "./CSV-button.component";
 import WikitextButton from "./wikitext-button.component";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
@@ -25,6 +26,9 @@ import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
 import ArticleLanguagesGrid from "./article-languages-grid.component";
 import ArticleLanguageComparisonModal from "./article-language-comparison-modal.component";
 import GlossaryModal from "./glossary-modal.component";
+import LegendModal from "./legend-modal.component";
+import AdvancedFilterPanel from "./advanced-filter-panel.component";
+import AxisControls from "./axis-controls.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
@@ -46,6 +50,10 @@ import { exportChartImage } from "../utils/chart-image-export";
 import {
   decodeChartState,
   encodeChartState,
+  DEFAULT_CHART_UI_STATE,
+  GRADE_KEYS,
+  CENTRALITY_MIN,
+  CENTRALITY_MAX,
 } from "../utils/bubble-chart-permalink";
 
 type Wiki = {
@@ -65,220 +73,79 @@ interface WikiBubbleChartProps {
 
 const HEIGHT = 650;
 const LARGE_DATASET_THRESHOLD = 10000;
-const CENTRALITY_MIN = 1;
-const CENTRALITY_MAX = 10;
 
-const gradeGroups = [
-  { id: "fa", label: "Featured", grades: ["FA", "FL"], dot: "#9CBDFF" },
-  { id: "ga", label: "GA", grades: ["GA"], dot: "#66FF66" },
-  { id: "aclass", label: "A-Class", grades: ["A"], dot: "#66FFFF" },
-  { id: "bclass", label: "B-Class", grades: ["B"], dot: "#B2FF66" },
-  { id: "cclass", label: "C-Class", grades: ["C"], dot: "#FFFF66" },
-  { id: "start", label: "Start", grades: ["Start"], dot: "#FFAA66" },
-  { id: "stub", label: "Stub", grades: ["Stub"], dot: "#FFA4A4" },
-  { id: "list", label: "List", grades: ["List"], dot: "#C7B1FF" },
-  {
-    id: "unassessed",
-    label: "Unassessed",
-    grades: ["Unassessed"],
-    dot: "#9E9E9E",
-  },
-];
+// Largest bubble radius (Vega derives radius from area; max size range is 1500).
+const MAX_CIRCLE_RADIUS = Math.sqrt(1500 / Math.PI);
+const Y_BOTTOM_MARGIN = MAX_CIRCLE_RADIUS * 2;
 
-function QualityFilterButtons({
-  onToggle,
-  selected,
-}: {
-  onToggle: (grades: string[], on: boolean) => void;
-  selected: Record<string, boolean>;
-}) {
-  return (
-    <div className="QualityAssessment">
-      <div className="BoxTitle">Quality assessment*</div>
-      <div className="Grid">
-        {gradeGroups.map((g) => {
-          const isOn = g.grades.every((x) => selected[x] !== false);
-          return (
-            <button
-              key={g.id}
-              type="button"
-              className={`Btn ${isOn ? "is-selected" : ""}`}
-              data-group={g.id}
-              onClick={() => onToggle(g.grades, !isOn)}
-            >
-              <span className="Dot" style={{ backgroundColor: g.dot }} />
-              <span className="Label">{g.label}</span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+// Post-compile tweaks Vega-Lite can't express directly.
+const patchChartScales = (vgSpec: any) => {
+  try {
+    const scales = vgSpec.scales || [];
 
-function TagFilterButtons({
-  tags,
-  deselected,
-  includeUntagged,
-  onToggle,
-  onToggleAll,
-  onIncludeUntaggedChange,
-}: {
-  tags: string[];
-  deselected: Set<string>;
-  includeUntagged: boolean;
-  onToggle: (tag: string, on: boolean) => void;
-  onToggleAll: (on: boolean) => void;
-  onIncludeUntaggedChange: (checked: boolean) => void;
-}) {
-  const allSelected = deselected.size === 0;
-  return (
-    <div className="TagFilter">
-      <div className="TagFilterHead">
-        <div className="BoxTitle">Tags</div>
-        <label className="Checkbox">
-          <input
-            type="checkbox"
-            checked={includeUntagged}
-            onChange={(e) => onIncludeUntaggedChange(e.target.checked)}
-            aria-label="Include untagged articles"
-          />
-          <span>include untagged articles</span>
-        </label>
-        <button
-          type="button"
-          className="ToggleAll"
-          onClick={() => onToggleAll(!allSelected)}
-        >
-          {allSelected ? "Deselect all" : "Select all"}
-        </button>
-      </div>
-      <div className="Grid">
-        {tags.map((tag) => {
-          const isOn = !deselected.has(tag);
-          return (
-            <button
-              key={tag}
-              type="button"
-              className={`Btn ${isOn ? "is-selected" : ""}`}
-              onClick={() => onToggle(tag, !isOn)}
-            >
-              <span className="Label">{tag}</span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+    // Clamp x pan/zoom to the data extent (no dragging into empty space; no-op
+    // once every bubble is visible). The bound x domain is recomputed by
+    // panLinear/zoomLinear each frame, so we rewrite those to clamp at the
+    // source against `x_base` — the x scale without the interactive override.
+    const xScale = scales.find((s: any) => s.name === "x");
+    if (xScale && xScale.domainRaw) {
+      if (!scales.some((s: any) => s.name === "x_base")) {
+        const base = { ...xScale, name: "x_base" };
+        delete base.domainRaw;
+        scales.push(base);
+        vgSpec.scales = scales;
+      }
+      const B = "domain('x_base')";
+      const clamp = (proposed: string) =>
+        `(span(${proposed}) >= span(${B}) ? ${B}` +
+        ` : (${proposed})[0] < ${B}[0] ? [${B}[0], ${B}[0] + span(${proposed})]` +
+        ` : (${proposed})[1] > ${B}[1] ? [${B}[1] - span(${proposed}), ${B}[1]]` +
+        ` : (${proposed}))`;
+      for (const sig of vgSpec.signals || []) {
+        if (!Array.isArray(sig.on)) continue;
+        for (const handler of sig.on) {
+          if (
+            typeof handler.update === "string" &&
+            /panLinear|zoomLinear/.test(handler.update)
+          ) {
+            handler.update = clamp(handler.update);
+          }
+        }
+      }
+    }
 
-function ProtectionFilterCheckboxes({
-  moveChecked,
-  editChecked,
-  onMoveChange,
-  onEditChange,
-}: {
-  moveChecked: boolean;
-  editChecked: boolean;
-  onMoveChange: (checked: boolean) => void;
-  onEditChange: (checked: boolean) => void;
-}) {
-  return (
-    <div className="ProtectionFilter">
-      <div className="BoxTitle">Protection filter</div>
-      <div className="Checkboxes">
-        <label className="Label">
-          <input
-            type="checkbox"
-            checked={moveChecked}
-            onChange={(e) => onMoveChange(e.target.checked)}
-          />
-          <span>Move restriction</span>
-        </label>
-        <label className="Label">
-          <input
-            type="checkbox"
-            checked={editChecked}
-            onChange={(e) => onEditChange(e.target.checked)}
-          />
-          <span>Edit restriction</span>
-        </label>
-      </div>
-    </div>
-  );
-}
+    // Inset the y range's bottom so low-value bubbles clear the floor. Done in
+    // pixel space: scale.padding is ignored once domainMin/Max are set, and
+    // lowering the domain would expose negative axis values.
+    const yScale = scales.find((s: any) => s.name === "y");
+    if (yScale && Array.isArray(yScale.range) && yScale.range.length === 2) {
+      if (!scales.some((s: any) => s.name === "y_grid")) {
+        const gridClone = { ...yScale, name: "y_grid" };
+        delete gridClone.domainRaw;
+        scales.push(gridClone);
+        vgSpec.scales = scales;
+      }
+      for (const axis of vgSpec.axes || []) {
+        if (axis.scale === "x" && axis.grid && axis.gridScale === "y") {
+          axis.gridScale = "y_grid";
+        }
+      }
 
-function CentralityFilter({
-  min,
-  max,
-  includeUnassessed,
-  onMinChange,
-  onMaxChange,
-  onIncludeUnassessedChange,
-}: {
-  min: number;
-  max: number;
-  includeUnassessed: boolean;
-  onMinChange: (value: number) => void;
-  onMaxChange: (value: number) => void;
-  onIncludeUnassessedChange: (checked: boolean) => void;
-}) {
-  const minPercent =
-    ((min - CENTRALITY_MIN) / (CENTRALITY_MAX - CENTRALITY_MIN)) * 100;
-  const maxPercent =
-    ((max - CENTRALITY_MIN) / (CENTRALITY_MAX - CENTRALITY_MIN)) * 100;
-
-  return (
-    <div className="CentralityFilter">
-      <div className="Header">
-        <div className="BoxTitle">Centrality</div>
-        <label className="Checkbox">
-          <input
-            type="checkbox"
-            checked={includeUnassessed}
-            onChange={(e) => onIncludeUnassessedChange(e.target.checked)}
-            aria-label="Include articles with no centrality"
-          />
-          <span>include articles without centrality</span>
-        </label>
-        <div className="Value">
-          {min}-{max}
-        </div>
-      </div>
-      <div className="Slider">
-        <div className="Track" />
-        <div
-          className="Range"
-          style={{ left: `${minPercent}%`, right: `${100 - maxPercent}%` }}
-        />
-        <input
-          type="range"
-          min={CENTRALITY_MIN}
-          max={CENTRALITY_MAX}
-          step={1}
-          value={min}
-          onChange={(e) => onMinChange(Number(e.target.value))}
-          aria-label="Minimum centrality"
-          className="Input Input--min"
-        />
-        <input
-          type="range"
-          min={CENTRALITY_MIN}
-          max={CENTRALITY_MAX}
-          step={1}
-          value={max}
-          onChange={(e) => onMaxChange(Number(e.target.value))}
-          aria-label="Maximum centrality"
-          className="Input Input--max"
-        />
-      </div>
-      <div className="Bounds">
-        <span>{CENTRALITY_MIN}</span>
-        <span>{CENTRALITY_MAX}</span>
-      </div>
-    </div>
-  );
-}
+      const bottom = yScale.range[0];
+      const bottomExpr =
+        bottom && typeof bottom === "object" && "signal" in bottom
+          ? bottom.signal
+          : String(bottom);
+      yScale.range = [
+        { signal: `(${bottomExpr}) - ${Y_BOTTOM_MARGIN}` },
+        yScale.range[1],
+      ];
+    }
+  } catch {
+    // leave the spec untouched if the compiled shape is unexpected
+  }
+  return vgSpec;
+};
 
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
@@ -347,6 +214,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [includeNoCentrality, setIncludeNoCentrality] = useState<boolean>(
     initialState.includeNoCentrality,
   );
+  const [advancedOpen, setAdvancedOpen] = useState<boolean>(() => {
+    const s = initialState;
+    return (
+      s.deselectedTags.length > 0 ||
+      !s.includeUntagged ||
+      s.centralityMin !== DEFAULT_CHART_UI_STATE.centralityMin ||
+      s.centralityMax !== DEFAULT_CHART_UI_STATE.centralityMax ||
+      !s.includeNoCentrality ||
+      s.filterMoveRestriction ||
+      s.filterEditRestriction ||
+      GRADE_KEYS.some((g) => s.selectedGrades[g] === false)
+    );
+  });
   const [searchTerm, setSearchTerm] = useState<string>(initialState.searchTerm);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
   const [selectedArticle, setSelectedArticle] = useState<ArticleRow | null>(
@@ -359,6 +239,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     null,
   );
   const [glossaryOpen, setGlossaryOpen] = useState<boolean>(false);
+  const [legendOpen, setLegendOpen] = useState<boolean>(false);
   const [showLabels, setShowLabels] = useState<boolean>(
     initialState.showLabels,
   );
@@ -662,12 +543,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     setCommittedYAxisMaxInput("");
   }, [yAxisKey]);
 
-  useEffect(() => {
-    if (xAxisKey === "title") {
-      setXAxisMode("ranked");
-    }
-  }, [xAxisKey]);
-
   sortedRowsRef.current = sortedRows;
   const hasData = sortedRows.length > 0;
   const isLargeDatasetBucket = sortedRows.length > LARGE_DATASET_THRESHOLD;
@@ -677,9 +552,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
     const currentSortedRows = sortedRowsRef.current;
     const isLogScale = yAxisScaleType === "log";
-
-    // calculate padding based on maximum circle radius to prevent clipping
-    const maxCircleRadius = Math.sqrt(1500 / Math.PI); // this is how vega calculates the circle radius
 
     let yScaleSpec: Record<string, any>;
     if (isLogScale) {
@@ -698,16 +570,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         },
       };
     } else {
-      const fallbackMin = -25;
-      const fallbackMax = yAxisAutoDomain.max ?? 1000;
-      const fallbackRange = fallbackMax - fallbackMin;
-      const fallbackPadding = maxCircleRadius * (fallbackRange / HEIGHT);
+      // Fall back to the auto domain when no user range; clamp autoMin to 0.
+      const autoMin =
+        yAxisAutoDomain.min !== null ? Math.max(0, yAxisAutoDomain.min) : 0;
+      const autoMax = yAxisAutoDomain.max ?? 1000;
+      const loExpr = `(isFinite(y_domain_min) ? y_domain_min : ${autoMin})`;
+      const hiExpr = `(isFinite(y_domain_max) ? y_domain_max : ${autoMax})`;
+      // Radius padding in domain units so boundary bubbles stay visible; max(,1)
+      // guards a degenerate span; domainMin clamps to 0 (no below-zero axis).
+      const spanExpr = `max((${hiExpr}) - (${loExpr}), 1)`;
+      const padExpr = `(${MAX_CIRCLE_RADIUS} * (${spanExpr}) / ${HEIGHT})`;
       yScaleSpec = {
         domainMin: {
-          expr: `isFinite(y_domain_min) && y_domain_min > 0 ? y_domain_min : ${fallbackMin - fallbackPadding}`,
+          expr: `max(0, (${loExpr}) - ${padExpr})`,
         },
         domainMax: {
-          expr: `isFinite(y_domain_max) ? y_domain_max : ${fallbackMax + fallbackPadding}`,
+          expr: `(${hiExpr}) + ${padExpr}`,
         },
       };
     }
@@ -746,6 +624,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             grid: false,
           },
         };
+
+    // Edge padding so the first/last bubble isn't clipped (the pan clamp
+    // otherwise pins the domain flush to the data).
+    xEncoding.scale = {
+      ...(xEncoding.scale || {}),
+      padding: MAX_CIRCLE_RADIUS,
+    };
 
     const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
     const yFilterExprParts: string[] = [];
@@ -1074,6 +959,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       actions,
       renderer: "canvas",
       mode: "vega-lite",
+      patch: patchChartScales as EmbedOptions["patch"],
       tooltip: {
         sanitize: (value: string) => value,
       } as EmbedOptions["tooltip"],
@@ -1270,6 +1156,67 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     startTransition(() => setIncludeNoCentrality(checked));
   };
 
+  const resetTags = () => {
+    toggleAllTags(true);
+    handleIncludeUntaggedChange(true);
+  };
+
+  const resetGrades = () => toggleGrades(GRADE_KEYS, true);
+
+  const resetCentrality = () => {
+    updateCentralitySignals(CENTRALITY_MIN, CENTRALITY_MAX, true);
+    startTransition(() => {
+      setCentralityMin(CENTRALITY_MIN);
+      setCentralityMax(CENTRALITY_MAX);
+      setIncludeNoCentrality(true);
+    });
+  };
+
+  const resetProtection = () => {
+    handleMoveRestrictionChange(false);
+    handleEditRestrictionChange(false);
+  };
+
+  const advancedFilterProps = {
+    tags: availableTags,
+    deselectedTags,
+    includeUntagged,
+    onToggleTag: toggleTag,
+    onIncludeUntaggedChange: handleIncludeUntaggedChange,
+    onResetTags: resetTags,
+    centralityMin,
+    centralityMax,
+    includeNoCentrality,
+    onCentralityMinChange: handleCentralityMinChange,
+    onCentralityMaxChange: handleCentralityMaxChange,
+    onIncludeNoCentralityChange: handleIncludeNoCentralityChange,
+    onResetCentrality: resetCentrality,
+    selectedGrades,
+    onToggleGrades: toggleGrades,
+    onResetGrades: resetGrades,
+    moveRestriction: filterMoveRestriction,
+    editRestriction: filterEditRestriction,
+    onMoveRestrictionChange: handleMoveRestrictionChange,
+    onEditRestrictionChange: handleEditRestrictionChange,
+    onResetProtection: resetProtection,
+  };
+
+  const axisControlProps = {
+    yAxisKey,
+    onYAxisKeyChange: setYAxisKey,
+    yAxisScaleType,
+    onYAxisScaleTypeChange: setYAxisScaleType,
+    yAxisMinInput,
+    onYAxisMinInputChange: setYAxisMinInput,
+    yAxisMaxInput,
+    onYAxisMaxInputChange: setYAxisMaxInput,
+    yAxisAutoDomain,
+    xAxisKey,
+    onXAxisKeyChange: setXAxisKey,
+    xAxisMode,
+    onXAxisModeChange: setXAxisMode,
+  };
+
   const handleShowLabelsChange = (checked: boolean) => {
     setShowLabels(checked);
   };
@@ -1429,6 +1376,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         <button
           type="button"
           className="GlossaryBtn"
+          onClick={() => setLegendOpen(true)}
+        >
+          <MdLegendToggle size={14} />
+          <span>Legend</span>
+        </button>
+        <button
+          type="button"
+          className="GlossaryBtn"
           onClick={() => setGlossaryOpen(true)}
         >
           <BsBook size={14} />
@@ -1451,161 +1406,26 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         >
           Languages
         </button>
+        <button
+          type="button"
+          className="AdvancedToggle"
+          aria-expanded={advancedOpen}
+          onClick={() => setAdvancedOpen((open) => !open)}
+        >
+          <span className="AdvancedToggleLabel">Advanced Filters</span>
+          {advancedOpen ? (
+            <FaChevronUp size={14} />
+          ) : (
+            <FaChevronDown size={14} />
+          )}
+        </button>
       </div>
 
       <div className="TabPanel" hidden={activeTab !== "overview"}>
-        <div className="AxisControls">
-          <div className="FilterBox">
-            <div className="AxisControl">
-              <FaArrowUp size={30} className="AxisIcon" />
-              <div className="AxisFields">
-                <div className="AxisLabelRow">
-                  <label htmlFor="wiki-bubble-y-axis" className="BoxTitle">
-                    Vertical axis
-                  </label>
-                  <div className="ScaleToggle">
-                    <button
-                      type="button"
-                      className={`ScaleBtn ${yAxisScaleType === "linear" ? "is-active" : ""}`}
-                      onClick={() => setYAxisScaleType("linear")}
-                    >
-                      Linear
-                    </button>
-                    <button
-                      type="button"
-                      className={`ScaleBtn ${yAxisScaleType === "log" ? "is-active" : ""}`}
-                      onClick={() => setYAxisScaleType("log")}
-                    >
-                      Log
-                    </button>
-                  </div>
-                </div>
-                <select
-                  id="wiki-bubble-y-axis"
-                  className="SortSelect"
-                  value={yAxisKey}
-                  onChange={(e) => setYAxisKey(e.target.value as YAxisKey)}
-                >
-                  <option value="average_daily_views">Avg daily views</option>
-                  <option value="number_of_editors">Editors</option>
-                  <option value="incoming_links_count">Incoming links</option>
-                </select>
-              </div>
-            </div>
-          </div>
+        <AxisControls idPrefix="overview" {...axisControlProps} />
 
-          <div className="FilterBox">
-            <div className="BoxTitle">Y-axis range</div>
-            <div className="RangeRow">
-              <label className="RangeField">
-                <span className="RangeLabel">min</span>
-                <input
-                  className="RangeInput"
-                  type="number"
-                  inputMode="numeric"
-                  placeholder={
-                    yAxisAutoDomain.min === null
-                      ? ""
-                      : String(yAxisAutoDomain.min)
-                  }
-                  value={yAxisMinInput}
-                  onChange={(e) => setYAxisMinInput(e.target.value)}
-                  aria-label="Y-axis minimum"
-                />
-              </label>
-              <label className="RangeField">
-                <span className="RangeLabel">max</span>
-                <input
-                  className="RangeInput"
-                  type="number"
-                  inputMode="numeric"
-                  placeholder={
-                    yAxisAutoDomain.max === null
-                      ? ""
-                      : String(yAxisAutoDomain.max)
-                  }
-                  value={yAxisMaxInput}
-                  onChange={(e) => setYAxisMaxInput(e.target.value)}
-                  aria-label="Y-axis maximum"
-                />
-              </label>
-            </div>
-          </div>
-
-          <div className="FilterBox">
-            <div className="AxisControl">
-              <FaArrowRight size={30} className="AxisIcon" />
-              <div className="AxisFields">
-                <div className="AxisLabelRow">
-                  <label htmlFor="wiki-bubble-sort" className="BoxTitle">
-                    Horizontal axis
-                  </label>
-                  <div className="ScaleToggle">
-                    <button
-                      type="button"
-                      className={`ScaleBtn ${xAxisMode === "ranked" ? "is-active" : ""}`}
-                      onClick={() => setXAxisMode("ranked")}
-                    >
-                      Ranked
-                    </button>
-                    <button
-                      type="button"
-                      className={`ScaleBtn ${xAxisMode === "scaled" ? "is-active" : ""}`}
-                      onClick={() =>
-                        xAxisKey !== "title" && setXAxisMode("scaled")
-                      }
-                      disabled={xAxisKey === "title"}
-                      title={
-                        xAxisKey === "title"
-                          ? "Not available for article title"
-                          : undefined
-                      }
-                    >
-                      Scaled
-                    </button>
-                  </div>
-                </div>
-                <select
-                  id="wiki-bubble-sort"
-                  className="SortSelect"
-                  value={xAxisKey}
-                  onChange={(e) => setXAxisKey(e.target.value as XAxisKey)}
-                >
-                  <option value="title">Article title (A-Z)</option>
-                  <option value="publication_date">
-                    Creation date (Old-New)
-                  </option>
-                  <option value="linguistic_versions_count">
-                    Linguistic versions (Low-High)
-                  </option>
-                  <option value="article_size">
-                    Article size (Small-Large)
-                  </option>
-                  <option value="lead_section_size">
-                    Lead section size (Small-Large)
-                  </option>
-                  <option value="talk_size">
-                    Discussion page size (Small-Large)
-                  </option>
-                  <option value="warning_tags_count">
-                    Warning tags (Low-High)
-                  </option>
-                  <option value="images_count">Images (Low-High)</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="FilterBox">
-            <CentralityFilter
-              min={centralityMin}
-              max={centralityMax}
-              includeUnassessed={includeNoCentrality}
-              onMinChange={handleCentralityMinChange}
-              onMaxChange={handleCentralityMaxChange}
-              onIncludeUnassessedChange={handleIncludeNoCentralityChange}
-            />
-          </div>
+        <div className="AdvancedFilters">
+          {advancedOpen && <AdvancedFilterPanel {...advancedFilterProps} />}
         </div>
 
         <div className="Heading">
@@ -1642,39 +1462,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             onToggleOutlier={handleToggleOutlier}
             onClearOutliers={handleClearOutliers}
           />
-        </div>
-
-        <div
-          className={`QualityFilters ${availableTags.length ? "has-tags" : ""}`}
-        >
-          {availableTags.length > 0 && (
-            <div className="FilterBox FilterBox--tags">
-              <TagFilterButtons
-                tags={availableTags}
-                deselected={deselectedTags}
-                includeUntagged={includeUntagged}
-                onToggle={toggleTag}
-                onToggleAll={toggleAllTags}
-                onIncludeUntaggedChange={handleIncludeUntaggedChange}
-              />
-            </div>
-          )}
-
-          <div className="FilterBox">
-            <QualityFilterButtons
-              onToggle={toggleGrades}
-              selected={selectedGrades}
-            />
-          </div>
-
-          <div className="FilterBox">
-            <ProtectionFilterCheckboxes
-              moveChecked={filterMoveRestriction}
-              editChecked={filterEditRestriction}
-              onMoveChange={handleMoveRestrictionChange}
-              onEditChange={handleEditRestrictionChange}
-            />
-          </div>
         </div>
 
         <div className="Stats">
@@ -1721,49 +1508,17 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="Legend">
-          <div className="Text">
-            * Quality assessment is done by the Wikipedia community and it may
-            be inconsistent
-          </div>
-          <div className="Box">
-            <div className="Title">Legend</div>
-            <img src="/images/legend.png" />
-          </div>
+        <div className="Footnote">
+          * Quality assessment is done by the Wikipedia community and it may be
+          inconsistent
         </div>
       </div>
 
       <div className="TabPanel" hidden={activeTab !== "languages"}>
-        <div
-          className={`QualityFilters ${availableTags.length ? "has-tags" : ""}`}
-        >
-          {availableTags.length > 0 && (
-            <div className="FilterBox FilterBox--tags">
-              <TagFilterButtons
-                tags={availableTags}
-                deselected={deselectedTags}
-                includeUntagged={includeUntagged}
-                onToggle={toggleTag}
-                onToggleAll={toggleAllTags}
-                onIncludeUntaggedChange={handleIncludeUntaggedChange}
-              />
-            </div>
-          )}
-          <div className="FilterBox">
-            <QualityFilterButtons
-              onToggle={toggleGrades}
-              selected={selectedGrades}
-            />
-          </div>
-          <div className="FilterBox">
-            <ProtectionFilterCheckboxes
-              moveChecked={filterMoveRestriction}
-              editChecked={filterEditRestriction}
-              onMoveChange={handleMoveRestrictionChange}
-              onEditChange={handleEditRestrictionChange}
-            />
-          </div>
+        <AxisControls idPrefix="languages" hideYAxis {...axisControlProps} />
+
+        <div className="AdvancedFilters">
+          {advancedOpen && <AdvancedFilterPanel {...advancedFilterProps} />}
         </div>
 
         <div className="ArticleLang">
@@ -1820,6 +1575,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       )}
 
       {glossaryOpen && <GlossaryModal onClose={() => setGlossaryOpen(false)} />}
+
+      {legendOpen && <LegendModal onClose={() => setLegendOpen(false)} />}
     </div>
   );
 };
