@@ -243,30 +243,53 @@ function makeSqrtAreaScale(
   };
 }
 
+function shadeColor(hex: string, amount: number): string {
+  const num = parseInt(hex.replace("#", ""), 16);
+  const channel = (shift: number) => {
+    const c = (num >> shift) & 0xff;
+    const next = amount < 0 ? c * (1 + amount) : c + (255 - c) * amount;
+    return Math.min(255, Math.max(0, Math.round(next)));
+  };
+  const r = channel(16);
+  const g = channel(8);
+  const b = channel(0);
+  return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+}
+
+const RAW_ASSESSMENT_COLORS: Record<string, string> = {
+  FA: "#9CBDFF",
+  GA: "#66FF66",
+  A: "#66FFFF",
+  FL: "#9CBDFF",
+  B: "#B2FF66",
+  C: "#FFFF66",
+  Start: "#FFAA66",
+  Stub: "#FFA4A4",
+  List: "#C7B1FF",
+};
+const UNASSESSED_COLOR = "#9e9e9e";
+const BASE_DARKEN = -0.12;
+
 function getAssessmentColor(grade?: string | null): string {
-  if (!grade) return "#9e9e9e";
-  switch (grade) {
-    case "FA":
-      return "#9CBDFF";
-    case "GA":
-      return "#66FF66";
-    case "A":
-      return "#66FFFF";
-    case "FL":
-      return "#9CBDFF";
-    case "B":
-      return "#B2FF66";
-    case "C":
-      return "#FFFF66";
-    case "Start":
-      return "#FFAA66";
-    case "Stub":
-      return "#FFA4A4";
-    case "List":
-      return "#C7B1FF";
-    default:
-      return "#9e9e9e";
-  }
+  const raw = (grade && RAW_ASSESSMENT_COLORS[grade]) || UNASSESSED_COLOR;
+  return shadeColor(raw, BASE_DARKEN);
+}
+
+type AssessmentPalette = {
+  article: string;
+  lead: string;
+  talk: string;
+  prevArticle: string;
+};
+
+function getAssessmentPalette(grade?: string | null): AssessmentPalette {
+  const base = getAssessmentColor(grade);
+  return {
+    article: base,
+    lead: shadeColor(base, 0.35),
+    talk: shadeColor(base, -0.22),
+    prevArticle: shadeColor(base, -0.1),
+  };
 }
 
 export {
@@ -277,5 +300,9 @@ export {
   convertAnalyticsToCSV,
   convertAnalyticsToWikitext,
   getAssessmentColor,
+  getAssessmentPalette,
+  shadeColor,
   makeSqrtAreaScale,
 };
+
+export type { AssessmentPalette };

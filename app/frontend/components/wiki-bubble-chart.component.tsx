@@ -38,7 +38,7 @@ import type {
 import {
   convertAnalyticsToCSV,
   convertAnalyticsToWikitext,
-  getAssessmentColor,
+  getAssessmentPalette,
   compareArticlesByPublicationDateAsc,
   compareArticlesByNumericFieldAsc,
   formatProtectionSummary,
@@ -286,14 +286,16 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         const protections = analytics?.article_protections ?? [];
         const hasMoveRestriction = protections.some((p) => p.type === "move");
         const hasEditRestriction = protections.some((p) => p.type === "edit");
+        const palette = getAssessmentPalette(analytics?.assessment_grade);
 
         return {
           article,
           ...analytics,
           classifications: analytics?.classifications ?? [],
-          assessment_grade_color: getAssessmentColor(
-            analytics?.assessment_grade,
-          ),
+          assessment_grade_color: palette.article,
+          talk_color: palette.talk,
+          prev_article_color: palette.prevArticle,
+          lead_color: palette.lead,
           protection_summary: formatProtectionSummary(protections),
           has_move_restriction: hasMoveRestriction,
           has_edit_restriction: hasEditRestriction,
@@ -816,7 +818,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           mark: {
             type: "circle",
             fill: null,
-            stroke: "#2196f3",
             strokeWidth: 1.5,
             cursor: "pointer",
           },
@@ -827,6 +828,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [50, 1500] },
             },
+            stroke: {
+              field: "talk_color",
+              type: "nominal",
+              scale: null,
+              legend: null,
+            },
             opacity: makeOpacityEncoding(1),
           },
         },
@@ -836,7 +843,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             type: "circle",
             fill: null,
             strokeDash: [4, 4],
-            stroke: "#64b5f6",
             strokeWidth: 1.5,
             cursor: "pointer",
           },
@@ -847,6 +853,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [20, 600] },
             },
+            stroke: {
+              field: "prev_article_color",
+              type: "nominal",
+              scale: null,
+              legend: null,
+            },
             opacity: makeOpacityEncoding(1),
           },
         },
@@ -854,7 +866,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         {
           mark: {
             type: "circle",
-            fill: "#90caf9",
             opacity: 0.8,
             cursor: "pointer",
           },
@@ -865,14 +876,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [30, 800] },
             },
+            fill: {
+              field: "lead_color",
+              type: "nominal",
+              scale: null,
+              legend: null,
+            },
             opacity: makeOpacityEncoding(0.8),
           },
         },
-        // Article size circle (article_size)
+        // Article size circle (article_size), colored by quality assessment
         {
           mark: {
             type: "circle",
-            fill: "#0d47a1",
             opacity: 0.5,
             stroke: "white",
             strokeWidth: 1,
@@ -918,6 +934,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               field: "article_size",
               type: "quantitative",
               scale: { type: "sqrt", range: [20, 600] },
+            },
+            fill: {
+              field: "assessment_grade_color",
+              type: "nominal",
+              scale: null,
+              legend: null,
             },
             opacity: makeOpacityEncoding(0.5),
           },
