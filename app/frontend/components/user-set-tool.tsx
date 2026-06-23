@@ -79,6 +79,12 @@ export default function UserSetTool() {
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
+      <p className="ToolIntro">
+        Import articles edited by a specific Wiki Education community, for
+        example the Wikipedia Student Program or the Scholars &amp; Scientists
+        program. Choose the group and whether to include students only, or
+        students and instructors.
+      </p>
 
       <form onSubmit={handleSubmit}>
         <label>

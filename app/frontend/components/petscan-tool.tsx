@@ -48,6 +48,12 @@ export default function PetScanTool() {
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
+      <p className="ToolIntro">
+        PetScan (petscan.wmcloud.org) is an external Wikimedia tool for building
+        article lists from categories, templates, and other criteria. If you've
+        already created a query there or have a query in mind to look at, paste
+        its PetScan ID to import the resulting articles.
+      </p>
 
       <form onSubmit={handleSubmit}>
         <h3>Enter PetScan ID</h3>

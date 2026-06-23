@@ -70,10 +70,10 @@ export default function WikipediaCategoryPage() {
     <div className="Container Container--padded">
       <form onSubmit={(e) => handleSubmit(e)}>
         <h1>Impact Search</h1>
-        <p>
-          This tool allows users to browse a wikipedia category and all of its
-          subcategories. Whenever a category is expanded for the first time, the
-          tool will retrieve the data for the subcategories 2 levels down.
+        <p className="ToolIntro">
+          Browse a Wikipedia category and all of its subcategories to collect
+          articles. When a category is expanded for the first time, the tool
+          loads its subcategories two levels down.
         </p>
         <h3>Legend</h3>
         <div>

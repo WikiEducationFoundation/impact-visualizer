@@ -134,6 +134,14 @@ export default function QueryBuilder() {
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
+      <p className="ToolIntro">
+        Wikidata is the structured database of facts behind Wikipedia. This tool
+        builds a list of articles that share characteristics you choose (such as
+        occupation, gender, or country of citizenship) in the language you pick.
+        Enter a two-letter language code (for example, en for English or fr for
+        French) to set the Wikipedia language, add one or more properties, then
+        run the query to get the matching articles.
+      </p>
 
       <form onSubmit={(e) => handleSubmit(e)}>
         <h3>Enter Language Code</h3>

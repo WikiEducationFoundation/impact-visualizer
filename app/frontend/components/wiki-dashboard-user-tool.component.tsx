@@ -84,6 +84,11 @@ export default function WikiDashboardUserTool() {
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
+      <p className="ToolIntro">
+        Look up an individual editor on the Wiki Education or Outreach Dashboard
+        and import the articles they created or edited. Enter their username (or
+        profile URL) and choose which dashboard to search.
+      </p>
 
       <form onSubmit={handleSubmit}>
         <h3>Enter Username or Profile URL</h3>

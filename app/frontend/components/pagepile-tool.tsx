@@ -42,6 +42,12 @@ export default function PagePileTool() {
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
+      <p className="ToolIntro">
+        PagePile (pagepile.toolforge.org) is an external Wikimedia tool that
+        stores fixed lists of Wikipedia pages, each identified by a number. If
+        you have a PagePile ID, paste it here to import that exact list of
+        articles.
+      </p>
 
       <form onSubmit={handleSubmit}>
         <h3>Enter PagePile ID</h3>

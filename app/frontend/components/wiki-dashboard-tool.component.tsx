@@ -93,6 +93,12 @@ export default function WikiDashboardCourseTool() {
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
+      <p className="ToolIntro">
+        The Programs &amp; Events Dashboard (and the Wiki Education Dashboard)
+        tracks the editing done in Wikipedia courses and edit-a-thons. Paste a
+        course's URL to import the list of articles its participants created or
+        edited.
+      </p>
 
       <form onSubmit={handleSubmit}>
         <h3>Enter Course URL</h3>
