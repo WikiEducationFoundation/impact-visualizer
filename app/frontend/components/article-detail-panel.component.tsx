@@ -10,7 +10,11 @@ import {
   fetchArticleWordFrequencies,
   PEACOCK_TERMS,
 } from "../utils/word-cloud-utils";
-import { fetchArticleNeeds } from "../utils/article-quality-utils";
+import {
+  fetchArticleNeeds,
+  MICROTASK_GENERATOR_NAME,
+  MICROTASK_GENERATOR_URL,
+} from "../utils/article-quality-utils";
 
 type Wiki = {
   language: string;
@@ -316,6 +320,19 @@ function ArticleDetailPanel({
                     </li>
                   ))}
                 </ul>
+              )}
+              {!loadingNeeds && isWikipedia && (
+                <div className="Credit">
+                  Suggestions based on the Wikimedia{" "}
+                  <a
+                    href={MICROTASK_GENERATOR_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {MICROTASK_GENERATOR_NAME}
+                  </a>{" "}
+                  tool.
+                </div>
               )}
             </div>
           </div>
