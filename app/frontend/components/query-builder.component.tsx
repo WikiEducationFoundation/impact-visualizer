@@ -11,6 +11,7 @@ import LoadingOval from "./loading-oval.component";
 import React from "react";
 import toast from "react-hot-toast";
 import { v4 as uuidv4 } from "uuid";
+import ToolHowTo from "./tool-how-to.component";
 
 export default function QueryBuilder() {
   const [queryItemsData, setQueryItemsData] = useState<QueryProperty[]>([
@@ -50,7 +51,7 @@ export default function QueryBuilder() {
   const handleRemoveQueryItem = (indexToRemove: number) => {
     if (queryItemsData.length > 1) {
       const updatedProperties = queryItemsData.filter(
-        (_, idx) => idx !== indexToRemove
+        (_, idx) => idx !== indexToRemove,
       );
       setQueryItemsData(updatedProperties);
     }
@@ -85,10 +86,10 @@ export default function QueryBuilder() {
 
     const gender = queryItemsData.filter((item) => item.property === "gender");
     const ethnicity = queryItemsData.filter(
-      (item) => item.property === "ethnicity"
+      (item) => item.property === "ethnicity",
     );
     const occupations = queryItemsData.filter(
-      (item) => item.property === "occupation"
+      (item) => item.property === "occupation",
     );
 
     const query: string = buildWikidataQuery(
@@ -96,7 +97,7 @@ export default function QueryBuilder() {
       gender.length > 0 ? gender[0].qValue.id : "",
       ethnicity.length > 0 ? ethnicity[0].qValue.id : "",
       languageCode,
-      { requireWikipediaArticle: requireWikiArticle }
+      { requireWikipediaArticle: requireWikiArticle },
     );
     try {
       const response = await fetch(
@@ -105,7 +106,7 @@ export default function QueryBuilder() {
           headers: {
             Accept: "application/sparql-results+json",
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -135,13 +136,30 @@ export default function QueryBuilder() {
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
       <p className="ToolIntro">
-        Wikidata is the structured database of facts behind Wikipedia. This tool
-        builds a list of articles that share characteristics you choose (such as
+        <a href="https://www.wikidata.org" target="_blank" rel="noreferrer">
+          Wikidata
+        </a>{" "}
+        is the structured database of facts behind Wikipedia. This tool builds a
+        list of articles that share characteristics you choose (such as
         occupation, gender, or country of citizenship) in the language you pick.
-        Enter a two-letter language code (for example, en for English or fr for
-        French) to set the Wikipedia language, add one or more properties, then
-        run the query to get the matching articles.
       </p>
+
+      <ToolHowTo
+        steps={[
+          "Enter a two-letter language code (e.g. en) to choose the Wikipedia language.",
+          "Add one or more properties (occupation, gender, or ethnicity) and pick a value for each. Combining properties narrows the results and keeps the query fast.",
+          'Optionally tick "Require Wiki Article" to keep only items that have an article in that language.',
+          "Click Run Query to get the matching articles.",
+        ]}
+        example={{
+          inputs: [
+            { label: "Language code", value: "en" },
+            { label: "Occupation", value: "astronaut" },
+            { label: "Gender", value: "female" },
+          ],
+          result: "English Wikipedia articles about women astronauts.",
+        }}
+      />
 
       <form onSubmit={(e) => handleSubmit(e)}>
         <h3>Enter Language Code</h3>

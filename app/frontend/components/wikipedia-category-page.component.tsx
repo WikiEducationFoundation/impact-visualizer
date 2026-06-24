@@ -11,6 +11,7 @@ import React from "react";
 import toast from "react-hot-toast";
 import { BsExclamationCircleFill } from "react-icons/bs";
 import { CheckBoxIcon } from "./tree-icons.component";
+import ToolHowTo from "./tool-how-to.component";
 
 export default function WikipediaCategoryPage() {
   const [categoryText, setCategoryText] = useState<string>("");
@@ -71,10 +72,28 @@ export default function WikipediaCategoryPage() {
       <form onSubmit={(e) => handleSubmit(e)}>
         <h1>Impact Search</h1>
         <p className="ToolIntro">
-          Browse a Wikipedia category and all of its subcategories to collect
-          articles. When a category is expanded for the first time, the tool
-          loads its subcategories two levels down.
+          Browse a{" "}
+          <a href="https://en.wikipedia.org/wiki/Help:Category" target="_blank" rel="noreferrer">
+            Wikipedia category
+          </a>{" "}
+          and all of its subcategories to collect articles. When a category is
+          expanded for the first time, the tool loads its subcategories two
+          levels down.
         </p>
+        <ToolHowTo
+          steps={[
+            "Enter a two-letter language code (e.g. en).",
+            "Enter a category title or URL (e.g. Category:Women physicists).",
+            "Click Run Query, then expand categories and use the checkboxes to select the subcategories you want.",
+          ]}
+          example={{
+            inputs: [
+              { label: "Language code", value: "en" },
+              { label: "Category", value: "Category:Women physicists" },
+            ],
+            result: "articles from that category and its subcategories.",
+          }}
+        />
         <h3>Legend</h3>
         <div>
           <BsExclamationCircleFill color="#71afef" /> Indicates that the given

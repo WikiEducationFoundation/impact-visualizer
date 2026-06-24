@@ -3,6 +3,7 @@ import { PagePileResponse } from "../types/search-tool.type";
 import toast from "react-hot-toast";
 import LoadingOval from "./loading-oval.component";
 import ArticlesTable from "./articles-table.component";
+import ToolHowTo from "./tool-how-to.component";
 
 export default function PagePileTool() {
   const [pagePileID, setPagePileID] = useState<string>("");
@@ -43,11 +44,23 @@ export default function PagePileTool() {
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
       <p className="ToolIntro">
-        PagePile (pagepile.toolforge.org) is an external Wikimedia tool that
-        stores fixed lists of Wikipedia pages, each identified by a number. If
-        you have a PagePile ID, paste it here to import that exact list of
-        articles.
+        <a href="https://pagepile.toolforge.org" target="_blank" rel="noreferrer">PagePile</a>{" "}
+        is an external Wikimedia tool that stores fixed lists of Wikipedia pages,
+        each identified by a number. Import one of those saved lists using its
+        PagePile ID.
       </p>
+
+      <ToolHowTo
+        steps={[
+          "Find your list on pagepile.toolforge.org.",
+          "Copy its numeric PagePile ID.",
+          "Paste the ID and click Run Query.",
+        ]}
+        example={{
+          inputs: [{ label: "PagePile ID", value: "10000" }],
+          result: "the exact list of pages saved in that PagePile.",
+        }}
+      />
 
       <form onSubmit={handleSubmit}>
         <h3>Enter PagePile ID</h3>

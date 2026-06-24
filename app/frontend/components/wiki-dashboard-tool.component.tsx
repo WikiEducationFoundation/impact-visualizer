@@ -9,6 +9,7 @@ import {
 } from "../types/search-tool.type";
 import { extractDashboardURLInfo } from "../utils/search-utils";
 import ArticlesTable from "./articles-table.component";
+import ToolHowTo from "./tool-how-to.component";
 
 export default function WikiDashboardCourseTool() {
   const [courseURL, setCourseURL] = useState("");
@@ -94,11 +95,35 @@ export default function WikiDashboardCourseTool() {
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
       <p className="ToolIntro">
-        The Programs &amp; Events Dashboard (and the Wiki Education Dashboard)
-        tracks the editing done in Wikipedia courses and edit-a-thons. Paste a
-        course's URL to import the list of articles its participants created or
-        edited.
+        The{" "}
+        <a href="https://outreachdashboard.wmflabs.org" target="_blank" rel="noreferrer">
+          Programs &amp; Events Dashboard
+        </a>{" "}
+        (and the{" "}
+        <a href="https://dashboard.wikiedu.org" target="_blank" rel="noreferrer">
+          Wiki Education Dashboard
+        </a>
+        ) tracks the editing done in Wikipedia courses and edit-a-thons. Use it
+        to import the articles a course's participants created or edited.
       </p>
+
+      <ToolHowTo
+        steps={[
+          "Open the course on the Dashboard and copy its URL from your browser.",
+          "Paste the course URL into the field.",
+          "Click Run Query to import the articles its participants created or edited.",
+        ]}
+        example={{
+          inputs: [
+            {
+              label: "Course URL",
+              value:
+                "https://dashboard.wikiedu.org/courses/University_of_Oklahoma/Cold_War_Science_(Spring_2022)",
+            },
+          ],
+          result: "the articles that course's participants created or edited.",
+        }}
+      />
 
       <form onSubmit={handleSubmit}>
         <h3>Enter Course URL</h3>

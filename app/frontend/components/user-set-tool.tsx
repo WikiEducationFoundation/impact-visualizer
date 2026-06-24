@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { UserSetResponse } from "../types/search-tool.type";
 import LoadingOval from "./loading-oval.component";
 import ArticlesTable from "./articles-table.component";
+import ToolHowTo from "./tool-how-to.component";
 
 const userSetOptions = [
   { value: "", label: "-- Choose an option --" },
@@ -80,11 +81,26 @@ export default function UserSetTool() {
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
       <p className="ToolIntro">
-        Import articles edited by a specific Wiki Education community, for
-        example the Wikipedia Student Program or the Scholars &amp; Scientists
-        program. Choose the group and whether to include students only, or
-        students and instructors.
+        Import articles edited by a specific{" "}
+        <a href="https://wikiedu.org" target="_blank" rel="noreferrer">Wiki Education</a>{" "}
+        community, for example the Wikipedia Student Program or the Scholars
+        &amp; Scientists program.
       </p>
+
+      <ToolHowTo
+        steps={[
+          "Select a user group (e.g. Wikipedia Student Program).",
+          "Select a user type — students only, or students and instructors.",
+          "Click Run Query.",
+        ]}
+        example={{
+          inputs: [
+            { label: "User group", value: "Scholars & Scientists" },
+            { label: "User type", value: "Students and Instructors" },
+          ],
+          result: "the articles edited by that group.",
+        }}
+      />
 
       <form onSubmit={handleSubmit}>
         <label>
