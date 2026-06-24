@@ -39,9 +39,14 @@
     <div><dt>Source topic:</dt> <dd><%= @package['source_topic'] %></dd></div>
   </dl>
 
-  <% if @diff.empty? %>
+  <% has_changes = !@diff.empty? || @tags_will_sync %>
+  <% unless has_changes %>
     <p class="nochange">No changes to apply — the package matches the current article bag.</p>
   <% else %>
+    <% if @diff.empty? %>
+      <p class="nochange">No article changes — the article bag already matches.
+      The tag taxonomy (<%= @tag_count %> tag<%= 's' if @tag_count != 1 %>) will be (re-)synced.</p>
+    <% else %>
     <div class="diff-summary">
       <strong>Summary:</strong>
       <ul>
@@ -108,6 +113,8 @@
           </tbody>
         </table>
       </div>
+    <% end %>
+
     <% end %>
 
     <%= form_with url: import_path(handle: @handle), method: :post, local: true, class: 'actions' do %>

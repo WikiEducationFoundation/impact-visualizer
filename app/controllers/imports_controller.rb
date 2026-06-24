@@ -32,6 +32,11 @@ class ImportsController < ApplicationController
 
     if @existing_topic
       @diff = TopicBuilderSyncService.compute_diff(topic: @existing_topic, package: @package)
+      # The article diff is tag-blind; a v2 re-publish can carry tag-only
+      # changes (identical article bag). Surface that so the view still
+      # offers Apply when only the tag taxonomy would change.
+      @tags_will_sync = TopicBuilderTagIngestService.applicable?(@package)
+      @tag_count = Array(@package['tags']).size
       render :sync_preview
     else
       @first_articles = @package.fetch('articles', []).first(PREVIEW_ARTICLE_LIMIT)
