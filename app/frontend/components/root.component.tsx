@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React from "react";
 import { Link, Outlet, ScrollRestoration } from "react-router-dom";
-import { MdOutlineArrowDropDown } from "react-icons/md";
+import { MdOutlineArrowDropDown, MdFeedback } from "react-icons/md";
 
 import UserStatus from "./user-status.component";
 
@@ -74,7 +74,11 @@ function Root() {
                 </div>
                 <div className="dropdown-content">
                   {SEARCH_TOOLS.map((tool) => (
-                    <Link key={tool.path} to={tool.path} className="Dropdown-tool">
+                    <Link
+                      key={tool.path}
+                      to={tool.path}
+                      className="Dropdown-tool"
+                    >
                       <span className="Dropdown-toolName">{tool.label}</span>
                       <span className="Dropdown-toolDesc">{tool.short}</span>
                     </Link>
@@ -85,6 +89,15 @@ function Root() {
           </div>
 
           <div className="Header-right">
+            <a
+              className="Button Button--feedback u-mr1"
+              href="https://meta.wikimedia.org/wiki/Talk:Visual_Analytics_for_Sustainability_and_Climate_Change/Tool?action=edit&section=new"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Give Feedback
+              <MdFeedback className="Button-icon" />
+            </a>
             <UserStatus />
           </div>
         </div>
