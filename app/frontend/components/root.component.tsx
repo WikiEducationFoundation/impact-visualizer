@@ -89,8 +89,10 @@ function Root() {
           </div>
 
           <div className="Header-right">
+            <UserStatus />
+            <span className="Header-divider" aria-hidden="true" />
             <a
-              className="Button Button--feedback u-mr1"
+              className="Button Button--feedback"
               href="https://meta.wikimedia.org/wiki/Talk:Visual_Analytics_for_Sustainability_and_Climate_Change/Tool?action=edit&section=new"
               target="_blank"
               rel="noopener noreferrer"
@@ -98,7 +100,6 @@ function Root() {
               Give Feedback
               <MdFeedback className="Button-icon" />
             </a>
-            <UserStatus />
           </div>
         </div>
       </header>
