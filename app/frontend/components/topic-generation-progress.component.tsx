@@ -2,7 +2,6 @@
 import _ from "lodash";
 import React, { useState, useEffect, useRef } from "react";
 import cn from "classnames";
-import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Types
@@ -467,13 +466,6 @@ function OverflowMenu({
           >
             Restart data generation
           </button>
-          <Link
-            to={`/my-topics/edit/${topic.id}`}
-            className="TopicOverflow-item"
-            onClick={() => setOpen(false)}
-          >
-            Edit topic
-          </Link>
         </div>
       )}
     </div>
@@ -572,12 +564,6 @@ function TopicGenerationProgress({ topic }: { topic: Topic }) {
           {cannotStartReason ||
             "Add articles to this topic before generating data."}
         </div>
-      )}
-
-      {canEdit && state === "idle" && (
-        <Link to={`/my-topics/edit/${topic.id}`} className="TopicProgress-editLink">
-          Edit topic
-        </Link>
       )}
 
       {canEdit && (

@@ -34,8 +34,8 @@ function renderLoading() {
 function renderIntro({ topic, editorLabel }) {
   return (
     <div className="TopicDetailIntro u-mb2">
-      <div className="u-limitWidth50">
-        <h1 className="u-mt1 u-h1">{topic.name}</h1>
+      <div className="u-limitWidth50 TopicDetailIntro-main">
+        <h1 className="u-h1">{topic.name}</h1>
 
         <h3 className="u-mb05">
           Focus Period: {moment(topic.start_date).format("MMMM YYYY")} –{" "}
@@ -233,6 +233,15 @@ function TopicDetail() {
             {!topic.owned && <Link to="/">← Back to all Topics</Link>}
 
             {topic.owned && <Link to="/my-topics">← Back to My Topics</Link>}
+
+            {topic.owned && (
+              <Link
+                to={`/my-topics/edit/${topic.id}`}
+                className="Button Button--outlined"
+              >
+                Edit topic
+              </Link>
+            )}
           </div>
 
           {renderIntro({ topic, editorLabel })}
