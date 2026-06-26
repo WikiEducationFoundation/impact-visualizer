@@ -218,6 +218,35 @@ class Topic < ApplicationRecord
     topic_article_analytics.maximum(:updated_at)
   end
 
+  # Remove a single article (by title) from the active bag, hard-deleting its
+  # topic-scoped analytics + timepoints. Mirrors the batch cleanup in
+  # TopicBuilderSyncService#apply_removes!. The Article + ArticleTimepoint rows
+  # are article-scoped (possibly shared with other topics) and are left intact.
+  # Returns true if an article was removed, false if the title isn't in the bag.
+  def remove_article_from_active_bag!(title:)
+    bag = active_article_bag
+    return false unless bag
+
+    article_bag_article = bag.article_bag_articles.joins(:article).find_by(articles: { title: })
+    return false unless article_bag_article
+
+    article_id = article_bag_article.article_id
+
+    transaction do
+      TopicArticleTimepoint
+        .joins(:topic_timepoint, :article_timepoint)
+        .where(topic_timepoints: { topic_id: id },
+               article_timepoints: { article_id: })
+        .delete_all
+
+      TopicArticleAnalytic.where(topic_id: id, article_id:).delete_all
+
+      ArticleBagArticle.where(id: article_bag_article.id).delete_all
+    end
+
+    true
+  end
+
   def queue_articles_import
     job_id = ImportArticlesJob.perform_async(id)
     update article_import_job_id: job_id

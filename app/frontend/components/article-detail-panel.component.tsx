@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { FaArrowRight } from "react-icons/fa6";
 import { FiExternalLink } from "react-icons/fi";
 import { IoClose } from "react-icons/io5";
+import { BsTrash } from "react-icons/bs";
 import Spinner from "./spinner.component";
 import type { ArticleAnalytics } from "../types/bubble-chart.type";
 import { getWikiUrl } from "../utils/search-utils";
@@ -33,10 +34,16 @@ function ArticleDetailPanel({
   article,
   wiki,
   onClose,
+  canEdit = false,
+  onRemove,
+  removing = false,
 }: {
   article: ArticleRow;
   wiki?: Wiki;
   onClose: () => void;
+  canEdit?: boolean;
+  onRemove?: (title: string) => void;
+  removing?: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<"all" | "peacock">("all");
   const lang = wiki?.language ?? "en";
@@ -109,6 +116,18 @@ function ArticleDetailPanel({
               <FiExternalLink size={18} />
             </a>
           </h3>
+          {canEdit && onRemove && (
+            <button
+              type="button"
+              className="RemoveBtn"
+              onClick={() => onRemove(article.article)}
+              disabled={removing}
+              title="Remove this article from the topic"
+            >
+              <BsTrash size={14} aria-hidden="true" />
+              <span>Remove from topic</span>
+            </button>
+          )}
           <button className="Close" onClick={onClose} aria-label="Close">
             <IoClose size={28} />
           </button>

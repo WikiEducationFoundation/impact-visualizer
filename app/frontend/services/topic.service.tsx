@@ -155,6 +155,14 @@ class TopicService {
       });
   }
 
+  removeArticle(id: number | string, title: string) {
+    return http
+      .delete<Topic>(`/topics/${id}/remove_article`, { params: { title } })
+      .then((response: AxiosResponse) => {
+        return _.get(response, "data");
+      });
+  }
+
   getArticleLanguageComparison(
     id: number | string,
     article: string,
