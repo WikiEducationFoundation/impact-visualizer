@@ -20,6 +20,9 @@ function UserStatus() {
 
       {signedIn && (
         <div className="Header-userInfo">
+          <Link className="Button u-mr1" to="/my-topics/new">
+            Create a New Topic
+          </Link>
           <Link className="Button u-mr1" to="/my-topics">
             {isAdmin ? "Manage All Topics" : "Manage Your Topics"}
           </Link>

@@ -7,8 +7,9 @@ import React, {
   useDeferredValue,
 } from "react";
 import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   BsBook,
   BsInfoCircle,
@@ -38,12 +39,13 @@ import type {
 import {
   convertAnalyticsToCSV,
   convertAnalyticsToWikitext,
-  getAssessmentColor,
+  getAssessmentPalette,
   compareArticlesByPublicationDateAsc,
   compareArticlesByNumericFieldAsc,
   formatProtectionSummary,
   xAxisTitleForKey,
 } from "../utils/bubble-chart-utils";
+import TopicService from "../services/topic.service";
 import { fetchLanguageLinks, TARGET_LANGUAGES } from "../utils/language-links";
 import type { LangLinksProgress } from "../utils/language-links";
 import { exportChartImage } from "../utils/chart-image-export";
@@ -69,6 +71,8 @@ interface WikiBubbleChartProps {
   topicName?: string;
   topicStartDate?: string;
   topicEndDate?: string;
+  canEdit?: boolean;
+  isTopicBuilderTopic?: boolean;
 }
 
 const HEIGHT = 650;
@@ -155,12 +159,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   topicName,
   topicStartDate,
   topicEndDate,
+  canEdit = false,
+  isTopicBuilderTopic = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
   const sortedRowsRef = useRef<any[]>([]);
   const lastEmbeddedSortedRowsRef = useRef<any[] | null>(null);
   const [searchParams] = useSearchParams();
+  const queryClient = useQueryClient();
 
   // Parse the shared view from the URL exactly once, so every control below can
   // initialize straight from it without a URL->state effect (which would loop).
@@ -286,14 +293,16 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         const protections = analytics?.article_protections ?? [];
         const hasMoveRestriction = protections.some((p) => p.type === "move");
         const hasEditRestriction = protections.some((p) => p.type === "edit");
+        const palette = getAssessmentPalette(analytics?.assessment_grade);
 
         return {
           article,
           ...analytics,
           classifications: analytics?.classifications ?? [],
-          assessment_grade_color: getAssessmentColor(
-            analytics?.assessment_grade,
-          ),
+          assessment_grade_color: palette.article,
+          talk_color: palette.talk,
+          prev_article_color: palette.prevArticle,
+          lead_color: palette.lead,
           protection_summary: formatProtectionSummary(protections),
           has_move_restriction: hasMoveRestriction,
           has_edit_restriction: hasEditRestriction,
@@ -816,7 +825,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           mark: {
             type: "circle",
             fill: null,
-            stroke: "#2196f3",
             strokeWidth: 1.5,
             cursor: "pointer",
           },
@@ -827,6 +835,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [50, 1500] },
             },
+            stroke: {
+              field: "talk_color",
+              type: "nominal",
+              scale: null,
+              legend: null,
+            },
             opacity: makeOpacityEncoding(1),
           },
         },
@@ -836,7 +850,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             type: "circle",
             fill: null,
             strokeDash: [4, 4],
-            stroke: "#64b5f6",
             strokeWidth: 1.5,
             cursor: "pointer",
           },
@@ -847,6 +860,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [20, 600] },
             },
+            stroke: {
+              field: "prev_article_color",
+              type: "nominal",
+              scale: null,
+              legend: null,
+            },
             opacity: makeOpacityEncoding(1),
           },
         },
@@ -854,7 +873,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         {
           mark: {
             type: "circle",
-            fill: "#90caf9",
             opacity: 0.8,
             cursor: "pointer",
           },
@@ -865,14 +883,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               type: "quantitative",
               scale: { type: "sqrt", range: [30, 800] },
             },
+            fill: {
+              field: "lead_color",
+              type: "nominal",
+              scale: null,
+              legend: null,
+            },
             opacity: makeOpacityEncoding(0.8),
           },
         },
-        // Article size circle (article_size)
+        // Article size circle (article_size), colored by quality assessment
         {
           mark: {
             type: "circle",
-            fill: "#0d47a1",
             opacity: 0.5,
             stroke: "white",
             strokeWidth: 1,
@@ -918,6 +941,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               field: "article_size",
               type: "quantitative",
               scale: { type: "sqrt", range: [20, 600] },
+            },
+            fill: {
+              field: "assessment_grade_color",
+              type: "nominal",
+              scale: null,
+              legend: null,
             },
             opacity: makeOpacityEncoding(0.5),
           },
@@ -1221,6 +1250,39 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     setShowLabels(checked);
   };
 
+  const removeArticleMutation = useMutation({
+    mutationFn: (title: string) => TopicService.removeArticle(topicId!, title),
+    onSuccess: (updatedTopic, title) => {
+      queryClient.invalidateQueries({
+        queryKey: ["articleAnalytics", String(topicId)],
+      });
+      queryClient.setQueryData(["topic", String(topicId)], updatedTopic);
+      setSelectedArticle((cur) => (cur?.article === title ? null : cur));
+      setExcludedOutliers((prev) => {
+        if (!prev.has(title)) return prev;
+        const next = new Set(prev);
+        next.delete(title);
+        return next;
+      });
+      toast.success(`Removed "${title}" from this topic`);
+    },
+    onError: () => toast.error("Failed to remove article"),
+  });
+
+  const handleRemoveArticle = (title: string) => {
+    if (!canEdit || !topicId) return;
+    const tbNote = isTopicBuilderTopic
+      ? "\n\nNote: this topic syncs from Topic Builder, so a future sync may re-add this article."
+      : "";
+    if (
+      window.confirm(
+        `Remove "${title}" from this topic? This deletes its analytics and cannot be undone.${tbNote}`,
+      )
+    ) {
+      removeArticleMutation.mutate(title);
+    }
+  };
+
   const handleToggleOutlier = (article: string) => {
     setExcludedOutliers((prev) => {
       const next = new Set(prev);
@@ -1461,6 +1523,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             excludedOutliers={excludedOutliers}
             onToggleOutlier={handleToggleOutlier}
             onClearOutliers={handleClearOutliers}
+            canEdit={canEdit && !!topicId}
+            onRemoveArticle={handleRemoveArticle}
+            removing={removeArticleMutation.isPending}
           />
         </div>
 
@@ -1561,6 +1626,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           article={selectedArticle}
           wiki={wiki}
           onClose={() => setSelectedArticle(null)}
+          canEdit={canEdit && !!topicId}
+          onRemove={handleRemoveArticle}
+          removing={removeArticleMutation.isPending}
         />
       )}
 

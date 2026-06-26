@@ -27,14 +27,6 @@ function MyTopicIndex() {
   return (
     <section className="Section u-lg-pr05">
       <div className="Container Container--padded">
-        <div className="u-mb2">
-          <Link
-            className="Button"
-            to="/my-topics/new"
-          >
-            Create a New Topic
-          </Link>
-        </div>
         <div className="TopicIndex">
           {status === 'pending' && <Spinner />}
 

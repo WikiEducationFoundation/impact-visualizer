@@ -855,6 +855,33 @@ $danger-fg: #c62828;
       }
     }
 
+    .RemoveBtn {
+      margin-left: auto;
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid $danger-fg;
+      color: $danger-fg;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      transition:
+        background-color 120ms ease,
+        color 120ms ease;
+
+      &:hover {
+        background-color: $danger-bg;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+    }
+
     .Close {
       background: none;
       border: none;
@@ -1044,6 +1071,11 @@ $danger-fg: #c62828;
     flex-direction: column;
     overflow: hidden;
 
+    .ColBody {
+      display: flex;
+      flex-direction: column;
+    }
+
     .SectionHeader {
       font-size: 14px;
       font-weight: 600;
@@ -1099,6 +1131,19 @@ $danger-fg: #c62828;
       color: #4a4a4a;
       font-style: italic;
       padding: 16px 20px;
+    }
+
+    .Credit {
+      margin-top: auto;
+      font-size: 12px;
+      color: #4a4a4a;
+      padding: 12px 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+      a {
+        color: #2e7d32;
+        text-decoration: underline;
+      }
     }
   }
 }
@@ -1352,6 +1397,33 @@ $danger-fg: #c62828;
 
   .TrimBtn + .Link {
     padding-left: 8px;
+  }
+
+  .Item .RemoveBtn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 8px 12px 8px 4px;
+    background: none;
+    border: none;
+    color: #c2c2c2;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+      opacity 100ms ease,
+      color 120ms ease;
+
+    &:hover {
+      color: $danger-fg;
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+  }
+
+  .Item:hover .RemoveBtn {
+    opacity: 1;
   }
 
   .Item.is-excluded .Link {

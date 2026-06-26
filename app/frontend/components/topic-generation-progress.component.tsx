@@ -2,7 +2,6 @@
 import _ from "lodash";
 import React, { useState, useEffect, useRef } from "react";
 import cn from "classnames";
-import { Link } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Types
@@ -57,16 +56,16 @@ const PHASE_WEIGHTS = PHASE_BAR_COUNTS.map((n) => n / N_BARS);
 // "articles per timepoint" distribution rather than a uniform ramp.
 const BAR_HEIGHTS = [
   // import (3) — small, gently rising
-  0.25, 0.30, 0.32,
+  0.25, 0.3, 0.32,
   // analytics (12) — rising in clusters with occasional dips
-  0.42, 0.45, 0.40, 0.52, 0.58, 0.55, 0.65, 0.62, 0.70, 0.78, 0.85, 0.82,
+  0.42, 0.45, 0.4, 0.52, 0.58, 0.55, 0.65, 0.62, 0.7, 0.78, 0.85, 0.82,
   // timeline (15)
   // 15–17: late rise into peak
-  0.88, 0.95, 0.90,
+  0.88, 0.95, 0.9,
   // 18–22: plateau around the ~60% mark
   0.93, 0.92, 0.86, 0.94, 0.88,
   // 23–29: gentle decline with one bump (the "final ~40%")
-  0.84, 0.80, 0.82, 0.74, 0.68, 0.62, 0.55,
+  0.84, 0.8, 0.82, 0.74, 0.68, 0.62, 0.55,
 ];
 
 function phaseIdxForBar(i: number): number {
@@ -86,7 +85,10 @@ function isFailed(status: string | null | undefined) {
   return status === "failed" || status === "interrupted";
 }
 
-function derive(jobStatus: string | null | undefined, dataExists: boolean): PhaseStatus {
+function derive(
+  jobStatus: string | null | undefined,
+  dataExists: boolean,
+): PhaseStatus {
   if (isRunning(jobStatus)) return "running";
   if (isFailed(jobStatus)) return "error";
   return dataExists ? "complete" : "pending";
@@ -118,22 +120,25 @@ function buildImportPhase(topic: Topic): Phase {
   if (status === "running") {
     if (hasUsersCsv) {
       percent = Math.round((articlesPct + usersPct) / 2);
-      startedAt = _.min(
-        [topic.articles_import_started_at, topic.users_import_started_at].filter(
-          (v) => v != null,
-        ) as number[],
-      ) ?? null;
+      startedAt =
+        _.min(
+          [
+            topic.articles_import_started_at,
+            topic.users_import_started_at,
+          ].filter((v) => v != null) as number[],
+        ) ?? null;
     } else {
       percent = articlesPct;
       startedAt = topic.articles_import_started_at;
     }
   }
 
-  const detail = status === "running"
-    ? hasUsersCsv
-      ? `Importing — articles ${articlesPct}% · users ${usersPct}%`
-      : `Importing articles · ${articlesPct}%`
-    : null;
+  const detail =
+    status === "running"
+      ? hasUsersCsv
+        ? `Importing — articles ${articlesPct}% · users ${usersPct}%`
+        : `Importing articles · ${articlesPct}%`
+      : null;
 
   let countLabel: string | null = null;
   if (status === "complete") {
@@ -181,15 +186,22 @@ function buildAnalyticsPhase(topic: Topic): Phase {
     key: "analytics",
     label: "Analytics",
     status,
-    percent: status === "running" ? topic.generate_article_analytics_percent_complete : null,
-    startedAt: status === "running" ? topic.generate_article_analytics_started_at : null,
+    percent:
+      status === "running"
+        ? topic.generate_article_analytics_percent_complete
+        : null,
+    startedAt:
+      status === "running" ? topic.generate_article_analytics_started_at : null,
     detail,
     countLabel: null,
   };
 }
 
 function buildTimepointsPhase(topic: Topic): Phase {
-  const status = derive(topic.incremental_topic_build_status, !!topic.has_stats);
+  const status = derive(
+    topic.incremental_topic_build_status,
+    !!topic.has_stats,
+  );
 
   const currentStageKey = topic.incremental_topic_build_stage;
   const currentIdx = currentStageKey
@@ -206,16 +218,19 @@ function buildTimepointsPhase(topic: Topic): Phase {
     return { ...stage, state: "pending" as const };
   });
 
-  const detail = status === "running"
-    ? buildTimepointsDetail(topic, currentStageKey)
-    : null;
+  const detail =
+    status === "running" ? buildTimepointsDetail(topic, currentStageKey) : null;
 
   return {
     key: "timepoints",
     label: "Timeline",
     status,
-    percent: status === "running" ? topic.incremental_topic_build_percent_complete : null,
-    startedAt: status === "running" ? topic.incremental_topic_build_started_at : null,
+    percent:
+      status === "running"
+        ? topic.incremental_topic_build_percent_complete
+        : null,
+    startedAt:
+      status === "running" ? topic.incremental_topic_build_started_at : null,
     detail,
     countLabel: null,
     subStages,
@@ -358,7 +373,13 @@ function ProgressChart({
       preserveAspectRatio="none"
       aria-label={`Progress: ${Math.round(overallPercent)}%`}
     >
-      <line x1="0" y1="59" x2="300" y2="59" className="ProgressChart-baseline" />
+      <line
+        x1="0"
+        y1="59"
+        x2="300"
+        y2="59"
+        className="ProgressChart-baseline"
+      />
 
       {BAR_HEIGHTS.map((target, i) => {
         const phaseIdx = phaseIdxForBar(i);
@@ -411,9 +432,15 @@ function PhaseLegend({ phases }: { phases: Phase[] }) {
           )}
         >
           <span className="ProgressLegend-marker">
-            {phase.status === "complete" && <span className="ProgressLegend-check">✓</span>}
-            {phase.status === "running" && <span className="ProgressLegend-dot" />}
-            {phase.status === "pending" && <span className="ProgressLegend-dotPending" />}
+            {phase.status === "complete" && (
+              <span className="ProgressLegend-check">✓</span>
+            )}
+            {phase.status === "running" && (
+              <span className="ProgressLegend-dot" />
+            )}
+            {phase.status === "pending" && (
+              <span className="ProgressLegend-dotPending" />
+            )}
             {phase.status === "error" && "!"}
           </span>
           <span className="ProgressLegend-label">{phase.label}</span>
@@ -438,7 +465,8 @@ function OverflowMenu({
   useEffect(() => {
     if (!open) return;
     function onClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     }
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
@@ -467,13 +495,6 @@ function OverflowMenu({
           >
             Restart data generation
           </button>
-          <Link
-            to={`/my-topics/edit/${topic.id}`}
-            className="TopicOverflow-item"
-            onClick={() => setOpen(false)}
-          >
-            Edit topic
-          </Link>
         </div>
       )}
     </div>
@@ -494,7 +515,8 @@ function TopicGenerationProgress({ topic }: { topic: Topic }) {
 
   const phases = buildPhases(topic);
   const state = topic.data_generation_state || "idle";
-  const overallPercent = state === "complete" ? 100 : computeOverallPercent(phases);
+  const overallPercent =
+    state === "complete" ? 100 : computeOverallPercent(phases);
 
   const currentPhase = phases.find((p) => p.status === "running") || null;
   const currentEta = currentPhase
@@ -517,10 +539,22 @@ function TopicGenerationProgress({ topic }: { topic: Topic }) {
         <h4 className="TopicProgress-title">
           {state === "idle" && "Data generation"}
           {state === "running" && "Generating data"}
-          {state === "complete" && "Data is up to date"}
+          {state === "complete" && "Last updated:"}
+          {state === "complete" && topic.data_updated_at && (
+            <span className="TopicProgress-updatedAt">
+              {" "}
+              {new Date(topic.data_updated_at).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </span>
+          )}
         </h4>
         {state === "running" && currentEta != null && (
-          <span className="TopicProgress-eta">{formatEta(currentEta)} left</span>
+          <span className="TopicProgress-eta">
+            {formatEta(currentEta)} left
+          </span>
         )}
         {canEdit && state !== "idle" && (
           <OverflowMenu
@@ -572,12 +606,6 @@ function TopicGenerationProgress({ topic }: { topic: Topic }) {
           {cannotStartReason ||
             "Add articles to this topic before generating data."}
         </div>
-      )}
-
-      {canEdit && state === "idle" && (
-        <Link to={`/my-topics/edit/${topic.id}`} className="TopicProgress-editLink">
-          Edit topic
-        </Link>
       )}
 
       {canEdit && (

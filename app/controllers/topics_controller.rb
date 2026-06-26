@@ -4,7 +4,8 @@ class TopicsController < ApiController
   before_action :authenticate_topic_editor!,
                 only: %i[create update destroy import_users import_articles
                          generate_timepoints incremental_topic_build
-                         generate_article_analytics start_data_generation]
+                         generate_article_analytics start_data_generation
+                         remove_article]
 
   def index
     if current_editor && params[:owned]
@@ -146,6 +147,15 @@ class TopicsController < ApiController
   rescue ImpactVisualizerErrors::TopicNotReadyForDataGeneration
     render json: { error: 'Topic has no articles to process. Add articles or attach a CSV first.' },
            status: :unprocessable_entity
+  end
+
+  def remove_article
+    topic = find_editable_topic
+    removed = topic.remove_article_from_active_bag!(title: params[:title].to_s)
+    return render(json: { error: 'Article not found in topic' }, status: :not_found) unless removed
+
+    @topic = topic.reload
+    render :show
   end
 
   protected

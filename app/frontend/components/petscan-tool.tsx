@@ -3,6 +3,7 @@ import { PetscanResponse } from "../types/search-tool.type";
 import toast from "react-hot-toast";
 import LoadingOval from "./loading-oval.component";
 import ArticlesTable from "./articles-table.component";
+import ToolHowTo from "./tool-how-to.component";
 
 export default function PetScanTool() {
   const [petscanID, setPetscanID] = useState<string>("");
@@ -48,6 +49,24 @@ export default function PetScanTool() {
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
+      <p className="ToolIntro">
+        <a href="https://petscan.wmcloud.org" target="_blank" rel="noreferrer">PetScan</a>{" "}
+        is an external Wikimedia tool for building article lists from categories,
+        templates, and other criteria. Import the results of a query you've built
+        there using its PetScan ID.
+      </p>
+
+      <ToolHowTo
+        steps={[
+          "Build and run your query on petscan.wmcloud.org.",
+          "Copy the PSID (PetScan ID) shown in the results / URL.",
+          "Paste the ID and click Run Query.",
+        ]}
+        example={{
+          inputs: [{ label: "PetScan ID", value: "100" }],
+          result: "the articles produced by that PetScan query.",
+        }}
+      />
 
       <form onSubmit={handleSubmit}>
         <h3>Enter PetScan ID</h3>

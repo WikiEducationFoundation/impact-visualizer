@@ -1,9 +1,53 @@
 import _ from "lodash";
 import React from "react";
 import { Link, Outlet, ScrollRestoration } from "react-router-dom";
-import { MdOutlineArrowDropDown } from "react-icons/md";
+import { MdOutlineArrowDropDown, MdFeedback } from "react-icons/md";
 
 import UserStatus from "./user-status.component";
+
+const SEARCH_TOOLS = [
+  {
+    path: "/search/wikidata-tool",
+    label: "Wikidata Tool",
+    short:
+      "Find articles by their characteristics, such as people of a given occupation, gender, or nationality, using Wikidata.",
+  },
+  {
+    path: "/search/wikipedia-category-tool",
+    label: "Wikipedia Category Tool",
+    short:
+      "Collect articles by browsing a Wikipedia category and its subcategories.",
+  },
+  {
+    path: "/search/wiki-dashboard-course-tool",
+    label: "Education Dashboard Course Tool",
+    short:
+      "Import the articles edited in a Wiki Education / Programs & Events Dashboard course.",
+  },
+  {
+    path: "/search/wiki-dashboard-user-tool",
+    label: "Education Dashboard User Tool",
+    short:
+      "Import the articles a single editor worked on, from their Dashboard profile.",
+  },
+  {
+    path: "/search/petscan-tool",
+    label: "Petscan Tool",
+    short:
+      "Import a ready-made list of articles from PetScan using its query ID.",
+  },
+  {
+    path: "/search/pagepile-tool",
+    label: "Pagepile Tool",
+    short: "Import a saved list of pages from PagePile using its ID.",
+  },
+  {
+    path: "/search/user-set-tool",
+    label: "User Set Tool",
+    short:
+      "Get the articles edited by a predefined group of Wiki Education participants.",
+  },
+];
 
 function Root() {
   return (
@@ -29,19 +73,16 @@ function Root() {
                   Tools <MdOutlineArrowDropDown />
                 </div>
                 <div className="dropdown-content">
-                  <Link to="/search/wikidata-tool">Wikidata Tool</Link>
-                  <Link to="/search/wikipedia-category-tool">
-                    Wikipedia Category Tool
-                  </Link>
-                  <Link to="/search/wiki-dashboard-course-tool">
-                    Education Dashboard Course Tool
-                  </Link>
-                  <Link to="/search/wiki-dashboard-user-tool">
-                    Education Dashboard User Tool
-                  </Link>
-                  <Link to="/search/petscan-tool">Petscan Tool</Link>
-                  <Link to="/search/pagepile-tool">Pagepile Tool</Link>
-                  <Link to="/search/user-set-tool">User Set Tool</Link>
+                  {SEARCH_TOOLS.map((tool) => (
+                    <Link
+                      key={tool.path}
+                      to={tool.path}
+                      className="Dropdown-tool"
+                    >
+                      <span className="Dropdown-toolName">{tool.label}</span>
+                      <span className="Dropdown-toolDesc">{tool.short}</span>
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
@@ -49,6 +90,16 @@ function Root() {
 
           <div className="Header-right">
             <UserStatus />
+            <span className="Header-divider" aria-hidden="true" />
+            <a
+              className="Button Button--feedback"
+              href="https://meta.wikimedia.org/wiki/Talk:Visual_Analytics_for_Sustainability_and_Climate_Change/Tool?action=edit&section=new"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Give Feedback
+              <MdFeedback className="Button-icon" />
+            </a>
           </div>
         </div>
       </header>

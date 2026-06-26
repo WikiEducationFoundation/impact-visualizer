@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { List } from "react-window";
 import { GoTriangleLeft, GoTriangleRight } from "react-icons/go";
 import { FiExternalLink } from "react-icons/fi";
-import { BsEye, BsEyeSlash } from "react-icons/bs";
+import { BsEye, BsEyeSlash, BsTrash } from "react-icons/bs";
 import { getWikiUrl } from "../utils/search-utils";
 import type { ArticleRow } from "./article-detail-panel.component";
 
@@ -18,6 +18,9 @@ interface FilteredArticlesSidebarProps {
   excludedOutliers?: Set<string>;
   onToggleOutlier?: (article: string) => void;
   onClearOutliers?: () => void;
+  canEdit?: boolean;
+  onRemoveArticle?: (title: string) => void;
+  removing?: boolean;
 }
 
 interface SidebarRowProps {
@@ -26,11 +29,22 @@ interface SidebarRowProps {
   onArticleClick?: (article: ArticleRow) => void;
   excludedOutliers?: Set<string>;
   onToggleOutlier?: (article: string) => void;
+  canEdit?: boolean;
+  onRemoveArticle?: (title: string) => void;
+  removing?: boolean;
 }
 
 function SidebarRow(props: SidebarRowProps): React.ReactElement | null {
-  const { articles, wiki, onArticleClick, excludedOutliers, onToggleOutlier } =
-    props;
+  const {
+    articles,
+    wiki,
+    onArticleClick,
+    excludedOutliers,
+    onToggleOutlier,
+    canEdit,
+    onRemoveArticle,
+    removing,
+  } = props;
   const { index, style } = props as unknown as {
     index: number;
     style: React.CSSProperties;
@@ -76,6 +90,18 @@ function SidebarRow(props: SidebarRowProps): React.ReactElement | null {
       >
         <FiExternalLink />
       </a>
+      {canEdit && onRemoveArticle && (
+        <button
+          type="button"
+          className="RemoveBtn"
+          onClick={() => onRemoveArticle(articleRow.article)}
+          disabled={removing}
+          title="Remove from topic"
+          aria-label={`Remove ${articleRow.article} from topic`}
+        >
+          <BsTrash />
+        </button>
+      )}
     </li>
   );
 }
@@ -91,6 +117,9 @@ const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> =
       excludedOutliers,
       onToggleOutlier,
       onClearOutliers,
+      canEdit,
+      onRemoveArticle,
+      removing,
     }) => {
       const [excludedOnly, setExcludedOnly] = useState<boolean>(false);
 
@@ -168,6 +197,9 @@ const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> =
                   onArticleClick,
                   excludedOutliers,
                   onToggleOutlier,
+                  canEdit,
+                  onRemoveArticle,
+                  removing,
                 }}
                 overscanCount={10}
                 style={{ maxHeight: LIST_HEIGHT }}

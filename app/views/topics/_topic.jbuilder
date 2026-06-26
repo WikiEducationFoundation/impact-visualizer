@@ -27,6 +27,7 @@ end
 
 json.has_stats topic.most_recent_summary.present?
 json.has_analytics topic.article_analytics_exist?
+json.data_updated_at topic.data_updated_at
 json.owned owned
 
 # Data-generation status — exposed to everyone so non-owners can see

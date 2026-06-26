@@ -53,24 +53,24 @@ const BubbleCell: React.FC<BubbleCellProps> = ({
         <circle
           r={scales.talk(row.talk_size)}
           fill="none"
-          stroke="#2196f3"
+          stroke={row.talk_color ?? "#2196f3"}
           strokeWidth={1.5}
         />
         <circle
           r={scales.prevArticle(row.prev_article_size)}
           fill="none"
-          stroke="#64b5f6"
+          stroke={row.prev_article_color ?? "#64b5f6"}
           strokeWidth={1.5}
           strokeDasharray="4 4"
         />
         <circle
           r={scales.lead(row.lead_section_size)}
-          fill="#90caf9"
+          fill={row.lead_color ?? "#90caf9"}
           opacity={0.8}
         />
         <circle
           r={scales.article(row.article_size)}
-          fill="#0d47a1"
+          fill={row.assessment_grade_color ?? "#0d47a1"}
           opacity={0.5}
           stroke="white"
           strokeWidth={1}

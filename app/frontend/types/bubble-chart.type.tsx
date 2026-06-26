@@ -45,6 +45,10 @@ type BubbleSizeFields = {
   prev_article_size?: number | null;
   lead_section_size?: number;
   talk_size?: number;
+  assessment_grade_color?: string;
+  talk_color?: string;
+  prev_article_color?: string;
+  lead_color?: string;
 };
 
 type RadiusScale = (v: number | null | undefined) => number;

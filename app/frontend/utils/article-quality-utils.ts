@@ -1,6 +1,10 @@
 // Threshold and feature mapping ported from the Wikimedia microtask-generator:
 // https://gitlab.wikimedia.org/toolforge-repos/microtask-generator/-/blob/main/main.py
 
+export const MICROTASK_GENERATOR_NAME = "microtask-generator";
+export const MICROTASK_GENERATOR_URL =
+  "https://gitlab.wikimedia.org/toolforge-repos/microtask-generator";
+
 export const QUALITY_THRESHOLD = 0.5;
 
 export const QUALITY_CHECKS: { key: string; message: string }[] = [

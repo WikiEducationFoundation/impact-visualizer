@@ -112,6 +112,15 @@ const GLOSSARY_SECTIONS: GlossarySection[] = [
     ],
   },
   {
+    title: "Tags",
+    terms: [
+      {
+        name: "Tag",
+        def: "A topic-specific label assigned to articles, used to filter the chart down to a subset of articles.",
+      },
+    ],
+  },
+  {
     title: "Page protections",
     intro:
       "Administrative controls applied to high-traffic or contentious pages.",

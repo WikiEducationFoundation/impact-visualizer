@@ -5,6 +5,7 @@ import LoadingOval from "./loading-oval.component";
 import ArticlesTable from "./articles-table.component";
 import { extractDashboardUsername } from "../utils/search-utils";
 import { DashboardUserToolResponse } from "../types/search-tool.type";
+import ToolHowTo from "./tool-how-to.component";
 
 export default function WikiDashboardUserTool() {
   const [userInputString, setUserInputString] = useState<string>("");
@@ -84,6 +85,32 @@ export default function WikiDashboardUserTool() {
   return (
     <div className="Container Container--padded">
       <h1>Impact Search</h1>
+      <p className="ToolIntro">
+        Look up an individual editor on the{" "}
+        <a href="https://dashboard.wikiedu.org" target="_blank" rel="noreferrer">
+          Wiki Education Dashboard
+        </a>{" "}
+        or{" "}
+        <a href="https://outreachdashboard.wmflabs.org" target="_blank" rel="noreferrer">
+          Programs &amp; Events Dashboard
+        </a>{" "}
+        and import the articles they created or edited.
+      </p>
+
+      <ToolHowTo
+        steps={[
+          "Enter the editor's username or their Dashboard profile URL.",
+          "Choose which dashboard to search (dashboard.wikiedu.org or outreachdashboard.wmflabs.org).",
+          "Click Run Query.",
+        ]}
+        example={{
+          inputs: [
+            { label: "Username", value: "Ragesoss" },
+            { label: "Dashboard", value: "dashboard.wikiedu.org" },
+          ],
+          result: "the articles Ragesoss created or edited.",
+        }}
+      />
 
       <form onSubmit={handleSubmit}>
         <h3>Enter Username or Profile URL</h3>
