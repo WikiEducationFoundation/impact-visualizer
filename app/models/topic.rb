@@ -214,6 +214,10 @@ class Topic < ApplicationRecord
     topic_article_analytics.with_pageviews.exists? && topic_article_analytics.with_size.exists?
   end
 
+  def data_updated_at
+    topic_article_analytics.maximum(:updated_at)
+  end
+
   def queue_articles_import
     job_id = ImportArticlesJob.perform_async(id)
     update article_import_job_id: job_id
