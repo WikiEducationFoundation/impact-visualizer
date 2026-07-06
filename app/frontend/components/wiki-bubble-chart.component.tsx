@@ -99,11 +99,13 @@ const patchChartScales = (vgSpec: any) => {
         scales.push(base);
         vgSpec.scales = scales;
       }
-      const B = "domain('x_base')";
+      // convert to number to avoid issues with date objects
+      const Blo = "toNumber(domain('x_base')[0])";
+      const Bhi = "toNumber(domain('x_base')[1])";
       const clamp = (proposed: string) =>
-        `(span(${proposed}) >= span(${B}) ? ${B}` +
-        ` : (${proposed})[0] < ${B}[0] ? [${B}[0], ${B}[0] + span(${proposed})]` +
-        ` : (${proposed})[1] > ${B}[1] ? [${B}[1] - span(${proposed}), ${B}[1]]` +
+        `(span(${proposed}) >= (${Bhi} - ${Blo}) ? [${Blo}, ${Bhi}]` +
+        ` : (${proposed})[0] < ${Blo} ? [${Blo}, ${Blo} + span(${proposed})]` +
+        ` : (${proposed})[1] > ${Bhi} ? [${Bhi} - span(${proposed}), ${Bhi}]` +
         ` : (${proposed}))`;
       for (const sig of vgSpec.signals || []) {
         if (!Array.isArray(sig.on)) continue;
