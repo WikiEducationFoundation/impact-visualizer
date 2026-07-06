@@ -676,6 +676,21 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       tagFilterExpr,
     ].join(" && ");
 
+    const rankedSortField =
+      xAxisKey === "title"
+        ? "article"
+        : xAxisKey === "publication_date"
+          ? "publication_date"
+          : xAxisKey;
+
+    const rankedSort =
+      rankedSortField === "article"
+        ? [{ field: "article", order: "ascending" as const }]
+        : [
+            { field: rankedSortField, order: "ascending" as const },
+            { field: "article", order: "ascending" as const },
+          ];
+
     const isLargeDataset = currentSortedRows.length > LARGE_DATASET_THRESHOLD;
 
     const useHighlight = !isLargeDataset;
@@ -703,7 +718,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       transform: [
         { filter: yFilterExpr },
         { filter: visibilityFilterExpr },
-        { window: [{ op: "row_number", as: "idx" }] },
+        { window: [{ op: "row_number", as: "idx" }], sort: rankedSort },
       ],
       config: {
         legend: { disable: true },
