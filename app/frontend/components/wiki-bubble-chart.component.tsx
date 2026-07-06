@@ -401,6 +401,35 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     return { min, max };
   }, [rows, yAxisConfig.currentField, excludedOutliers]);
 
+  // Full-data extent for the x axis, used to pin the x scale domain so filtering
+  // hides bubbles without repacking or re-scaling (articles keep a fixed x
+  // position). Computed over all rows for the current x field.
+  const xFullDomain = useMemo<[number, number] | null>(() => {
+    const isScaled = xAxisMode === "scaled" && xAxisKey !== "title";
+    if (!isScaled) {
+      return rows.length ? [1, rows.length] : null;
+    }
+    let min = Infinity;
+    let max = -Infinity;
+    let found = false;
+    for (let i = 0; i < rows.length; i++) {
+      const v =
+        xAxisKey === "publication_date"
+          ? rows[i].publication_date
+            ? Date.parse(rows[i].publication_date as string)
+            : NaN
+          : (rows[i] as any)[xAxisKey];
+      if (typeof v === "number" && Number.isFinite(v)) {
+        if (v < min) min = v;
+        if (v > max) max = v;
+        found = true;
+      }
+    }
+    return found ? [min, max] : null;
+  }, [rows, xAxisKey, xAxisMode]);
+  const xDomainMin = xFullDomain ? xFullDomain[0] : null;
+  const xDomainMax = xFullDomain ? xFullDomain[1] : null;
+
   const parsedYAxisDomain = useMemo(() => {
     const parsedMin =
       committedYAxisMinInput.trim() === ""
@@ -637,10 +666,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         };
 
     // Edge padding so the first/last bubble isn't clipped (the pan clamp
-    // otherwise pins the domain flush to the data).
+    // otherwise pins the domain flush to the data). Pin the domain to the full
+    // data extent so filtering hides bubbles without repacking/re-scaling —
+    // every article keeps a fixed x position for comparison across filters.
     xEncoding.scale = {
       ...(xEncoding.scale || {}),
       padding: MAX_CIRCLE_RADIUS,
+      ...(xFullDomain ? { domain: xFullDomain } : {}),
     };
 
     const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
@@ -718,9 +750,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       background: "#ffffff",
       data: { name: "main", values: currentSortedRows },
       transform: [
+        { window: [{ op: "row_number", as: "idx" }], sort: rankedSort },
         { filter: yFilterExpr },
         { filter: visibilityFilterExpr },
-        { window: [{ op: "row_number", as: "idx" }], sort: rankedSort },
       ],
       config: {
         legend: { disable: true },
@@ -1055,6 +1087,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     yAxisScaleType,
     yAxisAutoDomain.min,
     yAxisAutoDomain.max,
+    xDomainMin,
+    xDomainMax,
     excludedKey,
     availableTagsKey,
   ]);
