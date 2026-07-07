@@ -40,6 +40,7 @@ import {
   convertAnalyticsToCSV,
   convertAnalyticsToWikitext,
   getAssessmentPalette,
+  SINGLE_COLOR_PALETTE,
   compareArticlesByPublicationDateAsc,
   compareArticlesByNumericFieldAsc,
   formatProtectionSummary,
@@ -99,11 +100,13 @@ const patchChartScales = (vgSpec: any) => {
         scales.push(base);
         vgSpec.scales = scales;
       }
-      const B = "domain('x_base')";
+      // convert to number to avoid issues with date objects
+      const Blo = "toNumber(domain('x_base')[0])";
+      const Bhi = "toNumber(domain('x_base')[1])";
       const clamp = (proposed: string) =>
-        `(span(${proposed}) >= span(${B}) ? ${B}` +
-        ` : (${proposed})[0] < ${B}[0] ? [${B}[0], ${B}[0] + span(${proposed})]` +
-        ` : (${proposed})[1] > ${B}[1] ? [${B}[1] - span(${proposed}), ${B}[1]]` +
+        `(span(${proposed}) >= (${Bhi} - ${Blo}) ? [${Blo}, ${Bhi}]` +
+        ` : (${proposed})[0] < ${Blo} ? [${Blo}, ${Blo} + span(${proposed})]` +
+        ` : (${proposed})[1] > ${Bhi} ? [${Bhi} - span(${proposed}), ${Bhi}]` +
         ` : (${proposed}))`;
       for (const sig of vgSpec.signals || []) {
         if (!Array.isArray(sig.on)) continue;
@@ -250,6 +253,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [showLabels, setShowLabels] = useState<boolean>(
     initialState.showLabels,
   );
+  const [colorMode, setColorMode] = useState<"assessment" | "single">(
+    initialState.colorMode,
+  );
   const [excludedOutliers, setExcludedOutliers] = useState<Set<string>>(
     () => new Set(initialState.excludedOutliers),
   );
@@ -294,15 +300,17 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         const hasMoveRestriction = protections.some((p) => p.type === "move");
         const hasEditRestriction = protections.some((p) => p.type === "edit");
         const palette = getAssessmentPalette(analytics?.assessment_grade);
+        const bubble = colorMode === "single" ? SINGLE_COLOR_PALETTE : palette;
 
         return {
           article,
           ...analytics,
           classifications: analytics?.classifications ?? [],
           assessment_grade_color: palette.article,
-          talk_color: palette.talk,
-          prev_article_color: palette.prevArticle,
-          lead_color: palette.lead,
+          bubble_article_color: bubble.article,
+          bubble_talk_color: bubble.talk,
+          bubble_prev_color: bubble.prevArticle,
+          bubble_lead_color: bubble.lead,
           protection_summary: formatProtectionSummary(protections),
           has_move_restriction: hasMoveRestriction,
           has_edit_restriction: hasEditRestriction,
@@ -310,7 +318,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       });
     }
     return [];
-  }, [data]);
+  }, [data, colorMode]);
 
   const availableTags = useMemo(() => {
     const set = new Set<string>();
@@ -398,6 +406,35 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       return { min: null as number | null, max: null as number | null };
     return { min, max };
   }, [rows, yAxisConfig.currentField, excludedOutliers]);
+
+  // Full-data extent for the x axis, used to pin the x scale domain so filtering
+  // hides bubbles without repacking or re-scaling (articles keep a fixed x
+  // position). Computed over all rows for the current x field.
+  const xFullDomain = useMemo<[number, number] | null>(() => {
+    const isScaled = xAxisMode === "scaled" && xAxisKey !== "title";
+    if (!isScaled) {
+      return rows.length ? [1, rows.length] : null;
+    }
+    let min = Infinity;
+    let max = -Infinity;
+    let found = false;
+    for (let i = 0; i < rows.length; i++) {
+      const v =
+        xAxisKey === "publication_date"
+          ? rows[i].publication_date
+            ? Date.parse(rows[i].publication_date as string)
+            : NaN
+          : (rows[i] as any)[xAxisKey];
+      if (typeof v === "number" && Number.isFinite(v)) {
+        if (v < min) min = v;
+        if (v > max) max = v;
+        found = true;
+      }
+    }
+    return found ? [min, max] : null;
+  }, [rows, xAxisKey, xAxisMode]);
+  const xDomainMin = xFullDomain ? xFullDomain[0] : null;
+  const xDomainMax = xFullDomain ? xFullDomain[1] : null;
 
   const parsedYAxisDomain = useMemo(() => {
     const parsedMin =
@@ -635,10 +672,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         };
 
     // Edge padding so the first/last bubble isn't clipped (the pan clamp
-    // otherwise pins the domain flush to the data).
+    // otherwise pins the domain flush to the data). Pin the domain to the full
+    // data extent so filtering hides bubbles without repacking/re-scaling —
+    // every article keeps a fixed x position for comparison across filters.
     xEncoding.scale = {
       ...(xEncoding.scale || {}),
       padding: MAX_CIRCLE_RADIUS,
+      ...(xFullDomain ? { domain: xFullDomain } : {}),
     };
 
     const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
@@ -676,6 +716,21 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       tagFilterExpr,
     ].join(" && ");
 
+    const rankedSortField =
+      xAxisKey === "title"
+        ? "article"
+        : xAxisKey === "publication_date"
+          ? "publication_date"
+          : xAxisKey;
+
+    const rankedSort =
+      rankedSortField === "article"
+        ? [{ field: "article", order: "ascending" as const }]
+        : [
+            { field: rankedSortField, order: "ascending" as const },
+            { field: "article", order: "ascending" as const },
+          ];
+
     const isLargeDataset = currentSortedRows.length > LARGE_DATASET_THRESHOLD;
 
     const useHighlight = !isLargeDataset;
@@ -701,9 +756,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       background: "#ffffff",
       data: { name: "main", values: currentSortedRows },
       transform: [
+        { window: [{ op: "row_number", as: "idx" }], sort: rankedSort },
         { filter: yFilterExpr },
         { filter: visibilityFilterExpr },
-        { window: [{ op: "row_number", as: "idx" }] },
       ],
       config: {
         legend: { disable: true },
@@ -836,7 +891,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [50, 1500] },
             },
             stroke: {
-              field: "talk_color",
+              field: "bubble_talk_color",
               type: "nominal",
               scale: null,
               legend: null,
@@ -861,7 +916,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             stroke: {
-              field: "prev_article_color",
+              field: "bubble_prev_color",
               type: "nominal",
               scale: null,
               legend: null,
@@ -884,7 +939,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [30, 800] },
             },
             fill: {
-              field: "lead_color",
+              field: "bubble_lead_color",
               type: "nominal",
               scale: null,
               legend: null,
@@ -943,7 +998,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             fill: {
-              field: "assessment_grade_color",
+              field: "bubble_article_color",
               type: "nominal",
               scale: null,
               legend: null,
@@ -1038,6 +1093,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     yAxisScaleType,
     yAxisAutoDomain.min,
     yAxisAutoDomain.max,
+    xDomainMin,
+    xDomainMax,
     excludedKey,
     availableTagsKey,
   ]);
@@ -1334,6 +1391,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       includeNoCentrality,
       searchTerm,
       showLabels,
+      colorMode,
       selectedGrades,
       deselectedTags: [...deselectedTags],
       includeUntagged,
@@ -1503,6 +1561,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 onChange={(e) => handleShowLabelsChange(e.target.checked)}
               />
               <span>Show labels</span>
+            </label>
+            <label
+              className="ShowLabels"
+              title="Color every bubble the same instead of by quality assessment. Useful for accessibility and for wikis without assessment grades."
+            >
+              <input
+                type="checkbox"
+                checked={colorMode === "single"}
+                onChange={(e) =>
+                  setColorMode(e.target.checked ? "single" : "assessment")
+                }
+              />
+              <span>Single color</span>
             </label>
             <ArticleSearchAutocomplete
               searchTerm={searchTerm}

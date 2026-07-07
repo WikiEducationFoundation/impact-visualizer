@@ -282,8 +282,7 @@ type AssessmentPalette = {
   prevArticle: string;
 };
 
-function getAssessmentPalette(grade?: string | null): AssessmentPalette {
-  const base = getAssessmentColor(grade);
+function getPaletteFromBase(base: string): AssessmentPalette {
   return {
     article: base,
     lead: shadeColor(base, 0.35),
@@ -292,7 +291,16 @@ function getAssessmentPalette(grade?: string | null): AssessmentPalette {
   };
 }
 
+function getAssessmentPalette(grade?: string | null): AssessmentPalette {
+  return getPaletteFromBase(getAssessmentColor(grade));
+}
+
+const SINGLE_COLOR_BASE = "#2f6d9e";
+const SINGLE_COLOR_PALETTE: AssessmentPalette =
+  getPaletteFromBase(SINGLE_COLOR_BASE);
+
 export {
+  SINGLE_COLOR_PALETTE,
   compareArticlesByPublicationDateAsc,
   compareArticlesByNumericFieldAsc,
   formatProtectionSummary,
