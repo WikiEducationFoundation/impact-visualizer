@@ -33,7 +33,10 @@ type NumericSortField =
   | "images_count";
 
 type XAxisKey = "title" | "publication_date" | NumericSortField;
-type YAxisKey = "average_daily_views" | "number_of_editors" | "incoming_links_count";
+type YAxisKey =
+  | "average_daily_views"
+  | "number_of_editors"
+  | "incoming_links_count";
 
 type NumericSortableArticle = { article: string } & Record<
   NumericSortField,
@@ -46,9 +49,10 @@ type BubbleSizeFields = {
   lead_section_size?: number;
   talk_size?: number;
   assessment_grade_color?: string;
-  talk_color?: string;
-  prev_article_color?: string;
-  lead_color?: string;
+  bubble_article_color?: string;
+  bubble_talk_color?: string;
+  bubble_prev_color?: string;
+  bubble_lead_color?: string;
 };
 
 type RadiusScale = (v: number | null | undefined) => number;

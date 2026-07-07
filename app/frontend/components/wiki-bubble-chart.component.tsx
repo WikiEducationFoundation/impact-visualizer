@@ -40,6 +40,7 @@ import {
   convertAnalyticsToCSV,
   convertAnalyticsToWikitext,
   getAssessmentPalette,
+  SINGLE_COLOR_PALETTE,
   compareArticlesByPublicationDateAsc,
   compareArticlesByNumericFieldAsc,
   formatProtectionSummary,
@@ -252,6 +253,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [showLabels, setShowLabels] = useState<boolean>(
     initialState.showLabels,
   );
+  const [colorMode, setColorMode] = useState<"assessment" | "single">(
+    initialState.colorMode,
+  );
   const [excludedOutliers, setExcludedOutliers] = useState<Set<string>>(
     () => new Set(initialState.excludedOutliers),
   );
@@ -296,15 +300,17 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         const hasMoveRestriction = protections.some((p) => p.type === "move");
         const hasEditRestriction = protections.some((p) => p.type === "edit");
         const palette = getAssessmentPalette(analytics?.assessment_grade);
+        const bubble = colorMode === "single" ? SINGLE_COLOR_PALETTE : palette;
 
         return {
           article,
           ...analytics,
           classifications: analytics?.classifications ?? [],
           assessment_grade_color: palette.article,
-          talk_color: palette.talk,
-          prev_article_color: palette.prevArticle,
-          lead_color: palette.lead,
+          bubble_article_color: bubble.article,
+          bubble_talk_color: bubble.talk,
+          bubble_prev_color: bubble.prevArticle,
+          bubble_lead_color: bubble.lead,
           protection_summary: formatProtectionSummary(protections),
           has_move_restriction: hasMoveRestriction,
           has_edit_restriction: hasEditRestriction,
@@ -312,7 +318,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       });
     }
     return [];
-  }, [data]);
+  }, [data, colorMode]);
 
   const availableTags = useMemo(() => {
     const set = new Set<string>();
@@ -885,7 +891,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [50, 1500] },
             },
             stroke: {
-              field: "talk_color",
+              field: "bubble_talk_color",
               type: "nominal",
               scale: null,
               legend: null,
@@ -910,7 +916,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             stroke: {
-              field: "prev_article_color",
+              field: "bubble_prev_color",
               type: "nominal",
               scale: null,
               legend: null,
@@ -933,7 +939,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [30, 800] },
             },
             fill: {
-              field: "lead_color",
+              field: "bubble_lead_color",
               type: "nominal",
               scale: null,
               legend: null,
@@ -992,7 +998,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: { type: "sqrt", range: [20, 600] },
             },
             fill: {
-              field: "assessment_grade_color",
+              field: "bubble_article_color",
               type: "nominal",
               scale: null,
               legend: null,
@@ -1385,6 +1391,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       includeNoCentrality,
       searchTerm,
       showLabels,
+      colorMode,
       selectedGrades,
       deselectedTags: [...deselectedTags],
       includeUntagged,
@@ -1554,6 +1561,19 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 onChange={(e) => handleShowLabelsChange(e.target.checked)}
               />
               <span>Show labels</span>
+            </label>
+            <label
+              className="ShowLabels"
+              title="Color every bubble the same instead of by quality assessment. Useful for accessibility and for wikis without assessment grades."
+            >
+              <input
+                type="checkbox"
+                checked={colorMode === "single"}
+                onChange={(e) =>
+                  setColorMode(e.target.checked ? "single" : "assessment")
+                }
+              />
+              <span>Single color</span>
             </label>
             <ArticleSearchAutocomplete
               searchTerm={searchTerm}

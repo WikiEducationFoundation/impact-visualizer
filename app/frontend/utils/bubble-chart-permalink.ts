@@ -14,6 +14,7 @@ export interface ChartUiState {
   includeNoCentrality: boolean;
   searchTerm: string;
   showLabels: boolean;
+  colorMode: "assessment" | "single";
   selectedGrades: Record<string, boolean>;
   deselectedTags: string[];
   includeUntagged: boolean;
@@ -66,6 +67,7 @@ export const DEFAULT_CHART_UI_STATE: ChartUiState = {
   includeNoCentrality: true,
   searchTerm: "",
   showLabels: false,
+  colorMode: "assessment",
   selectedGrades: Object.fromEntries(GRADE_KEYS.map((g) => [g, true])),
   deselectedTags: [],
   includeUntagged: true,
@@ -94,6 +96,7 @@ export function encodeChartState(state: ChartUiState): Record<string, string> {
   if (!state.includeNoCentrality) params.cna = "0";
   if (state.searchTerm.trim() !== "") params.q = state.searchTerm.trim();
   if (state.showLabels) params.lbl = "1";
+  if (state.colorMode === "single") params.mono = "1";
 
   if (!allGradesOn(state.selectedGrades)) {
     const off = GRADE_KEYS.filter((g) => state.selectedGrades[g] === false);
@@ -170,6 +173,8 @@ export function decodeChartState(params: URLSearchParams): ChartUiState {
   if (q) state.searchTerm = q;
 
   state.showLabels = params.get("lbl") === "1";
+
+  state.colorMode = params.get("mono") === "1" ? "single" : "assessment";
 
   const off = params.get("off");
   if (off) {
