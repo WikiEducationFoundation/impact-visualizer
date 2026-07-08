@@ -268,12 +268,10 @@ export const RAW_ASSESSMENT_COLORS: Record<string, string> = {
   List: "#8FB2F8",
   Unassessed: "#9e9e9e",
 };
-const BASE_DARKEN = -0.12;
-
 function getAssessmentColor(grade?: string | null): string {
-  const raw =
-    (grade && RAW_ASSESSMENT_COLORS[grade]) || RAW_ASSESSMENT_COLORS.Unassessed;
-  return shadeColor(raw, BASE_DARKEN);
+  return (
+    (grade && RAW_ASSESSMENT_COLORS[grade]) || RAW_ASSESSMENT_COLORS.Unassessed
+  );
 }
 
 type AssessmentPalette = {

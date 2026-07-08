@@ -951,7 +951,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         {
           mark: {
             type: "circle",
-            opacity: 0.5,
+            opacity: 1,
             stroke: "white",
             strokeWidth: 1,
             cursor: "pointer",
@@ -1003,7 +1003,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
               scale: null,
               legend: null,
             },
-            opacity: makeOpacityEncoding(0.5),
+            opacity: makeOpacityEncoding(1),
           },
         },
         ...(showLabels
