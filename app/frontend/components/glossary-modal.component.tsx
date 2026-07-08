@@ -1,6 +1,7 @@
 import React from "react";
 import { BsBook } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
+import { RAW_ASSESSMENT_COLORS } from "../utils/bubble-chart-utils";
 
 type GlossaryTerm = { name: string; def: string; color?: string };
 type GlossarySection = {
@@ -17,47 +18,47 @@ const GLOSSARY_SECTIONS: GlossarySection[] = [
     terms: [
       {
         name: "Featured Article (FA) / Featured List (FL)",
-        color: "#9CBDFF",
+        color: RAW_ASSESSMENT_COLORS.FA,
         def: "Wikipedia's highest quality rating, awarded after in-depth peer review.",
       },
       {
         name: "A-Class",
-        color: "#66FFFF",
+        color: RAW_ASSESSMENT_COLORS.A,
         def: "Well-organized and essentially complete, reviewed by a WikiProject.",
       },
       {
         name: "Good Article (GA)",
-        color: "#66FF66",
+        color: RAW_ASSESSMENT_COLORS.GA,
         def: "Reviewed and confirmed to meet the Good Article criteria, but not yet Featured.",
       },
       {
         name: "B-Class",
-        color: "#B2FF66",
+        color: RAW_ASSESSMENT_COLORS.B,
         def: "Mostly complete, but still needs work to reach Good Article standards.",
       },
       {
         name: "C-Class",
-        color: "#FFFF66",
+        color: RAW_ASSESSMENT_COLORS.C,
         def: "Substantial, but missing important content or containing some irrelevant material.",
       },
       {
         name: "Start",
-        color: "#FFAA66",
+        color: RAW_ASSESSMENT_COLORS.Start,
         def: "Started but still quite incomplete.",
       },
       {
         name: "Stub",
-        color: "#FFA4A4",
+        color: RAW_ASSESSMENT_COLORS.Stub,
         def: "Very short, with only basic information.",
       },
       {
         name: "List",
-        color: "#C7B1FF",
+        color: RAW_ASSESSMENT_COLORS.List,
         def: "Primarily a list of items rather than prose.",
       },
       {
         name: "Unassessed",
-        color: "#9E9E9E",
+        color: RAW_ASSESSMENT_COLORS.Unassessed,
         def: "No quality grade has been assigned yet.",
       },
     ],
