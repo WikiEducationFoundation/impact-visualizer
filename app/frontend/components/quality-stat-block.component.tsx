@@ -2,6 +2,7 @@ import React, { MouseEventHandler } from 'react';
 import _ from 'lodash';
 import cn from 'classnames';
 import pluralize from 'pluralize';
+import { BsChevronDown } from 'react-icons/bs';
 
 interface Props {
   stats: object,
@@ -57,6 +58,9 @@ function QualityStatBlock({ stats, center, active, onSelect, topic }: Props) {
       })}
       onClick={onSelect}
     >
+      <div className="StatBlock-cue" aria-hidden="true">
+        <BsChevronDown />
+      </div>
       <h3>Predicted Quality</h3>
       {active &&
         <div className="StatBlock-indicator" />

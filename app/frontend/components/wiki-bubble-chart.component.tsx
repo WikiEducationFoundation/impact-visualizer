@@ -1551,7 +1551,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         <div className="Heading">
           <div className="InfoLine">
             <BsInfoCircle size={24} className="InfoIcon" />
-            <span>See an overview of articles with their statistics</span>
+            <span>
+              See an overview of articles with their statistics (click any
+              article for more details)
+            </span>
           </div>
           <div className="HeadingControls">
             <label className="ShowLabels">

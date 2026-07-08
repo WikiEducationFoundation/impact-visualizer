@@ -1,6 +1,7 @@
 import React, { MouseEventHandler } from 'react';
 import _ from 'lodash';
 import cn from 'classnames';
+import { BsChevronDown } from 'react-icons/bs';
 
 interface Props {
   stats: Array<Stat>,
@@ -47,6 +48,9 @@ function StatBlock({ stats, center, active, onSelect }: Props) {
       })}
       onClick={onSelect}
     >
+      <div className="StatBlock-cue" aria-hidden="true">
+        <BsChevronDown />
+      </div>
       {active &&
         <div className="StatBlock-indicator" />
       }
