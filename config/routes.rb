@@ -27,6 +27,7 @@ Rails.application.routes.draw do
       get :incremental_topic_build, on: :member
       post :start_data_generation, on: :member
       delete :remove_article, on: :member
+      post :add_article, on: :member
       get :topic_article_analytics, on: :member
       get :language_links, on: :member
       get :article_language_comparison, on: :member

@@ -1250,6 +1250,7 @@ $danger-fg: #c62828;
     font-size: 14px;
     font-weight: 600;
     color: #333;
+    white-space: nowrap;
   }
 
   .Count {
@@ -1293,6 +1294,33 @@ $danger-fg: #c62828;
 
     &:hover {
       text-decoration: underline;
+    }
+  }
+
+  .HeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .AddToggleBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 22px;
+    padding: 0 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: $primary;
+    background: none;
+    border: 1px solid $border-light;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      background: #f0f4fa;
     }
   }
 
@@ -1994,7 +2022,8 @@ $danger-fg: #c62828;
 }
 
 .GlossaryModal,
-.LegendModal {
+.LegendModal,
+.AddArticleModal {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
@@ -2124,5 +2153,145 @@ $danger-fg: #c62828;
     max-width: 100%;
     height: auto;
     margin: 0 auto;
+  }
+}
+
+.AddArticleModal {
+  .Panel {
+    width: 480px;
+    overflow: visible;
+  }
+
+  .Panel .Body {
+    overflow: visible;
+    padding-bottom: 24px;
+  }
+
+  .Intro {
+    margin: 12px 0 0;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+  }
+
+  .HowTo {
+    margin: 10px 0 18px;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: $text-secondary;
+    line-height: 1.5;
+  }
+
+  .FetchingState {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 4px 0;
+
+    .OvalContainer {
+      flex: 0 0 auto;
+      width: auto;
+      height: auto;
+      margin-top: 0;
+    }
+  }
+
+  .FetchingText {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    strong {
+      font-size: 14px;
+      color: #333;
+    }
+
+    span {
+      font-size: 13px;
+      color: $text-secondary;
+      line-height: 1.5;
+    }
+  }
+
+  .AddArticleForm {
+    display: flex;
+    gap: 8px;
+    position: relative;
+  }
+
+  .AddArticleInput {
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 14px;
+    border: 1px solid $border-light;
+    border-radius: 4px;
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+
+  .AddBtn {
+    height: 36px;
+    padding: 0 18px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    background: $primary;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+      background: #1565c0;
+    }
+
+    &:disabled {
+      background: #b5cae3;
+      cursor: default;
+    }
+  }
+
+  .AddArticleSuggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+
+    .SuggestionsList {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border: 1px solid $border-light;
+      background: #fff;
+      border-radius: 0 0 4px 4px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .SuggestionItem {
+      padding: 8px 10px;
+      cursor: pointer;
+      font-size: 14px;
+
+      &:hover,
+      &.active {
+        background: #f0f0f0;
+      }
+    }
+
+    .NoSuggestionsItem {
+      padding: 8px 10px;
+      font-size: 14px;
+      color: #888;
+    }
   }
 }

@@ -5,7 +5,7 @@ class TopicsController < ApiController
                 only: %i[create update destroy import_users import_articles
                          generate_timepoints incremental_topic_build
                          generate_article_analytics start_data_generation
-                         remove_article]
+                         remove_article add_article]
 
   def index
     if current_editor && params[:owned]
@@ -153,6 +153,42 @@ class TopicsController < ApiController
     topic = find_editable_topic
     removed = topic.remove_article_from_active_bag!(title: params[:title].to_s)
     return render(json: { error: 'Article not found in topic' }, status: :not_found) unless removed
+
+    @topic = topic.reload
+    render :show
+  end
+
+  def add_article
+    topic = find_editable_topic
+    raw_title = params[:title].to_s.strip
+    if raw_title.blank?
+      return render(json: { error: 'Article title is required' }, status: :unprocessable_entity)
+    end
+
+    page_info = WikiActionApi.new(topic.wiki).get_page_info(title: raw_title)
+    if page_info.nil? || page_info['pageid'].blank?
+      return render(json: { error: "No article named \"#{raw_title}\" found on " \
+                                   "#{topic.wiki.language}.#{topic.wiki.project}.org" },
+                    status: :unprocessable_entity)
+    end
+
+    canonical_title = page_info['title']
+    article = topic.add_article_to_active_bag!(title: canonical_title,
+                                               pageid: page_info['pageid'])
+    if article.nil?
+      return render(json: { error: "\"#{canonical_title}\" is already in this topic" },
+                    status: :unprocessable_entity)
+    end
+
+    begin
+      ArticleAnalyticsService.new(topic).generate_for_article(article)
+    rescue StandardError => e
+      Rails.logger.error('[TopicsController#add_article] analytics failed for ' \
+                         "#{canonical_title}: #{e.class}: #{e.message}")
+      topic.remove_article_from_active_bag!(title: canonical_title)
+      return render(json: { error: 'Failed to fetch article analytics from Wikipedia. Please try again.' },
+                    status: :bad_gateway)
+    end
 
     @topic = topic.reload
     render :show

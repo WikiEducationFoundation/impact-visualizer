@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { List } from "react-window";
 import { GoTriangleLeft, GoTriangleRight } from "react-icons/go";
 import { FiExternalLink } from "react-icons/fi";
-import { BsEye, BsEyeSlash, BsTrash } from "react-icons/bs";
+import { BsEye, BsEyeSlash, BsTrash, BsPlusLg } from "react-icons/bs";
 import { getWikiUrl } from "../utils/search-utils";
 import type { ArticleRow } from "./article-detail-panel.component";
 
@@ -21,6 +21,7 @@ interface FilteredArticlesSidebarProps {
   canEdit?: boolean;
   onRemoveArticle?: (title: string) => void;
   removing?: boolean;
+  onAddArticleClick?: () => void;
 }
 
 interface SidebarRowProps {
@@ -120,8 +121,10 @@ const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> =
       canEdit,
       onRemoveArticle,
       removing,
+      onAddArticleClick,
     }) => {
       const [excludedOnly, setExcludedOnly] = useState<boolean>(false);
+      const showAddButton = !!(canEdit && onAddArticleClick);
 
       const excludedCount = useMemo(() => {
         if (!excludedOutliers?.size) return 0;
@@ -158,9 +161,22 @@ const FilteredArticlesSidebar: React.FC<FilteredArticlesSidebarProps> =
             <div className="Header">
               <div className="HeaderTop">
                 <span className="Title">Filtered Articles</span>
-                <span className="Count">
-                  {displayedArticles.length} article
-                  {displayedArticles.length !== 1 ? "s" : ""}
+                <span className="HeaderActions">
+                  <span className="Count">
+                    {displayedArticles.length} article
+                    {displayedArticles.length !== 1 ? "s" : ""}
+                  </span>
+                  {showAddButton && (
+                    <button
+                      type="button"
+                      className="AddToggleBtn"
+                      onClick={onAddArticleClick}
+                      title="Add an article to this topic"
+                    >
+                      <BsPlusLg />
+                      <span>Add</span>
+                    </button>
+                  )}
                 </span>
               </div>
               {hasExcluded && (

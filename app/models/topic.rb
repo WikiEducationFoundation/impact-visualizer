@@ -247,6 +247,19 @@ class Topic < ApplicationRecord
     true
   end
 
+  def add_article_to_active_bag!(title:, pageid: nil)
+    bag = active_article_bag
+    return nil unless bag
+
+    article = Article.find_or_create_by!(title:, wiki:)
+    article.update!(pageid:) if pageid && article.pageid.nil?
+
+    return nil if bag.article_bag_articles.exists?(article_id: article.id)
+
+    bag.article_bag_articles.create!(article:)
+    article
+  end
+
   def queue_articles_import
     job_id = ImportArticlesJob.perform_async(id)
     update article_import_job_id: job_id

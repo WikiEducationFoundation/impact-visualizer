@@ -27,6 +27,7 @@ import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
 import ArticleLanguagesGrid from "./article-languages-grid.component";
 import ArticleLanguageComparisonModal from "./article-language-comparison-modal.component";
 import GlossaryModal from "./glossary-modal.component";
+import AddArticleModal from "./add-article-modal.component";
 import LegendModal from "./legend-modal.component";
 import AdvancedFilterPanel from "./advanced-filter-panel.component";
 import AxisControls from "./axis-controls.component";
@@ -249,6 +250,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     null,
   );
   const [glossaryOpen, setGlossaryOpen] = useState<boolean>(false);
+  const [addArticleOpen, setAddArticleOpen] = useState<boolean>(false);
   const [legendOpen, setLegendOpen] = useState<boolean>(false);
   const [showLabels, setShowLabels] = useState<boolean>(
     initialState.showLabels,
@@ -1326,6 +1328,28 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     onError: () => toast.error("Failed to remove article"),
   });
 
+  const addArticleMutation = useMutation({
+    mutationFn: (title: string) => TopicService.addArticle(topicId!, title),
+    onSuccess: (updatedTopic, title) => {
+      queryClient.invalidateQueries({
+        queryKey: ["articleAnalytics", String(topicId)],
+      });
+      queryClient.setQueryData(["topic", String(topicId)], updatedTopic);
+      toast.success(`Added "${title}" to this topic`);
+    },
+    onError: (error) => {
+      const message = (
+        error as { response?: { data?: { error?: string } } }
+      ).response?.data?.error;
+      toast.error(message ?? "Failed to add article");
+    },
+  });
+
+  const handleAddArticle = (title: string) => {
+    if (!canEdit || !topicId) return Promise.resolve();
+    return addArticleMutation.mutateAsync(title);
+  };
+
   const handleRemoveArticle = (title: string) => {
     if (!canEdit || !topicId) return;
     const tbNote = isTopicBuilderTopic
@@ -1600,6 +1624,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             canEdit={canEdit && !!topicId}
             onRemoveArticle={handleRemoveArticle}
             removing={removeArticleMutation.isPending}
+            onAddArticleClick={() => setAddArticleOpen(true)}
           />
         </div>
 
@@ -1713,6 +1738,15 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           wiki={wiki}
           languages={TARGET_LANGUAGES}
           onClose={() => setLangCompareArticle(null)}
+        />
+      )}
+
+      {addArticleOpen && canEdit && !!topicId && (
+        <AddArticleModal
+          wiki={wiki}
+          onAdd={handleAddArticle}
+          adding={addArticleMutation.isPending}
+          onClose={() => setAddArticleOpen(false)}
         />
       )}
 
