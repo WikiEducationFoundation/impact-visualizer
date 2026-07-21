@@ -22,6 +22,19 @@ export function getWikiUrl(
   )}`;
 }
 
+export function parseWikiUrlTitle(input: string): string | null {
+  const trimmed = input.trim();
+  if (!/^https?:\/\//i.test(trimmed)) return null;
+  try {
+    const url = new URL(trimmed);
+    const match = url.pathname.match(/^\/wiki\/(.+)$/);
+    if (!match) return null;
+    return decodeURIComponent(match[1]).replace(/_/g, " ");
+  } catch {
+    return null;
+  }
+}
+
 function buildWikidataQuery(
   occupationIDs: string[],
   genderID: string,

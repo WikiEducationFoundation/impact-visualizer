@@ -23,6 +23,30 @@ const ChartUtils = {
     return { classificationId, propertySlug };
   },
 
+  classificationDeltaFieldFor(deltaField): string {
+    if (deltaField === 'articles_count_delta') {
+      return 'count_delta';
+    };
+    return deltaField;
+  },
+
+  limitSegments<T extends { key: string }>(segments: T[]): T[] {
+    if (segments.length <= 20) {
+      return segments;
+    };
+
+    const otherSegment = _.find(segments, { key: 'other' });
+    if (otherSegment) {
+      segments = _.reject(segments, otherSegment);
+    }
+    segments = _.take(segments, 19);
+    if (otherSegment) {
+      segments.push(otherSegment);
+    };
+
+    return segments;
+  },
+
   async prepChartSpecs({ topicTimepoints, stat, totalField, topic, classificationView,
                    deltaField, attributedDeltaField, type }) {
     
@@ -155,37 +179,30 @@ const ChartUtils = {
     return { values, yLabel, min, max, title, categories };
   },
 
-  minForCumulativeChart(timepoints, totalField, stat, topic): number {
-    let min = _.reduce(timepoints, (accum, timepoint) => {
-      return Math.min(accum as number, timepoint[totalField] as number);
+  extremeForCumulativeChart(reducer, timepoints, totalField, stat, topic): number {
+    let value = _.reduce(timepoints, (accum, timepoint) => {
+      return reducer(accum as number, timepoint[totalField] as number);
     }, timepoints[0][totalField] as number);
 
     if (stat === 'tokens') {
-      min = TopicUtils.tokenOrWordCount(topic, min);
+      value = TopicUtils.tokenOrWordCount(topic, value);
     };
 
-    return min;
+    return value;
+  },
+
+  minForCumulativeChart(timepoints, totalField, stat, topic): number {
+    return this.extremeForCumulativeChart(Math.min, timepoints, totalField, stat, topic);
   },
 
   maxForCumulativeChart(timepoints, totalField, stat, topic): number {
-    let max = _.reduce(timepoints, (accum, timepoint) => {
-      return Math.max(accum as number, timepoint[totalField] as number);
-    }, timepoints[0][totalField] as number);
-
-    if (stat === 'tokens') {
-      max = TopicUtils.tokenOrWordCount(topic, max);
-    };
-
-    return max;
+    return this.extremeForCumulativeChart(Math.max, timepoints, totalField, stat, topic);
   },
 
   maxForCumulativeSegmentChart(min, timepoints, classificationId, propertySlug, deltaField, stat, topic): number {
     let total = min;
 
-    let classificationDeltaField = deltaField;
-    if (classificationDeltaField === 'articles_count_delta') {
-      classificationDeltaField = 'count_delta';
-    };
+    const classificationDeltaField = this.classificationDeltaFieldFor(deltaField);
 
     timepoints.forEach((timepoint) => {
       const classification = _.find(timepoint.classifications, { id: classificationId });
@@ -324,10 +341,7 @@ const ChartUtils = {
     const { timepoints, deltaField, classificationId, stat, topic } = options;
     
     const values: ChartTimepoint[] = [];
-    let classificationDeltaField = deltaField;
-    if (classificationDeltaField === 'articles_count_delta') {
-      classificationDeltaField = 'count_delta';
-    };
+    const classificationDeltaField = this.classificationDeltaFieldFor(deltaField);
 
     timepoints.forEach((timepoint) => {
       const classification = _.find(timepoint.classifications, { id: classificationId });
@@ -362,10 +376,7 @@ const ChartUtils = {
     const values: Array<ChartTimepoint> = [];
     let segments: Array<{key: string, countDelta: number, label: string}> = [];
 
-    let classificationDeltaField = deltaField;
-    if (classificationDeltaField === 'articles_count_delta') {
-      classificationDeltaField = 'count_delta';
-    };
+    const classificationDeltaField = this.classificationDeltaFieldFor(deltaField);
 
     timepoints.forEach((timepoint) => {
       const classification = _.find(timepoint.classifications, { id: classificationId });
@@ -392,16 +403,7 @@ const ChartUtils = {
     });
 
 
-    if (segments.length > 20) {
-      const otherSegment = _.find(segments, { key: 'other'});
-      if (otherSegment) {
-        segments = _.reject(segments, otherSegment);
-      }
-      segments = _.take(segments, 19);
-      if (otherSegment) {
-        segments.push(otherSegment);
-      };
-    };
+    segments = this.limitSegments(segments);
 
     timepoints.forEach((timepoint) => {
       _.each(segments, (segment) => {
@@ -434,10 +436,7 @@ const ChartUtils = {
     const values: Array<ChartTimepoint> = [];
     let segments: Array<{key: string, countDelta: number, counter: number, label: string}> = [];
 
-    let classificationDeltaField = deltaField;
-    if (classificationDeltaField === 'articles_count_delta') {
-      classificationDeltaField = 'count_delta';
-    };
+    const classificationDeltaField = this.classificationDeltaFieldFor(deltaField);
 
     timepoints.forEach((timepoint) => {
       const classification = _.find(timepoint.classifications, { id: classificationId });
@@ -461,16 +460,7 @@ const ChartUtils = {
       return -segment.countDelta;
     })
 
-    if (segments.length > 20) {
-      const otherSegment = _.find(segments, { key: 'other'});
-      if (otherSegment) {
-        segments = _.reject(segments, otherSegment);
-      }
-      segments = _.take(segments, 19);
-      if (otherSegment) {
-        segments.push(otherSegment);
-      };
-    };
+    segments = this.limitSegments(segments);
 
     timepoints.forEach((timepoint) => {
       _.each(segments, (segment) => {

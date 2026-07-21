@@ -4,21 +4,22 @@ import {
   CENTRALITY_MIN,
   CENTRALITY_MAX,
 } from "../utils/bubble-chart-permalink";
+import { RAW_ASSESSMENT_COLORS } from "../utils/bubble-chart-utils";
 
 const gradeGroups = [
-  { id: "fa", label: "Featured", grades: ["FA", "FL"], dot: "#9CBDFF" },
-  { id: "ga", label: "GA", grades: ["GA"], dot: "#66FF66" },
-  { id: "aclass", label: "A-Class", grades: ["A"], dot: "#66FFFF" },
-  { id: "bclass", label: "B-Class", grades: ["B"], dot: "#B2FF66" },
-  { id: "cclass", label: "C-Class", grades: ["C"], dot: "#FFFF66" },
-  { id: "start", label: "Start", grades: ["Start"], dot: "#FFAA66" },
-  { id: "stub", label: "Stub", grades: ["Stub"], dot: "#FFA4A4" },
-  { id: "list", label: "List", grades: ["List"], dot: "#C7B1FF" },
+  { id: "fa", label: "Featured", grades: ["FA", "FL"], dot: RAW_ASSESSMENT_COLORS.FA },
+  { id: "ga", label: "GA", grades: ["GA"], dot: RAW_ASSESSMENT_COLORS.GA },
+  { id: "aclass", label: "A-Class", grades: ["A"], dot: RAW_ASSESSMENT_COLORS.A },
+  { id: "bclass", label: "B-Class", grades: ["B"], dot: RAW_ASSESSMENT_COLORS.B },
+  { id: "cclass", label: "C-Class", grades: ["C"], dot: RAW_ASSESSMENT_COLORS.C },
+  { id: "start", label: "Start", grades: ["Start"], dot: RAW_ASSESSMENT_COLORS.Start },
+  { id: "stub", label: "Stub", grades: ["Stub"], dot: RAW_ASSESSMENT_COLORS.Stub },
+  { id: "list", label: "List", grades: ["List"], dot: RAW_ASSESSMENT_COLORS.List },
   {
     id: "unassessed",
     label: "Unassessed",
     grades: ["Unassessed"],
-    dot: "#9E9E9E",
+    dot: RAW_ASSESSMENT_COLORS.Unassessed,
   },
 ];
 

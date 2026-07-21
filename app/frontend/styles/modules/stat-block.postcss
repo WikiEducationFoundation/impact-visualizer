@@ -21,7 +21,7 @@ $indicatorSize: 10px;
   transition: border $hover-speed;
   border: 4px solid $borderGrey;
   margin-bottom: 2rem;
-  
+
   &:hover {
     border: 4px solid #aaa;
   }
@@ -132,5 +132,19 @@ $indicatorSize: 10px;
 }
 
 .StatBlock--active, .StatBlock--active:hover {
-  border: 4px solid $blue; 
+  border: 4px solid $blue;
+}
+
+.StatBlock-cue {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  display: flex;
+  font-size: 13px;
+  color: $mediumLightGrey;
+  transition: color $hover-speed;
+}
+
+.StatBlock--active .StatBlock-cue {
+  color: $blue;
 }

@@ -256,23 +256,22 @@ function shadeColor(hex: string, amount: number): string {
   return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
 }
 
-const RAW_ASSESSMENT_COLORS: Record<string, string> = {
-  FA: "#9CBDFF",
-  GA: "#66FF66",
+export const RAW_ASSESSMENT_COLORS: Record<string, string> = {
+  FA: "#F7B1FF",
+  GA: "#3AD358",
   A: "#66FFFF",
-  FL: "#9CBDFF",
-  B: "#B2FF66",
-  C: "#FFFF66",
-  Start: "#FFAA66",
+  FL: "#F7B1FF",
+  B: "#9CEA72",
+  C: "#FBF090",
+  Start: "#F3BA4F",
   Stub: "#FFA4A4",
-  List: "#C7B1FF",
+  List: "#8FB2F8",
+  Unassessed: "#9e9e9e",
 };
-const UNASSESSED_COLOR = "#9e9e9e";
-const BASE_DARKEN = -0.12;
-
 function getAssessmentColor(grade?: string | null): string {
-  const raw = (grade && RAW_ASSESSMENT_COLORS[grade]) || UNASSESSED_COLOR;
-  return shadeColor(raw, BASE_DARKEN);
+  return (
+    (grade && RAW_ASSESSMENT_COLORS[grade]) || RAW_ASSESSMENT_COLORS.Unassessed
+  );
 }
 
 type AssessmentPalette = {

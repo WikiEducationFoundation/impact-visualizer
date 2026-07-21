@@ -163,6 +163,14 @@ class TopicService {
       });
   }
 
+  addArticle(id: number | string, title: string) {
+    return http
+      .post<Topic>(`/topics/${id}/add_article`, { title })
+      .then((response: AxiosResponse) => {
+        return _.get(response, "data");
+      });
+  }
+
   getArticleLanguageComparison(
     id: number | string,
     article: string,

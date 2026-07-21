@@ -56,7 +56,7 @@ const Y_AXIS_KEYS: YAxisKey[] = [
 export const DEFAULT_CHART_UI_STATE: ChartUiState = {
   xAxisKey: "title",
   xAxisMode: "ranked",
-  yAxisKey: "average_daily_views",
+  yAxisKey: "number_of_editors",
   yAxisScaleType: "linear",
   yAxisMin: "",
   yAxisMax: "",
@@ -83,7 +83,7 @@ export function encodeChartState(state: ChartUiState): Record<string, string> {
 
   if (state.xAxisKey !== "title") params.x = state.xAxisKey;
   if (state.xAxisMode !== "ranked") params.xm = state.xAxisMode;
-  if (state.yAxisKey !== "average_daily_views") params.y = state.yAxisKey;
+  if (state.yAxisKey !== "number_of_editors") params.y = state.yAxisKey;
   if (state.yAxisScaleType !== "linear") params.ys = state.yAxisScaleType;
   if (state.yAxisMin.trim() !== "") params.ymin = state.yAxisMin.trim();
   if (state.yAxisMax.trim() !== "") params.ymax = state.yAxisMax.trim();

@@ -1,0 +1,91 @@
+.HomeIntro {
+  margin-bottom: 32px;
+}
+
+.HomeIntro-lead {
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+
+.HomeIntro-title {
+  @mixin h1;
+  margin-bottom: 12px;
+}
+
+.HomeIntro-blurb {
+  font-size: 17px;
+  line-height: 1.55;
+  color: $grey;
+  margin: 0;
+}
+
+.HomeIntro-howTo {
+  border: 1px solid $borderGrey;
+  border-radius: $radius;
+  padding: 24px;
+  background: #fafafb;
+}
+
+.HomeIntro-howToTitle {
+  @mixin h3;
+  margin-bottom: 16px;
+}
+
+.HomeIntro-steps {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @mixin above $medium {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.HomeIntro-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.HomeIntro-stepNum {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: $blue;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  line-height: 28px;
+}
+
+.HomeIntro-stepText {
+  font-size: 15px;
+  line-height: 1.45;
+  color: $grey;
+}
+
+.HomeIntro-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.TopicIndex-demoHeading {
+  margin-bottom: 20px;
+
+  h2 {
+    @mixin h2;
+  }
+
+  p {
+    margin: 0;
+    color: $mediumGrey;
+    font-size: 15px;
+  }
+}
