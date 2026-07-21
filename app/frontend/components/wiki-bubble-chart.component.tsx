@@ -10,17 +10,7 @@ import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import {
-  BsBook,
-  BsInfoCircle,
-  BsImage,
-  BsLink45Deg,
-  BsCheck2,
-} from "react-icons/bs";
-import { MdLegendToggle } from "react-icons/md";
-import { FaChevronUp, FaChevronDown } from "react-icons/fa6";
-import CSVButton from "./CSV-button.component";
-import WikitextButton from "./wikitext-button.component";
+import { BsBook, BsInfoCircle } from "react-icons/bs";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
 import ArticleDetailPanel from "./article-detail-panel.component";
 import FilteredArticlesSidebar from "./filtered-articles-sidebar.component";
@@ -31,6 +21,9 @@ import AddArticleModal from "./add-article-modal.component";
 import LegendModal from "./legend-modal.component";
 import AdvancedFilterPanel from "./advanced-filter-panel.component";
 import AxisControls from "./axis-controls.component";
+import ChartToolbar from "./chart-toolbar.component";
+import ChartTabBar from "./chart-tab-bar.component";
+import ChartAggregateStats from "./chart-aggregate-stats.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
@@ -38,8 +31,6 @@ import type {
   YAxisKey,
 } from "../types/bubble-chart.type";
 import {
-  convertAnalyticsToCSV,
-  convertAnalyticsToWikitext,
   getAssessmentPalette,
   SINGLE_COLOR_PALETTE,
   compareArticlesByPublicationDateAsc,
@@ -47,6 +38,7 @@ import {
   formatProtectionSummary,
   xAxisTitleForKey,
 } from "../utils/bubble-chart-utils";
+import { MAX_CIRCLE_RADIUS, patchChartScales } from "../utils/bubble-chart-vega";
 import TopicService from "../services/topic.service";
 import { fetchLanguageLinks, TARGET_LANGUAGES } from "../utils/language-links";
 import type { LangLinksProgress } from "../utils/language-links";
@@ -79,81 +71,6 @@ interface WikiBubbleChartProps {
 
 const HEIGHT = 650;
 const LARGE_DATASET_THRESHOLD = 10000;
-
-// Largest bubble radius (Vega derives radius from area; max size range is 1500).
-const MAX_CIRCLE_RADIUS = Math.sqrt(1500 / Math.PI);
-const Y_BOTTOM_MARGIN = MAX_CIRCLE_RADIUS * 2;
-
-// Post-compile tweaks Vega-Lite can't express directly.
-const patchChartScales = (vgSpec: any) => {
-  try {
-    const scales = vgSpec.scales || [];
-
-    // Clamp x pan/zoom to the data extent (no dragging into empty space; no-op
-    // once every bubble is visible). The bound x domain is recomputed by
-    // panLinear/zoomLinear each frame, so we rewrite those to clamp at the
-    // source against `x_base` — the x scale without the interactive override.
-    const xScale = scales.find((s: any) => s.name === "x");
-    if (xScale && xScale.domainRaw) {
-      if (!scales.some((s: any) => s.name === "x_base")) {
-        const base = { ...xScale, name: "x_base" };
-        delete base.domainRaw;
-        scales.push(base);
-        vgSpec.scales = scales;
-      }
-      // convert to number to avoid issues with date objects
-      const Blo = "toNumber(domain('x_base')[0])";
-      const Bhi = "toNumber(domain('x_base')[1])";
-      const clamp = (proposed: string) =>
-        `(span(${proposed}) >= (${Bhi} - ${Blo}) ? [${Blo}, ${Bhi}]` +
-        ` : (${proposed})[0] < ${Blo} ? [${Blo}, ${Blo} + span(${proposed})]` +
-        ` : (${proposed})[1] > ${Bhi} ? [${Bhi} - span(${proposed}), ${Bhi}]` +
-        ` : (${proposed}))`;
-      for (const sig of vgSpec.signals || []) {
-        if (!Array.isArray(sig.on)) continue;
-        for (const handler of sig.on) {
-          if (
-            typeof handler.update === "string" &&
-            /panLinear|zoomLinear/.test(handler.update)
-          ) {
-            handler.update = clamp(handler.update);
-          }
-        }
-      }
-    }
-
-    // Inset the y range's bottom so low-value bubbles clear the floor. Done in
-    // pixel space: scale.padding is ignored once domainMin/Max are set, and
-    // lowering the domain would expose negative axis values.
-    const yScale = scales.find((s: any) => s.name === "y");
-    if (yScale && Array.isArray(yScale.range) && yScale.range.length === 2) {
-      if (!scales.some((s: any) => s.name === "y_grid")) {
-        const gridClone = { ...yScale, name: "y_grid" };
-        delete gridClone.domainRaw;
-        scales.push(gridClone);
-        vgSpec.scales = scales;
-      }
-      for (const axis of vgSpec.axes || []) {
-        if (axis.scale === "x" && axis.grid && axis.gridScale === "y") {
-          axis.gridScale = "y_grid";
-        }
-      }
-
-      const bottom = yScale.range[0];
-      const bottomExpr =
-        bottom && typeof bottom === "object" && "signal" in bottom
-          ? bottom.signal
-          : String(bottom);
-      yScale.range = [
-        { signal: `(${bottomExpr}) - ${Y_BOTTOM_MARGIN}` },
-        yScale.range[1],
-      ];
-    }
-  } catch {
-    // leave the spec untouched if the compiled shape is unexpected
-  }
-  return vgSpec;
-};
 
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
@@ -1480,90 +1397,23 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   return (
     <div className="WikiBubbleChart">
-      <div className="TitleRow">
-        <h2 className="u-mb0">Article analytics over chosen focus period</h2>
-        <CSVButton
-          articles={sortedRows}
-          filteredArticles={filteredArticles}
-          csvConvert={convertAnalyticsToCSV}
-          filename="article-analytics"
-        />
-        <WikitextButton
-          articles={sortedRows}
-          filteredArticles={filteredArticles}
-          wikitextConvert={convertAnalyticsToWikitext}
-          filename="article-analytics"
-        />
-        <button
-          type="button"
-          className="ShareBtn"
-          onClick={handleSaveImage}
-          disabled={!hasData}
-          title="Download the current chart as a PNG with credits"
-        >
-          <BsImage size={14} aria-hidden="true" />
-          <span>Save image</span>
-        </button>
-        <button
-          type="button"
-          className="ShareBtn"
-          onClick={handleCopyLink}
-          title="Copy a link to this exact chart view"
-        >
-          {linkCopied ? (
-            <BsCheck2 size={16} aria-hidden="true" />
-          ) : (
-            <BsLink45Deg size={16} aria-hidden="true" />
-          )}
-          <span>{linkCopied ? "Copied" : "Copy link"}</span>
-        </button>
-        <button
-          type="button"
-          className="GlossaryBtn"
-          onClick={() => setLegendOpen(true)}
-        >
-          <MdLegendToggle size={14} />
-          <span>Legend</span>
-        </button>
-        <button
-          type="button"
-          className="GlossaryBtn"
-          onClick={() => setGlossaryOpen(true)}
-        >
-          <BsBook size={14} />
-          <span>Glossary</span>
-        </button>
-      </div>
+      <ChartToolbar
+        articles={sortedRows}
+        filteredArticles={filteredArticles}
+        hasData={hasData}
+        linkCopied={linkCopied}
+        onSaveImage={handleSaveImage}
+        onCopyLink={handleCopyLink}
+        onOpenLegend={() => setLegendOpen(true)}
+        onOpenGlossary={() => setGlossaryOpen(true)}
+      />
 
-      <div className="TabBar">
-        <button
-          type="button"
-          className={`Tab ${activeTab === "overview" ? "is-active" : ""}`}
-          onClick={() => handleTabChange("overview")}
-        >
-          Articles overview
-        </button>
-        <button
-          type="button"
-          className={`Tab ${activeTab === "languages" ? "is-active" : ""}`}
-          onClick={() => handleTabChange("languages")}
-        >
-          Languages
-        </button>
-        <button
-          type="button"
-          className="AdvancedToggle"
-          aria-expanded={advancedOpen}
-          onClick={() => setAdvancedOpen((open) => !open)}
-        >
-          <span className="AdvancedToggleLabel">Advanced Filters</span>
-          {advancedOpen ? (
-            <FaChevronUp size={14} />
-          ) : (
-            <FaChevronDown size={14} />
-          )}
-        </button>
-      </div>
+      <ChartTabBar
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        advancedOpen={advancedOpen}
+        onToggleAdvanced={() => setAdvancedOpen((open) => !open)}
+      />
 
       <div className="TabPanel" hidden={activeTab !== "overview"}>
         <AxisControls idPrefix="overview" {...axisControlProps} />
@@ -1628,49 +1478,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           />
         </div>
 
-        <div className="Stats">
-          <div className="StatCell">
-            <span className="StatValue">
-              {aggregateStats.totalArticles.toLocaleString()}
-            </span>
-            <span className="StatLabel">Total articles</span>
-          </div>
-
-          <div className="StatCell">
-            <span className="StatValue">
-              {aggregateStats.millionVisits !== null
-                ? aggregateStats.millionVisits.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
-                : "—"}
-            </span>
-            <span className="StatLabel">
-              Million visits
-              {aggregateStats.startDateLabel
-                ? ` (since ${aggregateStats.startDateLabel})`
-                : ""}
-            </span>
-          </div>
-
-          <div className="StatCell">
-            <span className="StatValue">
-              {aggregateStats.averageTotalViews !== null
-                ? aggregateStats.averageTotalViews.toLocaleString()
-                : "—"}
-            </span>
-            <span className="StatLabel">Average total views per article</span>
-          </div>
-
-          <div className="StatCell">
-            <span className="StatValue">
-              {aggregateStats.averageArticleSize !== null
-                ? aggregateStats.averageArticleSize.toLocaleString()
-                : "—"}
-            </span>
-            <span className="StatLabel">Average article size (bytes)</span>
-          </div>
-        </div>
+        <ChartAggregateStats stats={aggregateStats} />
 
         <div className="Footnote">
           * Quality assessment is done by the Wikipedia community and it may be
