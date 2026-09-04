@@ -24,6 +24,7 @@ import PetScanTool from "../components/petscan-tool";
 import PagePileTool from "../components/pagepile-tool";
 import UserSetTool from "../components/user-set-tool";
 import WikiDashboardUserTool from "../components/wiki-dashboard-user-tool.component";
+import Credits from "../components/credits.component";
 
 // Misc
 const queryClient = new QueryClient();
@@ -90,6 +91,10 @@ const router = createBrowserRouter([
       {
         path: "/search/user-set-tool",
         element: <UserSetTool />,
+      },
+      {
+        path: "/credits",
+        element: <Credits />,
       },
     ],
   },

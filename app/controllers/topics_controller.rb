@@ -131,6 +131,22 @@ class TopicsController < ApiController
     render json: { error: e.message }, status: :service_unavailable
   end
 
+  def article_time_travel
+    topic = Topic.find(params[:id])
+    return render json: { error: 'Wiki not found' }, status: :not_found unless topic.wiki
+
+    result = ArticleTimeTravelService.new(topic).call(
+      article_titles: params[:articles],
+      start_year: params[:start_year].to_s.to_i,
+      end_year: params[:end_year].to_s.to_i
+    )
+    render json: result
+  rescue ArticleTimeTravelService::InvalidRequest => e
+    render json: { error: e.message }, status: :bad_request
+  rescue ArticleStatsService::RateLimitError, ArticleStatsService::FetchError => e
+    render json: { error: e.message }, status: :service_unavailable
+  end
+
   def incremental_topic_build
     topic = find_editable_topic
     topic_service = TopicService.new(topic_editor: @topic_editor, topic:)

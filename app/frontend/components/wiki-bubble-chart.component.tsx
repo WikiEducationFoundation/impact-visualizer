@@ -31,6 +31,9 @@ import AdvancedFilterPanel from "./advanced-filter-panel.component";
 import AxisControls from "./axis-controls.component";
 import ChartToolbar from "./chart-toolbar.component";
 import ChartTabBar from "./chart-tab-bar.component";
+import type { ChartTab } from "./chart-tab-bar.component";
+import TimeTravelPanel from "./time-travel-panel.component";
+import type { TimeTravelQuery } from "./time-travel-panel.component";
 import ChartAggregateStats from "./chart-aggregate-stats.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
@@ -138,7 +141,13 @@ const TOUR_STEPS: Step[] = [
     target: '.WikiBubbleChart [data-tour="languages-tab"]',
     placement: "bottom",
     content:
-      "You can also compare articles in different linguistic versions and at different points in time.",
+      "The languages tab compares articles across their different linguistic versions.",
+  },
+  {
+    target: '.WikiBubbleChart [data-tour="time-travel-tab"]',
+    placement: "bottom",
+    content:
+      "And the Time travel tab compares the same articles at two points in time. Pick two years to see a chart for each one, side by side.",
   },
   {
     target: ".WikiBubbleChart",
@@ -241,9 +250,41 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [selectedArticle, setSelectedArticle] = useState<ArticleRow | null>(
     null,
   );
-  const [activeTab, setActiveTab] = useState<"overview" | "languages">(
-    "overview",
+  const [activeTab, setActiveTab] = useState<ChartTab>(initialState.activeTab);
+  const [timeTravelArticles, setTimeTravelArticles] = useState<string[]>(
+    initialState.timeTravelArticles,
   );
+  const [timeTravelStartYear, setTimeTravelStartYear] = useState<number>(
+    initialState.timeTravelStartYear,
+  );
+  const [timeTravelEndYear, setTimeTravelEndYear] = useState<number>(
+    initialState.timeTravelEndYear,
+  );
+  const [timeTravelXAxisKey, setTimeTravelXAxisKey] = useState<XAxisKey>(
+    initialState.timeTravelXAxisKey,
+  );
+  const [timeTravelXAxisMode, setTimeTravelXAxisMode] = useState<
+    "ranked" | "scaled"
+  >(initialState.timeTravelXAxisMode);
+  const [timeTravelYScaleType, setTimeTravelYScaleType] = useState<
+    "linear" | "log"
+  >(initialState.timeTravelYScaleType);
+  const [timeTravelShowLabels, setTimeTravelShowLabels] = useState<boolean>(
+    initialState.timeTravelShowLabels,
+  );
+  // Fetching is expensive (a live Wikipedia round-trip per article-year), so it
+  // runs only when the user asks for it. A shared permalink already names a
+  // selection, so that one runs on load.
+  const [timeTravelQuery, setTimeTravelQuery] =
+    useState<TimeTravelQuery | null>(() =>
+      initialState.timeTravelArticles.length > 0
+        ? {
+            articles: initialState.timeTravelArticles,
+            startYear: initialState.timeTravelStartYear,
+            endYear: initialState.timeTravelEndYear,
+          }
+        : null,
+    );
   const [langCompareArticle, setLangCompareArticle] = useState<string | null>(
     null,
   );
@@ -378,6 +419,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   const articleTitles = useMemo(() => {
     return sortedRows.map((row) => row.article);
+  }, [sortedRows]);
+
+  const publicationDates = useMemo(() => {
+    return Object.fromEntries(
+      sortedRows.map((row) => [row.article, row.publication_date ?? null]),
+    );
   }, [sortedRows]);
 
   // Stable key for the excluded set so it can drive memo/effect deps without
@@ -1390,8 +1437,23 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }, 150);
   };
 
-  const handleTabChange = (tab: "overview" | "languages") => {
+  const handleTabChange = (tab: ChartTab) => {
     setActiveTab(tab);
+  };
+
+  const handleTimeTravelFetch = () => {
+    setTimeTravelQuery({
+      articles: timeTravelArticles,
+      startYear: timeTravelStartYear,
+      endYear: timeTravelEndYear,
+    });
+  };
+
+  const handleTimeTravelStartYearChange = (year: number) => {
+    setTimeTravelStartYear(year);
+    if (year >= timeTravelEndYear) {
+      setTimeTravelEndYear(Math.min(new Date().getFullYear(), year + 1));
+    }
   };
 
   // Build a shareable URL from the current view on demand. The query string
@@ -1417,6 +1479,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       deselectedTags: [...deselectedTags],
       includeUntagged,
       excludedOutliers: [...excludedOutliers],
+      activeTab,
+      timeTravelArticles,
+      timeTravelStartYear,
+      timeTravelEndYear,
+      timeTravelXAxisKey,
+      timeTravelXAxisMode,
+      timeTravelYScaleType,
+      timeTravelShowLabels,
     });
     const qs = new URLSearchParams(next).toString();
     return `${window.location.origin}${window.location.pathname}${
@@ -1553,6 +1623,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         onTabChange={handleTabChange}
         advancedOpen={advancedOpen}
         onToggleAdvanced={() => setAdvancedOpen((open) => !open)}
+        showAdvancedToggle={activeTab !== "timeTravel"}
       />
 
       <div className="TabPanel" hidden={activeTab !== "overview"}>
@@ -1666,6 +1737,37 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             </button>
           </div>
         </div>
+      </div>
+
+      <div className="TabPanel" hidden={activeTab !== "timeTravel"}>
+        {activeTab === "timeTravel" && topicId && (
+          <TimeTravelPanel
+            topicId={topicId}
+            articleTitles={articleTitles}
+            publicationDates={publicationDates}
+            selectedArticles={timeTravelArticles}
+            onSelectedArticlesChange={setTimeTravelArticles}
+            startYear={timeTravelStartYear}
+            endYear={timeTravelEndYear}
+            onStartYearChange={handleTimeTravelStartYearChange}
+            onEndYearChange={setTimeTravelEndYear}
+            query={timeTravelQuery}
+            onFetch={handleTimeTravelFetch}
+            xAxisKey={timeTravelXAxisKey}
+            onXAxisKeyChange={setTimeTravelXAxisKey}
+            xAxisMode={timeTravelXAxisMode}
+            onXAxisModeChange={setTimeTravelXAxisMode}
+            yAxisScaleType={timeTravelYScaleType}
+            onYAxisScaleTypeChange={setTimeTravelYScaleType}
+            showLabels={timeTravelShowLabels}
+            onShowLabelsChange={setTimeTravelShowLabels}
+          />
+        )}
+        {activeTab === "timeTravel" && !topicId && (
+          <div className="Panels--empty">
+            Time travel is only available for a saved topic.
+          </div>
+        )}
       </div>
 
       {selectedArticle && (

@@ -31,6 +31,7 @@ Rails.application.routes.draw do
       get :topic_article_analytics, on: :member
       get :language_links, on: :member
       get :article_language_comparison, on: :member
+      get :article_time_travel, on: :member
       resources :topic_timepoints, only: [:index] 
     end
     resources :classifications, only: [:index]
@@ -50,6 +51,7 @@ Rails.application.routes.draw do
   get '/search/petscan-tool', to: 'pages#index'
   get '/search/pagepile-tool', to: 'pages#index'
   get '/search/user-set-tool', to: 'pages#index'
+  get '/credits', to: 'pages#index'
 
   root "pages#index"
 end

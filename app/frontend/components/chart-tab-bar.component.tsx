@@ -1,11 +1,14 @@
 import React from "react";
 import { FaChevronUp, FaChevronDown } from "react-icons/fa6";
 
+export type ChartTab = "overview" | "languages" | "timeTravel";
+
 export interface ChartTabBarProps {
-  activeTab: "overview" | "languages";
-  onTabChange: (tab: "overview" | "languages") => void;
+  activeTab: ChartTab;
+  onTabChange: (tab: ChartTab) => void;
   advancedOpen: boolean;
   onToggleAdvanced: () => void;
+  showAdvancedToggle?: boolean;
 }
 
 const ChartTabBar: React.FC<ChartTabBarProps> = ({
@@ -13,6 +16,7 @@ const ChartTabBar: React.FC<ChartTabBarProps> = ({
   onTabChange,
   advancedOpen,
   onToggleAdvanced,
+  showAdvancedToggle = true,
 }) => {
   return (
     <div className="TabBar">
@@ -33,17 +37,27 @@ const ChartTabBar: React.FC<ChartTabBarProps> = ({
       </button>
       <button
         type="button"
-        className="AdvancedToggle"
-        aria-expanded={advancedOpen}
-        onClick={onToggleAdvanced}
+        data-tour="time-travel-tab"
+        className={`Tab ${activeTab === "timeTravel" ? "is-active" : ""}`}
+        onClick={() => onTabChange("timeTravel")}
       >
-        <span className="AdvancedToggleLabel">Advanced Filters</span>
-        {advancedOpen ? (
-          <FaChevronUp size={14} />
-        ) : (
-          <FaChevronDown size={14} />
-        )}
+        Time travel
       </button>
+      {showAdvancedToggle && (
+        <button
+          type="button"
+          className="AdvancedToggle"
+          aria-expanded={advancedOpen}
+          onClick={onToggleAdvanced}
+        >
+          <span className="AdvancedToggleLabel">Advanced Filters</span>
+          {advancedOpen ? (
+            <FaChevronUp size={14} />
+          ) : (
+            <FaChevronDown size={14} />
+          )}
+        </button>
+      )}
     </div>
   );
 };

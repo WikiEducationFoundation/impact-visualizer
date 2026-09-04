@@ -22,7 +22,7 @@ $danger-fg: #c62828;
   width: 100%;
 
   .AdvancedToggle {
-    margin-left: auto;
+    flex: none;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -107,6 +107,12 @@ $danger-fg: #c62828;
 
     @media (min-width: 768px) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    &.AxisControls--twoColumn {
+      @media (min-width: 768px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     &.AxisControls--horizontalOnly {
@@ -422,27 +428,44 @@ $danger-fg: #c62828;
 
   .TabBar {
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    background: #f5f5f5;
     border-bottom: 1px solid $border-grey;
   }
 
   .Tab {
-    padding: 10px 24px;
-    font-size: 14px;
+    flex: 1 1 0;
+    padding: 13px 16px;
+    font-size: 15px;
     font-weight: 500;
     color: $text-muted;
     background: #f5f5f5;
     border: none;
-    border-bottom: 2px solid transparent;
+    border-right: 1px solid $border-grey;
+    border-bottom: 3px solid transparent;
     cursor: pointer;
+    user-select: none;
     transition:
       color 120ms ease,
       background-color 120ms ease,
       border-color 120ms ease;
 
+    &:last-child {
+      border-right: none;
+    }
+
     &:hover:not(.is-active) {
       background: #eeeeee;
       color: #333;
+    }
+
+    &:active:not(.is-active) {
+      background: #e2e2e2;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $primary;
+      outline-offset: -4px;
     }
 
     &.is-active {
@@ -1805,6 +1828,312 @@ $danger-fg: #c62828;
 @keyframes articleLangCellSpin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+.TimeTravel {
+  .Explainer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    font-size: 14px;
+    font-style: italic;
+    color: $text-strong;
+    background: white;
+    border-bottom: 1px solid $border-faint;
+
+    svg {
+      flex: 0 0 auto;
+    }
+  }
+
+  .Controls {
+    background: white;
+    border-bottom: 1px solid $border-grey;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .YearRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .YearField {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    max-width: 220px;
+    gap: 6px;
+  }
+
+  .ArticleRow {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 260px;
+    max-width: 452px;
+    gap: 6px;
+  }
+
+  .YearLabel {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .FetchRow {
+    display: flex;
+  }
+
+  .FetchButton {
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    background: $primary;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: $primary-dark;
+    }
+
+    &:disabled {
+      background: $border-grey;
+      color: $text-muted;
+      cursor: not-allowed;
+    }
+  }
+
+  .DisplayOptions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 16px;
+    background: white;
+    border-bottom: 1px solid $border-faint;
+  }
+
+  .Note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    color: $text-muted;
+    background: white;
+    border-bottom: 1px solid $border-grey;
+
+    svg {
+      flex: 0 0 auto;
+      margin-top: 1px;
+    }
+  }
+
+  .Panels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: $border-grey;
+
+    @media (min-width: 900px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .Panel {
+    background: white;
+    min-width: 0;
+  }
+
+  .PanelHeader {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 1px solid $border-faint;
+  }
+
+  .PanelBody {
+    width: 100%;
+    overflow-y: hidden;
+  }
+
+  .TimeTravelTooltip {
+    position: fixed;
+    pointer-events: none;
+    min-width: 200px;
+    padding: 10px 12px;
+    background: white;
+    border: 1px solid $border-light;
+    border-radius: 4px;
+    font-size: 13px;
+
+    .Title {
+      font-weight: 700;
+    }
+
+    .Subtitle {
+      margin-top: 2px;
+      font-size: 12px;
+      color: $text-muted;
+    }
+
+    .Rows {
+      display: flex;
+      flex-direction: column;
+      margin-top: 8px;
+      gap: 4px;
+    }
+
+    .Row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      white-space: nowrap;
+    }
+
+    .Label {
+      color: $text-secondary;
+    }
+
+    .Value {
+      font-weight: 600;
+    }
+
+    .Change {
+      margin-left: 4px;
+    }
+
+    .Change--up {
+      color: #2e7d32;
+    }
+
+    .Change--down {
+      color: $danger-fg;
+    }
+
+    .Change--flat {
+      color: $text-muted;
+    }
+  }
+
+  .Panels--loading,
+  .Panels--empty,
+  .Panels--error {
+    padding: 48px 24px;
+    text-align: center;
+    color: $text-muted;
+    font-size: 14px;
+    font-style: italic;
+    background: white;
+  }
+
+  .Panels--loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .Panels--error {
+    color: $danger-fg;
+  }
+
+  .Footnote {
+    padding: 10px 16px;
+    font-size: 12px;
+    color: $text-muted;
+  }
+}
+
+.TimeTravelPicker {
+  position: relative;
+
+  .PickerTrigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 14px;
+    color: $text-strong;
+    background: white;
+    border: 1px solid $border-grey;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .PickerPopover {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    min-width: 320px;
+    background: white;
+    border: 1px solid $border-grey;
+    border-radius: 6px 6px 0 0;
+    z-index: 100;
+  }
+
+  .PickerSearch {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-bottom: 1px solid $border-faint;
+  }
+
+  .PickerList {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .PickerItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #f0f4ff;
+    }
+  }
+
+  .PickerItemLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .PickerEmpty {
+    padding: 16px 12px;
+    font-size: 14px;
+    font-style: italic;
+    color: $text-muted;
+  }
+
+  .PickerFooter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: $text-muted;
+    border-top: 1px solid $border-faint;
+  }
+
+  .PickerActions {
+    display: flex;
+    gap: 12px;
   }
 }
 

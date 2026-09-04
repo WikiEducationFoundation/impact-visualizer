@@ -8,6 +8,7 @@ import Topic from "../types/topic.type";
 import Classification from "../types/classification.type";
 import Wiki from "../types/wiki.type";
 import TopicTimepoint from "../types/topic-timepoint.type";
+import type { TimeTravelResponse } from "../types/time-travel.type";
 
 export type LangComparisonData = {
   title: string;
@@ -179,6 +180,23 @@ class TopicService {
     return http
       .get(`/topics/${id}/article_language_comparison`, {
         params: { article },
+        signal,
+      })
+      .then((response: AxiosResponse) => {
+        return _.get(response, "data");
+      });
+  }
+
+  getArticleTimeTravel(
+    id: number | string,
+    articles: string[],
+    startYear: number,
+    endYear: number,
+    signal?: AbortSignal,
+  ): Promise<TimeTravelResponse> {
+    return http
+      .get(`/topics/${id}/article_time_travel`, {
+        params: { articles, start_year: startYear, end_year: endYear },
         signal,
       })
       .then((response: AxiosResponse) => {

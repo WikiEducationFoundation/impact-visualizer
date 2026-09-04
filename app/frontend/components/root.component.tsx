@@ -85,6 +85,10 @@ function Root() {
                   ))}
                 </div>
               </div>
+
+              <Link className="Header-navLink" to="/credits">
+                Credits
+              </Link>
             </div>
           </div>
 

@@ -568,6 +568,12 @@ function TopicGenerationProgress({ topic }: { topic: Topic }) {
       <ProgressChart overallPercent={overallPercent} phases={phases} />
       <PhaseLegend phases={phases} />
 
+      <div className="TopicProgress-chartNote">
+        Each bar is one step of data generation. They fill from left to right
+        through the three phases above, which get more bars the longer they
+        typically take.
+      </div>
+
       {currentPhase?.detail && (
         <div className="TopicProgress-detail" aria-live="polite">
           {currentPhase.detail}

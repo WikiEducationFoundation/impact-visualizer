@@ -502,4 +502,78 @@ describe TopicsController do
       expect(response.parsed_body['error']).to eq('No articles found')
     end
   end
+
+  describe '#article_time_travel' do
+    let(:topic) { topic_editor.topics.first }
+    let(:current_year) { Date.current.year }
+
+    before do
+      article = create(:article, title: 'Forest', pageid: 1,
+                                 first_revision_at: Date.new(2010, 1, 1))
+      create(:article_bag_article, article:, article_bag: topic.active_article_bag)
+    end
+
+    def get_time_travel(params)
+      get("/api/topics/#{topic.id}/article_time_travel", params:)
+    end
+
+    it 'returns 400 when no articles are given' do
+      get_time_travel(start_year: 2016, end_year: 2020)
+      expect(response.status).to eq(400)
+      expect(response.parsed_body['error']).to match(/At least one article/)
+    end
+
+    it 'returns 400 naming a title outside the active article bag' do
+      get_time_travel(articles: ['Rainforest'], start_year: 2016, end_year: 2020)
+      expect(response.status).to eq(400)
+      expect(response.parsed_body['error']).to match(/Unknown articles: Rainforest/)
+    end
+
+    it 'returns 400 for a start year before 2015' do
+      get_time_travel(articles: ['Forest'], start_year: 2010, end_year: 2020)
+      expect(response.status).to eq(400)
+      expect(response.parsed_body['error']).to match(/between 2015/)
+    end
+
+    it 'returns 400 for an end year in the future' do
+      get_time_travel(articles: ['Forest'], start_year: 2016, end_year: current_year + 1)
+      expect(response.status).to eq(400)
+      expect(response.parsed_body['error']).to match(/between 2015/)
+    end
+
+    it 'returns 400 when the start year is not before the end year' do
+      get_time_travel(articles: ['Forest'], start_year: 2020, end_year: 2016)
+      expect(response.status).to eq(400)
+      expect(response.parsed_body['error']).to match(/before end year/)
+    end
+
+    it 'returns a snapshot per article per year' do
+      allow_any_instance_of(ArticleTimeTravelService).to receive(:call).and_return(
+        'Forest' => {
+          '2016' => { article_size: 1000, lead_section_size: 100, talk_size: 10,
+                      average_daily_views: 5 },
+          '2020' => nil
+        }
+      )
+
+      get_time_travel(articles: ['Forest'], start_year: 2016, end_year: 2020)
+
+      expect(response.status).to eq(200)
+      expect(response.parsed_body['Forest']['2016']).to eq(
+        'article_size' => 1000, 'lead_section_size' => 100,
+        'talk_size' => 10, 'average_daily_views' => 5
+      )
+      expect(response.parsed_body['Forest']['2020']).to be_nil
+    end
+
+    it 'returns 503 when Wikipedia rate-limits the fetch' do
+      allow_any_instance_of(ArticleTimeTravelService).to receive(:call)
+        .and_raise(ArticleStatsService::RateLimitError, 'slow down')
+
+      get_time_travel(articles: ['Forest'], start_year: 2016, end_year: 2020)
+
+      expect(response.status).to eq(503)
+      expect(response.parsed_body['error']).to eq('slow down')
+    end
+  end
 end

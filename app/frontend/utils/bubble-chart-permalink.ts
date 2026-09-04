@@ -1,4 +1,9 @@
 import type { XAxisKey, YAxisKey } from "../types/bubble-chart.type";
+import type { ChartTab } from "../components/chart-tab-bar.component";
+import {
+  MIN_TIME_TRAVEL_YEAR,
+  TIME_TRAVEL_X_AXIS_KEYS,
+} from "./time-travel-vega";
 
 export interface ChartUiState {
   xAxisKey: XAxisKey;
@@ -19,7 +24,21 @@ export interface ChartUiState {
   deselectedTags: string[];
   includeUntagged: boolean;
   excludedOutliers: string[];
+  activeTab: ChartTab;
+  timeTravelArticles: string[];
+  timeTravelStartYear: number;
+  timeTravelEndYear: number;
+  timeTravelXAxisKey: XAxisKey;
+  timeTravelXAxisMode: "ranked" | "scaled";
+  timeTravelYScaleType: "linear" | "log";
+  timeTravelShowLabels: boolean;
 }
+
+const CURRENT_YEAR = new Date().getFullYear();
+const DEFAULT_TIME_TRAVEL_START_YEAR = Math.max(
+  MIN_TIME_TRAVEL_YEAR,
+  CURRENT_YEAR - 5,
+);
 
 export const CENTRALITY_MIN = 1;
 export const CENTRALITY_MAX = 10;
@@ -72,6 +91,19 @@ export const DEFAULT_CHART_UI_STATE: ChartUiState = {
   deselectedTags: [],
   includeUntagged: true,
   excludedOutliers: [],
+  activeTab: "overview",
+  timeTravelArticles: [],
+  timeTravelStartYear: DEFAULT_TIME_TRAVEL_START_YEAR,
+  timeTravelEndYear: CURRENT_YEAR,
+  timeTravelXAxisKey: "title",
+  timeTravelXAxisMode: "ranked",
+  timeTravelYScaleType: "linear",
+  timeTravelShowLabels: false,
+};
+
+const TAB_PARAMS: Record<string, ChartTab> = {
+  lang: "languages",
+  tt: "timeTravel",
 };
 
 function allGradesOn(selected: Record<string, boolean>): boolean {
@@ -113,7 +145,32 @@ export function encodeChartState(state: ChartUiState): Record<string, string> {
   if (state.excludedOutliers.length)
     params.trim = state.excludedOutliers.join("|");
 
+  if (state.activeTab === "languages") params.tab = "lang";
+  if (state.activeTab === "timeTravel") params.tab = "tt";
+
+  if (state.timeTravelArticles.length)
+    params.tta = state.timeTravelArticles.join("|");
+  if (state.timeTravelStartYear !== DEFAULT_TIME_TRAVEL_START_YEAR)
+    params.ttS = String(state.timeTravelStartYear);
+  if (state.timeTravelEndYear !== CURRENT_YEAR)
+    params.ttE = String(state.timeTravelEndYear);
+  if (state.timeTravelXAxisKey !== "title")
+    params.ttx = state.timeTravelXAxisKey;
+  if (state.timeTravelXAxisMode !== "ranked")
+    params.ttxm = state.timeTravelXAxisMode;
+  if (state.timeTravelYScaleType !== "linear")
+    params.ttys = state.timeTravelYScaleType;
+  if (state.timeTravelShowLabels) params.ttlbl = "1";
+
   return params;
+}
+
+function clampYear(value: number): number {
+  if (!Number.isFinite(value)) return CURRENT_YEAR;
+  return Math.min(
+    CURRENT_YEAR,
+    Math.max(MIN_TIME_TRAVEL_YEAR, Math.round(value)),
+  );
 }
 
 function clampCentrality(value: number): number {
@@ -191,6 +248,49 @@ export function decodeChartState(params: URLSearchParams): ChartUiState {
 
   const trim = params.get("trim");
   state.excludedOutliers = trim ? trim.split("|").filter(Boolean) : [];
+
+  const tab = params.get("tab");
+  if (tab && TAB_PARAMS[tab]) state.activeTab = TAB_PARAMS[tab];
+
+  const tta = params.get("tta");
+  if (tta) {
+    state.timeTravelArticles = tta.split("|").filter(Boolean);
+  }
+
+  const ttS = params.get("ttS");
+  if (ttS !== null) state.timeTravelStartYear = clampYear(Number(ttS));
+  const ttE = params.get("ttE");
+  if (ttE !== null) state.timeTravelEndYear = clampYear(Number(ttE));
+  if (state.timeTravelStartYear > state.timeTravelEndYear) {
+    [state.timeTravelStartYear, state.timeTravelEndYear] = [
+      state.timeTravelEndYear,
+      state.timeTravelStartYear,
+    ];
+  }
+  if (state.timeTravelStartYear === state.timeTravelEndYear) {
+    if (state.timeTravelEndYear < CURRENT_YEAR) {
+      state.timeTravelEndYear += 1;
+    } else {
+      state.timeTravelStartYear = Math.max(
+        MIN_TIME_TRAVEL_YEAR,
+        state.timeTravelEndYear - 1,
+      );
+    }
+  }
+
+  const ttx = params.get("ttx");
+  if (ttx && (TIME_TRAVEL_X_AXIS_KEYS as string[]).includes(ttx))
+    state.timeTravelXAxisKey = ttx as XAxisKey;
+
+  const ttxm = params.get("ttxm");
+  if (ttxm === "scaled" || ttxm === "ranked") state.timeTravelXAxisMode = ttxm;
+  if (state.timeTravelXAxisKey === "title")
+    state.timeTravelXAxisMode = "ranked";
+
+  const ttys = params.get("ttys");
+  if (ttys === "log" || ttys === "linear") state.timeTravelYScaleType = ttys;
+
+  state.timeTravelShowLabels = params.get("ttlbl") === "1";
 
   return state;
 }
