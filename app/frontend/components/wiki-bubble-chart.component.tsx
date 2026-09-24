@@ -1098,9 +1098,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
     lastEmbeddedSortedRowsRef.current = currentSortedRows;
 
+    let resizeObserver: ResizeObserver | null = null;
+
     vegaEmbed(containerRef.current, spec, options)
       .then((result) => {
         viewRef.current = result;
+
+        const chartContainer = result.view.container();
+        if (chartContainer) {
+          resizeObserver = new ResizeObserver(() => {
+            const width = chartContainer.clientWidth;
+            if (width > 0 && width !== result.view.width()) {
+              result.view.width(width).runAsync();
+            }
+          });
+          resizeObserver.observe(chartContainer);
+        }
 
         result.view.addEventListener("click", (_event, item) => {
           if (item && item.datum && item.datum.article) {
@@ -1125,6 +1138,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       .catch(console.error);
 
     return () => {
+      resizeObserver?.disconnect();
       viewRef.current?.view.finalize();
       viewRef.current = null;
       lastEmbeddedSortedRowsRef.current = null;
