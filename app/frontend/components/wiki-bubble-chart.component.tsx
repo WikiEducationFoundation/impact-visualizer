@@ -483,6 +483,30 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const xDomainMin = xFullDomain ? xFullDomain[0] : null;
   const xDomainMax = xFullDomain ? xFullDomain[1] : null;
 
+  const sizeDomainMax = useMemo(() => {
+    const max = {
+      talk_size: 0,
+      prev_article_size: 0,
+      lead_section_size: 0,
+      article_size: 0,
+    };
+    const fields = Object.keys(max) as (keyof typeof max)[];
+    for (const row of rows) {
+      if (excludedOutliers.has(row.article)) continue;
+      for (const field of fields) {
+        const v = row[field];
+        if (typeof v === "number" && Number.isFinite(v) && v > max[field]) {
+          max[field] = v;
+        }
+      }
+    }
+    return max;
+  }, [rows, excludedOutliers]);
+  const talkSizeMax = sizeDomainMax.talk_size;
+  const prevArticleSizeMax = sizeDomainMax.prev_article_size;
+  const leadSectionSizeMax = sizeDomainMax.lead_section_size;
+  const articleSizeMax = sizeDomainMax.article_size;
+
   const parsedYAxisDomain = useMemo(() => {
     const parsedMin =
       committedYAxisMinInput.trim() === ""
@@ -796,6 +820,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           }
         : { value: activeOpacity };
 
+    const sizeScale = (max: number, range: [number, number]) => ({
+      type: "sqrt" as const,
+      range,
+      ...(max > 0 ? { domain: [0, max] } : {}),
+    });
+
     const spec: VisualizationSpec = {
       $schema: "https://vega.github.io/schema/vega-lite/v5.json",
       height: HEIGHT,
@@ -935,7 +965,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             size: {
               field: "talk_size",
               type: "quantitative",
-              scale: { type: "sqrt", range: [50, 1500] },
+              scale: sizeScale(talkSizeMax, [50, 1500]),
             },
             stroke: {
               field: "bubble_talk_color",
@@ -960,7 +990,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             size: {
               field: "prev_article_size",
               type: "quantitative",
-              scale: { type: "sqrt", range: [20, 600] },
+              scale: sizeScale(prevArticleSizeMax, [20, 600]),
             },
             stroke: {
               field: "bubble_prev_color",
@@ -983,7 +1013,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             size: {
               field: "lead_section_size",
               type: "quantitative",
-              scale: { type: "sqrt", range: [30, 800] },
+              scale: sizeScale(leadSectionSizeMax, [30, 800]),
             },
             fill: {
               field: "bubble_lead_color",
@@ -1042,7 +1072,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             size: {
               field: "article_size",
               type: "quantitative",
-              scale: { type: "sqrt", range: [20, 600] },
+              scale: sizeScale(articleSizeMax, [20, 600]),
             },
             fill: {
               field: "bubble_article_color",
@@ -1156,6 +1186,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     yAxisAutoDomain.max,
     xDomainMin,
     xDomainMax,
+    talkSizeMax,
+    prevArticleSizeMax,
+    leadSectionSizeMax,
+    articleSizeMax,
     excludedKey,
     availableTagsKey,
   ]);
