@@ -192,6 +192,40 @@ describe WikiActionApi do
     end
   end
 
+  describe '#get_subpages' do
+    let(:wiki_api) { described_class.new(wiki) }
+    let(:archive1) { { 'pageid' => 1, 'title' => 'Talk:Apple/Archive 1', 'length' => 100 } }
+    let(:archive2) { { 'pageid' => 2, 'title' => 'Talk:Apple/Archive 2', 'length' => 50 } }
+
+    def api_response(pages, continue: nil)
+      instance_double(MediawikiApi::Response, data: { 'pages' => pages }, '[]': continue)
+    end
+
+    it 'queries subpages by namespace and prefix, following continuation' do
+      continuation = { 'gapcontinue' => 'Apple/Archive_2', 'continue' => 'gapcontinue||' }
+      allow(wiki_api).to receive(:query)
+        .and_return(api_response([archive1], continue: continuation), api_response([archive2]))
+
+      subpages = wiki_api.get_subpages(title: 'Apple', namespace: 1)
+
+      expected_params = hash_including(generator: 'allpages', gapnamespace: 1,
+                                       gapprefix: 'Apple/', gapfilterredir: 'nonredirects')
+      expect(wiki_api).to have_received(:query).with(query_parameters: expected_params).twice
+      expect(subpages.pluck('length')).to eq([100, 50])
+      expect(subpages.first['title']).to eq('Talk:Apple/Archive 1')
+    end
+
+    it 'returns an empty list when there are no subpages' do
+      allow(wiki_api).to receive(:query).and_return(api_response(nil))
+      expect(wiki_api.get_subpages(title: 'Apple', namespace: 1)).to eq([])
+    end
+
+    it 'returns nil when the query fails' do
+      allow(wiki_api).to receive(:query).and_return(nil)
+      expect(wiki_api.get_subpages(title: 'Apple', namespace: 1)).to be_nil
+    end
+  end
+
   describe '#get_wikidata_claims' do
     it 'gets wikidata claims for given article title', vcr: true do
       wiki_api = described_class.new(wiki)

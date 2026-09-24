@@ -88,7 +88,7 @@ const GLOSSARY_SECTIONS: GlossarySection[] = [
       },
       {
         name: "Talk / Discussion page size",
-        def: "The byte size of the article's talk page, where editors discuss changes.",
+        def: "The byte size of the article's talk page (including archived talk pages), where editors discuss changes.",
       },
       {
         name: "Images",
