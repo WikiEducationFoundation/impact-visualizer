@@ -866,6 +866,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           value: !deselectedTags.has(tag),
         })),
         { name: "include_untagged", value: includeUntagged },
+        { name: "show_labels", value: showLabels },
         {
           name: "y_domain_min",
           value:
@@ -1064,6 +1065,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
                 "Warning tags": format(datum.warning_tags_count, ','),
                 "Images": format(datum.images_count, ','),
                 "Protections": datum.protection_summary,
+                "Tags": length(datum.classifications) ? join(datum.classifications, ', ') : 'none',
               }`,
             },
           },
@@ -1083,26 +1085,23 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
             opacity: makeOpacityEncoding(1),
           },
         },
-        ...(showLabels
-          ? [
-              {
-                mark: {
-                  type: "text" as const,
-                  align: "center" as const,
-                  baseline: "bottom" as const,
-                  dy: -10,
-                  angle: 0,
-                  fontSize: 9,
-                  limit: 120,
-                  clip: true,
-                },
-                encoding: {
-                  text: { field: "article", type: "nominal" as const },
-                  opacity: { value: 1 },
-                },
-              },
-            ]
-          : []),
+        {
+          transform: [{ filter: "show_labels" }],
+          mark: {
+            type: "text",
+            align: "center",
+            baseline: "bottom",
+            dy: -10,
+            angle: 0,
+            fontSize: 9,
+            limit: 120,
+            clip: true,
+          },
+          encoding: {
+            text: { field: "article", type: "nominal" },
+            opacity: { value: 1 },
+          },
+        },
       ],
 
       encoding: {
@@ -1177,7 +1176,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     hasData,
     isLargeDatasetBucket,
     actions,
-    showLabels,
     xAxisKey,
     xAxisMode,
     yAxisConfig,
@@ -1399,6 +1397,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   };
 
   const handleShowLabelsChange = (checked: boolean) => {
+    if (viewRef.current) {
+      viewRef.current.view.signal("show_labels", checked);
+      viewRef.current.view.runAsync();
+    }
     setShowLabels(checked);
   };
 
