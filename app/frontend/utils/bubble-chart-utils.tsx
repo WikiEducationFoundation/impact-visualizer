@@ -1,8 +1,13 @@
 import { escapeCSVSpecialCharacters } from "./search-utils";
 import type {
+  ArticleAnalytics,
   ArticleProtection,
+  ChartRow,
   NumericSortField,
   XAxisKey,
+  YAxisConfig,
+  YAxisDomain,
+  YAxisKey,
   NumericSortableArticle,
 } from "../types/bubble-chart.type";
 
@@ -256,6 +261,19 @@ function shadeColor(hex: string, amount: number): string {
   return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
 }
 
+export const GRADE_KEYS = [
+  "FA",
+  "FL",
+  "A",
+  "GA",
+  "B",
+  "C",
+  "Start",
+  "Stub",
+  "List",
+  "Unassessed",
+];
+
 export const RAW_ASSESSMENT_COLORS: Record<string, string> = {
   FA: "#F7B1FF",
   GA: "#3AD358",
@@ -298,8 +316,192 @@ const SINGLE_COLOR_BASE = "#2f6d9e";
 const SINGLE_COLOR_PALETTE: AssessmentPalette =
   getPaletteFromBase(SINGLE_COLOR_BASE);
 
+const Y_AXIS_CONFIG: Record<YAxisKey, YAxisConfig> = {
+  average_daily_views: {
+    currentField: "average_daily_views",
+    previousField: "prev_average_daily_views",
+    axisTitle: "avg daily visits",
+  },
+  number_of_editors: {
+    currentField: "number_of_editors",
+    previousField: null,
+    axisTitle: "editors",
+  },
+  incoming_links_count: {
+    currentField: "incoming_links_count",
+    previousField: null,
+    axisTitle: "incoming links",
+  },
+};
+
+function buildChartRows(
+  data: Record<string, ArticleAnalytics>,
+  colorMode: "assessment" | "single",
+): ChartRow[] {
+  return Object.entries(data).map(([article, analytics]) => {
+    const protections = analytics?.article_protections ?? [];
+    const palette = getAssessmentPalette(analytics?.assessment_grade);
+    const bubble = colorMode === "single" ? SINGLE_COLOR_PALETTE : palette;
+
+    return {
+      article,
+      ...analytics,
+      classifications: analytics?.classifications ?? [],
+      assessment_grade_color: palette.article,
+      bubble_article_color: bubble.article,
+      bubble_talk_color: bubble.talk,
+      bubble_prev_color: bubble.prevArticle,
+      bubble_lead_color: bubble.lead,
+      protection_summary: formatProtectionSummary(protections),
+      has_move_restriction: protections.some((p) => p.type === "move"),
+      has_edit_restriction: protections.some((p) => p.type === "edit"),
+    };
+  });
+}
+
+function numericExtent<T>(
+  items: T[],
+  getValue: (item: T) => unknown,
+  skip?: (item: T) => boolean,
+): [number, number] | null {
+  // Iterate rather than spread into Math.min/max: with tens of thousands of
+  // articles, the spread exceeds the JS argument limit and throws RangeError.
+  let min = Infinity;
+  let max = -Infinity;
+  for (const item of items) {
+    if (skip?.(item)) continue;
+    const v = getValue(item);
+    if (typeof v === "number" && Number.isFinite(v)) {
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+  }
+  return min <= max ? [min, max] : null;
+}
+
+function parseYAxisDomain(minInput: string, maxInput: string): YAxisDomain {
+  const parse = (input: string) => {
+    if (input.trim() === "") return null;
+    const value = Number(input);
+    return Number.isFinite(value) ? value : null;
+  };
+  const domainMin = parse(minInput);
+  const domainMax = parse(maxInput);
+  if (domainMin !== null && domainMax !== null && domainMin > domainMax) {
+    return { domainMin: domainMax, domainMax: domainMin };
+  }
+  return { domainMin, domainMax };
+}
+
+type ArticleFilters = {
+  searchTerm: string;
+  selectedGrades: Record<string, boolean>;
+  filterMoveRestriction: boolean;
+  filterEditRestriction: boolean;
+  centralityMin: number;
+  centralityMax: number;
+  includeNoCentrality: boolean;
+  yField: YAxisKey;
+  yDomain: YAxisDomain;
+  deselectedTags: Set<string>;
+  includeUntagged: boolean;
+};
+
+// Mirrors the Vega visibility filter in bubble-chart-vega.ts, which the chart
+// applies through signals; keep the two in sync.
+function filterArticles(rows: ChartRow[], filters: ArticleFilters): ChartRow[] {
+  const { domainMin, domainMax } = filters.yDomain;
+  const lowerSearch = filters.searchTerm.trim().toLowerCase();
+
+  return rows.filter((row) => {
+    if (lowerSearch && !row.article.toLowerCase().includes(lowerSearch)) {
+      return false;
+    }
+
+    if (!filters.selectedGrades[row.assessment_grade || "Unassessed"]) {
+      return false;
+    }
+
+    if (filters.filterMoveRestriction && !row.has_move_restriction) {
+      return false;
+    }
+    if (filters.filterEditRestriction && !row.has_edit_restriction) {
+      return false;
+    }
+
+    if (typeof row.centrality === "number") {
+      if (
+        row.centrality < filters.centralityMin ||
+        row.centrality > filters.centralityMax
+      ) {
+        return false;
+      }
+    } else if (!filters.includeNoCentrality) {
+      return false;
+    }
+
+    const yValue = row[filters.yField];
+    if (domainMin !== null && yValue < domainMin) return false;
+    if (domainMax !== null && yValue > domainMax) return false;
+
+    if (row.classifications.length > 0) {
+      return row.classifications.some(
+        (tag) => !filters.deselectedTags.has(tag),
+      );
+    }
+    return filters.includeUntagged;
+  });
+}
+
+function computeAggregateStats(
+  rows: ChartRow[],
+  topicStartDate?: string,
+  topicEndDate?: string,
+) {
+  const daysElapsed = topicStartDate
+    ? ((topicEndDate ? new Date(topicEndDate).getTime() : Date.now()) -
+        new Date(topicStartDate).getTime()) /
+      (1000 * 60 * 60 * 24)
+    : null;
+
+  const totalViews =
+    daysElapsed !== null
+      ? rows.reduce(
+          (sum, row) => sum + row.average_daily_views * daysElapsed,
+          0,
+        )
+      : null;
+
+  return {
+    totalArticles: rows.length,
+    millionVisits: totalViews !== null ? totalViews / 1_000_000 : null,
+    averageTotalViews:
+      totalViews !== null && rows.length > 0
+        ? Math.round(totalViews / rows.length)
+        : null,
+    averageArticleSize:
+      rows.length > 0
+        ? Math.round(
+            rows.reduce((sum, r) => sum + r.article_size, 0) / rows.length,
+          )
+        : null,
+    startDateLabel: topicStartDate
+      ? new Date(topicStartDate).toLocaleDateString("en-US", {
+          month: "short",
+          year: "numeric",
+        })
+      : null,
+  };
+}
+
 export {
   SINGLE_COLOR_PALETTE,
+  Y_AXIS_CONFIG,
+  buildChartRows,
+  numericExtent,
+  parseYAxisDomain,
+  filterArticles,
+  computeAggregateStats,
   compareArticlesByPublicationDateAsc,
   compareArticlesByNumericFieldAsc,
   formatProtectionSummary,
@@ -312,4 +514,4 @@ export {
   makeSqrtAreaScale,
 };
 
-export type { AssessmentPalette };
+export type { AssessmentPalette, ArticleFilters };

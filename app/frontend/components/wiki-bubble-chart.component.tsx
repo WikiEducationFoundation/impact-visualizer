@@ -6,19 +6,10 @@ import React, {
   startTransition,
   useDeferredValue,
 } from "react";
-import vegaEmbed, { VisualizationSpec, EmbedOptions, Result } from "vega-embed";
-import {
-  Joyride,
-  ACTIONS,
-  EVENTS,
-  STATUS,
-  type EventData,
-  type Step,
-} from "react-joyride";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import vegaEmbed, { EmbedOptions, Result } from "vega-embed";
+import { Joyride } from "react-joyride";
+import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
-import toast from "react-hot-toast";
-import moment from "moment";
 import { BsBook, BsInfoCircle } from "react-icons/bs";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
 import ArticleDetailPanel from "./article-detail-panel.component";
@@ -39,35 +30,51 @@ import ChartAggregateStats from "./chart-aggregate-stats.component";
 import type { ArticleRow } from "./article-detail-panel.component";
 import type {
   ArticleAnalytics,
+  ChartRow,
+  NumericSortField,
   XAxisKey,
   YAxisKey,
 } from "../types/bubble-chart.type";
 import {
-  getAssessmentPalette,
-  SINGLE_COLOR_PALETTE,
+  GRADE_KEYS,
+  Y_AXIS_CONFIG,
+  buildChartRows,
   compareArticlesByPublicationDateAsc,
   compareArticlesByNumericFieldAsc,
-  formatProtectionSummary,
-  xAxisTitleForKey,
+  computeAggregateStats,
+  filterArticles,
+  numericExtent,
+  parseYAxisDomain,
 } from "../utils/bubble-chart-utils";
 import {
-  MAX_CIRCLE_RADIUS,
+  LARGE_DATASET_THRESHOLD,
+  applySignals,
+  buildBubbleChartSpec,
+  gradeSignalName,
   patchChartScales,
+  tagSignalName,
+  yDomainSignals,
 } from "../utils/bubble-chart-vega";
-import TopicService from "../services/topic.service";
+import {
+  JOYRIDE_OPTIONS,
+  JOYRIDE_STYLES,
+  SIDEBAR_STEP_INDEX,
+  TOUR_STEPS,
+} from "../utils/bubble-chart-tour";
 import {
   fetchLanguageLinks,
   LANGUAGE_LABELS,
   TARGET_LANGUAGES,
 } from "../utils/language-links";
 import type { LangLinksProgress } from "../utils/language-links";
-import { exportChartImage } from "../utils/chart-image-export";
+import { exportChartImage, toSafeFilename } from "../utils/chart-image-export";
+import { formatShortDate } from "../utils/date-utils";
 import { useOnboardingTour } from "../hooks/useOnboardingTour";
+import { useTopicArticleMutations } from "../hooks/useTopicArticleMutations";
 import {
   decodeChartState,
   encodeChartState,
   DEFAULT_CHART_UI_STATE,
-  GRADE_KEYS,
   CENTRALITY_MIN,
   CENTRALITY_MAX,
 } from "../utils/bubble-chart-permalink";
@@ -90,84 +97,6 @@ interface WikiBubbleChartProps {
   isTopicBuilderTopic?: boolean;
 }
 
-const HEIGHT = 650;
-const LARGE_DATASET_THRESHOLD = 10000;
-
-const TOUR_STEPS: Step[] = [
-  {
-    target: ".WikiBubbleChart",
-    placement: "center",
-    title: "Welcome to Wikipedia Panorama",
-    content: "A visual way to explore Wikipedia articles",
-    locale: { skip: "No, thanks" },
-  },
-  {
-    target: ".WikiBubbleChart",
-    placement: "center",
-    content:
-      "Wikipedia Panorama allows you to have a general overview of articles on a specific topic.",
-  },
-  {
-    target: ".WikiBubbleChart .Container",
-    placement: "top",
-    content:
-      "Each bubble represents an article on the topic. The bubble size changes depending on different article metrics. Click any bubble to open that article's details.",
-  },
-  {
-    target: '.WikiBubbleChart [data-tour="legend"]',
-    placement: "bottom",
-    content: (
-      <img
-        className="TourLegendImage"
-        src="/images/legend.png"
-        alt="Chart legend"
-      />
-    ),
-  },
-  {
-    target:
-      '.WikiBubbleChart .TabPanel:not([hidden]) [data-tour="vertical-axis"]',
-    placement: "bottom",
-    content: "You can rearrange the data along the vertical axis.",
-  },
-  {
-    target:
-      '.WikiBubbleChart .TabPanel:not([hidden]) [data-tour="horizontal-axis"]',
-    placement: "bottom",
-    content: "And you can rearrange the data along the horizontal axis.",
-  },
-  {
-    id: "sidebar",
-    target: ".WikiBubbleChart .FilteredArticlesSidebar",
-    placement: "left",
-    content:
-      "The sidebar lists the filtered articles. It allows you to trim outliers, inspect details, or remove articles from the chart.",
-  },
-  {
-    target: '.WikiBubbleChart [data-tour="languages-tab"]',
-    placement: "bottom",
-    content:
-      "The languages tab compares articles across their different linguistic versions.",
-  },
-  {
-    target: '.WikiBubbleChart [data-tour="time-travel-tab"]',
-    placement: "bottom",
-    content:
-      "And the Time travel tab compares the same articles at two points in time. Pick two years to see a chart for each one, side by side.",
-  },
-  {
-    target: ".WikiBubbleChart",
-    placement: "center",
-    content:
-      "Explore the articles, see how Wikipedia changes over time, and contribute to sharing your knowledge!",
-    locale: { last: "Finish tour" },
-  },
-];
-
-const SIDEBAR_STEP_INDEX = TOUR_STEPS.findIndex(
-  (step) => step.id === "sidebar",
-);
-
 export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   data = {},
   actions = false,
@@ -182,10 +111,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<Result | null>(null);
-  const sortedRowsRef = useRef<any[]>([]);
-  const lastEmbeddedSortedRowsRef = useRef<any[] | null>(null);
+  const sortedRowsRef = useRef<ChartRow[]>([]);
+  const lastEmbeddedSortedRowsRef = useRef<ChartRow[] | null>(null);
   const [searchParams] = useSearchParams();
-  const queryClient = useQueryClient();
 
   // Parse the shared view from the URL exactly once, so every control below can
   // initialize straight from it without a URL->state effect (which would loop).
@@ -220,9 +148,6 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   );
   const [committedYAxisMaxInput, setCommittedYAxisMaxInput] = useState<string>(
     initialState.yAxisMax,
-  );
-  const yAxisDomainDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
   );
   const [filterMoveRestriction, setFilterMoveRestriction] = useState<boolean>(
     initialState.filterMoveRestriction,
@@ -293,9 +218,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         : null,
     );
 
-  const dataGatheredOn = dataUpdatedAt
-    ? moment(dataUpdatedAt).format("MMM D, YYYY")
-    : null;
+  const dataGatheredOn = dataUpdatedAt ? formatShortDate(dataUpdatedAt) : null;
   const sourceLangLabel =
     LANGUAGE_LABELS[wiki?.language ?? "en"] ?? wiki?.language;
 
@@ -321,59 +244,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const linkCopiedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const prevYAxisKeyRef = useRef<YAxisKey>(initialState.yAxisKey);
 
-  const yAxisConfig = useMemo(() => {
-    switch (yAxisKey) {
-      case "average_daily_views":
-        return {
-          currentField: "average_daily_views" as const,
-          previousField: "prev_average_daily_views" as const,
-          axisTitle: "avg daily visits",
-        };
-      case "number_of_editors":
-        return {
-          currentField: "number_of_editors" as const,
-          previousField: null,
-          axisTitle: "editors",
-        };
-      case "incoming_links_count":
-        return {
-          currentField: "incoming_links_count" as const,
-          previousField: null,
-          axisTitle: "incoming links",
-        };
-      default: {
-        const _exhaustiveCheck: never = yAxisKey;
-        return _exhaustiveCheck;
-      }
-    }
-  }, [yAxisKey]);
+  const yAxisConfig = Y_AXIS_CONFIG[yAxisKey];
 
-  const rows = useMemo(() => {
-    if (data && typeof data === "object") {
-      return Object.entries(data).map(([article, analytics]) => {
-        const protections = analytics?.article_protections ?? [];
-        const hasMoveRestriction = protections.some((p) => p.type === "move");
-        const hasEditRestriction = protections.some((p) => p.type === "edit");
-        const palette = getAssessmentPalette(analytics?.assessment_grade);
-        const bubble = colorMode === "single" ? SINGLE_COLOR_PALETTE : palette;
-
-        return {
-          article,
-          ...analytics,
-          classifications: analytics?.classifications ?? [],
-          assessment_grade_color: palette.article,
-          bubble_article_color: bubble.article,
-          bubble_talk_color: bubble.talk,
-          bubble_prev_color: bubble.prevArticle,
-          bubble_lead_color: bubble.lead,
-          protection_summary: formatProtectionSummary(protections),
-          has_move_restriction: hasMoveRestriction,
-          has_edit_restriction: hasEditRestriction,
-        };
-      });
-    }
-    return [];
-  }, [data, colorMode]);
+  const rows = useMemo(
+    () => buildChartRows(data, colorMode),
+    [data, colorMode],
+  );
 
   const availableTags = useMemo(() => {
     const set = new Set<string>();
@@ -400,9 +276,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         case "publication_date":
           return compareArticlesByPublicationDateAsc;
         case "title":
-          return (a: any, b: any) => a.article.localeCompare(b.article);
+          return (a: ChartRow, b: ChartRow) =>
+            a.article.localeCompare(b.article);
         default:
-          return (a: any, b: any) =>
+          return (a: ChartRow, b: ChartRow) =>
             compareArticlesByNumericFieldAsc(a, b, xAxisKey);
       }
     })();
@@ -449,23 +326,14 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   );
 
   const yAxisAutoDomain = useMemo(() => {
-    let min = Infinity;
-    let max = -Infinity;
-    let found = false;
-    for (let i = 0; i < rows.length; i++) {
-      // Trimmed outliers must not stretch the auto domain, otherwise removing
-      // them from the plot would not actually rescale the remaining bubbles.
-      if (excludedOutliers.has(rows[i].article)) continue;
-      const v = rows[i][yAxisConfig.currentField];
-      if (typeof v === "number" && Number.isFinite(v)) {
-        if (v < min) min = v;
-        if (v > max) max = v;
-        found = true;
-      }
-    }
-    if (!found)
-      return { min: null as number | null, max: null as number | null };
-    return { min, max };
+    // Trimmed outliers must not stretch the auto domain, otherwise removing
+    // them from the plot would not actually rescale the remaining bubbles.
+    const extent = numericExtent(
+      rows,
+      (row) => row[yAxisConfig.currentField],
+      (row) => excludedOutliers.has(row.article),
+    );
+    return { min: extent?.[0] ?? null, max: extent?.[1] ?? null };
   }, [rows, yAxisConfig.currentField, excludedOutliers]);
 
   // Full-data extent for the x axis, used to pin the x scale domain so filtering
@@ -476,192 +344,95 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     if (!isScaled) {
       return rows.length ? [1, rows.length] : null;
     }
-    let min = Infinity;
-    let max = -Infinity;
-    let found = false;
-    for (let i = 0; i < rows.length; i++) {
-      const v =
-        xAxisKey === "publication_date"
-          ? rows[i].publication_date
-            ? Date.parse(rows[i].publication_date as string)
-            : NaN
-          : (rows[i] as any)[xAxisKey];
-      if (typeof v === "number" && Number.isFinite(v)) {
-        if (v < min) min = v;
-        if (v > max) max = v;
-        found = true;
-      }
-    }
-    return found ? [min, max] : null;
+    return numericExtent(rows, (row) =>
+      xAxisKey === "publication_date"
+        ? row.publication_date
+          ? Date.parse(row.publication_date)
+          : NaN
+        : row[xAxisKey as NumericSortField],
+    );
   }, [rows, xAxisKey, xAxisMode]);
   const xDomainMin = xFullDomain ? xFullDomain[0] : null;
   const xDomainMax = xFullDomain ? xFullDomain[1] : null;
 
   const sizeDomainMax = useMemo(() => {
-    const max = {
-      talk_size: 0,
-      prev_article_size: 0,
-      lead_section_size: 0,
-      article_size: 0,
+    const maxOf = (
+      field:
+        | "talk_size"
+        | "prev_article_size"
+        | "lead_section_size"
+        | "article_size",
+    ) =>
+      Math.max(
+        0,
+        numericExtent(
+          rows,
+          (row) => row[field],
+          (row) => excludedOutliers.has(row.article),
+        )?.[1] ?? 0,
+      );
+    return {
+      talk_size: maxOf("talk_size"),
+      prev_article_size: maxOf("prev_article_size"),
+      lead_section_size: maxOf("lead_section_size"),
+      article_size: maxOf("article_size"),
     };
-    const fields = Object.keys(max) as (keyof typeof max)[];
-    for (const row of rows) {
-      if (excludedOutliers.has(row.article)) continue;
-      for (const field of fields) {
-        const v = row[field];
-        if (typeof v === "number" && Number.isFinite(v) && v > max[field]) {
-          max[field] = v;
-        }
-      }
-    }
-    return max;
   }, [rows, excludedOutliers]);
   const talkSizeMax = sizeDomainMax.talk_size;
   const prevArticleSizeMax = sizeDomainMax.prev_article_size;
   const leadSectionSizeMax = sizeDomainMax.lead_section_size;
   const articleSizeMax = sizeDomainMax.article_size;
 
-  const parsedYAxisDomain = useMemo(() => {
-    const parsedMin =
-      committedYAxisMinInput.trim() === ""
-        ? null
-        : Number(committedYAxisMinInput);
-    const parsedMax =
-      committedYAxisMaxInput.trim() === ""
-        ? null
-        : Number(committedYAxisMaxInput);
-    let domainMin =
-      parsedMin !== null && Number.isFinite(parsedMin) ? parsedMin : null;
-    let domainMax =
-      parsedMax !== null && Number.isFinite(parsedMax) ? parsedMax : null;
-
-    if (domainMin !== null && domainMax !== null && domainMin > domainMax) {
-      [domainMin, domainMax] = [domainMax, domainMin];
-    }
-    return { domainMin, domainMax };
-  }, [committedYAxisMinInput, committedYAxisMaxInput]);
+  const parsedYAxisDomain = useMemo(
+    () => parseYAxisDomain(committedYAxisMinInput, committedYAxisMaxInput),
+    [committedYAxisMinInput, committedYAxisMaxInput],
+  );
 
   useEffect(() => {
-    if (yAxisDomainDebounceRef.current) {
-      clearTimeout(yAxisDomainDebounceRef.current);
-    }
-    yAxisDomainDebounceRef.current = setTimeout(() => {
+    const timer = setTimeout(() => {
       setCommittedYAxisMinInput(yAxisMinInput);
       setCommittedYAxisMaxInput(yAxisMaxInput);
     }, 250);
-    return () => {
-      if (yAxisDomainDebounceRef.current) {
-        clearTimeout(yAxisDomainDebounceRef.current);
-      }
-    };
+    return () => clearTimeout(timer);
   }, [yAxisMinInput, yAxisMaxInput]);
 
-  const daysElapsed = topicStartDate
-    ? ((topicEndDate ? new Date(topicEndDate).getTime() : Date.now()) -
-        new Date(topicStartDate).getTime()) /
-      (1000 * 60 * 60 * 24)
-    : null;
-
-  const totalViews =
-    daysElapsed !== null
-      ? rows.reduce(
-          (sum, row) => sum + row.average_daily_views * daysElapsed,
-          0,
-        )
-      : null;
-
-  const aggregateStats = {
-    totalArticles: rows.length,
-    millionVisits: totalViews !== null ? totalViews / 1_000_000 : null,
-    averageTotalViews:
-      totalViews !== null && rows.length > 0
-        ? Math.round(totalViews / rows.length)
-        : null,
-    averageArticleSize:
-      rows.length > 0
-        ? Math.round(
-            rows.reduce((sum, r) => sum + r.article_size, 0) / rows.length,
-          )
-        : null,
-    startDateLabel: topicStartDate
-      ? new Date(topicStartDate).toLocaleDateString("en-US", {
-          month: "short",
-          year: "numeric",
-        })
-      : null,
-  };
+  const aggregateStats = useMemo(
+    () => computeAggregateStats(rows, topicStartDate, topicEndDate),
+    [rows, topicStartDate, topicEndDate],
+  );
 
   const deferredSearchTerm = useDeferredValue(searchTerm);
 
-  const filteredArticles = useMemo(() => {
-    const { domainMin, domainMax } = parsedYAxisDomain;
-    const lowerSearch = deferredSearchTerm.trim().toLowerCase();
-
-    return sortedRows.filter((row) => {
-      if (lowerSearch && !row.article.toLowerCase().includes(lowerSearch)) {
-        return false;
-      }
-
-      const grade = row.assessment_grade;
-      if (grade) {
-        if (!selectedGrades[grade]) return false;
-      } else {
-        if (!selectedGrades.Unassessed) return false;
-      }
-
-      if (filterMoveRestriction && !row.has_move_restriction) {
-        return false;
-      }
-      if (filterEditRestriction && !row.has_edit_restriction) {
-        return false;
-      }
-
-      if (typeof row.centrality === "number") {
-        if (row.centrality < centralityMin || row.centrality > centralityMax) {
-          return false;
-        }
-      } else if (!includeNoCentrality) {
-        return false;
-      }
-
-      const yValue = row[yAxisConfig.currentField];
-      if (domainMin !== null && yValue < domainMin) {
-        return false;
-      }
-      if (domainMax !== null && yValue > domainMax) {
-        return false;
-      }
-
-      const rowTags = row.classifications ?? [];
-      if (rowTags.length > 0) {
-        let anySelected = false;
-        for (const tag of rowTags) {
-          if (!deselectedTags.has(tag)) {
-            anySelected = true;
-            break;
-          }
-        }
-        if (!anySelected) return false;
-      } else if (!includeUntagged) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [
-    sortedRows,
-    deferredSearchTerm,
-    selectedGrades,
-    filterMoveRestriction,
-    filterEditRestriction,
-    centralityMin,
-    centralityMax,
-    includeNoCentrality,
-    parsedYAxisDomain,
-    yAxisConfig.currentField,
-    deselectedTags,
-    includeUntagged,
-  ]);
+  const filteredArticles = useMemo(
+    () =>
+      filterArticles(sortedRows, {
+        searchTerm: deferredSearchTerm,
+        selectedGrades,
+        filterMoveRestriction,
+        filterEditRestriction,
+        centralityMin,
+        centralityMax,
+        includeNoCentrality,
+        yField: yAxisConfig.currentField,
+        yDomain: parsedYAxisDomain,
+        deselectedTags,
+        includeUntagged,
+      }),
+    [
+      sortedRows,
+      deferredSearchTerm,
+      selectedGrades,
+      filterMoveRestriction,
+      filterEditRestriction,
+      centralityMin,
+      centralityMax,
+      includeNoCentrality,
+      parsedYAxisDomain,
+      yAxisConfig.currentField,
+      deselectedTags,
+      includeUntagged,
+    ],
+  );
 
   useEffect(() => {
     // Only clear the range on a genuine y-axis change. Skipping the no-op mount
@@ -682,452 +453,32 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     if (!containerRef.current || !hasData) return;
 
     const currentSortedRows = sortedRowsRef.current;
-    const isLogScale = yAxisScaleType === "log";
 
-    let yScaleSpec: Record<string, any>;
-    if (isLogScale) {
-      const logAutoMin =
-        yAxisAutoDomain.min !== null && yAxisAutoDomain.min > 0
-          ? yAxisAutoDomain.min
-          : 1;
-      const logAutoMax = yAxisAutoDomain.max ?? 1000;
-      yScaleSpec = {
-        type: "log",
-        domainMin: {
-          expr: `max(1, isFinite(y_domain_min) && y_domain_min > 0 ? y_domain_min : ${logAutoMin}) * 0.6`,
-        },
-        domainMax: {
-          expr: `(isFinite(y_domain_max) ? y_domain_max : ${logAutoMax}) * 1.8`,
-        },
-      };
-    } else {
-      // Fall back to the auto domain when no user range; clamp autoMin to 0.
-      const autoMin =
-        yAxisAutoDomain.min !== null ? Math.max(0, yAxisAutoDomain.min) : 0;
-      const autoMax = yAxisAutoDomain.max ?? 1000;
-      const loExpr = `(isFinite(y_domain_min) ? y_domain_min : ${autoMin})`;
-      const hiExpr = `(isFinite(y_domain_max) ? y_domain_max : ${autoMax})`;
-      // Radius padding in domain units so boundary bubbles stay visible; max(,1)
-      // guards a degenerate span; domainMin clamps to 0 (no below-zero axis).
-      const spanExpr = `max((${hiExpr}) - (${loExpr}), 1)`;
-      const padExpr = `(${MAX_CIRCLE_RADIUS} * (${spanExpr}) / ${HEIGHT})`;
-      yScaleSpec = {
-        domainMin: {
-          expr: `max(0, (${loExpr}) - ${padExpr})`,
-        },
-        domainMax: {
-          expr: `(${hiExpr}) + ${padExpr}`,
-        },
-      };
-    }
-
-    const isScaledMode = xAxisMode === "scaled" && xAxisKey !== "title";
-
-    const xEncoding: any = isScaledMode
-      ? xAxisKey === "publication_date"
-        ? {
-            field: "publication_date",
-            type: "temporal",
-            axis: {
-              title: xAxisTitleForKey(xAxisKey).scaled,
-              labels: true,
-              ticks: true,
-              grid: true,
-            },
-          }
-        : {
-            field: xAxisKey,
-            type: "quantitative",
-            axis: {
-              title: xAxisTitleForKey(xAxisKey).scaled,
-              labels: true,
-              ticks: true,
-              grid: true,
-            },
-          }
-      : {
-          field: "idx",
-          type: "quantitative",
-          axis: {
-            title: xAxisTitleForKey(xAxisKey).ranked,
-            labels: false,
-            ticks: false,
-            grid: false,
-          },
-        };
-
-    // Edge padding so the first/last bubble isn't clipped (the pan clamp
-    // otherwise pins the domain flush to the data). Pin the domain to the full
-    // data extent so filtering hides bubbles without repacking/re-scaling —
-    // every article keeps a fixed x position for comparison across filters.
-    xEncoding.scale = {
-      ...(xEncoding.scale || {}),
-      padding: MAX_CIRCLE_RADIUS,
-      ...(xFullDomain ? { domain: xFullDomain } : {}),
-    };
-
-    const yFieldExpr = `datum[${JSON.stringify(yAxisConfig.currentField)}]`;
-    const yFilterExprParts: string[] = [];
-    if (isLogScale) yFilterExprParts.push(`${yFieldExpr} > 0`);
-    yFilterExprParts.push(
-      `(!isFinite(y_domain_min) || ${yFieldExpr} >= y_domain_min)`,
-    );
-    yFilterExprParts.push(
-      `(!isFinite(y_domain_max) || ${yFieldExpr} <= y_domain_max)`,
-    );
-    const yFilterExpr = yFilterExprParts.join(" && ");
-
-    const yEncoding: any = {
-      field: yAxisConfig.currentField,
-      type: "quantitative",
-      scale: yScaleSpec,
-    };
-
-    const tagFilterExpr = availableTags.length
-      ? `((length(datum.classifications) == 0 && include_untagged) || (${availableTags
-          .map(
-            (tag, i) =>
-              `(tag_${i} && indexof(datum.classifications, ${JSON.stringify(tag)}) >= 0)`,
-          )
-          .join(" || ")}))`
-      : "true";
-
-    const visibilityFilterExpr = [
-      "(!search_input || indexof(lower(datum.article), search_input) >= 0)",
-      "((grade_FA && datum.assessment_grade == 'FA') || (grade_FL && datum.assessment_grade == 'FL') || (grade_GA && datum.assessment_grade == 'GA') || (grade_A && datum.assessment_grade == 'A') || (grade_B && datum.assessment_grade == 'B') || (grade_C && datum.assessment_grade == 'C') || (grade_Start && datum.assessment_grade == 'Start') || (grade_Stub && datum.assessment_grade == 'Stub') || (grade_List && datum.assessment_grade == 'List') || (grade_Unassessed && !datum.assessment_grade))",
-      "((!filter_move_restriction || datum.has_move_restriction) && (!filter_edit_restriction || datum.has_edit_restriction))",
-      "((isValid(datum.centrality) && datum.centrality >= centrality_min && datum.centrality <= centrality_max) || (!isValid(datum.centrality) && include_no_centrality))",
-      "(indexof(trimmed_articles, datum.article) < 0)",
-      tagFilterExpr,
-    ].join(" && ");
-
-    const rankedSortField =
-      xAxisKey === "title"
-        ? "article"
-        : xAxisKey === "publication_date"
-          ? "publication_date"
-          : xAxisKey;
-
-    const rankedSort =
-      rankedSortField === "article"
-        ? [{ field: "article", order: "ascending" as const }]
-        : [
-            { field: rankedSortField, order: "ascending" as const },
-            { field: "article", order: "ascending" as const },
-          ];
-
-    const isLargeDataset = currentSortedRows.length > LARGE_DATASET_THRESHOLD;
-
-    const useHighlight = !isLargeDataset;
-
-    const makeOpacityEncoding = (activeOpacity: number) =>
-      useHighlight
-        ? {
-            condition: [
-              { param: "highlight", empty: false, value: activeOpacity },
-              {
-                test: "!highlight.article",
-                value: activeOpacity,
-              },
-            ],
-            value: 0.06,
-          }
-        : { value: activeOpacity };
-
-    const sizeScale = (max: number, range: [number, number]) => ({
-      type: "sqrt" as const,
-      range,
-      ...(max > 0 ? { domain: [0, max] } : {}),
+    const spec = buildBubbleChartSpec({
+      rows: currentSortedRows,
+      xAxisKey,
+      xAxisMode,
+      xFullDomain,
+      yAxisConfig,
+      yScaleType: yAxisScaleType,
+      yAxisAutoDomain,
+      sizeDomainMax,
+      availableTags,
+      signals: {
+        searchTerm,
+        selectedGrades,
+        filterMoveRestriction,
+        filterEditRestriction,
+        centralityMin,
+        centralityMax,
+        includeNoCentrality,
+        excludedOutliers,
+        deselectedTags,
+        includeUntagged,
+        showLabels,
+        yDomain: parsedYAxisDomain,
+      },
     });
-
-    const spec: VisualizationSpec = {
-      $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-      height: HEIGHT,
-      width: "container",
-      background: "#ffffff",
-      data: { name: "main", values: currentSortedRows },
-      transform: [
-        { window: [{ op: "row_number", as: "idx" }], sort: rankedSort },
-        { filter: yFilterExpr },
-        { filter: visibilityFilterExpr },
-      ],
-      config: {
-        legend: { disable: true },
-        style: {
-          cell: { cursor: "grab" },
-        },
-      },
-      params: [
-        { name: "search_input", value: searchTerm.trim().toLowerCase() },
-        { name: "grade_FA", value: selectedGrades.FA },
-        { name: "grade_GA", value: selectedGrades.GA },
-        { name: "grade_A", value: selectedGrades.A },
-        { name: "grade_FL", value: selectedGrades.FL },
-        { name: "grade_B", value: selectedGrades.B },
-        { name: "grade_C", value: selectedGrades.C },
-        { name: "grade_Start", value: selectedGrades.Start },
-        { name: "grade_Stub", value: selectedGrades.Stub },
-        { name: "grade_List", value: selectedGrades.List },
-        { name: "grade_Unassessed", value: selectedGrades.Unassessed },
-        { name: "filter_move_restriction", value: filterMoveRestriction },
-        { name: "filter_edit_restriction", value: filterEditRestriction },
-        { name: "centrality_min", value: centralityMin },
-        { name: "centrality_max", value: centralityMax },
-        { name: "include_no_centrality", value: includeNoCentrality },
-        { name: "trimmed_articles", value: [...excludedOutliers] },
-        ...availableTags.map((tag, i) => ({
-          name: `tag_${i}`,
-          value: !deselectedTags.has(tag),
-        })),
-        { name: "include_untagged", value: includeUntagged },
-        { name: "show_labels", value: showLabels },
-        {
-          name: "y_domain_min",
-          value:
-            parsedYAxisDomain.domainMin !== null
-              ? parsedYAxisDomain.domainMin
-              : -Infinity,
-        },
-        {
-          name: "y_domain_max",
-          value:
-            parsedYAxisDomain.domainMax !== null
-              ? parsedYAxisDomain.domainMax
-              : Infinity,
-        },
-      ],
-
-      layer: [
-        {
-          mark: {
-            type: "circle",
-            opacity: 0,
-          },
-          params: [
-            ...(useHighlight
-              ? [
-                  {
-                    name: "highlight",
-                    select: {
-                      type: "point" as const,
-                      fields: ["article"],
-                      on: { type: "pointerover", throttle: 50 } as any,
-                      clear: "pointerout",
-                    },
-                  },
-                ]
-              : []),
-            {
-              name: "grid",
-              select: { type: "interval", zoom: true, encodings: ["x"] },
-              bind: "scales",
-            },
-            {
-              name: "clickSelection",
-              select: {
-                type: "point",
-                fields: ["article"],
-                on: "click",
-              },
-            },
-          ],
-          encoding: {
-            y: yEncoding,
-          },
-        },
-        ...(yAxisConfig.previousField
-          ? [
-              {
-                mark: {
-                  type: "rule" as const,
-                  strokeDash: [2, 4],
-                  strokeWidth: 1.2,
-                  opacity: 0.6,
-                },
-                ...(isLogScale
-                  ? {
-                      transform: [
-                        {
-                          filter: `datum[${JSON.stringify(yAxisConfig.previousField)}] > 0`,
-                        },
-                      ],
-                    }
-                  : {}),
-                encoding: {
-                  y: {
-                    field: yAxisConfig.previousField,
-                    type: "quantitative" as const,
-                  },
-                  y2: {
-                    field: yAxisConfig.currentField,
-                    type: "quantitative" as const,
-                  },
-                },
-              },
-            ]
-          : []),
-
-        // Discussion size circle (talk_size)
-        {
-          mark: {
-            type: "circle",
-            fill: null,
-            strokeWidth: 1.5,
-            cursor: "pointer",
-          },
-          encoding: {
-            y: yEncoding,
-            size: {
-              field: "talk_size",
-              type: "quantitative",
-              scale: sizeScale(talkSizeMax, [50, 1500]),
-            },
-            stroke: {
-              field: "bubble_talk_color",
-              type: "nominal",
-              scale: null,
-              legend: null,
-            },
-            opacity: makeOpacityEncoding(1),
-          },
-        },
-        // Previous article size circle (prev_article_size)
-        {
-          mark: {
-            type: "circle",
-            fill: null,
-            strokeDash: [4, 4],
-            strokeWidth: 1.5,
-            cursor: "pointer",
-          },
-          encoding: {
-            y: yEncoding,
-            size: {
-              field: "prev_article_size",
-              type: "quantitative",
-              scale: sizeScale(prevArticleSizeMax, [20, 600]),
-            },
-            stroke: {
-              field: "bubble_prev_color",
-              type: "nominal",
-              scale: null,
-              legend: null,
-            },
-            opacity: makeOpacityEncoding(1),
-          },
-        },
-        // Lead section size circle (lead_section_size)
-        {
-          mark: {
-            type: "circle",
-            opacity: 0.8,
-            cursor: "pointer",
-          },
-          encoding: {
-            y: yEncoding,
-            size: {
-              field: "lead_section_size",
-              type: "quantitative",
-              scale: sizeScale(leadSectionSizeMax, [30, 800]),
-            },
-            fill: {
-              field: "bubble_lead_color",
-              type: "nominal",
-              scale: null,
-              legend: null,
-            },
-            opacity: makeOpacityEncoding(0.8),
-          },
-        },
-        // Article size circle (article_size), colored by quality assessment
-        {
-          mark: {
-            type: "circle",
-            opacity: 1,
-            stroke: "white",
-            strokeWidth: 1,
-            cursor: "pointer",
-            tooltip: {
-              signal: `{
-                title: datum.assessment_grade
-                  ? '<div style=\"display:flex;align-items:flex-start;justify-content:space-between;gap:8px;width:100%\">' +
-                      '<div style=\"display:flex;flex-direction:column;\">' +
-                        '<span style=\"font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap\">' + datum.article + '</span>' +
-                        ((datum.publication_date && isValid(toDate(datum.publication_date)))
-                          ? '<span style=\"font-size:12px;color:#666;margin-top:2px\">' + timeFormat(toDate(datum.publication_date), '%b %d, %Y') + '</span>'
-                          : '') +
-                      '</div>' +
-                      '<span style=\"background-color:' + datum.assessment_grade_color + '; padding:2px 6px; border-radius:4px; color:#000; white-space:nowrap; flex:0 0 auto\">' + datum.assessment_grade + '</span>' +
-                    '</div>'
-                  : '<div style=\"display:flex;flex-direction:column\">' +
-                      '<span style=\"font-weight:600\">' + datum.article + '</span>' +
-                      ((datum.publication_date && isValid(toDate(datum.publication_date)))
-                        ? '<span style=\"font-size:12px;color:#666;margin-top:2px\">' + timeFormat(toDate(datum.publication_date), '%b %d, %Y') + '</span>'
-                        : '') +
-                    '</div>',
-                "Daily visits": format(datum.average_daily_views, ','),
-                "Daily visits (prev year)": isValid(datum.prev_average_daily_views) ? format(datum.prev_average_daily_views, ',') : 'n/a',
-                "Size": format(datum.article_size, ','),
-                "Size (prev year)": isValid(datum.prev_article_size) ? format(datum.prev_article_size, ',') : 'n/a',
-                "Lead size": format(datum.lead_section_size, ','),
-                "Talk size": format(datum.talk_size, ','),
-                "Talk size (prev year)": isValid(datum.prev_talk_size) ? format(datum.prev_talk_size, ',') : 'n/a',
-                "Editors": format(datum.number_of_editors, ','),
-                "Incoming links": format(datum.incoming_links_count, ','),
-                "Centrality": isValid(datum.centrality) ? format(datum.centrality, ',') : 'n/a',
-                "Linguistic versions": format(datum.linguistic_versions_count, ','),
-                "Warning tags": format(datum.warning_tags_count, ','),
-                "Images": format(datum.images_count, ','),
-                "Protections": datum.protection_summary,
-                "Tags": length(datum.classifications) ? join(datum.classifications, ', ') : 'none',
-              }`,
-            },
-          },
-          encoding: {
-            y: yEncoding,
-            size: {
-              field: "article_size",
-              type: "quantitative",
-              scale: sizeScale(articleSizeMax, [20, 600]),
-            },
-            fill: {
-              field: "bubble_article_color",
-              type: "nominal",
-              scale: null,
-              legend: null,
-            },
-            opacity: makeOpacityEncoding(1),
-          },
-        },
-        {
-          transform: [{ filter: "show_labels" }],
-          mark: {
-            type: "text",
-            align: "center",
-            baseline: "bottom",
-            dy: -10,
-            angle: 0,
-            fontSize: 9,
-            limit: 120,
-            clip: true,
-          },
-          encoding: {
-            text: { field: "article", type: "nominal" },
-            opacity: { value: 1 },
-          },
-        },
-      ],
-
-      encoding: {
-        x: xEncoding,
-        y: {
-          ...yEncoding,
-          axis: { title: yAxisConfig.axisTitle },
-        },
-      },
-
-      resolve: { scale: { size: "independent" } },
-    };
 
     const options: EmbedOptions = {
       actions,
@@ -1220,21 +571,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   }, [sortedRows]);
 
   useEffect(() => {
-    if (!viewRef.current) return;
-    const view = viewRef.current.view;
-    view.signal(
-      "y_domain_min",
-      parsedYAxisDomain.domainMin !== null
-        ? parsedYAxisDomain.domainMin
-        : -Infinity,
-    );
-    view.signal(
-      "y_domain_max",
-      parsedYAxisDomain.domainMax !== null
-        ? parsedYAxisDomain.domainMax
-        : Infinity,
-    );
-    view.runAsync();
+    applySignals(viewRef.current, yDomainSignals(parsedYAxisDomain));
   }, [parsedYAxisDomain]);
 
   useEffect(() => {
@@ -1248,28 +585,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     };
   }, []);
 
+  const setSignals = (signals: Record<string, unknown>) =>
+    applySignals(viewRef.current, signals);
+
   const toggleGrades = (grades: string[], on: boolean) => {
-    if (viewRef.current) {
-      grades.forEach((g) => viewRef.current!.view.signal(`grade_${g}`, on));
-      viewRef.current.view.runAsync();
-    }
+    setSignals(Object.fromEntries(grades.map((g) => [gradeSignalName(g), on])));
     startTransition(() => {
-      setSelectedGrades((prev) => {
-        const next = { ...prev };
-        grades.forEach((g) => {
-          next[g] = on;
-        });
-        return next;
-      });
+      setSelectedGrades((prev) => ({
+        ...prev,
+        ...Object.fromEntries(grades.map((g) => [g, on])),
+      }));
     });
   };
 
   const toggleTag = (tag: string, on: boolean) => {
     const index = availableTags.indexOf(tag);
-    if (viewRef.current && index >= 0) {
-      viewRef.current.view.signal(`tag_${index}`, on);
-      viewRef.current.view.runAsync();
-    }
+    if (index >= 0) setSignals({ [tagSignalName(index)]: on });
     startTransition(() => {
       setDeselectedTags((prev) => {
         const next = new Set(prev);
@@ -1284,38 +615,28 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   };
 
   const toggleAllTags = (on: boolean) => {
-    if (viewRef.current) {
-      availableTags.forEach((_tag, i) =>
-        viewRef.current!.view.signal(`tag_${i}`, on),
-      );
-      viewRef.current.view.runAsync();
-    }
+    setSignals(
+      Object.fromEntries(
+        availableTags.map((_tag, i) => [tagSignalName(i), on]),
+      ),
+    );
     startTransition(() => {
       setDeselectedTags(on ? new Set() : new Set(availableTags));
     });
   };
 
   const handleIncludeUntaggedChange = (checked: boolean) => {
-    if (viewRef.current) {
-      viewRef.current.view.signal("include_untagged", checked);
-      viewRef.current.view.runAsync();
-    }
+    setSignals({ include_untagged: checked });
     startTransition(() => setIncludeUntagged(checked));
   };
 
   const handleMoveRestrictionChange = (checked: boolean) => {
-    if (viewRef.current) {
-      viewRef.current.view.signal("filter_move_restriction", checked);
-      viewRef.current.view.runAsync();
-    }
+    setSignals({ filter_move_restriction: checked });
     startTransition(() => setFilterMoveRestriction(checked));
   };
 
   const handleEditRestrictionChange = (checked: boolean) => {
-    if (viewRef.current) {
-      viewRef.current.view.signal("filter_edit_restriction", checked);
-      viewRef.current.view.runAsync();
-    }
+    setSignals({ filter_edit_restriction: checked });
     startTransition(() => setFilterEditRestriction(checked));
   };
 
@@ -1323,14 +644,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     min: number,
     max: number,
     includeUnassessed: boolean,
-  ) => {
-    if (viewRef.current) {
-      viewRef.current.view.signal("centrality_min", min);
-      viewRef.current.view.signal("centrality_max", max);
-      viewRef.current.view.signal("include_no_centrality", includeUnassessed);
-      viewRef.current.view.runAsync();
-    }
-  };
+  ) =>
+    setSignals({
+      centrality_min: min,
+      centrality_max: max,
+      include_no_centrality: includeUnassessed,
+    });
 
   const handleCentralityMinChange = (value: number) => {
     const nextMin = Math.min(value, centralityMax);
@@ -1411,47 +730,22 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   };
 
   const handleShowLabelsChange = (checked: boolean) => {
-    if (viewRef.current) {
-      viewRef.current.view.signal("show_labels", checked);
-      viewRef.current.view.runAsync();
-    }
+    setSignals({ show_labels: checked });
     setShowLabels(checked);
   };
 
-  const removeArticleMutation = useMutation({
-    mutationFn: (title: string) => TopicService.removeArticle(topicId!, title),
-    onSuccess: (updatedTopic, title) => {
-      queryClient.invalidateQueries({
-        queryKey: ["articleAnalytics", String(topicId)],
-      });
-      queryClient.setQueryData(["topic", String(topicId)], updatedTopic);
-      setSelectedArticle((cur) => (cur?.article === title ? null : cur));
-      setExcludedOutliers((prev) => {
-        if (!prev.has(title)) return prev;
-        const next = new Set(prev);
-        next.delete(title);
-        return next;
-      });
-      toast.success(`Removed "${title}" from this topic`);
-    },
-    onError: () => toast.error("Failed to remove article"),
-  });
-
-  const addArticleMutation = useMutation({
-    mutationFn: (title: string) => TopicService.addArticle(topicId!, title),
-    onSuccess: (updatedTopic, title) => {
-      queryClient.invalidateQueries({
-        queryKey: ["articleAnalytics", String(topicId)],
-      });
-      queryClient.setQueryData(["topic", String(topicId)], updatedTopic);
-      toast.success(`Added "${title}" to this topic`);
-    },
-    onError: (error) => {
-      const message = (error as { response?: { data?: { error?: string } } })
-        .response?.data?.error;
-      toast.error(message ?? "Failed to add article");
-    },
-  });
+  const { addArticleMutation, removeArticleMutation } =
+    useTopicArticleMutations(topicId, {
+      onRemoved: (title) => {
+        setSelectedArticle((cur) => (cur?.article === title ? null : cur));
+        setExcludedOutliers((prev) => {
+          if (!prev.has(title)) return prev;
+          const next = new Set(prev);
+          next.delete(title);
+          return next;
+        });
+      },
+    });
 
   const handleAddArticle = (title: string) => {
     if (!canEdit || !topicId) return Promise.resolve();
@@ -1494,15 +788,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       clearTimeout(searchSignalTimerRef.current);
     }
     searchSignalTimerRef.current = setTimeout(() => {
-      if (viewRef.current) {
-        viewRef.current.view.signal("search_input", term.trim().toLowerCase());
-        viewRef.current.view.runAsync();
-      }
+      setSignals({ search_input: term.trim().toLowerCase() });
     }, 150);
-  };
-
-  const handleTabChange = (tab: ChartTab) => {
-    setActiveTab(tab);
   };
 
   const handleTimeTravelFetch = () => {
@@ -1560,26 +847,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
   const handleSaveImage = async () => {
     if (!viewRef.current) return;
-    const formatDate = (value?: string) =>
-      value
-        ? new Date(value).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })
-        : null;
-    const start = formatDate(topicStartDate);
-    const end = formatDate(topicEndDate);
-    const dateRangeLabel = start ? `${start} - ${end ?? "now"}` : null;
-    const generatedLabel = `Generated ${new Date().toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })}`;
-    const safeName =
-      (topicName ?? "article-analytics")
-        .replace(/[^\w-]+/g, "-")
-        .replace(/^-+|-+$/g, "") || "article-analytics";
+    const dateRangeLabel = topicStartDate
+      ? `${formatShortDate(topicStartDate)} - ${
+          topicEndDate ? formatShortDate(topicEndDate) : "now"
+        }`
+      : null;
+    const generatedLabel = `Generated ${formatShortDate(new Date())}`;
+    const safeName = toSafeFilename(topicName, "article-analytics");
 
     try {
       await exportChartImage({
@@ -1609,28 +883,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     }
   };
 
-  const { run, stepIndex, setStepIndex, startTour, endTour } =
-    useOnboardingTour({ hasData });
-
-  const handleJoyrideEvent = (data: EventData) => {
-    const { action, index, status, type } = data;
-
-    if (
-      action === ACTIONS.CLOSE ||
-      status === STATUS.FINISHED ||
-      status === STATUS.SKIPPED
-    ) {
-      endTour();
-      return;
-    }
-
-    if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
-      const nextIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+  const { run, stepIndex, startTour, handleEvent } = useOnboardingTour({
+    hasData,
+    onStepChange: (nextIndex) => {
       setActiveTab("overview");
       if (nextIndex === SIDEBAR_STEP_INDEX) setSidebarOpen(true);
-      setStepIndex(nextIndex);
-    }
-  };
+    },
+  });
 
   const handleStartTour = () => {
     setActiveTab("overview");
@@ -1644,31 +903,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         steps={TOUR_STEPS}
         run={run}
         stepIndex={stepIndex}
-        onEvent={handleJoyrideEvent}
+        onEvent={handleEvent}
         continuous
         scrollToFirstStep
-        options={{
-          primaryColor: "#1976d2",
-          textColor: "#424242",
-          backgroundColor: "#ffffff",
-          arrowColor: "#ffffff",
-          overlayColor: "#00000080",
-          zIndex: 10000,
-          width: 360,
-          showProgress: true,
-          skipBeacon: true,
-          overlayClickAction: false,
-          buttons: ["back", "skip", "primary"],
-        }}
-        styles={{
-          tooltip: {
-            borderRadius: 6,
-            padding: 16,
-            boxShadow: "none",
-            border: "1px solid #e0e0e0",
-          },
-          floater: { filter: "none" },
-        }}
+        options={JOYRIDE_OPTIONS}
+        styles={JOYRIDE_STYLES}
       />
       <ChartToolbar
         articles={sortedRows}
@@ -1684,7 +923,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
 
       <ChartTabBar
         activeTab={activeTab}
-        onTabChange={handleTabChange}
+        onTabChange={setActiveTab}
         advancedOpen={advancedOpen}
         onToggleAdvanced={() => setAdvancedOpen((open) => !open)}
         showAdvancedToggle={activeTab !== "timeTravel"}

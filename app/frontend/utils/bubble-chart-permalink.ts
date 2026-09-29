@@ -1,5 +1,6 @@
 import type { XAxisKey, YAxisKey } from "../types/bubble-chart.type";
 import type { ChartTab } from "../components/chart-tab-bar.component";
+import { GRADE_KEYS } from "./bubble-chart-utils";
 import {
   MIN_TIME_TRAVEL_YEAR,
   TIME_TRAVEL_X_AXIS_KEYS,
@@ -42,19 +43,6 @@ const DEFAULT_TIME_TRAVEL_START_YEAR = Math.max(
 
 export const CENTRALITY_MIN = 1;
 export const CENTRALITY_MAX = 10;
-
-export const GRADE_KEYS = [
-  "FA",
-  "FL",
-  "A",
-  "GA",
-  "B",
-  "C",
-  "Start",
-  "Stub",
-  "List",
-  "Unassessed",
-];
 
 const X_AXIS_KEYS: XAxisKey[] = [
   "title",

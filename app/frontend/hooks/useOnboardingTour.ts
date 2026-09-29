@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ACTIONS, EVENTS, STATUS, type EventData } from "react-joyride";
 
 const ONBOARDING_STORAGE_KEY = "iv:onboarding:wiki-bubble-chart:v1";
 
@@ -20,9 +21,13 @@ function markTourSeen() {
 
 interface UseOnboardingTourOptions {
   hasData: boolean;
+  onStepChange?: (nextIndex: number) => void;
 }
 
-function useOnboardingTour({ hasData }: UseOnboardingTourOptions) {
+function useOnboardingTour({
+  hasData,
+  onStepChange,
+}: UseOnboardingTourOptions) {
   const [run, setRun] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [isFirstVisit] = useState(() => !hasSeenTour());
@@ -45,7 +50,24 @@ function useOnboardingTour({ hasData }: UseOnboardingTourOptions) {
     markTourSeen();
   };
 
-  return { run, stepIndex, setStepIndex, startTour, endTour };
+  const handleEvent = ({ action, index, status, type }: EventData) => {
+    if (
+      action === ACTIONS.CLOSE ||
+      status === STATUS.FINISHED ||
+      status === STATUS.SKIPPED
+    ) {
+      endTour();
+      return;
+    }
+
+    if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
+      const nextIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+      onStepChange?.(nextIndex);
+      setStepIndex(nextIndex);
+    }
+  };
+
+  return { run, stepIndex, startTour, handleEvent };
 }
 
 export { useOnboardingTour, ONBOARDING_STORAGE_KEY, hasSeenTour, markTourSeen };

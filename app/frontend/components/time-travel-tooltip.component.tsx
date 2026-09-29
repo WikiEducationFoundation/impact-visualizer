@@ -1,6 +1,7 @@
 import React from "react";
 import type { TimeTravelRow } from "../types/time-travel.type";
 import type { ScreenPoint } from "../utils/time-travel-vega";
+import { formatShortDate } from "../utils/date-utils";
 
 type StatField =
   | "average_daily_views"
@@ -109,11 +110,7 @@ const TimeTravelTooltip: React.FC<TimeTravelTooltipProps> = ({
               <span className="Label">Created</span>
               <span className="Value">
                 {row.publication_date
-                  ? new Date(row.publication_date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })
+                  ? formatShortDate(row.publication_date)
                   : "unknown"}
               </span>
             </div>

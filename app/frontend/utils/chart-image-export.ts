@@ -58,6 +58,13 @@ function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   });
 }
 
+export function toSafeFilename(name: string | undefined, fallback: string) {
+  return (
+    (name ?? fallback).replace(/[^\w-]+/g, "-").replace(/^-+|-+$/g, "") ||
+    fallback
+  );
+}
+
 export async function exportChartImage(
   opts: ExportChartImageOptions,
 ): Promise<void> {

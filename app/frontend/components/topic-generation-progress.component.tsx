@@ -9,6 +9,7 @@ import Topic from "../types/topic.type";
 
 // Misc
 import TopicService from "../services/topic.service";
+import { formatShortDate } from "../utils/date-utils";
 
 type PhaseStatus = "pending" | "running" | "complete" | "error";
 
@@ -543,11 +544,7 @@ function TopicGenerationProgress({ topic }: { topic: Topic }) {
           {state === "complete" && topic.data_updated_at && (
             <span className="TopicProgress-updatedAt">
               {" "}
-              {new Date(topic.data_updated_at).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
+              {formatShortDate(topic.data_updated_at)}
             </span>
           )}
         </h4>
