@@ -296,6 +296,7 @@ function TopicDetail() {
             topicName={topic.name}
             topicStartDate={topic.start_date}
             topicEndDate={topic.end_date}
+            dataUpdatedAt={topic.data_updated_at}
             canEdit={topic.owned}
             isTopicBuilderTopic={!!topic.tb_handle}
           />
@@ -312,6 +313,7 @@ function TopicDetail() {
             topicName={topic.name}
             topicStartDate={topic.start_date}
             topicEndDate={topic.end_date}
+            dataUpdatedAt={topic.data_updated_at}
             canEdit={topic.owned}
             isTopicBuilderTopic={!!topic.tb_handle}
           />

@@ -18,6 +18,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import moment from "moment";
 import { BsBook, BsInfoCircle } from "react-icons/bs";
 import ArticleSearchAutocomplete from "./article-search-autocomplete.component";
 import ArticleDetailPanel from "./article-detail-panel.component";
@@ -54,7 +55,11 @@ import {
   patchChartScales,
 } from "../utils/bubble-chart-vega";
 import TopicService from "../services/topic.service";
-import { fetchLanguageLinks, TARGET_LANGUAGES } from "../utils/language-links";
+import {
+  fetchLanguageLinks,
+  LANGUAGE_LABELS,
+  TARGET_LANGUAGES,
+} from "../utils/language-links";
 import type { LangLinksProgress } from "../utils/language-links";
 import { exportChartImage } from "../utils/chart-image-export";
 import { useOnboardingTour } from "../hooks/useOnboardingTour";
@@ -80,6 +85,7 @@ interface WikiBubbleChartProps {
   topicName?: string;
   topicStartDate?: string;
   topicEndDate?: string;
+  dataUpdatedAt?: string | null;
   canEdit?: boolean;
   isTopicBuilderTopic?: boolean;
 }
@@ -170,6 +176,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   topicName,
   topicStartDate,
   topicEndDate,
+  dataUpdatedAt,
   canEdit = false,
   isTopicBuilderTopic = false,
 }) => {
@@ -285,6 +292,13 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           }
         : null,
     );
+
+  const dataGatheredOn = dataUpdatedAt
+    ? moment(dataUpdatedAt).format("MMM D, YYYY")
+    : null;
+  const sourceLangLabel =
+    LANGUAGE_LABELS[wiki?.language ?? "en"] ?? wiki?.language;
+
   const [langCompareArticle, setLangCompareArticle] = useState<string | null>(
     null,
   );
@@ -1742,6 +1756,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         <ChartAggregateStats stats={aggregateStats} />
 
         <div className="Footnote">
+          {dataGatheredOn && <div>Data gathered on {dataGatheredOn}</div>}
           * Quality assessment is done by the Wikipedia community and it may be
           inconsistent
         </div>
@@ -1773,6 +1788,12 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
           />
 
           <div className="Disclaimer">
+            {dataGatheredOn && (
+              <span>
+                {sourceLangLabel} data gathered on {dataGatheredOn}; other
+                languages are fetched live.
+              </span>
+            )}
             <span>
               * Quality assessment is done by the Wikipedia community and it may
               be inconsistent.
