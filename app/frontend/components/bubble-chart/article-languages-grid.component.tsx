@@ -1,0 +1,450 @@
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useQueries } from "@tanstack/react-query";
+import { BsInfoCircle } from "react-icons/bs";
+import { FiEdit2 } from "react-icons/fi";
+import { IoCloseCircle } from "react-icons/io5";
+import { MdDragIndicator } from "react-icons/md";
+import Spinner from "../common/spinner.component";
+import usePagination from "../../hooks/usePagination";
+import { LANGUAGE_LABELS, getTranslateUrl } from "../../utils/language-links";
+import { reorder, useLanguageOrder } from "../../utils/language-order";
+import { makeSqrtAreaScale } from "../../utils/bubble-chart-utils";
+import BubbleCell from "./bubble-cell.component";
+import TopicService from "../../services/topic.service";
+import type { LangComparisonData } from "../../services/topic.service";
+import type {
+  BubbleSizeFields,
+  RadiusScale,
+  RadiusScales,
+} from "../../types/bubble-chart.type";
+import type { TargetLanguage } from "../../utils/language-links";
+import type { LangLinksProgress } from "../../utils/language-links";
+
+type Wiki = {
+  language: string;
+  project: string;
+};
+
+type ArticleRowForGrid = BubbleSizeFields & {
+  article: string;
+};
+
+type ArticleLanguagesGridProps = {
+  articles: ArticleRowForGrid[];
+  allArticles?: ArticleRowForGrid[];
+  languageLinks: Map<string, Set<string>>;
+  wiki?: Wiki;
+  loading: boolean;
+  error?: string | null;
+  languages: readonly TargetLanguage[];
+  onArticleClick?: (articleTitle: string) => void;
+  progress?: LangLinksProgress;
+  topicId?: string | number;
+};
+
+const ITEMS_PER_PAGE = 10;
+const LANG_FETCH_CONCURRENCY = 5;
+const LANG_DATA_STALE_MS = 4 * 60 * 60 * 1000;
+const LANG_FETCH_DEBOUNCE_MS = 350;
+
+function LanguageCell({
+  articleTitle,
+  lang,
+  exists,
+  sourceLang,
+  row,
+  scales,
+  langData,
+  isLoading,
+  isQueued,
+}: {
+  articleTitle: string;
+  lang: string;
+  exists: boolean;
+  sourceLang: string;
+  row: ArticleRowForGrid;
+  scales: RadiusScales;
+  langData?: LangComparisonData | null;
+  isLoading?: boolean;
+  isQueued?: boolean;
+}) {
+  if (!exists) {
+    return (
+      <td className="Cell Cell--missing">
+        <span className="Missing">
+          <IoCloseCircle size={18} />
+          <span>Missing</span>
+        </span>
+        <a
+          className="Translate"
+          href={getTranslateUrl(articleTitle, sourceLang, lang)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <FiEdit2 size={14} />
+          <span>Translate article</span>
+        </a>
+      </td>
+    );
+  }
+
+  // The source-language column already has accurate data
+  const isSourceLang = lang === sourceLang;
+
+  const displayRow: ArticleRowForGrid =
+    !isSourceLang && langData
+      ? {
+          ...row,
+          article_size: langData.article_size,
+          lead_section_size: langData.lead_section_size,
+          talk_size: langData.talk_size,
+          prev_article_size: null,
+        }
+      : row;
+
+  return (
+    <BubbleCell
+      row={displayRow}
+      scales={scales}
+      isLoading={!isSourceLang && isLoading}
+      isQueued={!isSourceLang && isQueued}
+    />
+  );
+}
+
+function PaginationBar({
+  currentPage,
+  totalPages,
+  goToPage,
+}: {
+  currentPage: number;
+  totalPages: number;
+  goToPage: (page: number) => void;
+}) {
+  const [pageInput, setPageInput] = useState("");
+
+  if (totalPages <= 1) return null;
+
+  const handleJump = (e: React.FormEvent) => {
+    e.preventDefault();
+    const target = Number(pageInput);
+    if (Number.isInteger(target) && target >= 1) goToPage(target);
+    setPageInput("");
+  };
+
+  const pages: (number | "ellipsis")[] = [];
+  const maxVisible = 10;
+
+  if (totalPages <= maxVisible) {
+    for (let i = 1; i <= totalPages; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    const start = Math.max(2, currentPage - 3);
+    const end = Math.min(totalPages - 1, currentPage + 3);
+
+    if (start > 2) pages.push("ellipsis");
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (end < totalPages - 1) pages.push("ellipsis");
+    pages.push(totalPages);
+  }
+
+  return (
+    <div className="Pagination">
+      <button
+        className="Btn"
+        disabled={currentPage === 1}
+        onClick={() => goToPage(currentPage - 1)}
+        aria-label="Previous page"
+      >
+        &lsaquo;
+      </button>
+      {pages.map((p, i) =>
+        p === "ellipsis" ? (
+          <span key={`e${i}`} className="Ellipsis">
+            &hellip;
+          </span>
+        ) : (
+          <button
+            key={p}
+            className={`Btn ${p === currentPage ? "is-active" : ""}`}
+            onClick={() => goToPage(p)}
+          >
+            {p}
+          </button>
+        ),
+      )}
+      <button
+        className="Btn"
+        disabled={currentPage === totalPages}
+        onClick={() => goToPage(currentPage + 1)}
+        aria-label="Next page"
+      >
+        &rsaquo;
+      </button>
+      <form className="Jump" onSubmit={handleJump}>
+        <input
+          type="text"
+          inputMode="numeric"
+          className="JumpInput"
+          value={pageInput}
+          onChange={(e) => setPageInput(e.target.value.replace(/\D/g, ""))}
+          placeholder="#"
+          aria-label={`Go to page (1-${totalPages})`}
+        />
+        <button type="submit" className="Btn" disabled={pageInput === ""}>
+          Go
+        </button>
+      </form>
+    </div>
+  );
+}
+
+const ArticleLanguagesGrid: React.FC<ArticleLanguagesGridProps> = ({
+  articles,
+  allArticles,
+  languageLinks,
+  wiki,
+  loading,
+  error,
+  languages,
+  onArticleClick,
+  progress,
+  topicId,
+}) => {
+  const { currentPageData, currentPage, totalPages, goToPage } = usePagination({
+    data: articles,
+    itemsPerPage: ITEMS_PER_PAGE,
+  });
+
+  const sourceLang = wiki?.language ?? "en";
+
+  const [orderedLanguages, setOrderedLanguages] = useLanguageOrder(languages);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const scaleSource = allArticles ?? articles;
+
+  const radiusScales = useMemo<RadiusScales>(() => {
+    const areaToRadius = (area: number) => Math.sqrt(area / Math.PI);
+    const build = (
+      field:
+        | "talk_size"
+        | "prev_article_size"
+        | "lead_section_size"
+        | "article_size",
+      range: [number, number],
+    ): RadiusScale => {
+      const values = scaleSource.map((a) => a[field] ?? 0);
+      const areaScale = makeSqrtAreaScale(values, range);
+      return (v) => areaToRadius(areaScale(v ?? 0));
+    };
+    return {
+      talk: build("talk_size", [50, 1500]),
+      prevArticle: build("prev_article_size", [20, 600]),
+      lead: build("lead_section_size", [30, 800]),
+      article: build("article_size", [20, 600]),
+    };
+  }, [scaleSource]);
+
+  const [unlockedIdx, setUnlockedIdx] = useState(LANG_FETCH_CONCURRENCY - 1);
+  const pageKeyRef = useRef<string>("");
+  // Stable page identity key — changes only when the set of articles changes
+  const pageKey = currentPageData.map((r) => r.article).join("\0");
+
+  const [settledPageKey, setSettledPageKey] = useState(pageKey);
+  useEffect(() => {
+    const timer = setTimeout(
+      () => setSettledPageKey(pageKey),
+      LANG_FETCH_DEBOUNCE_MS,
+    );
+    return () => clearTimeout(timer);
+  }, [pageKey]);
+  const pageSettled = pageKey === settledPageKey;
+
+  const langQueries = useQueries({
+    queries: currentPageData.map((row, i) => ({
+      queryKey: ["langComparison", topicId, row.article],
+      queryFn: ({ signal }) =>
+        TopicService.getArticleLanguageComparison(
+          topicId!,
+          row.article,
+          signal,
+        ),
+      enabled: !!topicId && !loading && pageSettled && i <= unlockedIdx,
+      staleTime: LANG_DATA_STALE_MS,
+      gcTime: LANG_DATA_STALE_MS,
+    })),
+  });
+
+  // Maintain the sliding window: each time a query settles, advance the unlock
+  // pointer so that a new query starts and concurrency stays at LANG_FETCH_CONCURRENCY.
+  // Cached queries settle synchronously and fast-forward the window instantly.
+  useEffect(() => {
+    if (pageKey !== pageKeyRef.current) {
+      pageKeyRef.current = pageKey;
+      setUnlockedIdx(LANG_FETCH_CONCURRENCY - 1);
+      return;
+    }
+    const settledCount = langQueries
+      .slice(0, unlockedIdx + 1)
+      .filter((q) => q.isSuccess || q.isError).length;
+
+    const targetIdx = Math.min(
+      settledCount + LANG_FETCH_CONCURRENCY - 1,
+      currentPageData.length - 1,
+    );
+
+    if (targetIdx > unlockedIdx) {
+      setUnlockedIdx(targetIdx);
+    }
+  }, [pageKey, langQueries, unlockedIdx, currentPageData.length]);
+
+  const langDataByArticle = useMemo(() => {
+    const map = new Map<string, Record<string, LangComparisonData | null>>();
+    currentPageData.forEach((row, i) => {
+      const result = langQueries[i];
+      if (result?.data) {
+        map.set(row.article, result.data);
+      }
+    });
+    return map;
+  }, [langQueries, currentPageData]);
+
+  if (loading) {
+    const pct =
+      progress && progress.total > 0
+        ? Math.round((progress.done / progress.total) * 100)
+        : 0;
+
+    return (
+      <div className="Grid--loading">
+        <Spinner size="large" />
+        <div className="LoadingText">
+          Fetching language data&hellip;{" "}
+          {progress && progress.total > 0 && (
+            <span>
+              {progress.done} / {progress.total} articles
+            </span>
+          )}
+        </div>
+        {progress && progress.total > 0 && (
+          <div className="Progress">
+            <div className="Bar" style={{ width: `${pct}%` }} />
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="Grid--error">{error}</div>;
+  }
+
+  if (articles.length === 0) {
+    return (
+      <div className="Grid--empty">No articles match the current filters.</div>
+    );
+  }
+
+  return (
+    <div className="Grid">
+      <table className="Table">
+        <thead>
+          <tr>
+            <th className="HeaderArticle">
+              <div className="Inner">
+                <BsInfoCircle size={24} />
+                <span>
+                  Compare different linguistic versions of the article
+                </span>
+              </div>
+            </th>
+            {orderedLanguages.map((lang, i) => (
+              <th
+                key={lang}
+                className={`HeaderLang${
+                  dragOverIndex === i ? " HeaderLang--dragover" : ""
+                }${dragIndex === i ? " HeaderLang--dragging" : ""}`}
+                draggable
+                onDragStart={() => setDragIndex(i)}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (dragOverIndex !== i) setDragOverIndex(i);
+                }}
+                onDrop={() => {
+                  if (dragIndex !== null && dragIndex !== i) {
+                    setOrderedLanguages(
+                      reorder(orderedLanguages, dragIndex, i),
+                    );
+                  }
+                  setDragIndex(null);
+                  setDragOverIndex(null);
+                }}
+                onDragEnd={() => {
+                  setDragIndex(null);
+                  setDragOverIndex(null);
+                }}
+              >
+                <div className="HeaderLang-inner">
+                  <MdDragIndicator
+                    className="DragHandle"
+                    size={35}
+                    aria-hidden="true"
+                  />
+                  <span>{LANGUAGE_LABELS[lang] ?? lang} version</span>
+                </div>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {currentPageData.map((row, rowIdx) => {
+            const langs = languageLinks.get(row.article) ?? new Set<string>();
+            const articleLangData = langDataByArticle.get(row.article);
+            const inFetchPhase = !!topicId && !loading;
+            const rowIsLoading =
+              inFetchPhase && langQueries[rowIdx]?.isLoading === true;
+            const rowIsQueued =
+              inFetchPhase &&
+              !rowIsLoading &&
+              !langQueries[rowIdx]?.isSuccess &&
+              !langQueries[rowIdx]?.isError;
+
+            return (
+              <tr key={row.article} className="Row">
+                <td
+                  className={`Title${onArticleClick ? " Title--clickable" : ""}`}
+                  onClick={() => onArticleClick?.(row.article)}
+                >
+                  {row.article}
+                </td>
+                {orderedLanguages.map((lang) => (
+                  <LanguageCell
+                    key={lang}
+                    articleTitle={row.article}
+                    lang={lang}
+                    exists={langs.has(lang)}
+                    sourceLang={sourceLang}
+                    row={row}
+                    scales={radiusScales}
+                    langData={articleLangData?.[lang]}
+                    isLoading={rowIsLoading && langs.has(lang)}
+                    isQueued={rowIsQueued && langs.has(lang)}
+                  />
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      <PaginationBar
+        currentPage={currentPage}
+        totalPages={totalPages}
+        goToPage={goToPage}
+      />
+    </div>
+  );
+};
+
+export default ArticleLanguagesGrid;

@@ -1,10 +1,9 @@
 import type { Result, VisualizationSpec } from "vega-embed";
-import type { XAxisKey } from "../types/bubble-chart.type";
+import type { AxisOption, XAxisKey } from "../types/bubble-chart.type";
 import type {
   TimeTravelRow,
   TimeTravelSnapshot,
 } from "../types/time-travel.type";
-import type { AxisOption } from "../components/axis-controls.component";
 import { MAX_CIRCLE_RADIUS } from "./bubble-chart-vega";
 import { SINGLE_COLOR_PALETTE, xAxisTitleForKey } from "./bubble-chart-utils";
 

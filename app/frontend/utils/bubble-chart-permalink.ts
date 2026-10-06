@@ -1,5 +1,4 @@
-import type { XAxisKey, YAxisKey } from "../types/bubble-chart.type";
-import type { ChartTab } from "../components/chart-tab-bar.component";
+import type { ChartTab, XAxisKey, YAxisKey } from "../types/bubble-chart.type";
 import { GRADE_KEYS } from "./bubble-chart-utils";
 import {
   MIN_TIME_TRAVEL_YEAR,

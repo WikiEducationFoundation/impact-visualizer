@@ -38,6 +38,10 @@ type YAxisKey =
   | "number_of_editors"
   | "incoming_links_count";
 
+type AxisOption<K> = { value: K; label: string };
+
+type ChartTab = "overview" | "languages" | "timeTravel";
+
 type NumericSortableArticle = { article: string } & Record<
   NumericSortField,
   number
@@ -94,6 +98,8 @@ export type {
   NumericSortField,
   XAxisKey,
   YAxisKey,
+  AxisOption,
+  ChartTab,
   NumericSortableArticle,
   BubbleSizeFields,
   ChartRow,
