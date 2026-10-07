@@ -10,21 +10,21 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "~/styles/main.postcss";
 
 // Components
-import Root from "../components/root.component";
-import TopicIndex from "../components/topic-index.component";
-import MyTopicIndex from "../components/my-topic-index.component";
-import TopicDetail from "../components/topic-detail.component";
-import NewTopic from "../components/new-topic.component";
-import EditTopic from "../components/edit-topic.component";
-import WikipediaCategoryPage from "../components/wikipedia-category-page.component";
-import QueryBuilder from "../components/query-builder.component";
+import Root from "../components/layout/root.component";
+import TopicIndex from "../components/topic/topic-index.component";
+import MyTopicIndex from "../components/topic/my-topic-index.component";
+import TopicDetail from "../components/topic/topic-detail.component";
+import NewTopic from "../components/topic/new-topic.component";
+import EditTopic from "../components/topic/edit-topic.component";
+import WikipediaCategoryPage from "../components/search-tools/wikipedia-category-page.component";
+import QueryBuilder from "../components/search-tools/query-builder.component";
 import { Toaster } from "react-hot-toast";
-import WikiDashboardCourseTool from "../components/wiki-dashboard-tool.component";
-import PetScanTool from "../components/petscan-tool";
-import PagePileTool from "../components/pagepile-tool";
-import UserSetTool from "../components/user-set-tool";
-import WikiDashboardUserTool from "../components/wiki-dashboard-user-tool.component";
-import Credits from "../components/credits.component";
+import WikiDashboardCourseTool from "../components/search-tools/wiki-dashboard-tool.component";
+import PetScanTool from "../components/search-tools/petscan-tool";
+import PagePileTool from "../components/search-tools/pagepile-tool";
+import UserSetTool from "../components/search-tools/user-set-tool";
+import WikiDashboardUserTool from "../components/search-tools/wiki-dashboard-user-tool.component";
+import Credits from "../components/layout/credits.component";
 
 // Misc
 const queryClient = new QueryClient();

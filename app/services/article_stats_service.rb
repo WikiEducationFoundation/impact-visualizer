@@ -21,6 +21,7 @@ class ArticleStatsService
     # the lifetime of the service). Concurrent::Map is thread-safe
     # so this is fine under GenerateArticleAnalyticsJob's Parallel.each.
     @revision_cache = Concurrent::Map.new
+    @talk_subpages_cache = Concurrent::Map.new
   end
 
   def update_title_for_article(article:)
@@ -199,8 +200,8 @@ class ArticleStatsService
     revision = @wiki_action_api.get_page_revision_at_timestamp(pageid:, timestamp: date)
     return nil unless revision
 
-    size = revision['size']
-    Rails.logger.info("[ArticleStatsService] Final talk page size for #{talk_title}: #{size}")
+    size = revision['size'] + talk_subpages_size_at_date(title:, date:)
+    Rails.logger.info("[ArticleStatsService] Final talk page size (with archives) for #{talk_title}: #{size}")
     size
   rescue StandardError => e
     Rails.logger.error("[ArticleStatsService] Error fetching talk page size for #{talk_title}: #{e.message}")
@@ -402,6 +403,22 @@ class ArticleStatsService
     end
   end
 
+  def cached_talk_subpages(title:)
+    @talk_subpages_cache.compute_if_absent(title) do
+      @wiki_action_api.get_subpages(title:, namespace: 1)
+    end
+  end
+
+  def talk_subpages_size_at_date(title:, date:)
+    subpages = cached_talk_subpages(title:) || []
+    return subpages.sum { |page| page['length'].to_i } if date >= Date.current
+
+    subpages.sum do |page|
+      revision = cached_revision_at(pageid: page['pageid'], date:)
+      revision ? revision['size'].to_i : 0
+    end
+  end
+
   def fetch_language_links_batched(article_titles)
     wiki_lang = @wiki.language
     batches = article_titles.each_slice(LANGUAGE_LINK_BATCH_SIZE).to_a
@@ -529,6 +546,7 @@ class ArticleStatsService
       talk_rev = api.get_page_revision_at_timestamp(pageid: talk_info['pageid'],
                                                     timestamp: Date.current)
       talk_size = talk_rev ? talk_rev['size'] : 0
+      talk_size += (api.get_subpages(title: foreign_title, namespace: 1) || []).sum { |page| page['length'].to_i }
     end
 
     images_count = api.get_images_count(title: foreign_title)

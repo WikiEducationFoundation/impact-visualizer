@@ -38,6 +38,10 @@ type YAxisKey =
   | "number_of_editors"
   | "incoming_links_count";
 
+type AxisOption<K> = { value: K; label: string };
+
+type ChartTab = "overview" | "languages" | "timeTravel";
+
 type NumericSortableArticle = { article: string } & Record<
   NumericSortField,
   number
@@ -55,6 +59,30 @@ type BubbleSizeFields = {
   bubble_lead_color?: string;
 };
 
+type ChartRow = ArticleAnalytics & {
+  article: string;
+  classifications: string[];
+  assessment_grade_color: string;
+  bubble_article_color: string;
+  bubble_talk_color: string;
+  bubble_prev_color: string;
+  bubble_lead_color: string;
+  protection_summary: string;
+  has_move_restriction: boolean;
+  has_edit_restriction: boolean;
+};
+
+type YAxisConfig = {
+  currentField: YAxisKey;
+  previousField: "prev_average_daily_views" | null;
+  axisTitle: string;
+};
+
+type YAxisDomain = {
+  domainMin: number | null;
+  domainMax: number | null;
+};
+
 type RadiusScale = (v: number | null | undefined) => number;
 
 type RadiusScales = {
@@ -70,8 +98,13 @@ export type {
   NumericSortField,
   XAxisKey,
   YAxisKey,
+  AxisOption,
+  ChartTab,
   NumericSortableArticle,
   BubbleSizeFields,
+  ChartRow,
+  YAxisConfig,
+  YAxisDomain,
   RadiusScale,
   RadiusScales,
 };

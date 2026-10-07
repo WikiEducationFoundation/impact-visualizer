@@ -135,6 +135,67 @@ describe ArticleStatsService do
     end
   end
 
+  describe '#get_talk_page_size_at_date' do
+    let(:api) { instance_double(WikiActionApi) }
+    let(:article_stats_service) { described_class.new(wiki) }
+    let(:past_date) { Date.new(2020, 12, 31) }
+    let(:subpages) do
+      [{ 'pageid' => 11, 'length' => 1000 }, { 'pageid' => 12, 'length' => 500 }].to_hashugar
+    end
+
+    def stub_revision_size(pageid, size, date: anything)
+      revision = size && { 'size' => size }.to_hashugar
+      allow(api).to receive(:get_page_revision_at_timestamp)
+        .with(pageid:, timestamp: date).and_return(revision)
+    end
+
+    def talk_size(date)
+      article_stats_service.get_talk_page_size_at_date(article: 'Apple', date:)
+    end
+
+    before do
+      allow(WikiActionApi).to receive(:new).and_return(api)
+      allow(api).to receive(:get_page_info).with(title: 'Talk:Apple')
+        .and_return({ 'pageid' => 10 }.to_hashugar)
+      allow(api).to receive(:get_subpages).with(title: 'Apple', namespace: 1).and_return(subpages)
+      stub_revision_size(10, 200)
+    end
+
+    it 'adds the current size of archived subpages for current dates' do
+      expect(talk_size(Date.current.end_of_year)).to eq(1700)
+      expect(api).not_to have_received(:get_page_revision_at_timestamp)
+        .with(pageid: 11, timestamp: anything)
+    end
+
+    it 'uses each subpage size at the date for past dates, skipping ones created later' do
+      stub_revision_size(11, 800, date: past_date)
+      stub_revision_size(12, nil, date: past_date)
+
+      expect(talk_size(past_date)).to eq(1000)
+    end
+
+    it 'fetches the subpage list once per title' do
+      stub_revision_size(11, 800)
+      stub_revision_size(12, 400)
+
+      talk_size(Date.current)
+      talk_size(past_date)
+
+      expect(api).to have_received(:get_subpages).once
+    end
+
+    it 'falls back to the talk page size when the subpage lookup fails' do
+      allow(api).to receive(:get_subpages).and_return(nil)
+      expect(talk_size(Date.current)).to eq(200)
+    end
+
+    it 'returns nil when the talk page does not exist' do
+      allow(api).to receive(:get_page_info).with(title: 'Talk:Apple')
+        .and_return({ 'missing' => true }.to_hashugar)
+      expect(talk_size(Date.current)).to be_nil
+    end
+  end
+
   describe '#weighted_revision_quality' do
     let!(:article_stats_service) { described_class.new(wiki) }
 

@@ -236,6 +236,32 @@ class WikiActionApi
     response.data.dig('allrevisions', 0, 'revisions', 0).to_hashugar if response&.status == 200
   end
 
+  def get_subpages(title:, namespace:)
+    query_parameters = {
+      generator: 'allpages',
+      gapnamespace: namespace,
+      gapprefix: "#{title}/",
+      gapfilterredir: 'nonredirects',
+      gaplimit: 'max',
+      prop: 'info',
+      formatversion: '2'
+    }
+
+    pages = []
+    loop do
+      response = query(query_parameters:)
+      return nil unless response
+
+      pages.concat(response.data&.dig('pages') || [])
+
+      cont = response['continue']
+      break unless cont
+      query_parameters.merge!(cont)
+    end
+
+    pages.map { |page| page.slice('pageid', 'title', 'length') }.to_hashugar
+  end
+
   def get_first_revision(pageid:)
     # Setup basic query parameters
     query_parameters = {
