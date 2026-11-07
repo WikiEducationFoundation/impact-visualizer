@@ -1,4 +1,9 @@
-import type { ChartTab, XAxisKey, YAxisKey } from "../types/bubble-chart.type";
+import type {
+  ChartTab,
+  TagMatchMode,
+  XAxisKey,
+  YAxisKey,
+} from "../types/bubble-chart.type";
 import { GRADE_KEYS } from "./bubble-chart-utils";
 import {
   MIN_TIME_TRAVEL_YEAR,
@@ -23,6 +28,7 @@ export interface ChartUiState {
   selectedGrades: Record<string, boolean>;
   deselectedTags: string[];
   includeUntagged: boolean;
+  tagMatchMode: TagMatchMode;
   excludedOutliers: string[];
   activeTab: ChartTab;
   timeTravelArticles: string[];
@@ -77,6 +83,7 @@ export const DEFAULT_CHART_UI_STATE: ChartUiState = {
   selectedGrades: Object.fromEntries(GRADE_KEYS.map((g) => [g, true])),
   deselectedTags: [],
   includeUntagged: true,
+  tagMatchMode: "any",
   excludedOutliers: [],
   activeTab: "overview",
   timeTravelArticles: [],
@@ -128,6 +135,8 @@ export function encodeChartState(state: ChartUiState): Record<string, string> {
     params.tagsoff = state.deselectedTags.join(",");
 
   if (!state.includeUntagged) params.untag = "0";
+
+  if (state.tagMatchMode === "all") params.tagmatch = "all";
 
   if (state.excludedOutliers.length)
     params.trim = state.excludedOutliers.join("|");
@@ -232,6 +241,8 @@ export function decodeChartState(params: URLSearchParams): ChartUiState {
   state.deselectedTags = tagsoff ? tagsoff.split(",").filter(Boolean) : [];
 
   state.includeUntagged = params.get("untag") !== "0";
+
+  state.tagMatchMode = params.get("tagmatch") === "all" ? "all" : "any";
 
   const trim = params.get("trim");
   state.excludedOutliers = trim ? trim.split("|").filter(Boolean) : [];

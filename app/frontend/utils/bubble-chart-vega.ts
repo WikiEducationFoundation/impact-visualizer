@@ -4,6 +4,7 @@ import type {
   XAxisKey,
   YAxisConfig,
   YAxisDomain,
+  TagMatchMode,
 } from "../types/bubble-chart.type";
 import { GRADE_KEYS, xAxisTitleForKey } from "./bubble-chart-utils";
 
@@ -103,6 +104,7 @@ export type BubbleChartSignalState = {
   excludedOutliers: Set<string>;
   deselectedTags: Set<string>;
   includeUntagged: boolean;
+  tagMatchMode: TagMatchMode;
   showLabels: boolean;
   yDomain: YAxisDomain;
 };
@@ -266,13 +268,16 @@ function yFilterExpr(yAxisConfig: YAxisConfig, isLogScale: boolean) {
 }
 
 function visibilityFilterExpr(availableTags: string[]) {
+  const hasTagExpr = (tag: string) =>
+    `indexof(datum.classifications, ${JSON.stringify(tag)}) >= 0`;
+  const anyTagExpr = availableTags
+    .map((tag, i) => `(${tagSignalName(i)} && ${hasTagExpr(tag)})`)
+    .join(" || ");
+  const allTagsExpr = availableTags
+    .map((tag, i) => `(!${tagSignalName(i)} || ${hasTagExpr(tag)})`)
+    .join(" && ");
   const tagFilterExpr = availableTags.length
-    ? `((length(datum.classifications) == 0 && include_untagged) || (${availableTags
-        .map(
-          (tag, i) =>
-            `(${tagSignalName(i)} && indexof(datum.classifications, ${JSON.stringify(tag)}) >= 0)`,
-        )
-        .join(" || ")}))`
+    ? `((length(datum.classifications) == 0 && include_untagged) || (length(datum.classifications) > 0 && (tag_match_all ? (${allTagsExpr}) : (${anyTagExpr}))))`
     : "true";
 
   return [
@@ -320,6 +325,7 @@ function signalParams(
       ]),
     ),
     include_untagged: signals.includeUntagged,
+    tag_match_all: signals.tagMatchMode === "all",
     show_labels: signals.showLabels,
     ...yDomainSignals(signals.yDomain),
   };

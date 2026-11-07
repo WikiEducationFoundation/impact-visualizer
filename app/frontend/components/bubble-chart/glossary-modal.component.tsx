@@ -114,10 +114,28 @@ const GLOSSARY_SECTIONS: GlossarySection[] = [
   },
   {
     title: "Tags",
+    intro:
+      "Tag filters are in the Advanced Filters panel. All tags start switched on; click a tag to switch it off.",
     terms: [
       {
         name: "Tag",
         def: "A topic-specific label assigned to articles, used to filter the chart down to a subset of articles.",
+      },
+      {
+        name: "Any",
+        def: "Shows articles that have at least one of the switched-on tags. An article is only hidden once all of its tags are switched off.",
+      },
+      {
+        name: "All",
+        def: "Shows only articles that have every switched-on tag. Switch off the tags you don't need until only the ones you're looking for remain.",
+      },
+      {
+        name: "Include untagged",
+        def: "Controls whether articles with no tags are shown. It applies in both Any and All modes.",
+      },
+      {
+        name: "Reset all",
+        def: "Switches every tag back on, includes untagged articles again, and returns to Any mode.",
       },
     ],
   },

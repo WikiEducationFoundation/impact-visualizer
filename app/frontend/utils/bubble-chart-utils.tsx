@@ -9,6 +9,7 @@ import type {
   YAxisDomain,
   YAxisKey,
   NumericSortableArticle,
+  TagMatchMode,
 } from "../types/bubble-chart.type";
 
 function compareArticlesByPublicationDateAsc(
@@ -403,8 +404,10 @@ type ArticleFilters = {
   includeNoCentrality: boolean;
   yField: YAxisKey;
   yDomain: YAxisDomain;
+  availableTags: string[];
   deselectedTags: Set<string>;
   includeUntagged: boolean;
+  tagMatchMode: TagMatchMode;
 };
 
 // Mirrors the Vega visibility filter in bubble-chart-vega.ts, which the chart
@@ -445,6 +448,13 @@ function filterArticles(rows: ChartRow[], filters: ArticleFilters): ChartRow[] {
     if (domainMax !== null && yValue > domainMax) return false;
 
     if (row.classifications.length > 0) {
+      if (filters.tagMatchMode === "all") {
+        return filters.availableTags.every(
+          (tag) =>
+            filters.deselectedTags.has(tag) ||
+            row.classifications.includes(tag),
+        );
+      }
       return row.classifications.some(
         (tag) => !filters.deselectedTags.has(tag),
       );

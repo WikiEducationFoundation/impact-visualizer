@@ -39,6 +39,7 @@ function buildWikidataQuery(
   occupationIDs: string[],
   genderID: string,
   ethnicityID: string,
+  citizenshipID: string,
   languageCode: string,
   options?: { requireWikipediaArticle?: boolean },
 ): string {
@@ -46,6 +47,7 @@ function buildWikidataQuery(
     instanceOf: "P31",
     sexOrGender: "P21",
     ethnicGroup: "P172",
+    countryOfCitizenship: "P27",
     occupation: "P106",
   };
   const qValues = { human: "Q5" };
@@ -64,6 +66,10 @@ function buildWikidataQuery(
 
   if (ethnicityID) {
     query += `\n    ?person wdt:${properties.ethnicGroup} wd:${ethnicityID} .`;
+  }
+
+  if (citizenshipID) {
+    query += `\n    ?person wdt:${properties.countryOfCitizenship} wd:${citizenshipID} .`;
   }
 
   if (occupationIDs.length > 0) {

@@ -21,6 +21,7 @@ export default function QueryItem({
       >
         <option value="">--Please choose a property--</option>
         <option value="gender">Gender</option>
+        <option value="citizenship">Citizenship</option>
         <option value="ethnicity">Ethnicity</option>
         <option value="occupation">Occupation</option>
       </select>
