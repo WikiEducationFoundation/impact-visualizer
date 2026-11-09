@@ -129,6 +129,47 @@
   height: 16px;
 }
 
+.FloatingFeedback {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 22px;
+  background-color: #2e9e5b;
+  color: white;
+  text-decoration: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+
+  &.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:hover {
+    background-color: #268a4f;
+    color: white;
+  }
+
+  &:hover .FloatingFeedback-label,
+  &:focus-visible .FloatingFeedback-label {
+    max-width: 120px;
+    margin-left: 6px;
+  }
+}
+
+.FloatingFeedback-label {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.2s, margin-left 0.2s;
+}
+
 .Button--outlined {
   background: none;
   color: $blue;

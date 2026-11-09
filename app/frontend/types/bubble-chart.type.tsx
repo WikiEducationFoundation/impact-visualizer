@@ -85,6 +85,8 @@ type YAxisDomain = {
 
 type RadiusScale = (v: number | null | undefined) => number;
 
+type TagMatchMode = "any" | "all";
+
 type RadiusScales = {
   talk: RadiusScale;
   prevArticle: RadiusScale;
@@ -107,4 +109,5 @@ export type {
   YAxisDomain,
   RadiusScale,
   RadiusScales,
+  TagMatchMode,
 };

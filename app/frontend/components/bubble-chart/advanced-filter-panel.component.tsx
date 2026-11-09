@@ -5,6 +5,7 @@ import {
   CENTRALITY_MAX,
 } from "../../utils/bubble-chart-permalink";
 import { RAW_ASSESSMENT_COLORS } from "../../utils/bubble-chart-utils";
+import type { TagMatchMode } from "../../types/bubble-chart.type";
 
 const gradeGroups = [
   { id: "fa", label: "Featured", grades: ["FA", "FL"], dot: RAW_ASSESSMENT_COLORS.FA },
@@ -71,15 +72,19 @@ function TagFilterButtons({
   tags,
   deselected,
   includeUntagged,
+  matchMode,
   onToggle,
   onIncludeUntaggedChange,
+  onMatchModeChange,
   onReset,
 }: {
   tags: string[];
   deselected: Set<string>;
   includeUntagged: boolean;
+  matchMode: TagMatchMode;
   onToggle: (tag: string, on: boolean) => void;
   onIncludeUntaggedChange: (checked: boolean) => void;
+  onMatchModeChange: (mode: TagMatchMode) => void;
   onReset: () => void;
 }) {
   return (
@@ -95,6 +100,26 @@ function TagFilterButtons({
           />
           <span>include untagged</span>
         </label>
+        <div className="ScaleToggle" role="group" aria-label="Tag match mode">
+          <button
+            type="button"
+            className={`ScaleBtn ${matchMode === "any" ? "is-active" : ""}`}
+            aria-pressed={matchMode === "any"}
+            title="Show articles that have at least one of the selected tags"
+            onClick={() => onMatchModeChange("any")}
+          >
+            Any
+          </button>
+          <button
+            type="button"
+            className={`ScaleBtn ${matchMode === "all" ? "is-active" : ""}`}
+            aria-pressed={matchMode === "all"}
+            title="Show only articles that have every selected tag"
+            onClick={() => onMatchModeChange("all")}
+          >
+            All
+          </button>
+        </div>
         <button type="button" className="ResetLink" onClick={onReset}>
           Reset all
         </button>
@@ -252,8 +277,10 @@ export interface AdvancedFilterPanelProps {
   tags: string[];
   deselectedTags: Set<string>;
   includeUntagged: boolean;
+  tagMatchMode: TagMatchMode;
   onToggleTag: (tag: string, on: boolean) => void;
   onIncludeUntaggedChange: (checked: boolean) => void;
+  onTagMatchModeChange: (mode: TagMatchMode) => void;
   onResetTags: () => void;
 
   centralityMin: number;
@@ -279,8 +306,10 @@ const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
   tags,
   deselectedTags,
   includeUntagged,
+  tagMatchMode,
   onToggleTag,
   onIncludeUntaggedChange,
+  onTagMatchModeChange,
   onResetTags,
   centralityMin,
   centralityMax,
@@ -306,8 +335,10 @@ const AdvancedFilterPanel: React.FC<AdvancedFilterPanelProps> = ({
             tags={tags}
             deselected={deselectedTags}
             includeUntagged={includeUntagged}
+            matchMode={tagMatchMode}
             onToggle={onToggleTag}
             onIncludeUntaggedChange={onIncludeUntaggedChange}
+            onMatchModeChange={onTagMatchModeChange}
             onReset={onResetTags}
           />
         </div>

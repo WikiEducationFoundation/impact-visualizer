@@ -1,9 +1,10 @@
 import _ from "lodash";
 import React from "react";
 import { Link, Outlet, ScrollRestoration } from "react-router-dom";
-import { MdOutlineArrowDropDown, MdFeedback } from "react-icons/md";
+import { MdOutlineArrowDropDown } from "react-icons/md";
 
 import UserStatus from "./user-status.component";
+import FeedbackButton from "./feedback-button.component";
 
 const SEARCH_TOOLS = [
   {
@@ -95,15 +96,7 @@ function Root() {
           <div className="Header-right">
             <UserStatus />
             <span className="Header-divider" aria-hidden="true" />
-            <a
-              className="Button Button--feedback"
-              href="https://meta.wikimedia.org/wiki/Talk:Visual_Analytics_for_Sustainability_and_Climate_Change/Tool?action=edit&section=new"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Give Feedback
-              <MdFeedback className="Button-icon" />
-            </a>
+            <FeedbackButton />
           </div>
         </div>
       </header>

@@ -33,6 +33,7 @@ import type {
   ChartTab,
   NumericSortField,
   XAxisKey,
+  TagMatchMode,
   YAxisKey,
 } from "../../types/bubble-chart.type";
 import {
@@ -129,6 +130,9 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const [includeUntagged, setIncludeUntagged] = useState<boolean>(
     initialState.includeUntagged,
   );
+  const [tagMatchMode, setTagMatchMode] = useState<TagMatchMode>(
+    initialState.tagMatchMode,
+  );
   const [xAxisKey, setXAxisKey] = useState<XAxisKey>(initialState.xAxisKey);
   const [xAxisMode, setXAxisMode] = useState<"ranked" | "scaled">(
     initialState.xAxisMode,
@@ -169,6 +173,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     return (
       s.deselectedTags.length > 0 ||
       !s.includeUntagged ||
+      s.tagMatchMode !== "any" ||
       s.centralityMin !== DEFAULT_CHART_UI_STATE.centralityMin ||
       s.centralityMax !== DEFAULT_CHART_UI_STATE.centralityMax ||
       !s.includeNoCentrality ||
@@ -415,8 +420,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         includeNoCentrality,
         yField: yAxisConfig.currentField,
         yDomain: parsedYAxisDomain,
+        availableTags,
         deselectedTags,
         includeUntagged,
+        tagMatchMode,
       }),
     [
       sortedRows,
@@ -429,8 +436,10 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       includeNoCentrality,
       parsedYAxisDomain,
       yAxisConfig.currentField,
+      availableTags,
       deselectedTags,
       includeUntagged,
+      tagMatchMode,
     ],
   );
 
@@ -475,6 +484,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
         excludedOutliers,
         deselectedTags,
         includeUntagged,
+        tagMatchMode,
         showLabels,
         yDomain: parsedYAxisDomain,
       },
@@ -630,6 +640,11 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     startTransition(() => setIncludeUntagged(checked));
   };
 
+  const handleTagMatchModeChange = (mode: TagMatchMode) => {
+    setSignals({ tag_match_all: mode === "all" });
+    startTransition(() => setTagMatchMode(mode));
+  };
+
   const handleMoveRestrictionChange = (checked: boolean) => {
     setSignals({ filter_move_restriction: checked });
     startTransition(() => setFilterMoveRestriction(checked));
@@ -671,6 +686,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
   const resetTags = () => {
     toggleAllTags(true);
     handleIncludeUntaggedChange(true);
+    handleTagMatchModeChange("any");
   };
 
   const resetGrades = () => toggleGrades(GRADE_KEYS, true);
@@ -695,6 +711,8 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
     includeUntagged,
     onToggleTag: toggleTag,
     onIncludeUntaggedChange: handleIncludeUntaggedChange,
+    tagMatchMode,
+    onTagMatchModeChange: handleTagMatchModeChange,
     onResetTags: resetTags,
     centralityMin,
     centralityMax,
@@ -829,6 +847,7 @@ export const WikiBubbleChart: React.FC<WikiBubbleChartProps> = ({
       selectedGrades,
       deselectedTags: [...deselectedTags],
       includeUntagged,
+      tagMatchMode,
       excludedOutliers: [...excludedOutliers],
       activeTab,
       timeTravelArticles,

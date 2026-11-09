@@ -36,6 +36,7 @@ export default function QueryBuilder() {
   >([]);
   const [languageCode, setLanguageCode] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [hasQueried, setHasQueried] = useState<boolean>(false);
 
   const [requireWikiArticle, setRequireWikiArticle] = useState<boolean>(false);
 
@@ -77,16 +78,20 @@ export default function QueryBuilder() {
       return;
     }
     const fetchedArticles = await fetchArticlesByQuery();
-    setArticles(fetchedArticles.results.bindings);
+    setHasQueried(fetchedArticles !== null);
+    setArticles(fetchedArticles?.results.bindings ?? []);
   };
 
-  async function fetchArticlesByQuery(): Promise<SPARQLResponse> {
+  async function fetchArticlesByQuery(): Promise<SPARQLResponse | null> {
     setIsLoading(true);
-    let queriedArticlesJSON: SPARQLResponse;
+    let queriedArticlesJSON: SPARQLResponse | null;
 
     const gender = queryItemsData.filter((item) => item.property === "gender");
     const ethnicity = queryItemsData.filter(
       (item) => item.property === "ethnicity",
+    );
+    const citizenship = queryItemsData.filter(
+      (item) => item.property === "citizenship",
     );
     const occupations = queryItemsData.filter(
       (item) => item.property === "occupation",
@@ -96,6 +101,7 @@ export default function QueryBuilder() {
       occupations.map((occupation) => occupation.qValue.id),
       gender.length > 0 ? gender[0].qValue.id : "",
       ethnicity.length > 0 ? ethnicity[0].qValue.id : "",
+      citizenship.length > 0 ? citizenship[0].qValue.id : "",
       languageCode,
       { requireWikipediaArticle: requireWikiArticle },
     );
@@ -120,7 +126,7 @@ export default function QueryBuilder() {
       } else {
         toast.error(`Something went wrong!`);
       }
-      queriedArticlesJSON = { head: { vars: [] }, results: { bindings: [] } };
+      queriedArticlesJSON = null;
     }
 
     setIsLoading(false);
@@ -147,7 +153,7 @@ export default function QueryBuilder() {
       <ToolHowTo
         steps={[
           "Enter a two-letter language code (e.g. en) to choose the Wikipedia language.",
-          "Add one or more properties (occupation, gender, or ethnicity) and pick a value for each. Combining properties narrows the results and keeps the query fast.",
+          "Add one or more properties (occupation, gender, citizenship, or ethnicity) and pick a value for each. Combining properties narrows the results and keeps the query fast.",
           'Optionally tick "Require Wiki Article" to keep only items that have an article in that language.',
           "Click Run Query to get the matching articles.",
         ]}
@@ -218,6 +224,11 @@ export default function QueryBuilder() {
         </div>
       ) : articles.length > 0 ? (
         <SparqlArticlesTable articles={articles} filename={filename} />
+      ) : hasQueried ? (
+        <p className="NoResults">
+          No results matched all of the selected properties. Try removing a
+          property or choosing different ones.
+        </p>
       ) : (
         ""
       )}
